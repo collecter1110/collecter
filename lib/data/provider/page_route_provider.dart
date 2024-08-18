@@ -47,6 +47,12 @@ class CustomRouteObserver extends RouteObserver<PageRoute<dynamic>> {
     _saveScreenView(previousRoute, route);
   }
 
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    _saveScreenView(newRoute, oldRoute);
+  }
+
   void _saveScreenView(Route<dynamic>? newRoute, Route<dynamic>? oldRoute) {
     if (newRoute is PageRoute) {
       PageRouteProvider().currentPageRoute = newRoute;
