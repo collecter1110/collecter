@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/category_button.dart';
-]
+
 import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/collection.dart';
 
