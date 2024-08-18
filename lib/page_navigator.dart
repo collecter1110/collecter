@@ -1,82 +1,100 @@
-import 'package:collect_er/page/bookmark_page/bookmark_screen.dart';
-import 'package:collect_er/page/main_page/main_screen.dart';
+import 'package:collect_er/components/button/nav_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'components/button/nav_button.dart';
+import 'data/provider/page_route_provider.dart';
 import 'page/add_page/add_screen.dart';
+import 'page/bookmark_page/bookmark_screen.dart';
+import 'page/home_page/home_screen.dart';
 import 'page/search_page/search_screen.dart';
 import 'page/user_page/user_screen.dart';
 
 class PageNavigator extends StatefulWidget {
-  PageNavigator({super.key});
+  PageNavigator({Key? key}) : super(key: key);
 
   @override
   State<PageNavigator> createState() => _PageNavigatorState();
 }
 
 class _PageNavigatorState extends State<PageNavigator> {
-  int selectedIndex = 0;
+  final _navigatorKey = GlobalKey<NavigatorState>();
 
-  final List<Widget> _widgetOptions = <Widget>[
-    MainScreen(),
+  final _pages = [
+    HomeScreen(),
     SearchScreen(),
     AddScreen(),
     BookmarkScreen(),
     UserScreen(),
   ];
 
-  void _onTap(int index) {
-    setState(() {
-      selectedIndex = index;
-      print(selectedIndex);
-    });
+  static const List<String> _routeNames = [
+    '/',
+    '/search',
+    '/add',
+    '/bookmark',
+    '/user',
+  ];
+
+  MaterialPageRoute _onGenerateRoute(RouteSettings settings) {
+    final index = _routeNames.indexOf(settings.name!);
+    if (index != -1) {
+      return MaterialPageRoute(
+        builder: (context) => _pages[index],
+        settings: settings,
+      );
+    } else {
+      throw Exception('Unknown route: ${settings.name}');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: IndexedStack(
-        index: selectedIndex,
-        children: _widgetOptions,
-      ),
-      bottomNavigationBar: BottomAppBar(
-        height: 60.h,
-        padding: EdgeInsets.only(
-          bottom: 10.0,
+    return DefaultTabController(
+      initialIndex: 0,
+      length: 5,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Navigator(
+          key: _navigatorKey,
+          initialRoute: _routeNames[0],
+          onGenerateRoute: _onGenerateRoute,
+          observers: [CustomRouteObserver()],
         ),
-        color: Colors.black,
-        elevation: 0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            NavButton(
-              isSelected: selectedIndex == 0,
-              iconName: 'tab_home',
-              onTap: () => _onTap(0),
+        bottomNavigationBar: BottomAppBar(
+          padding: EdgeInsets.only(
+            top: 12.0.h,
+            bottom: 16.0.h,
+          ),
+          height: 60.0.h,
+          color: Colors.black,
+          child: TabBar(
+            dividerHeight: 0,
+            indicatorColor: Colors.transparent,
+            isScrollable: false,
+            onTap: (index) {
+              setState(() {
+                if (PageRouteProvider().getCurrentPageNum == index) {
+                  print('같은 페이지');
+                  return;
+                }
+                _navigatorKey.currentState?.pushNamed(_routeNames[index]);
+              });
+            },
+            tabs: List.generate(
+              5,
+              (index) => NavButton(index: index),
             ),
-            NavButton(
-              isSelected: selectedIndex == 1,
-              iconName: 'tab_search',
-              onTap: () => _onTap(1),
-            ),
-            NavButton(
-              isSelected: selectedIndex == 2,
-              iconName: 'tab_add',
-              onTap: () => _onTap(2),
-            ),
-            NavButton(
-              isSelected: selectedIndex == 3,
-              iconName: 'tab_bookmark',
-              onTap: () => _onTap(3),
-            ),
-            NavButton(
-              isSelected: selectedIndex == 4,
-              iconName: 'tab_user',
-              onTap: () => _onTap(4),
-            ),
-          ],
+          ),
         ),
       ),
     );

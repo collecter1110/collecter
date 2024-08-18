@@ -1,31 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+
+import '../../data/provider/page_route_provider.dart';
 
 class NavButton extends StatelessWidget {
-  final bool isSelected;
-  final String iconName;
-  final VoidCallback onTap;
+  final int index;
 
-  const NavButton({
+  NavButton({
     super.key,
-    required this.isSelected,
-    required this.iconName,
-    required this.onTap,
+    required this.index,
   });
+
+  List<String> _iconNames = [
+    'tab_home',
+    'tab_search',
+    'tab_add',
+    'tab_bookmark',
+    'tab_user',
+  ];
+
+  static const List<String> _routeNames = [
+    '/',
+    '/search',
+    '/add',
+    '/bookmark',
+    '/user',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: SizedBox(
+    return Consumer<PageRouteProvider>(
+      builder: (context, routeState, child) {
+        return SizedBox(
           child: Image.asset(
-            'assets/icons/${iconName}.png',
-            color: isSelected ? Colors.white : Colors.grey[600],
+            'assets/icons/${_iconNames[index]}.png',
+            color:
+                routeState.currentPageRoute?.settings.name == _routeNames[index]
+                    ? Colors.white
+                    : Colors.grey[600],
             height: 22.h,
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

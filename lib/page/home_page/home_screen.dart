@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/category_button.dart';
+import '../../components/button/search_bar_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/collect.dart';
 
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -86,31 +87,23 @@ class MainScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  background: Container(
-                      color: Color(0xFF292a29),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0.w),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              height: 20.0.h,
-                              child: Image.asset(
-                                'assets/images/image_logo.png',
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20.0.h,
-                              child: Image.asset(
-                                'assets/icons/tab_search.png',
-                                fit: BoxFit.contain,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )),
+                  background: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(child: SearchBarButton()),
+                        // SizedBox(
+                        //   height: 20.0.h,
+                        //   child: Image.asset(
+                        //     'assets/icons/tab_search.png',
+                        //     fit: BoxFit.contain,
+                        //     color: Colors.white,
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
@@ -160,10 +153,10 @@ class MainScreen extends StatelessWidget {
                 childCount: _name.length,
               ),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // 그리드의 열 개수를 설정하세요
-                mainAxisSpacing: 10.0.h, // 위아래 간격
-                crossAxisSpacing: 15.0.w, // 좌우 간격
-                childAspectRatio: 0.7, // 항목의 가로세로 비율을 설정하세요
+                crossAxisCount: 2,
+                mainAxisSpacing: 10.0.h,
+                crossAxisSpacing: 15.0.w,
+                childAspectRatio: 0.7,
               ),
             ),
           )
