@@ -1,47 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class SearchBarButton extends StatelessWidget {
-  const SearchBarButton({super.key});
+class CustomSearchBar extends StatelessWidget {
+  final ValueChanged<String>? onSearch;
+  final bool autoFocus;
+  final bool enabled;
+
+  CustomSearchBar(
+      {Key? key,
+      required this.onSearch,
+      required this.autoFocus,
+      required this.enabled});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: TextButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed('/search');
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          if (!enabled) {
+            // enabled가 false일 때 클릭 시 네비게이션 실행
+            Navigator.of(context).pushNamed('/search');
+          }
         },
-        style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          padding: EdgeInsets.symmetric(vertical: 16.0.h, horizontal: 14.0.w),
-          backgroundColor: Colors.white,
-          side: BorderSide(
-            // 테두리 추가
-            color: Color(0xFFDEE2E6), // 테두리 색상
-            width: 1.0, // 테두리 두께
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset(
-              'assets/icons/tab_search.png',
-              height: 16.h,
-            ),
-            Text(
-              '검색해보세요.',
-              style: TextStyle(
-                fontFamily: 'PretendardRegular',
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF343A40),
-                height: 1.5,
+        child: AbsorbPointer(
+          absorbing: !enabled,
+          child: TextFormField(
+            enabled: enabled,
+            autofocus: autoFocus,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Color(0xffF5F6F7),
+              hintText: '검색어를 입력해주세요.',
+              hintStyle: TextStyle(
+                color: Color(0xFFADB5BD),
+                fontSize: 15.0.sp,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w500,
+                height: 1.3.h,
+              ),
+              prefixIcon: Padding(
+                padding: EdgeInsets.only(
+                    top: 15.0.h, bottom: 15.0.h, left: 12.0.w, right: 6.0.w),
+                child: Image.asset(
+                  'assets/icons/tab_search.png',
+                  height: 14.0.h,
+                  color: Color(0xFFADB5BD),
+                ),
               ),
             ),
-          ],
+            style: TextStyle(
+              color: Color(0xFF212529),
+              fontSize: 15.sp,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w600,
+            ),
+            onFieldSubmitted: (String value) {
+              if (value.isNotEmpty) {
+                onSearch?.call(value);
+              }
+            },
+          ),
         ),
       ),
     );
