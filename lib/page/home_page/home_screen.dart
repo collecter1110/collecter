@@ -26,6 +26,9 @@ class HomeScreen extends StatelessWidget {
       '많이 검색한 키워드',
       '팔로우 많은 유저 랭킹',
     ];
+
+    final double _selectionRatio = 1.1;
+    final double _collectionRatio = 0.7;
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
@@ -165,7 +168,9 @@ class HomeScreen extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => Column(
                     children: [
-                      Collection(),
+                      Collection(
+                        index: index,
+                      )
                     ],
                   ),
                   childCount: _name.length,
@@ -173,8 +178,8 @@ class HomeScreen extends StatelessWidget {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 10.0.h,
-                  crossAxisSpacing: 14.0.w,
-                  childAspectRatio: 0.7,
+                  crossAxisSpacing: 10.0.w,
+                  childAspectRatio: _collectionRatio,
                 ),
               ),
             )

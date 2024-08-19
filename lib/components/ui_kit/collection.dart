@@ -3,10 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Collection extends StatelessWidget {
-  const Collection({super.key});
+  final int index;
+
+  const Collection({
+    super.key,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
+    List<String> _name = [
+      '나만의 레시피북',
+      '다이어트 레시피',
+      '여름 코디룩',
+      '사고 싶은 화장품 리스트',
+      '저소음 기계식 키보드 리스트',
+      '읽은 책 목록',
+      '읽고 싶은 책 목록',
+    ];
     return GestureDetector(
       onTap: () {},
       child: Stack(
@@ -32,7 +46,7 @@ class Collection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'dd',
+                      '${_name[index]}',
                       style: TextStyle(
                         color: Color(0xFF343A40),
                         fontSize: 14.sp,
@@ -62,16 +76,16 @@ class Collection extends StatelessWidget {
                         SizedBox(
                           width: 8.0.w,
                         ),
-                        Text(
-                          'dd',
-                          style: TextStyle(
-                            color: Color(0XFF868E96),
-                            fontSize: 12.sp,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w500,
-                            height: 1.5.h,
-                          ),
-                        ),
+                        // Text(
+                        //   'dd',
+                        //   style: TextStyle(
+                        //     color: Color(0XFF868E96),
+                        //     fontSize: 12.sp,
+                        //     fontFamily: 'Pretendard',
+                        //     fontWeight: FontWeight.w500,
+                        //     height: 1.5.h,
+                        //   ),
+                        // ),
                       ],
                     )
                   ],
