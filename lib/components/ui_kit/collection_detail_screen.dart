@@ -15,12 +15,12 @@ class CollectionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> keywords = ['요리', '레시피북', '한식'];
+    List<String> keywords = ['요리', '레시피'];
     return Scaffold(
       appBar: CustomAppbar(
           popState: true,
-          titleText: '',
-          titleState: false,
+          titleText: '컬렉션',
+          titleState: true,
           actionButtonOnTap: () {},
           actionButton: null),
       body: SingleChildScrollView(
@@ -41,7 +41,7 @@ class CollectionDetailScreen extends StatelessWidget {
                       Text(
                         title,
                         style: TextStyle(
-                          color: Color(0xFF343A40),
+                          color: Colors.black,
                           fontSize: 22.sp,
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w700,
@@ -63,11 +63,11 @@ class CollectionDetailScreen extends StatelessWidget {
                   Text(
                     '내가 좋아하는 간단한 집밥 레시피',
                     style: TextStyle(
-                      color: Color(0xFF495057),
-                      fontSize: 16.sp,
+                      color: Color(0xFF343a40),
+                      fontSize: 14.sp,
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w500,
-                      height: 1.3,
+                      height: 1.43,
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
@@ -82,7 +82,7 @@ class CollectionDetailScreen extends StatelessWidget {
                       Text(
                         '김가희',
                         style: TextStyle(
-                          color: Color(0xFFadb5bd),
+                          color: Color(0xFF868e96),
                           fontSize: 13.sp,
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w400,
@@ -101,7 +101,7 @@ class CollectionDetailScreen extends StatelessWidget {
                       Text(
                         '2024.08.19',
                         style: TextStyle(
-                          color: Color(0xFFadb5bd),
+                          color: Color(0xFF868e96),
                           fontSize: 13.sp,
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w400,
@@ -113,17 +113,14 @@ class CollectionDetailScreen extends StatelessWidget {
                   SizedBox(
                     height: 22.0.h,
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Wrap(
-                      direction: Axis.horizontal,
-                      alignment: WrapAlignment.start,
-                      spacing: 5,
-                      runSpacing: 5,
-                      children: keywords.map((keyword) {
-                        return Keyword(keywordName: keyword);
-                      }).toList(),
-                    ),
+                  Wrap(
+                    direction: Axis.horizontal,
+                    alignment: WrapAlignment.start,
+                    spacing: 5.0.w,
+                    runSpacing: 5,
+                    children: keywords.map((keyword) {
+                      return CollectionKeyword(keywordName: keyword);
+                    }).toList(),
                   ),
                   SizedBox(
                     height: 40.0.h,
@@ -133,15 +130,15 @@ class CollectionDetailScreen extends StatelessWidget {
                     physics: NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisSpacing: 10.0.h,
+                      mainAxisSpacing: 24.0.h,
                       crossAxisSpacing: 10.0.w,
-                      childAspectRatio: 1.1,
+                      childAspectRatio: 0.7,
                     ),
                     itemCount: 7,
                     itemBuilder: (context, index) {
                       return Selection(
                         index: index,
-                        ratio: 1.1,
+                        //ratio: 0.8,
                       );
                     },
                   ),

@@ -33,8 +33,7 @@ class CategoryButton extends StatelessWidget {
               fontFamily: 'PretendardRegular',
               fontSize: 14.sp,
               fontWeight: FontWeight.w700,
-              color:
-                  categoryState ? Theme.of(context).primaryColor : Colors.white,
+              color: Colors.white,
               height: 1.43,
             ),
           ),

@@ -2,13 +2,14 @@ import 'package:collect_er/components/button/bookmark_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'keyword.dart';
+
 class Selection extends StatelessWidget {
-  final double ratio;
   final int index;
+
   const Selection({
     super.key,
     required this.index,
-    required this.ratio,
   });
 
   @override
@@ -22,85 +23,88 @@ class Selection extends StatelessWidget {
       '송이버섯 숙회',
       '마녀 스프',
     ];
+    List<String> _keywords = ['요리', '음식'];
     return GestureDetector(
       onTap: () {},
       child: Stack(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AspectRatio(
-                aspectRatio: ratio,
-                child: Container(
-                  decoration: ShapeDecoration(
-                    color: Color(0xFFF8F9FA),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6)),
-                  ),
+          Container(
+            width: double.infinity,
+            decoration: ShapeDecoration(
+              color: Color(0xFFf8f9fa),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                index == 0
+                    ? Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(6),
+                            topRight: Radius.circular(6),
+                          ),
+                          child: Container(
+                            width: double.infinity,
+                            child: Image.asset(
+                              'assets/images/IMG_4498.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      )
+                    : SizedBox.shrink(),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 12.0.w, vertical: 16.0.h),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    //mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      index == 0
-                          ? Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(6),
-                                  topRight: Radius.circular(6),
-                                ),
-                                child: Container(
-                                  color: Colors.white,
-                                  width: double.infinity,
-                                  child: Image.asset(
-                                    'assets/images/IMG_4498.png',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : SizedBox.shrink(),
+                      Text(
+                        '${_titleName[index]}',
+                        style: TextStyle(
+                          color: Color(0xFF343A40),
+                          fontSize: 15.sp,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          height: 1.33,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 8.0.w, vertical: 10.0.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${_titleName[index]}',
-                              style: TextStyle(
-                                color: Color(0xFF343A40),
-                                fontSize: 14.sp,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w600,
-                                height: 1.42,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                            Text(
-                              'irismake',
-                              style: TextStyle(
-                                color: Color(0XFF868E96),
-                                fontSize: 12.sp,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w500,
-                                height: 1.5,
-                              ),
-                            ),
-                          ],
+                        padding: EdgeInsets.symmetric(vertical: 4.0.h),
+                        child: Wrap(
+                          direction: Axis.horizontal,
+                          alignment: WrapAlignment.start,
+                          spacing: 5.0.w,
+                          runSpacing: 8.0.h,
+                          children: _keywords.map((keyword) {
+                            return SelectionKeyword(keywordName: keyword);
+                          }).toList(),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 4.0.h,
+                      ),
+                      Text(
+                        '김가희',
+                        style: TextStyle(
+                          color: Color(0xFF868E96),
+                          fontSize: 12.sp,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          height: 1.5.h,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-
-              // AspectRatio(
-              //   aspectRatio: 1 / 0.3,
-              //   child:
-              // ),
-            ],
+              ],
+            ),
           ),
           Positioned(
             top: 4.0.h,
