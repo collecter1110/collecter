@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../button/bookmark_button.dart';
-import 'custom_app_bar.dart';
-import 'keyword.dart';
-import 'selection.dart';
+import '../../components/button/bookmark_button.dart';
+import '../../components/ui_kit/custom_app_bar.dart';
+import '../../components/ui_kit/keyword.dart';
+import '../../components/card/selection.dart';
 
 class CollectionDetailScreen extends StatelessWidget {
   final String title;

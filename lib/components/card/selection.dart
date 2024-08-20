@@ -2,7 +2,7 @@ import 'package:collect_er/components/button/bookmark_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'keyword.dart';
+import '../ui_kit/keyword.dart';
 
 class Selection extends StatelessWidget {
   final int index;

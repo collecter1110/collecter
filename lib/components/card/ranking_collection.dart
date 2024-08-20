@@ -2,10 +2,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../page/collection/collection_detail_screen.dart';
 import '../button/bookmark_button.dart';
-import 'collection_detail_screen.dart';
-import 'collection_tag.dart';
-import 'keyword.dart';
+
+import '../ui_kit/collection_tag.dart';
+import '../ui_kit/keyword.dart';
 
 class RankingCollection extends StatelessWidget {
   final int index;

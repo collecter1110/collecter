@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/button/category_button.dart';
 
 import '../../components/constants/screen_size.dart';
-import '../../components/ui_kit/ranking_collection.dart';
+import '../../components/card/ranking_collection.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
