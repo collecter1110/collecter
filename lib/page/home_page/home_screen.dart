@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/button/category_button.dart';
 
 import '../../components/constants/screen_size.dart';
-import '../../components/ui_kit/collection.dart';
+import '../../components/ui_kit/ranking_collection.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -26,8 +26,11 @@ class HomeScreen extends StatelessWidget {
       '많이 검색한 키워드',
       '팔로우 많은 유저 랭킹',
     ];
+
+    final double _selectionRatio = 0.8;
+    final double _collectionRatio = 3.0;
     return PopScope(
-      canPop: false,
+      canPop: true,
       onPopInvoked: (bool didPop) {
         if (didPop) {
           print('didPop호출');
@@ -148,7 +151,7 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 12.0.h, bottom: 24.0.h),
+                      padding: EdgeInsets.only(top: 12.0.h, bottom: 4.0.h),
                       child: Divider(
                         color: Colors.black,
                         thickness: 2.0.h,
@@ -160,21 +163,25 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: 18.0.w),
+              padding:
+                  EdgeInsets.symmetric(horizontal: 18.0.w, vertical: 20.0.h),
               sliver: SliverGrid(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => Column(
                     children: [
-                      Collection(),
+                      RankingCollection(
+                        index: index,
+                        ratio: _collectionRatio,
+                      )
                     ],
                   ),
                   childCount: _name.length,
                 ),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 10.0.h,
-                  crossAxisSpacing: 14.0.w,
-                  childAspectRatio: 0.7,
+                  crossAxisCount: 1,
+                  mainAxisSpacing: 14.0.h,
+                  crossAxisSpacing: 10.0.w,
+                  childAspectRatio: _collectionRatio,
                 ),
               ),
             )
