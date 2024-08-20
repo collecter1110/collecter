@@ -9,7 +9,7 @@ class CollectionKeyword extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: ShapeDecoration(
-        color: Color(0xFF343a40),
+        color: Color(0xFFf1f3f5),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50.0),
         ),
@@ -19,7 +19,7 @@ class CollectionKeyword extends StatelessWidget {
         child: Text(
           keywordName,
           style: TextStyle(
-            color: Colors.white,
+            color: Color(0xFF868e96),
             fontSize: 11.0.sp,
             fontFamily: 'Pretendard',
             fontWeight: FontWeight.w600,
@@ -39,7 +39,7 @@ class SelectionKeyword extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: ShapeDecoration(
-        color: Color(0xFF2f2f2f),
+        color: Color(0xFF212529),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(50.0),
         ),
