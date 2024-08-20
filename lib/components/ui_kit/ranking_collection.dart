@@ -64,9 +64,9 @@ class RankingCollection extends StatelessWidget {
                       height: double.infinity,
                     ),
                     BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                       child: Container(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withOpacity(0.5),
                       ),
                     ),
                   ],
