@@ -22,6 +22,7 @@ class CategoryButton extends StatelessWidget {
         ),
         backgroundColor: categoryState ? Colors.black : Color(0xFFCED4DA),
         elevation: 0,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

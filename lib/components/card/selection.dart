@@ -2,6 +2,7 @@ import 'package:collect_er/components/button/bookmark_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../page/selection/selction_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
 class Selection extends StatelessWidget {
@@ -25,7 +26,15 @@ class Selection extends StatelessWidget {
     ];
     List<String> _keywords = ['요리', '음식'];
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                SelectionDetailScreen(title: _titleName[index]),
+          ),
+        );
+      },
       child: Stack(
         children: [
           Container(
