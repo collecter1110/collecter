@@ -105,14 +105,14 @@ class RankingCollection extends StatelessWidget {
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 2.0.h),
+                          padding: EdgeInsets.symmetric(vertical: 6.0.h),
                           child: Tag(
                             name: '#한식   #우리집이국수맛   #웬만한_냉면보다_맛있음',
                             color: Color(0xFFf1f3f5),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 6.0.h),
+                          padding: EdgeInsets.symmetric(vertical: 4.0.h),
                           child: Wrap(
                             direction: Axis.horizontal,
                             alignment: WrapAlignment.start,
