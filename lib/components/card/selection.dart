@@ -2,7 +2,8 @@ import 'package:collect_er/components/button/bookmark_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'keyword.dart';
+import '../../page/selection/selction_detail_screen.dart';
+import '../ui_kit/keyword.dart';
 
 class Selection extends StatelessWidget {
   final int index;
@@ -25,16 +26,30 @@ class Selection extends StatelessWidget {
     ];
     List<String> _keywords = ['요리', '음식'];
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                SelectionDetailScreen(title: _titleName[index]),
+          ),
+        );
+      },
       child: Stack(
         children: [
           Container(
             width: double.infinity,
-            decoration: ShapeDecoration(
-              color: Color(0xFFf8f9fa),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-            ),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 0.5,
+                    blurRadius: 3,
+                    offset: Offset(0, 0),
+                  )
+                ],
+                borderRadius: BorderRadius.circular(8)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +98,7 @@ class Selection extends StatelessWidget {
                           spacing: 5.0.w,
                           runSpacing: 8.0.h,
                           children: _keywords.map((keyword) {
-                            return SelectionKeyword(keywordName: keyword);
+                            return Keyword(keywordName: keyword);
                           }).toList(),
                         ),
                       ),
@@ -93,11 +108,11 @@ class Selection extends StatelessWidget {
                       Text(
                         '김가희',
                         style: TextStyle(
-                          color: Color(0xFF868E96),
+                          color: Color(0xFF868e96),
                           fontSize: 12.sp,
                           fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w500,
-                          height: 1.5.h,
+                          fontWeight: FontWeight.w600,
+                          height: 1.5,
                         ),
                       ),
                     ],

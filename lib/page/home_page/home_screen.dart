@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/button/category_button.dart';
 
 import '../../components/constants/screen_size.dart';
-import '../../components/ui_kit/ranking_collection.dart';
+import '../../components/card/ranking_collection.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
     ];
 
     final double _selectionRatio = 0.8;
-    final double _collectionRatio = 3.0;
+    final double _collectionRatio = 2.4;
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) {

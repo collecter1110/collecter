@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../button/bookmark_button.dart';
-import 'custom_app_bar.dart';
-import 'keyword.dart';
-import 'selection.dart';
+import '../../components/button/link_button.dart';
+import '../../components/ui_kit/custom_app_bar.dart';
+import '../../components/ui_kit/expandable_text.dart';
+import '../../components/ui_kit/keyword.dart';
+import '../../components/widget/item_widget.dart';
 
-class CollectionDetailScreen extends StatelessWidget {
+class SelectionDetailScreen extends StatelessWidget {
   final String title;
-  const CollectionDetailScreen({
-    super.key,
-    required this.title,
-  });
+
+  const SelectionDetailScreen({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
-    List<String> keywords = ['요리', '레시피'];
+    List<String> keywords = [
+      '요리',
+      '한식',
+    ];
     return Scaffold(
       appBar: CustomAppbar(
           popState: true,
-          titleText: '컬렉션',
+          titleText: '셀렉션',
           titleState: true,
           actionButtonOnTap: () {},
           actionButton: null),
@@ -28,15 +30,20 @@ class CollectionDetailScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(
+              height: MediaQuery.of(context).size.width,
+              color: Colors.pink,
+            ),
             Padding(
               padding: EdgeInsets.only(
-                  left: 16.0.w, right: 16.0.w, top: 26.0.h, bottom: 26.h),
+                  left: 16.0.w, right: 16.0.w, top: 26.0.h, bottom: 42.0.h),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         title,
@@ -45,32 +52,16 @@ class CollectionDetailScreen extends StatelessWidget {
                           fontSize: 22.sp,
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w700,
-                          height: 1.4,
+                          height: 1.45,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
-                      BookmarkButton(
-                        listId: 0,
-                        isBookMarked: true,
-                        inListDetail: true,
+                      SizedBox(
+                        width: 10.0.w,
                       ),
+                      LinkButton(),
                     ],
-                  ),
-                  SizedBox(
-                    height: 22.0.h,
-                  ),
-                  Text(
-                    '내가 좋아하는 간단한 집밥 레시피',
-                    style: TextStyle(
-                      color: Color(0xFF343a40),
-                      fontSize: 14.sp,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      height: 1.43,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 3,
                   ),
                   SizedBox(
                     height: 10.0.h,
@@ -83,10 +74,10 @@ class CollectionDetailScreen extends StatelessWidget {
                         '김가희',
                         style: TextStyle(
                           color: Color(0xFF868e96),
-                          fontSize: 13.sp,
+                          fontSize: 12.sp,
                           fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w400,
-                          height: 1.15,
+                          fontWeight: FontWeight.w600,
+                          height: 1.5,
                         ),
                       ),
                       Padding(
@@ -94,7 +85,7 @@ class CollectionDetailScreen extends StatelessWidget {
                         child: Image.asset(
                           'assets/images/image_vertical_line.png',
                           fit: BoxFit.contain,
-                          color: Color(0xFFADB5BD),
+                          color: Color(0xFF868e96),
                           height: 10.0.h,
                         ),
                       ),
@@ -102,10 +93,10 @@ class CollectionDetailScreen extends StatelessWidget {
                         '2024.08.19',
                         style: TextStyle(
                           color: Color(0xFF868e96),
-                          fontSize: 13.sp,
+                          fontSize: 12.sp,
                           fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w400,
-                          height: 1.15,
+                          fontWeight: FontWeight.w600,
+                          height: 1.5,
                         ),
                       ),
                     ],
@@ -119,32 +110,22 @@ class CollectionDetailScreen extends StatelessWidget {
                     spacing: 5.0.w,
                     runSpacing: 5,
                     children: keywords.map((keyword) {
-                      return CollectionKeyword(keywordName: keyword);
+                      return Keyword(keywordName: keyword);
                     }).toList(),
                   ),
                   SizedBox(
-                    height: 40.0.h,
+                    height: 22.0.h,
                   ),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 24.0.h,
-                      crossAxisSpacing: 10.0.w,
-                      childAspectRatio: 0.7,
-                    ),
-                    itemCount: 7,
-                    itemBuilder: (context, index) {
-                      return Selection(
-                        index: index,
-                        //ratio: 0.8,
-                      );
-                    },
+                  ExpandableText(
+                    text:
+                        '​🍝주재료🍝\n낫또 1팩\n통마늘\n올리브유\n앤초비 or 액젓\n스파게티 면\n쪽파\n김가루\n🧂양념재료🧂\n치킨스톡\n쯔유\n소금\n후추\n크러쉬드 페퍼',
                   ),
                 ],
               ),
-            )
+            ),
+            ItemWidget(
+              isOrder: false,
+            ),
           ],
         ),
       ),
