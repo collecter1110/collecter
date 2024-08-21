@@ -5,7 +5,7 @@ import '../../components/button/link_button.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
-import '../../components/widget/item_widget.dart';
+import '../../components/widget/selection_item_widget.dart';
 
 class SelectionDetailScreen extends StatelessWidget {
   final String title;
@@ -123,7 +123,7 @@ class SelectionDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
-            ItemWidget(
+            SelectionItemWidget(
               isOrder: false,
             ),
           ],

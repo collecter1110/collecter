@@ -1,3 +1,4 @@
+import 'package:collect_er/components/widget/selection_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -120,28 +121,34 @@ class CollectionDetailScreen extends StatelessWidget {
             ),
             Container(
               color: Color(0xFFf8f9fa),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 18.0.w,
-                  vertical: 30.0.h,
-                ),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 24.0.h,
-                    crossAxisSpacing: 12.0.w,
-                    childAspectRatio: 0.7,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 12.0.h),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'SELECTION',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 16.sp,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  itemCount: 7,
-                  itemBuilder: (context, index) {
-                    return Selection(
-                      index: index,
-                      //ratio: 0.8,
-                    );
-                  },
-                ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 18.0.w,
+                      vertical: 20.0.h,
+                    ),
+                    child: SelectionWidget(),
+                  ),
+                ],
               ),
             ),
           ],
