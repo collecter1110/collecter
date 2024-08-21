@@ -1,3 +1,4 @@
+import 'package:collect_er/components/widget/selection_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -145,23 +146,7 @@ class CollectionDetailScreen extends StatelessWidget {
                       horizontal: 18.0.w,
                       vertical: 20.0.h,
                     ),
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 24.0.h,
-                        crossAxisSpacing: 12.0.w,
-                        childAspectRatio: 0.7,
-                      ),
-                      itemCount: 7,
-                      itemBuilder: (context, index) {
-                        return Selection(
-                          index: index,
-                          //ratio: 0.8,
-                        );
-                      },
-                    ),
+                    child: SelectionWidget(),
                   ),
                 ],
               ),
