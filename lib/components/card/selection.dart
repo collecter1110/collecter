@@ -2,7 +2,7 @@ import 'package:collect_er/components/button/bookmark_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../page/selection/selction_detail_screen.dart';
+import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
 class Selection extends StatelessWidget {

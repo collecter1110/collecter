@@ -68,33 +68,33 @@ class HomeScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            InkWell(
-                              onTap: () {},
-                              child: CategoryButton(
-                                categoryName: 'Collection',
-                                categoryState: false,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 8.0.w,
-                            ),
-                            InkWell(
-                              onTap: () {},
-                              child: CategoryButton(
-                                categoryName: 'Keyword',
-                                categoryState: true,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 8.0.w,
-                            ),
-                            InkWell(
-                              onTap: () {},
-                              child: CategoryButton(
-                                categoryName: 'User',
-                                categoryState: false,
-                              ),
-                            ),
+                            // InkWell(
+                            //   onTap: () {},
+                            //   child: CategoryButton(
+                            //     categoryName: 'Collection',
+                            //     categoryState: false,
+                            //   ),
+                            // ),
+                            // SizedBox(
+                            //   width: 8.0.w,
+                            // ),
+                            // InkWell(
+                            //   onTap: () {},
+                            //   child: CategoryButton(
+                            //     categoryName: 'Selection',
+                            //     categoryState: true,
+                            //   ),
+                            // ),
+                            // SizedBox(
+                            //   width: 8.0.w,
+                            // ),
+                            // InkWell(
+                            //   onTap: () {},
+                            //   child: CategoryButton(
+                            //     categoryName: 'User',
+                            //     categoryState: false,
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),

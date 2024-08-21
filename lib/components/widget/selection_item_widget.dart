@@ -4,9 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../card/order_item.dart';
 
-class ItemWidget extends StatelessWidget {
+class SelectionItemWidget extends StatelessWidget {
   final bool isOrder;
-  const ItemWidget({
+  const SelectionItemWidget({
     super.key,
     required this.isOrder,
   });
