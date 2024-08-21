@@ -8,31 +8,26 @@ class CollectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 18.0.w,
-        vertical: 20.0.h,
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 24.0.h,
+        crossAxisSpacing: 12.0.w,
+        childAspectRatio: 0.65,
       ),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 24.0.h,
-          crossAxisSpacing: 12.0.w,
-          childAspectRatio: 0.65,
-        ),
-        itemCount: 7,
-        itemBuilder: (context, index) {
-          return isMyCollection
-              ? Collection(
-                  index: index,
-                )
-              : Container(
-                  color: Colors.pink,
-                );
-        },
-      ),
+      itemCount: 7,
+      itemBuilder: (context, index) {
+        return isMyCollection
+            ? Collection(
+                index: index,
+              )
+            : Collection(
+                index: index,
+              );
+      },
     );
   }
 }

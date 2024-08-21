@@ -19,7 +19,7 @@ class RankingCollectionWidget extends StatelessWidget {
     ];
     final double _collectionRatio = 2.4;
     return GridView.builder(
-        padding: EdgeInsets.symmetric(vertical: 38.0.h),
+        padding: EdgeInsets.symmetric(vertical: 22.0.h),
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

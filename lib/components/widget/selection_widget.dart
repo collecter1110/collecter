@@ -9,7 +9,7 @@ class SelectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      padding: EdgeInsets.symmetric(vertical: 38.0.h),
+      padding: EdgeInsets.symmetric(vertical: 22.0.h),
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
