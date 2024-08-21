@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:collect_er/components/ui_kit/tag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -104,6 +105,13 @@ class RankingCollection extends StatelessWidget {
                           ],
                         ),
                         Padding(
+                          padding: EdgeInsets.symmetric(vertical: 2.0.h),
+                          child: Tag(
+                            name: '#한식   #우리집이국수맛   #웬만한_냉면보다_맛있음',
+                            color: Color(0xFFf1f3f5),
+                          ),
+                        ),
+                        Padding(
                           padding: EdgeInsets.symmetric(vertical: 6.0.h),
                           child: Wrap(
                             direction: Axis.horizontal,
@@ -111,21 +119,20 @@ class RankingCollection extends StatelessWidget {
                             spacing: 5.0.w,
                             runSpacing: 8.0.h,
                             children: keywords
-                                .map((keyword) =>
-                                    SelectionKeyword(keywordName: keyword))
+                                .map((keyword) => Keyword(keywordName: keyword))
                                 .toList(),
                           ),
                         ),
                       ],
                     ),
                     Text(
-                      'heenano',
+                      '김가희',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF868e96),
                         fontSize: 12.sp,
                         fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        height: 1.5.h,
+                        fontWeight: FontWeight.w600,
+                        height: 1.5,
                       ),
                     ),
                   ],

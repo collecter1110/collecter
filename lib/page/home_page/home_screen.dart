@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
     ];
 
     final double _selectionRatio = 0.8;
-    final double _collectionRatio = 3.0;
+    final double _collectionRatio = 2.4;
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) {
