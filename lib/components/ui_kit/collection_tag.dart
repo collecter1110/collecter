@@ -62,8 +62,8 @@ class CollectionTag {
         ],
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: 10.0.w,
-        vertical: 4.0.h,
+        horizontal: 8.0.w,
+        vertical: 3.0.h,
       ),
       child: Text(
         text,
