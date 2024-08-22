@@ -76,14 +76,13 @@ class UserScreen extends StatelessWidget {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle, // 원형으로 설정
+                            shape: BoxShape.circle,
                             color: Color(0xFFe9ecef),
                           ),
                           child: ClipOval(
                             child: Image.asset(
                               'assets/icons/tab_user.png',
                               height: 64.0.h,
-                              width: 64.0.w,
                               color: Colors.white,
                             ),
                           ),
