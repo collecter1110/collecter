@@ -25,9 +25,10 @@ class UserScreen extends StatelessWidget {
 
     return Scaffold(
         body: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
-          height: 130.0,
+          height: 130.0.h,
           child: Padding(
             padding: EdgeInsets.only(
               left: 16.0.w,
@@ -75,14 +76,16 @@ class UserScreen extends StatelessWidget {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(200),
+                            shape: BoxShape.circle, // 원형으로 설정
                             color: Color(0xFFe9ecef),
                           ),
-                          child: Image.asset(
-                            'assets/icons/tab_user.png',
-                            height: 64.0.h,
-                            width: 64.0.w,
-                            color: Colors.white,
+                          child: ClipOval(
+                            child: Image.asset(
+                              'assets/icons/tab_user.png',
+                              height: 64.0.h,
+                              width: 64.0.w,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                         SizedBox(
