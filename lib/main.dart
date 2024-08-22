@@ -1,4 +1,5 @@
 import 'package:collect_er/data/provider/page_route_provider.dart';
+import 'package:collect_er/data/provider/tag_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,9 @@ void main() {
       providers: [
         ChangeNotifierProvider<PageRouteProvider>(
           create: (context) => PageRouteProvider(),
+        ),
+        ChangeNotifierProvider<TagProvider>(
+          create: (context) => TagProvider(),
         ),
       ],
       builder: (context, child) {

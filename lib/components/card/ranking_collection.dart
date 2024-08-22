@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:collect_er/components/ui_kit/tag.dart';
+import 'package:collect_er/components/ui_kit/tag_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -49,7 +49,6 @@ class RankingCollection extends StatelessWidget {
         aspectRatio: ratio,
         child: Container(
           decoration: ShapeDecoration(
-            // color: Color(0xFFf8f9fa),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
@@ -106,8 +105,8 @@ class RankingCollection extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 6.0.h),
-                          child: Tag(
-                            name: '#한식   #우리집이국수맛   #웬만한_냉면보다_맛있음',
+                          child: TagTextStyle(
+                            name: '웬만한_냉면보다_맛있음',
                             color: Color(0xFFf1f3f5),
                           ),
                         ),
