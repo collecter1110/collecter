@@ -101,7 +101,7 @@ class RankingCollection extends StatelessWidget {
                               maxLines: 2,
                             ),
                             SizedBox(width: 6.0.w),
-                            CollectionTag(),
+                            CollectionTag.getTag(1),
                           ],
                         ),
                         Padding(
