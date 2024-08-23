@@ -1,10 +1,13 @@
+import 'package:collect_er/data/provider/keyword_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/button/category_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/add_collection_widget.dart';
 import '../../components/widget/add_selection_widget.dart';
+import '../../data/provider/tag_provider.dart';
 
 class AddScreen extends StatefulWidget {
   const AddScreen({super.key});
@@ -23,7 +26,16 @@ class _AddScreenState extends State<AddScreen>
     _tabController = TabController(length: 2, vsync: this);
     _tabController?.addListener(() {
       setState(() {
-        // _currentTabIndex = _tabController?.index ?? 0;
+        if (_tabController!.indexIsChanging) {
+          // 탭이 변경될 때 호출되는 함수
+          if (_tabController!.index == 0) {
+            print('dddd');
+            Provider.of<TagProvider>(context, listen: false).clearTag();
+          } else if (_tabController!.index == 1) {
+            print('dd');
+            Provider.of<KeywordProvider>(context, listen: false).clearTag();
+          }
+        }
       });
     });
   }
@@ -36,7 +48,6 @@ class _AddScreenState extends State<AddScreen>
 
   void _onTap(int index) {
     _tabController!.animateTo(index);
-    print('object');
   }
 
   @override

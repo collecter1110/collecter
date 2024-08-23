@@ -18,6 +18,7 @@ class TagProvider extends ChangeNotifier {
 
   void clearTag() {
     _tagNames.clear();
+    notifyListeners();
   }
 
   List<String> get tagNames => _tagNames;

@@ -19,7 +19,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   bool _isPrivate = false;
-  TagProvider? _myProvider;
 
   final TextStyle _hintTextStyle = TextStyle(
     color: Color(0xffADB5BD),
@@ -44,18 +43,10 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _myProvider = Provider.of<TagProvider>(context, listen: false);
-  }
-
-  @override
   void dispose() {
     _tagController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
-    _myProvider!.clearTag();
 
     super.dispose();
   }
@@ -163,8 +154,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                           ],
                           style: _fieldTextStyle,
                           onFieldSubmitted: (String value) {
-                            _myProvider!.addTag = value;
-                            print(_myProvider!.tagNames.add);
+                            context.read<TagProvider>().addTag = value;
 
                             _tagController.clear();
                           },
@@ -180,7 +170,9 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                           secondFieldState: true,
                           text: '추가',
                           onPressed: () async {
-                            _myProvider!.addTag = _tagController.text;
+                            context.read<TagProvider>().addTag =
+                                _tagController.text;
+
                             _tagController.clear();
                           },
                         ),
