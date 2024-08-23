@@ -87,33 +87,29 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '콜렉션 선택',
-                  style: TextStyle(
-                    fontFamily: 'PretendardRegular',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff343A40),
-                    height: 1.5,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '콜렉션 선택',
+                      style: TextStyle(
+                        fontFamily: 'PretendardRegular',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff343A40),
+                        height: 1.5,
+                      ),
+                    ),
+                    AddButton(
+                      onPressed: () {
+                        //컬렉션 추가 & 컬렉션 선택 팝업
+                      },
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 14.0.w, vertical: 12.0.h),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Color(0xffF5F6F7),
-                        hintText: '콜렉션 선택',
-                        hintStyle: _hintTextStyle),
-                    style: _fieldTextStyle,
-                    onFieldSubmitted: (String value) {},
-                  ),
+                  child: _image != null ? SizedBox() : SizedBox.shrink(),
                 ),
                 SizedBox(
                   height: 20.0.h,
@@ -171,10 +167,10 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                       'ex) 다이어트, 로맨틱 코미디 ,추리물',
                       style: TextStyle(
                         fontFamily: 'PretendardRegular',
-                        fontSize: 14.sp,
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
                         color: Color(0xffADB5BD),
-                        height: 1.43,
+                        height: 1.5,
                       ),
                     ),
                   ),
@@ -336,10 +332,10 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                       'ex) https://www.youtube.com/',
                       style: TextStyle(
                         fontFamily: 'PretendardRegular',
-                        fontSize: 14.sp,
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
                         color: Color(0xffADB5BD),
-                        height: 1.43,
+                        height: 1.5,
                       ),
                     ),
                   ),
@@ -369,15 +365,38 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      _isOrder ? '순서' : '리스트',
-                      style: TextStyle(
-                        fontFamily: 'PretendardRegular',
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff343A40),
-                        height: 1.5,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _isOrder ? '순서' : '리스트',
+                          style: TextStyle(
+                            fontFamily: 'PretendardRegular',
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff343A40),
+                            height: 1.5,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 2.0.h),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              _isOrder
+                                  ? '아이템을 꾹 눌러서 순서를 변경해보세요.'
+                                  : '링크 버튼을 눌러 링크를 추가해보세요.',
+                              style: TextStyle(
+                                fontFamily: 'PretendardRegular',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xffADB5BD),
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
                       width: 90.0.w,
@@ -470,7 +489,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                   firstFieldState: true,
                   secondFieldState: true,
                   text: '저장',
-                  onPressed: () async {},
+                  onTap: () {},
                 ),
               ],
             ),

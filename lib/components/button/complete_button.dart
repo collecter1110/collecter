@@ -4,13 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CompleteButton extends StatelessWidget {
   final bool firstFieldState;
   final bool secondFieldState;
-  final Function onPressed;
+  final VoidCallback onTap;
   final String text;
   const CompleteButton({
     super.key,
     required this.firstFieldState,
     required this.secondFieldState,
-    required this.onPressed,
+    required this.onTap,
     required this.text,
   });
 
@@ -22,7 +22,7 @@ class CompleteButton extends StatelessWidget {
           child: TextButton(
             onPressed: () async {
               if (firstFieldState && secondFieldState) {
-                onPressed();
+                onTap();
               }
             },
             style: TextButton.styleFrom(

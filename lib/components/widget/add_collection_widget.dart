@@ -279,7 +279,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                   firstFieldState: true,
                   secondFieldState: true,
                   text: '저장',
-                  onPressed: () async {},
+                  onTap: () {},
                 ),
               ],
             ),
