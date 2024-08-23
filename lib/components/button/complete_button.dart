@@ -29,11 +29,14 @@ class CompleteButton extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              padding:
-                  EdgeInsets.symmetric(vertical: 12.0.h, horizontal: 16.0.w),
+              padding: EdgeInsets.symmetric(
+                vertical: 12.0.h,
+              ),
               backgroundColor: firstFieldState && secondFieldState
                   ? Colors.black
                   : Color(0xFFDEE2E6),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              minimumSize: Size.zero,
             ),
             child: Text(
               text,

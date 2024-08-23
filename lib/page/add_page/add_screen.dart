@@ -27,13 +27,12 @@ class _AddScreenState extends State<AddScreen>
     _tabController?.addListener(() {
       setState(() {
         if (_tabController!.indexIsChanging) {
-          // 탭이 변경될 때 호출되는 함수
           if (_tabController!.index == 0) {
             print('dddd');
             Provider.of<TagProvider>(context, listen: false).clearTag();
           } else if (_tabController!.index == 1) {
             print('dd');
-            Provider.of<KeywordProvider>(context, listen: false).clearTag();
+            Provider.of<KeywordProvider>(context, listen: false).clearKeyword();
           }
         }
       });
@@ -117,7 +116,7 @@ class _AddScreenState extends State<AddScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Collection',
+                              'Add',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w700,

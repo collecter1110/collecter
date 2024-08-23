@@ -1,10 +1,14 @@
+import 'dart:io';
+import 'package:collect_er/components/button/add_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/keyword_provider.dart';
 import '../button/complete_button.dart';
 import '../button/keyword_button.dart';
+import '../text_field/Item_text_field.dart';
 
 class AddSelectionWidget extends StatefulWidget {
   const AddSelectionWidget({super.key});
@@ -14,10 +18,15 @@ class AddSelectionWidget extends StatefulWidget {
 }
 
 class _AddSelectionWidgetState extends State<AddSelectionWidget> {
-  TextEditingController _tagController = TextEditingController();
+  TextEditingController _keywordController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _linkController = TextEditingController();
   bool _isPrivate = false;
+  bool _isOrder = false;
+  bool _itemState = false;
+
+  int _itemNum = 0;
 
   final TextStyle _hintTextStyle = TextStyle(
     color: Color(0xffADB5BD),
@@ -36,6 +45,18 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     height: 1.3,
   );
 
+  XFile? _image;
+  final ImagePicker picker = ImagePicker();
+
+  Future getImage(ImageSource imageSource) async {
+    final XFile? pickedFile = await picker.pickImage(source: imageSource);
+    if (pickedFile != null) {
+      setState(() {
+        _image = XFile(pickedFile.path);
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -43,10 +64,10 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   @override
   void dispose() {
-    _tagController.dispose();
+    _keywordController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
-
+    _linkController.dispose();
     super.dispose();
   }
 
@@ -66,6 +87,37 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  '콜렉션 선택',
+                  style: TextStyle(
+                    fontFamily: 'PretendardRegular',
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff343A40),
+                    height: 1.5,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14.0.w, vertical: 12.0.h),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Color(0xffF5F6F7),
+                        hintText: '콜렉션 선택',
+                        hintStyle: _hintTextStyle),
+                    style: _fieldTextStyle,
+                    onFieldSubmitted: (String value) {},
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0.h,
+                ),
                 Text(
                   '셀렉션 이름',
                   style: TextStyle(
@@ -112,7 +164,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 2.0),
+                  padding: EdgeInsets.symmetric(vertical: 2.0.h),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -134,7 +186,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                     children: [
                       Expanded(
                         child: TextFormField(
-                          controller: _tagController,
+                          controller: _keywordController,
                           decoration: InputDecoration(
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 14.0.w, vertical: 12.0.h),
@@ -149,30 +201,22 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               hintStyle: _hintTextStyle),
                           style: _fieldTextStyle,
                           onFieldSubmitted: (String value) {
-                            context.read<KeywordProvider>().addTag =
-                                _tagController.text;
-
-                            _tagController.clear();
+                            context.read<KeywordProvider>().addKeyword =
+                                _keywordController.text;
+                            _keywordController.clear();
                           },
                         ),
                       ),
                       SizedBox(
-                        width: 10.0.w,
+                        width: 16.0.w,
                       ),
-                      SizedBox(
-                        width: 60.0.w,
-                        child: CompleteButton(
-                          firstFieldState: true,
-                          secondFieldState: true,
-                          text: '추가',
-                          onPressed: () async {
-                            context.read<KeywordProvider>().addTag =
-                                _tagController.text;
-
-                            _tagController.clear();
-                          },
-                        ),
-                      )
+                      AddButton(
+                        onPressed: () {
+                          context.read<KeywordProvider>().addKeyword =
+                              _keywordController.text;
+                          _keywordController.clear();
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -245,6 +289,151 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
+                      '사진 추가 (선택)',
+                      style: TextStyle(
+                        fontFamily: 'PretendardRegular',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff343A40),
+                        height: 1.5,
+                      ),
+                    ),
+                    AddButton(onPressed: () {
+                      setState(() {
+                        getImage(ImageSource.gallery);
+                      });
+                    }),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                  child: _image != null
+                      ? SizedBox(
+                          width: 80.0.w,
+                          height: 80.0.h,
+                          child: Image.file(File(_image!.path)),
+                        )
+                      : SizedBox.shrink(),
+                ),
+                SizedBox(
+                  height: 20.0.h,
+                ),
+                Text(
+                  '관련 링크 추가 (선택)',
+                  style: TextStyle(
+                    fontFamily: 'PretendardRegular',
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff343A40),
+                    height: 1.5,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 2.0.h),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'ex) https://www.youtube.com/',
+                      style: TextStyle(
+                        fontFamily: 'PretendardRegular',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xffADB5BD),
+                        height: 1.43,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                  child: TextFormField(
+                    controller: _linkController,
+                    decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14.0.w, vertical: 12.0.h),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Color(0xffF5F6F7),
+                        hintText: 'url 추가',
+                        hintStyle: _hintTextStyle),
+                    style: _fieldTextStyle,
+                    onFieldSubmitted: (String value) {},
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0.h,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _isOrder ? '순서' : '리스트',
+                      style: TextStyle(
+                        fontFamily: 'PretendardRegular',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff343A40),
+                        height: 1.5,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 90.0.w,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AddButton(
+                            onPressed: () {
+                              setState(() {
+                                _itemState = true;
+                                _itemNum++;
+                              });
+                            },
+                          ),
+                          Transform.scale(
+                            scale: 0.8,
+                            child: Switch(
+                              value: _isOrder,
+                              onChanged: (value) {
+                                setState(() {
+                                  _isOrder = value;
+                                });
+                              },
+                              inactiveThumbColor: Colors.white,
+                              inactiveTrackColor: Color(0xffdee2e6),
+                              activeTrackColor: Colors.black,
+                              activeColor: Theme.of(context).primaryColor,
+                              trackOutlineColor:
+                                  MaterialStateProperty.all(Colors.transparent),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                  child: Column(
+                    children: [
+                      _itemState
+                          ? ItemTextField(
+                              itemNum: _itemNum,
+                              orderState: _isOrder,
+                            )
+                          : SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0.h,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
                       _isPrivate ? '공유 가능' : '공유 불가능',
                       style: TextStyle(
                         fontFamily: 'PretendardRegular',
@@ -256,7 +445,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                     ),
                     SizedBox(width: 10),
                     Transform.scale(
-                      scale: 0.8, // 스위치의 크기 조절 (값을 변경하여 크기 조정)
+                      scale: 0.8,
                       child: Switch(
                         value: _isPrivate,
                         onChanged: (value) {

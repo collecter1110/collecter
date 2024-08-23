@@ -1,3 +1,4 @@
+import 'package:collect_er/components/button/add_button.dart';
 import 'package:collect_er/data/provider/tag_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -113,7 +114,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 2.0),
+                  padding: EdgeInsets.symmetric(vertical: 2.0.h),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -161,22 +162,15 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                         ),
                       ),
                       SizedBox(
-                        width: 10.0.w,
+                        width: 16.0.w,
                       ),
-                      SizedBox(
-                        width: 60.0.w,
-                        child: CompleteButton(
-                          firstFieldState: true,
-                          secondFieldState: true,
-                          text: '추가',
-                          onPressed: () async {
-                            context.read<TagProvider>().addTag =
-                                _tagController.text;
-
-                            _tagController.clear();
-                          },
-                        ),
-                      )
+                      AddButton(
+                        onPressed: () {
+                          context.read<TagProvider>().addTag =
+                              _tagController.text;
+                          _tagController.clear();
+                        },
+                      ),
                     ],
                   ),
                 ),

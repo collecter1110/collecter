@@ -29,7 +29,6 @@ class _BookmarkScreenState extends State<BookmarkScreen>
 
   void _onTap(int index) {
     _tabController!.animateTo(index);
-    print('object');
   }
 
   @override

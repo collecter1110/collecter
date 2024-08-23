@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/provider/tag_provider.dart';
+import '../../data/provider/keyword_provider.dart';
 
 class KeywordButton extends StatelessWidget {
   final String keywordName;
@@ -44,8 +44,8 @@ class KeywordButton extends StatelessWidget {
             ),
             InkWell(
               onTap: () async {
-                await Provider.of<TagProvider>(context, listen: false)
-                    .deleteTag(index);
+                await Provider.of<KeywordProvider>(context, listen: false)
+                    .deleteKeyword(index);
               },
               child: Container(
                 height: 10,

@@ -4,19 +4,19 @@ class KeywordProvider extends ChangeNotifier {
   final List<String> _keywordNames = [];
   bool _keywordState = false;
 
-  set addTag(String tagName) {
-    _keywordNames.add(tagName);
+  set addKeyword(String keywordName) {
+    _keywordNames.add(keywordName);
     print(_keywordNames);
     _keywordState = true;
     notifyListeners();
   }
 
-  Future<void> deleteTag(int index) async {
+  Future<void> deleteKeyword(int index) async {
     _keywordNames.removeAt(index);
     notifyListeners();
   }
 
-  void clearTag() {
+  void clearKeyword() {
     _keywordNames.clear();
   }
 
