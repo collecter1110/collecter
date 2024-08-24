@@ -212,28 +212,29 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                  child: TextFormField(
-                    keyboardType: TextInputType.multiline,
-                    controller: _descriptionController,
-                    textAlignVertical: TextAlignVertical.top,
-                    textInputAction: TextInputAction.newline,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.only(
-                            left: 14.0.w,
-                            right: 14.0.w,
-                            top: 12.0.h,
-                            bottom: 40.0.h),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Color(0xffF5F6F7),
-                        hintText: '설명',
-                        hintStyle: _hintTextStyle),
-                    style: _fieldTextStyle,
-                    onFieldSubmitted: (String value) {},
+                  child: SizedBox(
+                    height: 80.0.h,
+                    child: TextFormField(
+                      keyboardType: TextInputType.multiline,
+                      controller: _descriptionController,
+                      textAlignVertical: TextAlignVertical.top,
+                      textInputAction: TextInputAction.newline,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 14.0.w, vertical: 12.0.h),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: Color(0xffF5F6F7),
+                          hintText: '설명',
+                          hintStyle: _hintTextStyle),
+                      style: _fieldTextStyle,
+                      onFieldSubmitted: (String value) {},
+                      expands: true,
+                    ),
                   ),
                 ),
                 SizedBox(
