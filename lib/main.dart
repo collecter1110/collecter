@@ -1,5 +1,6 @@
 import 'package:collect_er/data/provider/page_route_provider.dart';
 import 'package:collect_er/data/provider/tag_provider.dart';
+import 'package:collect_er/page/login/enter_login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: PageNavigator(),
+      home: EnterLoginPage(),
     );
   }
 }
