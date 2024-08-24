@@ -31,37 +31,14 @@ class Item extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${_ItemTitle[index]}',
-                style: TextStyle(
-                  color: Color(0xFF212529),
-                  fontSize: 16.sp,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w700,
-                  height: 1.5,
-                ),
-              ),
-              SizedBox(
-                height: 8.0.h,
-              ),
-              Text(
-                '엽페',
+                // '상의 \n브랜드 : 엽페\n사이즈 : M',
+                '재료를 손질해 주세요.',
                 style: TextStyle(
                   color: Color(0xFF343a40),
-                  fontSize: 13.sp,
+                  fontSize: 14.sp,
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
-                height: 4.0.h,
-              ),
-              Text(
-                '사이즈 M',
-                style: TextStyle(
-                  color: Color(0xFF343a40),
-                  fontSize: 13.sp,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w500,
+                  height: 1.43,
                 ),
               ),
               SizedBox(
