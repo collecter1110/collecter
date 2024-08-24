@@ -124,7 +124,7 @@ class SelectionDetailScreen extends StatelessWidget {
               ),
             ),
             SelectionItemWidget(
-              isOrder: false,
+              isOrder: true,
             ),
           ],
         ),

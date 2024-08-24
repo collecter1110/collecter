@@ -5,8 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/button/bookmark_button.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/keyword.dart';
-import '../../components/card/selection.dart';
-import '../../components/ui_kit/tag.dart';
+
+import '../../components/ui_kit/tag_text_style.dart';
 
 class CollectionDetailScreen extends StatelessWidget {
   final String title;
@@ -100,8 +100,8 @@ class CollectionDetailScreen extends StatelessWidget {
                   SizedBox(
                     height: 32.0.h,
                   ),
-                  Tag(
-                    name: '#한식\n#우리집이국수맛집\n#웬만한_냉면보다_맛있음',
+                  TagTextStyle(
+                    name: '웬만한_냉면보다_맛있음',
                     color: Color(0xFF868E96),
                   ),
                   SizedBox(
