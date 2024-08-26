@@ -1,6 +1,3 @@
-import 'package:collect_er/data/provider/page_route_provider.dart';
-import 'package:collect_er/data/provider/tag_provider.dart';
-import 'package:collect_er/page/login/enter_login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,7 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'data/provider/keyword_provider.dart';
-import 'page_navigator.dart';
+import 'data/provider/page_route_provider.dart';
+import 'data/provider/tag_provider.dart';
+import 'page/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,7 +61,7 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: EnterLoginPage(),
+      home: SplashScreen(),
     );
   }
 }

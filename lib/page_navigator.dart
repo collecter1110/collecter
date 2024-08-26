@@ -87,8 +87,10 @@ class _PageNavigatorState extends State<PageNavigator> {
                   print('같은 페이지');
                   return;
                 }
-                _navigatorKey.currentState
-                    ?.pushReplacementNamed(_routeNames[index]);
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _navigatorKey.currentState
+                      ?.pushReplacementNamed(_routeNames[index]);
+                });
               });
             },
             tabs: List.generate(

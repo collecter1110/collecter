@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomTextFormField extends StatelessWidget {
-  final FocusNode focusNode;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final List<TextInputFormatter>? inputFormatter;
   final String labelText;
+  final String hinText;
   final bool isPassword;
-  final String? Function(String?) validator;
-  final Function(String) onChanged;
+  final String? Function(String?)? validator;
+  final Function(String)? onChanged;
   final TextInputType keyboardType;
   final Widget? suffixIcon;
 
   const CustomTextFormField({
     Key? key,
-    required this.focusNode,
+    this.controller,
+    this.focusNode,
+    this.inputFormatter,
     required this.labelText,
+    required this.hinText,
     this.isPassword = false,
-    required this.validator,
-    required this.onChanged,
+    this.validator,
+    this.onChanged,
     required this.keyboardType,
     this.suffixIcon,
   }) : super(key: key);
@@ -24,7 +31,9 @@ class CustomTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       focusNode: focusNode,
+      inputFormatters: inputFormatter != null ? inputFormatter! : [],
       obscureText: isPassword,
       validator: validator,
       onChanged: onChanged,
@@ -38,9 +47,18 @@ class CustomTextFormField extends StatelessWidget {
         height: 1.43,
       ),
       decoration: InputDecoration(
+        floatingLabelBehavior: FloatingLabelBehavior.always,
         labelText: labelText,
-        labelStyle: TextStyle(
+        hintText: hinText,
+        hintStyle: TextStyle(
           color: Color(0xffADB5BD),
+          fontSize: 14.sp,
+          fontFamily: 'Pretendard',
+          fontWeight: FontWeight.w600,
+          height: 1.43,
+        ),
+        labelStyle: TextStyle(
+          color: Color(0xFF868e96),
           fontSize: 14.sp,
           fontFamily: 'Pretendard',
           fontWeight: FontWeight.w600,
@@ -57,7 +75,12 @@ class CustomTextFormField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(4)),
-          borderSide: BorderSide(width: 1.5.w, color: Color(0xFF868e96)),
+          borderSide:
+              BorderSide(width: 1.5.w, color: Theme.of(context).primaryColor),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+          borderSide: BorderSide(width: 1.w, color: Colors.red),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(4)),

@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/authentication_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
+import 'set_user_info_screen.dart';
 
 class EmailAuthenticationScreen extends StatefulWidget {
   const EmailAuthenticationScreen({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class EmailAuthenticationScreen extends StatefulWidget {
 
 class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
   bool _emailAddressFilled = false;
-  bool _emailAddressExist = false;
+  bool _emailAddressDuplicate = false;
   bool _emailAddressValid = false;
   bool _emailVerifiedFilled = false;
   bool _emailVerifiedState = false;
@@ -60,11 +61,11 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
 
   String? _checkEmailExist(String? value) {
     if (_emailAddressFocus.hasFocus) {
-      _emailAddressExist = true;
+      _emailAddressDuplicate = true;
       _emailAddressValid = true;
       return null;
     }
-    if (!_emailAddressExist && _emailAddressFilled) {
+    if (!_emailAddressDuplicate && _emailAddressFilled) {
       return '이미 존재하는 이메일입니다.';
     }
     if (!_emailAddressValid && _emailAddressFilled) {
@@ -133,6 +134,7 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
                 child: CustomTextFormField(
                   focusNode: _emailAddressFocus,
                   labelText: '이메일',
+                  hinText: '이메일을 입력해주세요.',
                   keyboardType: TextInputType.text,
                   validator: (value) {
                     return _checkEmailExist(value);
@@ -149,10 +151,10 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
                     child: AuthenticationButton(onTap: () async {
                       FocusScope.of(context).unfocus();
                       print('이메일 주소 $emailAddress');
-                      _emailAddressExist =
-                          await ApiService.checkEmailExist(emailAddress);
-                      print(_emailAddressExist);
-                      if (!_emailAddressExist) {
+                      _emailAddressDuplicate =
+                          await ApiService.checkEmailDuplicate(emailAddress);
+                      print(_emailAddressDuplicate);
+                      if (!_emailAddressDuplicate) {
                         final formKeyState = _emailAddressFormKey.currentState!;
                         if (formKeyState.validate()) {
                           formKeyState.save();
@@ -185,6 +187,7 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
                 child: CustomTextFormField(
                   focusNode: _emailVerifiedFocus,
                   labelText: '인증번호',
+                  hinText: '인증번호를 입력해주세요.',
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     return _checkEmailVerified(value);
@@ -225,10 +228,16 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
                         formKeyState.save();
                       }
                     } else {
-                      print('go next page');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SetUserInfoScreen(email: emailAddress),
+                        ),
+                      );
                     }
                   },
-                  text: '다음')
+                  text: '회원가입')
             ],
           ),
         ),

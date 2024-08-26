@@ -5,7 +5,44 @@ import '../../components/pop_up/error_messege_toast.dart';
 class ApiService {
   static final SupabaseClient _supabase = Supabase.instance.client;
 
-  static Future<bool> checkEmailExist(String email) async {
+  static Future<String?> getEmailFromToken() async {
+    final user = _supabase.auth.currentUser;
+
+    if (user != null) {
+      final email = user.email;
+      print('User email: $email');
+      return email;
+    } else {
+      return null;
+    }
+  }
+
+  static Future<bool> checkUserInfoExist(String email) async {
+    try {
+      final response = await _supabase
+          .from('userinfo')
+          .select('name') // 'name' 속성만 선택
+          .eq('email', email) // 특정 이메일 조건
+          .maybeSingle(); // 결과가 단일 항목일 때 사용
+
+      if (response != null) {
+        final name = response['name'];
+        print('User name: $name');
+        return true;
+      } else {
+        print('Membership was registered, but userInfo was not entered.');
+        return false;
+      }
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+      return false;
+    } catch (e) {
+      print('checkEmailExist exception: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> checkEmailDuplicate(String email) async {
     try {
       final response = await _supabase
           .from('userinfo')
@@ -63,30 +100,76 @@ class ApiService {
     }
   }
 
-  static Future<bool> signUp(String email) async {
+  static Future<bool> checkUserNameExist(String userName) async {
     try {
-      final AuthResponse response = await _supabase.auth.signUp(
-        email: email,
-        password: 'kgh753951',
-        data: {
-          'user_name': 'test_name',
-          'image_url': 'test_imageUrl',
-          'message': 'test_message',
-        },
-      );
-      if (response.user != null) {
-        return true;
-      } else {
+      final response = await _supabase
+          .from('userinfo')
+          .select('name')
+          .eq('name', userName)
+          .maybeSingle();
+
+      return response == null;
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+      return false;
+    } catch (e) {
+      print('checkEmailExist exception: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> updateUserInfo(
+      String email, String userName, String userDescription) async {
+    try {
+      final response = await _supabase
+          .from('userinfo')
+          .update({
+            'name': userName,
+            'description': userDescription,
+          })
+          .eq('email', email)
+          .select();
+      print(response);
+      if (response.isEmpty) {
+        print('No user found with the given email');
         return false;
+      } else {
+        return true;
       }
     } on AuthException catch (e) {
       handleError(e.statusCode, e.message);
       return false;
     } catch (e) {
-      print('signUp exception: $e');
+      print('updateUserInfo exception: $e');
       return false;
     }
   }
+
+  // static Future<bool> signUp(String email, String userName, String imageUrl,
+  //     String description) async {
+  //   try {
+  //     final AuthResponse response = await _supabase.auth.(
+  //       email: email,
+  //       password: 'kgh753951',
+  //       data: {
+  //         'user_name': 'test_name',
+  //         'image_url': 'test_imageUrl',
+  //         'message': 'test_message',
+  //       },
+  //     );
+  //     if (response.user != null) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } on AuthException catch (e) {
+  //     handleError(e.statusCode, e.message);
+  //     return false;
+  //   } catch (e) {
+  //     print('signUp exception: $e');
+  //     return false;
+  //   }
+  // }
 
   static Future<void> checkUserStatus() async {
     try {
