@@ -1,95 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CustomTextFormField extends StatefulWidget {
-  final String hintText;
+class CustomTextFormField extends StatelessWidget {
   final FocusNode focusNode;
+  final String labelText;
+  final bool isPassword;
+  final String? Function(String?) validator;
   final Function(String) onChanged;
-  final String? Function(String?)? validator;
-  final bool isObscureText;
   final TextInputType keyboardType;
-  final Widget? authButton;
+  final Widget? suffixIcon;
 
   const CustomTextFormField({
     Key? key,
-    required this.hintText,
     required this.focusNode,
+    required this.labelText,
+    this.isPassword = false,
+    required this.validator,
     required this.onChanged,
-    this.validator,
-    this.isObscureText = false,
-    this.keyboardType = TextInputType.text,
-    this.authButton,
+    required this.keyboardType,
+    this.suffixIcon,
   }) : super(key: key);
 
   @override
-  State<CustomTextFormField> createState() => _CustomTextFormFieldState();
-}
-
-final noFocusColor = Color(0xffCED4DA);
-final noFocusTextColor = Color(0xff868E96);
-final errorColor = Color(0xffFA5252);
-
-class _CustomTextFormFieldState extends State<CustomTextFormField> {
-  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      onChanged: widget.onChanged,
-      validator: (value) {
-        return widget.validator?.call(value) ?? null;
-      },
-      obscureText: widget.isObscureText,
-      obscuringCharacter: '●',
-      keyboardType: widget.keyboardType,
+      focusNode: focusNode,
+      obscureText: isPassword,
+      validator: validator,
+      onChanged: onChanged,
+      keyboardType: keyboardType,
       style: TextStyle(
-          fontFamily: 'PretendardRegular',
-          decorationThickness: 0,
-          fontSize: 16.sp,
-          color: widget.focusNode.hasFocus ? Colors.black : noFocusTextColor,
-          fontWeight: FontWeight.w600,
-          letterSpacing: widget.isObscureText ? 6.0.w : 0.0,
-          height: 1.5),
-      showCursor: false,
-      focusNode: widget.focusNode,
+        decorationThickness: 0,
+        color: Color(0xff495057),
+        fontSize: 14.sp,
+        fontFamily: 'Pretendard',
+        fontWeight: FontWeight.w500,
+        height: 1.43,
+      ),
       decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(
+          color: Color(0xffADB5BD),
+          fontSize: 14.sp,
+          fontFamily: 'Pretendard',
+          fontWeight: FontWeight.w600,
+          height: 1.43,
+        ),
         isDense: true,
-        prefix: Container(width: 16.w),
-        contentPadding: EdgeInsets.symmetric(vertical: 20.0.h),
-        hintText: widget.hintText,
-        hintStyle: TextStyle(
-            fontFamily: 'PretendardRegular',
-            color: noFocusColor,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.0.w,
-            height: 1.5),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          borderSide:
-              BorderSide(width: 1.w, color: Theme.of(context).primaryColor),
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 20.0.h,
+          horizontal: 16.0.w,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(4)),
-          borderSide: BorderSide(width: 1.w, color: noFocusColor),
+          borderSide: BorderSide(width: 1.5.w, color: Color(0xFFdee2e6)),
         ),
-        focusedErrorBorder: OutlineInputBorder(
+        focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(4)),
-          borderSide: BorderSide(width: 1.w, color: errorColor),
+          borderSide: BorderSide(width: 1.5.w, color: Color(0xFF868e96)),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(4)),
-          borderSide: BorderSide(width: 1.w, color: errorColor),
+          borderSide: BorderSide(width: 1.w, color: Colors.red),
         ),
         errorStyle: TextStyle(
           fontFamily: 'PretendardRegular',
-          color: errorColor,
+          color: Colors.red,
           fontSize: 12.sp,
           fontWeight: FontWeight.w500,
         ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-          borderSide: BorderSide(width: 1.w, color: noFocusColor),
-        ),
-        suffixIcon: widget.authButton,
+        suffixIcon: suffixIcon,
       ),
     );
   }

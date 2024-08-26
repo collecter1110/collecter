@@ -11,7 +11,7 @@ import 'data/provider/keyword_provider.dart';
 import 'page_navigator.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: 'assets/config/.env');
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
