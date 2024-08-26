@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../components/pop_up/error_messege_toast.dart';
+
 class ApiService {
   static final SupabaseClient _supabase = Supabase.instance.client;
 
@@ -12,8 +14,11 @@ class ApiService {
           .maybeSingle();
 
       return response == null;
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+      return false;
     } catch (e) {
-      print('Error fetching user data: $e');
+      print('checkEmailExist exception: $e');
       return false;
     }
   }
@@ -27,8 +32,33 @@ class ApiService {
 
       print('OTP sent to $email');
       return true;
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+      return false;
     } catch (e) {
-      print('invaild email address: $e');
+      print('sendOtp exception: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> checkOtp(String otp, String email) async {
+    try {
+      final AuthResponse response = await _supabase.auth.verifyOTP(
+        type: OtpType.email,
+        email: email,
+        token: otp,
+      );
+
+      if (response.user != null) {
+        return true;
+      } else {
+        return false;
+      }
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+      return false;
+    } catch (e) {
+      print('checkOtp exception: $e');
       return false;
     }
   }
@@ -44,73 +74,19 @@ class ApiService {
           'message': 'test_message',
         },
       );
-
       if (response.user != null) {
-        print('succeed');
         return true;
       } else {
-        print('fail');
         return false;
       }
     } on AuthException catch (e) {
-      print(e);
+      handleError(e.statusCode, e.message);
       return false;
     } catch (e) {
-      print(e);
+      print('signUp exception: $e');
       return false;
     }
   }
-
-  static Future<bool> checkOtp(String otp, String email) async {
-    try {
-      final AuthResponse response = await _supabase.auth.verifyOTP(
-        type: OtpType.email,
-        email: email,
-        token: otp,
-      );
-      print('OTP number $otp');
-      if (response.user != null) {
-        print('OTP verified success');
-        return true;
-      } else {
-        print('OTP verified Failed');
-        return false;
-      }
-    } catch (e) {
-      print('Error verify OTP: $e');
-
-      return false;
-    }
-  }
-
-  // static Future<bool> signup(String email, String password, String name,
-  //     String imageUrl, String description) async {
-  //   try {
-  //     final AuthResponse response = await _supabase.auth.signUp(
-  //       email: email,
-  //       password: password,
-  //       data: {
-  //         'user_name': name,
-  //         'image_url': imageUrl,
-  //         'discription': description,
-  //       },
-  //     );
-
-  //     if (response.user != null) {
-  //       checkUserStatus();
-  //       return true;
-  //     } else {
-  //       print('Sign Up Failed');
-  //       return false;
-  //     }
-  //   } on AuthException catch (e) {
-  //     print('Sign Up Failed: ${e.message}');
-  //     return false;
-  //   } catch (e) {
-  //     print('An unexpected error occurred: $e');
-  //     return false;
-  //   }
-  // }
 
   static Future<void> checkUserStatus() async {
     try {
@@ -144,6 +120,33 @@ class ApiService {
       print('Sign Up Failed: ${e.message}');
     } catch (e) {
       print('An unexpected error occurred: $e');
+    }
+  }
+
+  static void handleError(String? statusCode, String? message) {
+    if (statusCode == '400') {
+      print('Bad Request - 400: 잘못된 요청입니다.');
+    } else if (statusCode == '401') {
+      print('Unauthorized - 401: 인증이 필요합니다.');
+    } else if (statusCode == '403') {
+      print('Forbidden - 403: 접근이 금지되었습니다.');
+    } else if (statusCode == '404') {
+      print('Not Found - 404: 요청한 리소스를 찾을 수 없습니다.');
+    } else if (statusCode == '500') {
+      ErrorMessegeToast.error();
+      print('Internal Server Error - 500: 서버에 문제가 발생했습니다.');
+    } else if (statusCode == '502') {
+      ErrorMessegeToast.error();
+      print('Bad Gateway - 502: 잘못된 게이트웨이입니다.');
+    } else if (statusCode == '503') {
+      ErrorMessegeToast.error();
+      print('Service Unavailable - 503: 서비스가 일시적으로 이용 불가능합니다.');
+    } else if (statusCode == '504') {
+      ErrorMessegeToast.error();
+      print('Gateway Timeout - 504: 게이트웨이 응답 시간이 초과되었습니다.');
+    } else {
+      ErrorMessegeToast.error();
+      print('Unknown error: $message');
     }
   }
 }
