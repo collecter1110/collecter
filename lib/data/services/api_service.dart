@@ -100,7 +100,7 @@ class ApiService {
     }
   }
 
-  static Future<bool> checkUserNameExist(String userName) async {
+  static Future<bool> checkUserNameDuplicate(String userName) async {
     try {
       final response = await _supabase
           .from('userinfo')
@@ -171,38 +171,34 @@ class ApiService {
   //   }
   // }
 
-  static Future<void> checkUserStatus() async {
-    try {
-      final response = await _supabase.auth.getUser();
+  // static Future<void> checkUserStatus() async {
+  //   try {
+  //     final response = await _supabase.auth.getUser();
 
-      if (response.user != null && response.user!.emailConfirmedAt != null) {
-        print('Email is confirmed!');
-      } else {
-        print('Email is not confirmed.');
-      }
-    } on AuthException catch (e) {
-      print('Email verified Failed: ${e.message}');
-    } catch (e) {
-      print('An unexpected error occurred: $e');
-    }
-  }
+  //     if (response.user != null && response.user!.emailConfirmedAt != null) {
+  //       print('Email is confirmed!');
+  //     } else {
+  //       print('Email is not confirmed.');
+  //     }
+  //   } on AuthException catch (e) {
+  //     print('Email verified Failed: ${e.message}');
+  //   } catch (e) {
+  //     print('An unexpected error occurred: $e');
+  //   }
+  // }
 
-  static Future<void> login(String email, String password) async {
+  static Future<void> emailLogin(String email) async {
     try {
-      final AuthResponse response = await _supabase.auth.signInWithPassword(
+      await _supabase.auth.signInWithOtp(
         email: email,
-        password: password,
+        shouldCreateUser: false,
       );
 
-      if (response.user != null) {
-        print('login Successful');
-      } else {
-        print('login Failed');
-      }
+      print('OTP sent to $email');
     } on AuthException catch (e) {
-      print('Sign Up Failed: ${e.message}');
+      handleError(e.statusCode, e.message);
     } catch (e) {
-      print('An unexpected error occurred: $e');
+      print('sendOtp exception: $e');
     }
   }
 
@@ -228,7 +224,6 @@ class ApiService {
       ErrorMessegeToast.error();
       print('Gateway Timeout - 504: 게이트웨이 응답 시간이 초과되었습니다.');
     } else {
-      ErrorMessegeToast.error();
       print('Unknown error: $message');
     }
   }

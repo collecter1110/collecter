@@ -109,7 +109,7 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
                 controller: _userDescriptionController,
                 labelText: '설명',
                 hinText: '설명을 입력해주세요 (선택)',
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.text,
               ),
               SizedBox(
                 height: 20.0.h,
@@ -120,7 +120,7 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
                   onTap: () async {
                     FocusScope.of(context).unfocus();
                     _userNameExist =
-                        await ApiService.checkUserNameExist(userName);
+                        await ApiService.checkUserNameDuplicate(userName);
 
                     if (!_userNameExist) {
                       final formKeyState = _userNameFormKey.currentState!;
