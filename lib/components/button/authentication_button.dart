@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AuthenticationButton extends StatelessWidget {
-  final VoidCallback onTap;
+  final Future<void> Function() onTap;
   const AuthenticationButton({
     super.key,
     required this.onTap,
@@ -11,7 +11,7 @@ class AuthenticationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () async {
+      onPressed: () {
         onTap();
       },
       style: TextButton.styleFrom(

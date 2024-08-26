@@ -21,17 +21,17 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
   bool _emailAddressFilled = false;
   bool _emailAddressDuplicate = false;
   bool _emailAddressValid = false;
-  bool _emailVerifiedFilled = false;
-  bool _emailVerifiedState = false;
+  bool _emailAuthFilled = false;
+  bool _emailAuthState = false;
 
   FocusNode _emailAddressFocus = FocusNode();
-  FocusNode _emailVerifiedFocus = FocusNode();
+  FocusNode _emailAuthFocus = FocusNode();
 
   final _emailAddressFormKey = GlobalKey<FormState>();
-  final _emailVerifiedFormKey = GlobalKey<FormState>();
+  final _emailAuthFormKey = GlobalKey<FormState>();
 
   String emailAddress = '';
-  String verifiedNumber = '';
+  String authNumber = '';
 
   late Timer _timer;
   int remainingTime = 180;
@@ -43,23 +43,17 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
 
     _emailAddressFocus.addListener(() {
       setState(() {
-        final formKeyState = _emailAddressFormKey.currentState!;
-        if (formKeyState.validate()) {
-          formKeyState.save();
-        }
+        _handleEmailAddressValid();
       });
     });
-    _emailVerifiedFocus.addListener(() {
+    _emailAuthFocus.addListener(() {
       setState(() {
-        final formKeyState = _emailVerifiedFormKey.currentState!;
-        if (formKeyState.validate()) {
-          formKeyState.save();
-        }
+        _handleEmailAuthValid();
       });
     });
   }
 
-  String? _checkEmailExist(String? value) {
+  String? _checkEmailAddressValid(String? value) {
     if (_emailAddressFocus.hasFocus) {
       _emailAddressDuplicate = true;
       _emailAddressValid = true;
@@ -73,12 +67,12 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
     }
   }
 
-  String? _checkEmailVerified(String? value) {
-    if (_emailVerifiedFocus.hasFocus) {
-      _emailVerifiedState = true;
+  String? _checkEmailAuthValid(String? value) {
+    if (_emailAuthFocus.hasFocus) {
+      _emailAuthState = true;
       return null;
     }
-    if (!_emailVerifiedState && _emailVerifiedFilled) {
+    if (!_emailAuthState && _emailAuthFilled) {
       return '인증번호가 올바르지 않습니다.';
     } else {
       return null;
@@ -108,11 +102,58 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
     });
   }
 
+  void _emailVerifiedRequest() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    try {
+      FocusScope.of(context).unfocus();
+      _emailAddressDuplicate =
+          await ApiService.checkEmailDuplicate(emailAddress);
+
+      if (!_emailAddressDuplicate) {
+        _handleEmailAddressValid();
+      } else {
+        _emailAddressValid = await ApiService.sendOtp(emailAddress);
+
+        if (!_emailAddressValid) {
+          _handleEmailAddressValid();
+        } else {
+          FocusScope.of(context).requestFocus(_emailAuthFocus);
+          startTimer();
+        }
+      }
+    } finally {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+  }
+
+  void _handleEmailAddressValid() {
+    final formKeyState = _emailAddressFormKey.currentState!;
+    if (formKeyState.validate()) {
+      formKeyState.save();
+    }
+  }
+
+  void _handleEmailAuthValid() {
+    final formKeyState = _emailAuthFormKey.currentState!;
+    if (formKeyState.validate()) {
+      formKeyState.save();
+    }
+  }
+
   @override
   void dispose() {
     _emailAddressFocus.dispose();
-    _emailVerifiedFocus.dispose();
-    _timer.cancel();
+    _emailAuthFocus.dispose();
+    _timerState ? _timer.cancel() : null;
     super.dispose();
   }
 
@@ -128,6 +169,7 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
           padding: EdgeInsets.symmetric(horizontal: 16.0.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Form(
                 key: _emailAddressFormKey,
@@ -137,7 +179,7 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
                   hinText: '이메일을 입력해주세요.',
                   keyboardType: TextInputType.text,
                   validator: (value) {
-                    return _checkEmailExist(value);
+                    return _checkEmailAddressValid(value);
                   },
                   onChanged: (value) {
                     setState(() {
@@ -149,84 +191,65 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
                     padding: EdgeInsets.only(
                         right: 16.0.w, top: 12.0.h, bottom: 12.0.h),
                     child: AuthenticationButton(onTap: () async {
-                      FocusScope.of(context).unfocus();
-                      print('이메일 주소 $emailAddress');
-                      _emailAddressDuplicate =
-                          await ApiService.checkEmailDuplicate(emailAddress);
-                      print(_emailAddressDuplicate);
-                      if (!_emailAddressDuplicate) {
-                        final formKeyState = _emailAddressFormKey.currentState!;
-                        if (formKeyState.validate()) {
-                          formKeyState.save();
-                        }
-                      } else {
-                        _emailAddressValid =
-                            await ApiService.sendOtp(emailAddress);
-
-                        if (!_emailAddressValid) {
-                          final formKeyState =
-                              _emailAddressFormKey.currentState!;
-                          if (formKeyState.validate()) {
-                            formKeyState.save();
-                          }
-                        } else {
-                          FocusScope.of(context)
-                              .requestFocus(_emailVerifiedFocus);
-                          startTimer();
-                        }
-                      }
+                      _emailVerifiedRequest();
                     }),
                   ),
                 ),
               ),
               SizedBox(
-                height: 12.0.h,
+                height: 18.0.h,
               ),
               Form(
-                key: _emailVerifiedFormKey,
+                key: _emailAuthFormKey,
                 child: CustomTextFormField(
-                  focusNode: _emailVerifiedFocus,
+                  focusNode: _emailAuthFocus,
                   labelText: '인증번호',
                   hinText: '인증번호를 입력해주세요.',
                   keyboardType: TextInputType.number,
                   validator: (value) {
-                    return _checkEmailVerified(value);
+                    return _checkEmailAuthValid(value);
                   },
                   onChanged: (value) {
                     setState(() {
-                      verifiedNumber = value;
-                      _emailVerifiedFilled = value.isNotEmpty;
+                      authNumber = value;
+                      _emailAuthFilled = value.isNotEmpty;
                     });
                   },
                   suffixIcon: Padding(
-                    padding: EdgeInsets.only(
-                        right: 16.0.w, top: 12.0.h, bottom: 12.0.h),
-                    child: Text(
-                      '${(remainingTime ~/ 60).toString().padLeft(2, '0')}:${(remainingTime % 60).toString().padLeft(2, '0')}',
-                      style: TextStyle(
-                          fontFamily: 'PretendardRegular',
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black),
+                    padding: EdgeInsets.only(right: 16.0.w),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            '${(remainingTime ~/ 60).toString().padLeft(2, '0')}:${(remainingTime % 60).toString().padLeft(2, '0')}',
+                            style: TextStyle(
+                              fontFamily: 'PretendardRegular',
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                              height: 1.43,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
               SizedBox(
-                height: 20.0.h,
+                height: 30.0.h,
               ),
               CompleteButton(
                   firstFieldState: _emailAddressFilled,
-                  secondFieldState: _emailVerifiedFilled,
+                  secondFieldState: _emailAuthFilled,
                   onTap: () async {
                     FocusScope.of(context).unfocus();
-                    _emailVerifiedState =
-                        await ApiService.checkOtp(verifiedNumber, emailAddress);
-                    if (!_emailVerifiedState) {
-                      final formKeyState = _emailVerifiedFormKey.currentState!;
-                      if (formKeyState.validate()) {
-                        formKeyState.save();
-                      }
+                    _emailAuthState =
+                        await ApiService.checkOtp(authNumber, emailAddress);
+                    if (!_emailAuthState) {
+                      _handleEmailAuthValid();
                     } else {
                       Navigator.pushReplacement(
                         context,
