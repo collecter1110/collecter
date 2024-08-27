@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
 import '../../data/services/api_service.dart';
-import '../../page_navigator.dart';
+import 'join_congraturation.dart';
 
 class SetUserInfoScreen extends StatefulWidget {
   final String email;
@@ -21,7 +21,6 @@ class SetUserInfoScreen extends StatefulWidget {
 class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
   bool _userNameFilled = false;
   bool _userNameExist = false;
-  bool _userInfoUpdate = false;
 
   FocusNode _userNameFocus = FocusNode();
 
@@ -72,10 +71,25 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+          padding: EdgeInsets.only(top: 184.0.h, left: 16.0.w, right: 16.0.w),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Text(
+                '콜렉터와 함께할\n이름을 만들어 보세요!',
+                style: TextStyle(
+                  fontFamily: 'PretendardRegular',
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 68.0.h,
+              ),
               Form(
                 key: _userNameFormKey,
                 child: CustomTextFormField(
@@ -132,16 +146,12 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
                           await ApiService.updateUserInfo(widget.email,
                               userName, _userDescriptionController.text);
                       if (updateUserInfoState) {
-                        print(widget.email);
-
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PageNavigator(),
-                            ),
-                          );
-                        });
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => JoinCongraturation(),
+                          ),
+                        );
                       }
                     }
                   },
