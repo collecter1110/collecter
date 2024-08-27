@@ -30,7 +30,7 @@ class CompleteButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
               ),
               padding: EdgeInsets.symmetric(
-                vertical: 12.0.h,
+                vertical: 16.0.h,
               ),
               backgroundColor: firstFieldState && secondFieldState
                   ? Colors.black

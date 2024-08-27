@@ -1,14 +1,22 @@
-import 'package:collect_er/data/provider/page_route_provider.dart';
-import 'package:collect_er/data/provider/tag_provider.dart';
-import 'package:collect_er/page/login/enter_login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'data/provider/keyword_provider.dart';
-import 'page_navigator.dart';
+import 'data/provider/page_route_provider.dart';
+import 'data/provider/tag_provider.dart';
+import 'page/splash/splash_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: 'assets/config/.env');
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL'] ?? '',
+    anonKey: dotenv.env['SUPABASE_API_KEY'] ?? '',
+  );
+
   runApp(
     MultiProvider(
       providers: [
@@ -53,7 +61,7 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: EnterLoginPage(),
+      home: SplashScreen(),
     );
   }
 }

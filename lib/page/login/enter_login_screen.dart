@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../join/join_email_screen.dart';
+import '../join/email_authentication_screen.dart';
+import 'email_login_screen.dart';
 
 class EnterLoginPage extends StatelessWidget {
   EnterLoginPage({Key? key}) : super(key: key);
@@ -91,7 +92,14 @@ class EnterLoginPage extends StatelessWidget {
                       height: 12.h,
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const EmailLoginScreen(),
+                          ),
+                        );
+                      },
                       style: TextButton.styleFrom(
                         side: BorderSide(width: 1.0, color: grayColor),
                         shape: RoundedRectangleBorder(
@@ -133,7 +141,8 @@ class EnterLoginPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const JoinEmailScreen(),
+                              builder: (context) =>
+                                  const EmailAuthenticationScreen(),
                             ),
                           );
                         },
