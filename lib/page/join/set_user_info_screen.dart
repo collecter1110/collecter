@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
 import '../../data/services/api_service.dart';
-import 'join_congraturation.dart';
+import 'welcome_screen_.dart';
 
 class SetUserInfoScreen extends StatefulWidget {
   final String email;
@@ -149,7 +149,7 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => JoinCongraturation(),
+                            builder: (context) => WelcomeScreen(),
                           ),
                         );
                       }
