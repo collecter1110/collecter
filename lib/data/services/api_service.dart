@@ -1,9 +1,11 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/pop_up/error_messege_toast.dart';
+import '../model/user_info_model.dart';
 
 class ApiService {
   static final SupabaseClient _supabase = Supabase.instance.client;
+  static final user = _supabase.auth.currentUser;
 
   static Future<String?> getEmailFromToken() async {
     final user = _supabase.auth.currentUser;
@@ -145,6 +147,21 @@ class ApiService {
     }
   }
 
+  static Future<void> emailLogin(String email) async {
+    try {
+      await _supabase.auth.signInWithOtp(
+        email: email,
+        shouldCreateUser: false,
+      );
+
+      print('OTP sent to $email');
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+    } catch (e) {
+      print('sendOtp exception: $e');
+    }
+  }
+
   // static Future<bool> signUp(String email, String userName, String imageUrl,
   //     String description) async {
   //   try {
@@ -171,34 +188,27 @@ class ApiService {
   //   }
   // }
 
-  // static Future<void> checkUserStatus() async {
-  //   try {
-  //     final response = await _supabase.auth.getUser();
-
-  //     if (response.user != null && response.user!.emailConfirmedAt != null) {
-  //       print('Email is confirmed!');
-  //     } else {
-  //       print('Email is not confirmed.');
-  //     }
-  //   } on AuthException catch (e) {
-  //     print('Email verified Failed: ${e.message}');
-  //   } catch (e) {
-  //     print('An unexpected error occurred: $e');
-  //   }
-  // }
-
-  static Future<void> emailLogin(String email) async {
+  static Future<UserInfoModel> getUserInfo() async {
     try {
-      await _supabase.auth.signInWithOtp(
-        email: email,
-        shouldCreateUser: false,
-      );
+      final userId = user!.id;
 
-      print('OTP sent to $email');
+      final response =
+          await _supabase.from('userinfo').select().eq('id', userId).single();
+
+      if (response != null && response.isNotEmpty) {
+        final responseData = response;
+        print('User Info: $responseData');
+        UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
+        return Future.value(userInfoData);
+      } else {
+        throw Exception('Response code error <getUserInfo>');
+      }
     } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
+      ErrorMessegeToast();
+      throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      print('sendOtp exception: $e');
+      ErrorMessegeToast();
+      throw Exception('An unexpected error occurred: $e');
     }
   }
 
