@@ -80,9 +80,9 @@ class EnterLoginPage extends StatelessWidget {
                       );
                     },
                     style: TextButton.styleFrom(
-                      side: BorderSide(width: 1.0, color: Color(0xFF343a40)),
+                      side: BorderSide(width: 1.0.w, color: Color(0xFF343a40)),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0)),
+                          borderRadius: BorderRadius.circular(8.0.r)),
                       padding: EdgeInsets.symmetric(vertical: 12.h),
                       backgroundColor: Colors.white,
                     ),
@@ -124,7 +124,7 @@ class EnterLoginPage extends StatelessWidget {
                     },
                     style: TextButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0)),
+                          borderRadius: BorderRadius.circular(8.0.r)),
                       padding: EdgeInsets.symmetric(
                           horizontal: 97.5.w, vertical: 12.h),
                       backgroundColor: Color(0xFF212529),
