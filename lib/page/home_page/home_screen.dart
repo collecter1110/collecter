@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen>
             SliverAppBar(
               pinned: true,
               toolbarHeight: 64.0.h,
-              expandedHeight: 130.0,
+              expandedHeight: 130.0.h,
               elevation: 0,
               scrolledUnderElevation: 0,
               foregroundColor: Colors.black,

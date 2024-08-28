@@ -11,7 +11,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(top: 124.0.h, left: 20.0.w, right: 20.0.w),
+        padding: EdgeInsets.only(top: 184.0.h, left: 20.0.w, right: 20.0.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,

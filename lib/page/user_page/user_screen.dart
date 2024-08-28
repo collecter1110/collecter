@@ -33,7 +33,7 @@ class UserScreen extends StatelessWidget {
             padding: EdgeInsets.only(
               left: 16.0.w,
               right: 16.0.w,
-              top: ViewPaddingTopSize(context) + 20.0,
+              top: ViewPaddingTopSize(context) + 20.0.h,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,24 +92,15 @@ class UserScreen extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 6.0.h),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'coffeeco',
-                                style: TextStyle(
-                                  color: Color(0xFF212529),
-                                  fontSize: 18.sp,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.5.h,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10.0.w,
-                              ),
-                            ],
+                          child: Text(
+                            'coffeeco',
+                            style: TextStyle(
+                              color: Color(0xFF212529),
+                              fontSize: 18.sp,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w700,
+                              height: 1.5.h,
+                            ),
                           ),
                         )
                       ],

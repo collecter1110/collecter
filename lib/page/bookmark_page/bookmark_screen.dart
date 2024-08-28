@@ -40,7 +40,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
             SliverAppBar(
               pinned: true,
               toolbarHeight: 64.0.h,
-              expandedHeight: 130.0,
+              expandedHeight: 130.0.h,
               elevation: 0,
               scrolledUnderElevation: 0,
               foregroundColor: Colors.black,
@@ -90,7 +90,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                       padding: EdgeInsets.only(
                         left: 16.0.w,
                         right: 16.0.w,
-                        top: ViewPaddingTopSize(context) + 20.0,
+                        top: ViewPaddingTopSize(context) + 20.0.h,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
