@@ -52,22 +52,35 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 123.0.w,
-          top: 376.0.h,
-          right: 123.0.w,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset(
-              'assets/images/image_logo.png',
-              width: 144.0.w,
-              height: 40.0.h,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 130.0.w,
             ),
-          ],
-        ),
+            child: Container(
+              width: double.infinity,
+              child: Image.asset(
+                'assets/images/image_logo.png',
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 50.0.h,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 130.0.w,
+            ),
+            child: Container(
+              width: double.infinity,
+              child: Image.asset(
+                'assets/images/image_character.png',
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

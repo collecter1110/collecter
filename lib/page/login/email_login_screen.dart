@@ -153,11 +153,25 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+          padding: EdgeInsets.only(top: 184.0.h, left: 16.0.w, right: 16.0.w),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Text(
+                '가입하신 이메일로\n로그인해 주세요.',
+                style: TextStyle(
+                  fontFamily: 'PretendardRegular',
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 68.0.h,
+              ),
               Form(
                 key: _emailAddressFormKey,
                 child: CustomTextFormField(
