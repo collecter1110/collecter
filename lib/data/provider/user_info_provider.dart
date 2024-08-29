@@ -4,7 +4,7 @@ import '../model/user_info_model.dart';
 import '../services/api_service.dart';
 
 class UserInfoProvider with ChangeNotifier {
-  UserInfoModel? _userInfo; // nullable 타입으로 선언
+  UserInfoModel? _userInfo;
 
   UserInfoModel? get userInfo => _userInfo;
 

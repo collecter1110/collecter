@@ -28,9 +28,13 @@ class ApiService {
           .maybeSingle(); // 결과가 단일 항목일 때 사용
 
       if (response != null) {
-        final name = response['name'];
-        print('User name: $name');
-        return true;
+        if (response['name'] != null) {
+          // final name = response['name'];
+          return true;
+        } else {
+          print('Need user info');
+          return false;
+        }
       } else {
         print('Membership was registered, but userInfo was not entered.');
         return false;
