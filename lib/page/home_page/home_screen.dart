@@ -31,6 +31,12 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
+  @override
+  void dispose() {
+    _tabController!.dispose();
+    super.dispose();
+  }
+
   void _onTap(int index) {
     _tabController!.animateTo(index);
     print('object');

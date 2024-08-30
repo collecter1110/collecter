@@ -32,6 +32,12 @@ class _BookmarkScreenState extends State<BookmarkScreen>
   }
 
   @override
+  void dispose() {
+    _tabController!.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(

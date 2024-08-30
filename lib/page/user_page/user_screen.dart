@@ -1,3 +1,4 @@
+import 'package:collect_er/page/bookmark_page/bookmark_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import '../../components/button/users_archive_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/collection_tag.dart';
 import '../../data/provider/user_info_provider.dart';
+import 'users_select_screen.dart';
 
 class UserScreen extends StatelessWidget {
   const UserScreen({super.key});
@@ -147,17 +149,42 @@ class UserScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             UsersArchiveButton(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BookmarkScreen(),
+                                  ),
+                                );
+                              },
                               number: 0,
                               name: 'Collection',
                             ),
                             UsersArchiveButton(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UsersSelectScreen(
+                                      initialPageIndex: 0,
+                                    ),
+                                  ),
+                                );
+                              },
                               number: 0,
                               name: 'Selecting',
                             ),
                             UsersArchiveButton(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UsersSelectScreen(
+                                      initialPageIndex: 1,
+                                    ),
+                                  ),
+                                );
+                              },
                               number: 0,
                               name: 'Selected',
                             ),
