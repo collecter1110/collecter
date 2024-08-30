@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../card/selection.dart';
+import '../ui_kit/select_status_tag.dart';
 
 class SelectWidget extends StatelessWidget {
   final bool isSelecting;
@@ -12,7 +13,7 @@ class SelectWidget extends StatelessWidget {
     return Container(
       color: Color(0xFFf8f9fa),
       child: ListView.builder(
-        padding: EdgeInsets.symmetric(vertical: 20.0.h),
+        padding: EdgeInsets.symmetric(vertical: 10.0.h),
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: 7,
@@ -29,7 +30,7 @@ class SelectWidget extends StatelessWidget {
                     Text(
                       '2024-08-06',
                       style: TextStyle(
-                        color: Color(0xFF868E96),
+                        color: Color(0xFFadb5bd),
                         fontSize: 12.0.sp,
                         fontFamily: 'Pretendard',
                         fontWeight: FontWeight.w600,
@@ -41,8 +42,8 @@ class SelectWidget extends StatelessWidget {
                     ),
                     Expanded(
                       child: Divider(
-                        thickness: 0.5,
-                        color: Color(0xFF868E96),
+                        thickness: 1.0.h,
+                        color: Color(0xFFdee2e6),
                       ),
                     ),
                   ],
@@ -64,44 +65,11 @@ class SelectWidget extends StatelessWidget {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: double.infinity,
-                        decoration: ShapeDecoration(
-                          color: Color(0xFF212529),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10.0.w, vertical: 4.0.h),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '04:48:53',
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 10.0.sp,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              isSelecting
-                                  ? SizedBox.shrink()
-                                  : Text(
-                                      '부드러운 아보카도',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10.0.sp,
-                                        fontFamily: 'Pretendard',
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                          child: SelectStatusTag(
+                            isSelecting: isSelecting,
+                          )),
                       Selection(
                         index: index,
                       ),
