@@ -7,6 +7,7 @@ import '../../components/button/user_page_edit_button.dart';
 import '../../components/button/users_archive_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/collection_tag.dart';
+import '../../components/ui_kit/expandable_text.dart';
 import '../../data/provider/user_info_provider.dart';
 import 'users_select_screen.dart';
 
@@ -28,6 +29,8 @@ class UserScreen extends StatelessWidget {
       // 9,
       // 10,
     ];
+
+    bool _isDescripted = false;
 
     return Scaffold(
         body: Column(
@@ -87,10 +90,10 @@ class UserScreen extends StatelessWidget {
                   final int _userId = provider.userInfo!.userId;
 
                   return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             decoration: BoxDecoration(
@@ -108,19 +111,37 @@ class UserScreen extends StatelessWidget {
                           SizedBox(
                             width: 16.0.w,
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 6.0.h),
-                            child: Text(
-                              _name,
-                              style: TextStyle(
-                                color: Color(0xFF212529),
-                                fontSize: 18.sp,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w700,
-                                height: 1.5.h,
+                          Flexible(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 2.0.h),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    _name,
+                                    style: TextStyle(
+                                      color: Color(0xFF212529),
+                                      fontSize: 18.sp,
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 8.0.h,
+                                  ),
+                                  !_isDescripted
+                                      ? ExpandableText(
+                                          maxLine: 1,
+                                          text:
+                                              '울퉁불퉁 멋진 몸매에 빨간 옷을 입고 새콤달콤 향내 풍기는 멋쟁이 토마토. 나는야 주스될거야 나는야 케첩될거야 나는야 춤을 출거야 멋쟁이 토마토.',
+                                        )
+                                      : SizedBox.shrink(),
+                                ],
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                       Padding(
@@ -143,7 +164,7 @@ class UserScreen extends StatelessWidget {
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: 50.0.w, vertical: 18.0.h),
+                            horizontal: 50.0.w, vertical: 12.0.h),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -196,11 +217,11 @@ class UserScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            UserPageEditButton(name: '프로필 보기', onTap: () {}),
+                            UserPageEditButton(name: '프로필 편집', onTap: () {}),
                             SizedBox(
                               width: 6.0.w,
                             ),
-                            UserPageEditButton(name: '태그보기', onTap: () {})
+                            UserPageEditButton(name: '태그 보기', onTap: () {})
                           ],
                         ),
                       ),

@@ -3,8 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ExpandableText extends StatefulWidget {
   final String text;
+  final int maxLine;
 
-  const ExpandableText({super.key, required this.text});
+  const ExpandableText({
+    super.key,
+    required this.text,
+    required this.maxLine,
+  });
 
   @override
   _ExpandableTextState createState() => _ExpandableTextState();
@@ -17,8 +22,6 @@ class _ExpandableTextState extends State<ExpandableText> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        const int maxLines = 3;
-
         final textSpan = TextSpan(
           text: widget.text,
           style: TextStyle(
@@ -32,7 +35,7 @@ class _ExpandableTextState extends State<ExpandableText> {
 
         final textPainter = TextPainter(
           text: textSpan,
-          maxLines: maxLines,
+          maxLines: widget.maxLine,
           textDirection: TextDirection.ltr,
         );
 
@@ -46,7 +49,7 @@ class _ExpandableTextState extends State<ExpandableText> {
           children: [
             Text.rich(
               textSpan,
-              maxLines: isExpanded ? null : maxLines,
+              maxLines: isExpanded ? null : widget.maxLine,
               overflow:
                   isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
             ),

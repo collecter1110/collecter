@@ -117,6 +117,7 @@ class SelectionDetailScreen extends StatelessWidget {
                     height: 22.0.h,
                   ),
                   ExpandableText(
+                    maxLine: 3,
                     text:
                         '​🍝주재료🍝\n낫또 1팩\n통마늘\n올리브유\n앤초비 or 액젓\n스파게티 면\n쪽파\n김가루\n🧂양념재료🧂\n치킨스톡\n쯔유\n소금\n후추\n크러쉬드 페퍼',
                   ),

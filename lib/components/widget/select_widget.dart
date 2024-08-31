@@ -65,11 +65,9 @@ class SelectWidget extends StatelessWidget {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                          child: SelectStatusTag(
-                            isSelecting: isSelecting,
-                          )),
+                      SelectStatusTag(
+                        isSelecting: isSelecting,
+                      ),
                       Selection(
                         index: index,
                       ),
