@@ -1,12 +1,16 @@
 class UserOverviewModel {
   final int userId;
   final List<int> labels;
-  final List<CreatedData>? selectingProperties;
-  final List<CreatedData>? selectedProperties;
+  final int selectingNum;
+  final int selectedNum;
+  final List<TimeStampedData>? selectingProperties;
+  final List<TimeStampedData>? selectedProperties;
 
   UserOverviewModel({
     required this.userId,
     required this.labels,
+    required this.selectingNum,
+    required this.selectedNum,
     required this.selectingProperties,
     required this.selectedProperties,
   });
@@ -16,22 +20,34 @@ class UserOverviewModel {
         labels = (json['label_ids'] as List<dynamic>)
             .map((item) => item as int)
             .toList(),
-        selectingProperties = json['selecting_properties'],
-        selectedProperties = json['selected_properties'];
+        selectingNum = json['selecting_num'],
+        selectedNum = json['selected_num'],
+        selectingProperties = json['selecting_properties'] != null
+            ? (json['selecting_properties'] as List<dynamic>)
+                .map((item) => TimeStampedData.fromJson(item))
+                .toList()
+            : null,
+        selectedProperties = json['selected_properties'] != null
+            ? (json['selected_properties'] as List<dynamic>)
+                .map((item) => TimeStampedData.fromJson(item))
+                .toList()
+            : null;
 }
 
-class CreatedData {
+class TimeStampedData {
   final String createdDate;
   final List<CreatedTimeData> times;
 
-  CreatedData({
+  TimeStampedData({
     required this.createdDate,
     required this.times,
   });
 
-  CreatedData.fromJson(Map<String, dynamic> json)
+  TimeStampedData.fromJson(Map<String, dynamic> json)
       : createdDate = json['created_date'],
-        times = json['times'];
+        times = (json['times'] as List<dynamic>)
+            .map((item) => CreatedTimeData.fromJson(item))
+            .toList();
 }
 
 class CreatedTimeData {
@@ -45,7 +61,9 @@ class CreatedTimeData {
 
   CreatedTimeData.fromJson(Map<String, dynamic> json)
       : createdTime = json['created_time'],
-        properties = json['properties'];
+        properties = (json['properties'] as List<dynamic>)
+            .map((item) => SelectPropertiesData.fromJson(item))
+            .toList();
 }
 
 class SelectPropertiesData {

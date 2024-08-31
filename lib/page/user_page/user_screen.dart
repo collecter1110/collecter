@@ -16,8 +16,6 @@ class UserScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _isDescripted = false;
-
     return Scaffold(
         body: Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -65,7 +63,7 @@ class UserScreen extends StatelessWidget {
                 ),
                 child: Consumer<UserInfoProvider>(
                     builder: (context, provider, child) {
-                  provider.fetchUserInfo();
+                  provider.getUsersData();
 
                   if (provider.userInfo == null) {
                     return Center(child: CircularProgressIndicator());
@@ -73,8 +71,11 @@ class UserScreen extends StatelessWidget {
                   final String _name = provider.userInfo!.name;
                   final String _description = provider.userInfo!.description;
                   final String _imageUrl = provider.userInfo!.imageUrl;
-                  final int _userId = provider.userInfo!.userId;
+
                   final List<int> _usersLabelIds = provider.userLabelIds!;
+                  final int selectingNum = provider.selectingNum;
+                  final int selectedNum = provider.selectedNum;
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -188,7 +189,7 @@ class UserScreen extends StatelessWidget {
                                   ),
                                 );
                               },
-                              number: 0,
+                              number: selectingNum,
                               name: 'Selecting',
                             ),
                             UsersArchiveButton(
@@ -202,7 +203,7 @@ class UserScreen extends StatelessWidget {
                                   ),
                                 );
                               },
-                              number: 0,
+                              number: selectedNum,
                               name: 'Selected',
                             ),
                           ],
