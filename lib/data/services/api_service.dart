@@ -1,10 +1,10 @@
 import 'dart:async';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/pop_up/error_messege_toast.dart';
 import '../model/user_info_model.dart';
+import '../model/user_overview_model.dart';
 
 class ApiService {
   static final storage = FlutterSecureStorage();
@@ -241,16 +241,17 @@ class ApiService {
 
   static Future<UserInfoModel> getUserInfo() async {
     try {
-      final userUuid = authUser!.id;
-
-      final response =
-          await _supabase.from('userinfo').select().eq('id', userUuid).single();
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+      final response = await _supabase
+          .from('userinfo')
+          .select()
+          .eq('user_id', userId)
+          .single();
 
       if (response.isNotEmpty) {
         final responseData = response;
-        print('User Info: $responseData');
         UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
-        getUserOverview(userInfoData.userId);
         return Future.value(userInfoData);
       } else {
         throw Exception('Response code error <getUserInfo>');
@@ -264,22 +265,18 @@ class ApiService {
     }
   }
 
-  static Future<UserInfoModel> getUserOverview(int userId) async {
+  static Future<UserOverviewModel> getUserOverview() async {
     try {
-      final userUuid = authUser!.id;
-
-      final response =
-          await _supabase.from('userinfo').select().eq('id', userUuid).single();
-
-      if (response.isNotEmpty) {
-        final responseData = response;
-        print('User Info: $responseData');
-        UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
-
-        return Future.value(userInfoData);
-      } else {
-        throw Exception('Response code error <getUserInfo>');
-      }
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+      final responseData = await _supabase
+          .from('useroverview')
+          .select()
+          .eq('user_id', userId)
+          .single();
+      UserOverviewModel userOverviewModel =
+          UserOverviewModel.fromJson(responseData);
+      return Future.value(userOverviewModel);
     } on AuthException catch (e) {
       ErrorMessegeToast();
       throw Exception('Authentication error: ${e.message}');

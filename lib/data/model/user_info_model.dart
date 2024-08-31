@@ -15,8 +15,8 @@ class UserInfoModel {
 
   UserInfoModel.fromJson(Map<String, dynamic> json)
       : name = json['name'].toString(),
-        email = json['picture'].toString(),
-        description = json['bio'].toString(),
-        imageUrl = json['bio'].toString(),
+        email = json['email'].toString(),
+        description = json['description'].toString(),
+        imageUrl = json['image_url'].toString(),
         userId = json['user_id'];
 }

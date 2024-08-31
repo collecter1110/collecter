@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../components/button/user_page_edit_button.dart';
 import '../../components/button/users_archive_button.dart';
 import '../../components/constants/screen_size.dart';
-import '../../components/ui_kit/collection_tag.dart';
+import '../../components/ui_kit/label.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../data/provider/user_info_provider.dart';
 import 'users_select_screen.dart';
@@ -16,20 +16,6 @@ class UserScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<int> _usersTagList = [
-      0,
-      1,
-      2,
-      // 3,
-      // 4,
-      // 5,
-      // 6,
-      // 7,
-      // 8,
-      // 9,
-      // 10,
-    ];
-
     bool _isDescripted = false;
 
     return Scaffold(
@@ -88,12 +74,11 @@ class UserScreen extends StatelessWidget {
                   final String _description = provider.userInfo!.description;
                   final String _imageUrl = provider.userInfo!.imageUrl;
                   final int _userId = provider.userInfo!.userId;
-
+                  final List<int> _usersLabelIds = provider.userLabelIds!;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             decoration: BoxDecoration(
@@ -116,7 +101,8 @@ class UserScreen extends StatelessWidget {
                               padding: EdgeInsets.symmetric(vertical: 2.0.h),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     _name,
@@ -128,14 +114,24 @@ class UserScreen extends StatelessWidget {
                                       height: 1.5,
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 8.0.h,
-                                  ),
-                                  !_isDescripted
-                                      ? ExpandableText(
-                                          maxLine: 1,
-                                          text:
-                                              '울퉁불퉁 멋진 몸매에 빨간 옷을 입고 새콤달콤 향내 풍기는 멋쟁이 토마토. 나는야 주스될거야 나는야 케첩될거야 나는야 춤을 출거야 멋쟁이 토마토.',
+                                  _description != ''
+                                      ? Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 4.0.h,
+                                            ),
+                                            ExpandableText(
+                                              maxLine: 1,
+                                              textStyle: TextStyle(
+                                                color: Color(0xFF868E96),
+                                                fontSize: 12.sp,
+                                                fontFamily: 'Pretendard',
+                                                fontWeight: FontWeight.w500,
+                                                height: 1.43,
+                                              ),
+                                              text: _description,
+                                            ),
+                                          ],
                                         )
                                       : SizedBox.shrink(),
                                 ],
@@ -154,8 +150,8 @@ class UserScreen extends StatelessWidget {
                                 alignment: WrapAlignment.start,
                                 runSpacing: 8.0.h,
                                 spacing: 10.0.w,
-                                children: _usersTagList.map((index) {
-                                  return CollectionTag.getTag(index);
+                                children: _usersLabelIds.map((index) {
+                                  return Label.getLabel(index);
                                 }).toList(),
                               ),
                             ),
