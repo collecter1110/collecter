@@ -8,10 +8,8 @@ import '../../data/services/api_service.dart';
 import 'welcome_screen_.dart';
 
 class SetUserInfoScreen extends StatefulWidget {
-  final String email;
   const SetUserInfoScreen({
     super.key,
-    required this.email,
   });
 
   @override
@@ -142,17 +140,15 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
                         formKeyState.save();
                       }
                     } else {
-                      bool updateUserInfoState =
-                          await ApiService.updateUserInfo(widget.email,
-                              userName, _userDescriptionController.text);
-                      if (updateUserInfoState) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WelcomeScreen(),
-                          ),
-                        );
-                      }
+                      await ApiService.updateUserInfo(
+                          userName, _userDescriptionController.text);
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WelcomeScreen(),
+                        ),
+                      );
                     }
                   },
                   text: '완료')

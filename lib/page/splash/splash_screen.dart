@@ -23,17 +23,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _getAccessToken(BuildContext context) async {
     await Future.delayed(Duration(seconds: 2));
 
-    String? _email = await ApiService.getEmailFromToken();
+    bool _isAccessToken = await ApiService.checkAccessToken();
 
-    if (_email == null) {
-      //Token 이 없을때 -> 로그인 이나 회원가입
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => EnterLoginPage()),
-      );
-    } else {
-      //Token이 있고 이메일이 검증되었는지 확인
-      if (await ApiService.checkUserInfoExist(_email)) {
+    if (_isAccessToken) {
+      bool _isUserInfo = await ApiService.checkUserEmailInUserInfo();
+      if (_isUserInfo) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PageNavigator()),
@@ -41,10 +35,14 @@ class _SplashScreenState extends State<SplashScreen> {
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => SetUserInfoScreen(email: _email)),
+          MaterialPageRoute(builder: (context) => SetUserInfoScreen()),
         );
       }
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => EnterLoginPage()),
+      );
     }
   }
 
