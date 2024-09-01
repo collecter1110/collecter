@@ -3,8 +3,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ExpandableText extends StatefulWidget {
   final String text;
+  final int maxLine;
+  final TextStyle textStyle;
 
-  const ExpandableText({super.key, required this.text});
+  const ExpandableText({
+    super.key,
+    required this.text,
+    required this.maxLine,
+    required this.textStyle,
+  });
 
   @override
   _ExpandableTextState createState() => _ExpandableTextState();
@@ -17,22 +24,14 @@ class _ExpandableTextState extends State<ExpandableText> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        const int maxLines = 3;
-
         final textSpan = TextSpan(
           text: widget.text,
-          style: TextStyle(
-            color: Color(0xFF343a40),
-            fontSize: 14.sp,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w500,
-            height: 1.43,
-          ),
+          style: widget.textStyle,
         );
 
         final textPainter = TextPainter(
           text: textSpan,
-          maxLines: maxLines,
+          maxLines: widget.maxLine,
           textDirection: TextDirection.ltr,
         );
 
@@ -46,28 +45,32 @@ class _ExpandableTextState extends State<ExpandableText> {
           children: [
             Text.rich(
               textSpan,
-              maxLines: isExpanded ? null : maxLines,
+              maxLines: isExpanded ? null : widget.maxLine,
               overflow:
                   isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
             ),
-            SizedBox(
-              height: 10.0.h,
-            ),
             if (isTextOverflowing)
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isExpanded = !isExpanded;
-                  });
-                },
-                child: Text(
-                  isExpanded ? '간단히 보기' : '더보기',
-                  style: TextStyle(
-                    color: Color(0xFFced4da),
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
+              Column(
+                children: [
+                  SizedBox(
+                    height: 10.0.h,
                   ),
-                ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isExpanded = !isExpanded;
+                      });
+                    },
+                    child: Text(
+                      isExpanded ? '간단히 보기' : '더보기',
+                      style: TextStyle(
+                        color: Color(0xFFced4da),
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
           ],
         );

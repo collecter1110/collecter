@@ -268,8 +268,7 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              SetUserInfoScreen(email: emailAddress),
+                          builder: (context) => SetUserInfoScreen(),
                         ),
                       );
                     }

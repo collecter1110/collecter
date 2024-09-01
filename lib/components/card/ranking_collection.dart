@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../button/bookmark_button.dart';
 
-import '../ui_kit/collection_tag.dart';
+import '../ui_kit/label.dart';
 import '../ui_kit/keyword.dart';
 
 class RankingCollection extends StatelessWidget {
@@ -100,7 +100,7 @@ class RankingCollection extends StatelessWidget {
                               maxLines: 2,
                             ),
                             SizedBox(width: 6.0.w),
-                            CollectionTag.getTag(1),
+                            Label.getLabel(1),
                           ],
                         ),
                         Padding(

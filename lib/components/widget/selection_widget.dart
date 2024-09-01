@@ -22,7 +22,6 @@ class SelectionWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         return Selection(
           index: index,
-          //ratio: 0.8,
         );
       },
     );

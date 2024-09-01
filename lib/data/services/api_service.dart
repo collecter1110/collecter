@@ -1,24 +1,56 @@
+import 'dart:async';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/pop_up/error_messege_toast.dart';
+import '../model/user_info_model.dart';
+import '../model/user_overview_model.dart';
 
 class ApiService {
+  static final storage = FlutterSecureStorage();
   static final SupabaseClient _supabase = Supabase.instance.client;
+  static final authUser = _supabase.auth.currentUser;
 
-  static Future<String?> getEmailFromToken() async {
-    final user = _supabase.auth.currentUser;
+  static Future<bool> checkAccessToken() async {
+    try {
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session == null || session.accessToken.isEmpty) {
+        print('No Token');
+        return false;
+      }
+      final userResponse = await Supabase.instance.client.auth.getUser();
 
-    if (user != null) {
-      final email = user.email;
-      print('User email: $email');
-      return email;
-    } else {
-      return null;
+      if (userResponse.user == null) {
+        print('Token expired or invalid');
+        return false;
+      }
+      return true;
+    } catch (e) {
+      print('checkAccessToken: $e');
+      return false;
     }
   }
 
-  static Future<bool> checkUserInfoExist(String email) async {
+  static Future<String> getEmailFromAuthentication() async {
     try {
+      if (authUser != null) {
+        return authUser!.email!;
+      } else {
+        handleError('', 'No authenticated user found');
+        throw Exception('No authenticated user found');
+      }
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      print('checkUserInfoExist : $e');
+      throw Exception('An unexpected error occurred');
+    }
+  }
+
+  static Future<bool> checkUserEmailInUserInfo() async {
+    try {
+      String email = await getEmailFromAuthentication();
       final response = await _supabase
           .from('userinfo')
           .select('name') // 'name' 속성만 선택
@@ -26,9 +58,12 @@ class ApiService {
           .maybeSingle(); // 결과가 단일 항목일 때 사용
 
       if (response != null) {
-        final name = response['name'];
-        print('User name: $name');
-        return true;
+        if (response['name'] != null) {
+          return true;
+        } else {
+          print('Need user info');
+          return false;
+        }
       } else {
         print('Membership was registered, but userInfo was not entered.');
         return false;
@@ -37,7 +72,7 @@ class ApiService {
       handleError(e.statusCode, e.message);
       return false;
     } catch (e) {
-      print('checkEmailExist exception: $e');
+      print('checkUserInfoExist : $e');
       return false;
     }
   }
@@ -87,6 +122,7 @@ class ApiService {
       );
 
       if (response.user != null) {
+        writeUserIdToStorage();
         return true;
       } else {
         return false;
@@ -118,9 +154,10 @@ class ApiService {
     }
   }
 
-  static Future<bool> updateUserInfo(
-      String email, String userName, String userDescription) async {
+  static Future<void> updateUserInfo(
+      String userName, String userDescription) async {
     try {
+      String email = await getEmailFromAuthentication();
       final response = await _supabase
           .from('userinfo')
           .update({
@@ -129,19 +166,50 @@ class ApiService {
           })
           .eq('email', email)
           .select();
-      print(response);
-      if (response.isEmpty) {
-        print('No user found with the given email');
-        return false;
+      if (response.isNotEmpty) {
       } else {
-        return true;
+        throw Exception('User information not saved');
       }
     } on AuthException catch (e) {
       handleError(e.statusCode, e.message);
-      return false;
     } catch (e) {
-      print('updateUserInfo exception: $e');
-      return false;
+      throw Exception('updateUserInfo exception: ${e}');
+    }
+  }
+
+  ///앱 로그아웃 시 로컬스토리지 데이터 삭제
+  ///앱 access token 만료시 데이터 삭제
+
+  static Future<void> emailLogin(String email) async {
+    try {
+      await _supabase.auth.signInWithOtp(
+        email: email,
+        shouldCreateUser: false,
+      );
+
+      print('OTP sent to $email');
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+    } catch (e) {
+      print('sendOtp exception: $e');
+    }
+  }
+
+  static Future<void> writeUserIdToStorage() async {
+    try {
+      final userUuid = authUser!.id;
+      final response = await _supabase
+          .from('userinfo')
+          .select('user_id')
+          .eq('id', userUuid)
+          .single();
+      int userId = response['user_id'];
+      await storage.write(key: 'USER_ID', value: userId.toString());
+      print(userId);
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+    } catch (e) {
+      print('writeUserIdToStorage exception: $e');
     }
   }
 
@@ -171,34 +239,50 @@ class ApiService {
   //   }
   // }
 
-  // static Future<void> checkUserStatus() async {
-  //   try {
-  //     final response = await _supabase.auth.getUser();
-
-  //     if (response.user != null && response.user!.emailConfirmedAt != null) {
-  //       print('Email is confirmed!');
-  //     } else {
-  //       print('Email is not confirmed.');
-  //     }
-  //   } on AuthException catch (e) {
-  //     print('Email verified Failed: ${e.message}');
-  //   } catch (e) {
-  //     print('An unexpected error occurred: $e');
-  //   }
-  // }
-
-  static Future<void> emailLogin(String email) async {
+  static Future<UserInfoModel> getUserInfo() async {
     try {
-      await _supabase.auth.signInWithOtp(
-        email: email,
-        shouldCreateUser: false,
-      );
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+      final response = await _supabase
+          .from('userinfo')
+          .select()
+          .eq('user_id', userId)
+          .single();
 
-      print('OTP sent to $email');
+      if (response.isNotEmpty) {
+        final responseData = response;
+        UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
+        return Future.value(userInfoData);
+      } else {
+        throw Exception('Response code error <getUserInfo>');
+      }
     } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
+      ErrorMessegeToast();
+      throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      print('sendOtp exception: $e');
+      ErrorMessegeToast();
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<UserOverviewModel> getUserOverview() async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+      final responseData = await _supabase
+          .from('useroverview')
+          .select()
+          .eq('user_id', userId)
+          .single();
+      UserOverviewModel userOverviewModel =
+          UserOverviewModel.fromJson(responseData);
+      return Future.value(userOverviewModel);
+    } on AuthException catch (e) {
+      ErrorMessegeToast();
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      ErrorMessegeToast();
+      throw Exception('An unexpected error occurred: $e');
     }
   }
 
@@ -224,6 +308,7 @@ class ApiService {
       ErrorMessegeToast.error();
       print('Gateway Timeout - 504: 게이트웨이 응답 시간이 초과되었습니다.');
     } else {
+      ErrorMessegeToast.error();
       print('Unknown error: $message');
     }
   }

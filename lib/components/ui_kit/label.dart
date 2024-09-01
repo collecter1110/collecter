@@ -1,41 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CollectionTag {
-  static Widget getTag(int index) {
+class Label {
+  static Widget getLabel(int index) {
     switch (index) {
       case 0:
-        return _buildTag(
+        return _buildLabel(
           text: 'New',
           backgroundColor: Color(0xFFfaedcd),
           textColor: Color(0xFF83c5be),
         );
       case 1:
-        return _buildTag(
+        return _buildLabel(
           text: 'Hot',
           backgroundColor: Color(0xffffe1dd),
           textColor: Color(0xFFdc595f),
         );
       case 2:
-        return _buildTag(
+        return _buildLabel(
           text: 'Trendy',
           backgroundColor: Color(0xFF234E70),
           textColor: Color(0xFFFBF8BE),
         );
       case 3:
-        return _buildTag(
+        return _buildLabel(
           text: 'Rising',
           backgroundColor: Color(0xFF243665),
           textColor: Color(0xFF8BD8BD),
         );
       case 4:
-        return _buildTag(
+        return _buildLabel(
           text: 'Best',
           backgroundColor: Color(0xFFb0c4b1),
           textColor: Color(0xFF4a5759),
         );
       default:
-        return _buildTag(
+        return _buildLabel(
           text: 'null',
           backgroundColor: Color(0xFFced4da),
           textColor: Colors.white,
@@ -43,7 +43,7 @@ class CollectionTag {
     }
   }
 
-  static Widget _buildTag({
+  static Widget _buildLabel({
     required String text,
     required Color backgroundColor,
     required Color textColor,

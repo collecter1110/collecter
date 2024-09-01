@@ -22,14 +22,18 @@ class CategoryButton extends StatelessWidget {
         horizontal: 14.0.w,
         vertical: 8.0.h,
       ),
-      child: Text(
-        categoryName,
-        style: TextStyle(
-          fontFamily: 'PretendardRegular',
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w700,
-          color: categoryState ? Theme.of(context).primaryColor : Colors.white,
-          height: 1.43,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          categoryName,
+          style: TextStyle(
+            fontFamily: 'PretendardRegular',
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w700,
+            color:
+                categoryState ? Theme.of(context).primaryColor : Colors.white,
+            height: 1.43,
+          ),
         ),
       ),
     );
