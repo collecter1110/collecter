@@ -10,7 +10,6 @@ class UserInfoProvider with ChangeNotifier {
   int? _selectingNum;
   int? _selectedNum;
   List<int>? _userLabelIds;
-
   UserInfoModel? get userInfo => _userInfo;
   List<int>? get userLabelIds => _userLabelIds;
   int get selectingNum => _selectingNum ?? 0;
@@ -39,19 +38,5 @@ class UserInfoProvider with ChangeNotifier {
     _selectingNum = _userOverview!.selectingNum;
     _selectedNum = _userOverview!.selectedNum;
     _userLabelIds = _userOverview!.labels;
-    // for (var timeStampedData in _userOverview!.selectingProperties ?? []) {
-    //   for (var createdTimeData in timeStampedData.times) {
-    //     for (var property in createdTimeData.properties) {
-    //       print('Selected Collection ID: ${property.selectedCollectionId}');
-    //       print('Selected Selection ID: ${property.selectedSelectionId}');
-    //       print('Selected User ID: ${property.selectedUserId}');
-    //       print('Selecting Collection ID: ${property.selectingCollectionId}');
-    //       print('Selecting User ID: ${property.selectingUserId}');
-    //       print('Selecting Selection ID: ${property.selectingSelectionId}');
-    //     }
-    //   }
-    // }
-
-    // _selectingNum = _userOverview?.selectingProperties?.length ?? 0;
   }
 }

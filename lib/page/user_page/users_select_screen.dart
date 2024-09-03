@@ -1,9 +1,11 @@
 import 'package:collect_er/components/widget/select_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/button/category_button.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
+import '../../data/provider/select_provider.dart';
 
 class UsersSelectScreen extends StatefulWidget {
   final int initialPageIndex;
@@ -23,12 +25,19 @@ class _UsersSelectScreenState extends State<UsersSelectScreen>
   @override
   void initState() {
     super.initState();
+    initializeData();
     _tabController = TabController(
         length: 2, vsync: this, initialIndex: widget.initialPageIndex);
     _tabController?.addListener(() {
       setState(() {
         // _currentTabIndex = _tabController?.index ?? 0;
       });
+    });
+  }
+
+  Future<void> initializeData() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SelectProvider>().getSelectData();
     });
   }
 

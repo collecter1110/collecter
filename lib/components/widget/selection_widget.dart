@@ -21,7 +21,9 @@ class SelectionWidget extends StatelessWidget {
       itemCount: 7,
       itemBuilder: (context, index) {
         return Selection(
-          index: index,
+          title: 'selectingDatas[index].selectionName',
+          imageFilePath: 'selectingDatas[index].imageFilePath?',
+          ownerName: 'selectingDatas[index].ownerName',
         );
       },
     );
