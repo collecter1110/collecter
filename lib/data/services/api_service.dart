@@ -263,18 +263,18 @@ class ApiService {
     }
   }
 
-  static Future<List<SelectingModel>> getSelectingModel() async {
+  static Future<List<SelectingModel>> getSelectModel(String properties) async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
 
       final responseData = await _supabase
           .from('selectingview')
-          .select('selecting_properties')
+          .select(properties)
           .eq('user_id', userId)
           .single();
-
-      List<dynamic> jsonDataList = responseData['selecting_properties'];
+      print('getSelectModel');
+      List<dynamic> jsonDataList = responseData[properties];
 
       List<SelectingModel> selectingModelList =
           jsonDataList.map((item) => SelectingModel.fromJson(item)).toList();

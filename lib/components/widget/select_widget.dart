@@ -9,13 +9,14 @@ import '../card/selection.dart';
 import '../ui_kit/select_status_tag.dart';
 
 class SelectWidget extends StatelessWidget {
-  final bool isSelecting;
-  const SelectWidget({super.key, required this.isSelecting});
+  const SelectWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<SelectProvider>(builder: (context, provider, child) {
-      List<String> keyList = provider.dateTimesMap.keys.toList();
+      List<String> _createdDateKeys = provider.createdDateKeys;
 
       return Container(
         color: Color(0xFFf8f9fa),
@@ -23,10 +24,9 @@ class SelectWidget extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 10.0.h),
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          itemCount: keyList.length,
+          itemCount: _createdDateKeys.length,
           itemBuilder: (context, index) {
-            List<SelectingData> selectingDatas =
-                provider.dateTimesMap[keyList[index]] ?? [];
+            List<SelectingData> selectDatas = provider.getSelectDatas(index);
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -38,7 +38,7 @@ class SelectWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        keyList[index],
+                        _createdDateKeys[index],
                         style: TextStyle(
                           color: Color(0xFFadb5bd),
                           fontSize: 12.0.sp,
@@ -70,20 +70,20 @@ class SelectWidget extends StatelessWidget {
                     crossAxisSpacing: 12.0.w,
                     childAspectRatio: 0.62,
                   ),
-                  itemCount: selectingDatas.length,
+                  itemCount: selectDatas.length,
                   itemBuilder: (context, index) {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SelectStatusTag(
-                          isSelecting: isSelecting,
-                          times: selectingDatas[index].createdTime,
+                          isSelecting: true,
+                          times: selectDatas[index].createdTime,
                         ),
                         Selection(
-                          title: selectingDatas[index].selectionName,
-                          imageFilePath: selectingDatas[index].imageFilePath,
-                          keywords: selectingDatas[index].keywords,
-                          ownerName: selectingDatas[index].ownerName,
+                          title: selectDatas[index].selectionName,
+                          imageFilePath: selectDatas[index].imageFilePath,
+                          keywords: selectDatas[index].keywords,
+                          ownerName: selectDatas[index].ownerName,
                         ),
                       ],
                     );

@@ -21,28 +21,36 @@ class UsersSelectScreen extends StatefulWidget {
 class _UsersSelectScreenState extends State<UsersSelectScreen>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
-
   @override
   void initState() {
     super.initState();
     initializeData();
     _tabController = TabController(
-        length: 2, vsync: this, initialIndex: widget.initialPageIndex);
-    _tabController?.addListener(() {
-      setState(() {
-        // _currentTabIndex = _tabController?.index ?? 0;
-      });
-    });
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialPageIndex,
+    );
+    _tabController!.addListener(_handleTabChange);
+  }
+
+  void _handleTabChange() {
+    if (_tabController!.indexIsChanging) {
+      setState(() {});
+    }
   }
 
   Future<void> initializeData() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SelectProvider>().getSelectData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = context.read<SelectProvider>();
+      provider.setPageChanged = widget.initialPageIndex;
     });
   }
 
   void _onTap(int index) {
     _tabController!.animateTo(index);
+    print('onTap');
+    final provider = context.read<SelectProvider>();
+    provider.setPageChanged = index;
   }
 
   @override
@@ -98,12 +106,8 @@ class _UsersSelectScreenState extends State<UsersSelectScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                SelectWidget(
-                  isSelecting: true,
-                ),
-                SelectWidget(
-                  isSelecting: false,
-                ),
+                SelectWidget(),
+                SelectWidget(),
               ],
             ),
           ),
