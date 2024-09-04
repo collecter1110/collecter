@@ -8,10 +8,10 @@ class SelectProvider with ChangeNotifier {
   Map<String, List<SelectingData>?> _selectedMap = {};
   List<SelectingModel> _selectingModels = [];
   List<SelectingModel> _selectedModels = [];
-  List<String> _createdDateKeys = [];
+  List<String> _createdDates = [];
   int? _currentPageNum;
 
-  List<String> get createdDateKeys => _createdDateKeys;
+  List<String> get createdDates => _createdDates;
   int? get currentPage => _currentPageNum;
 
   set setPageChanged(int currentPageNum) {
@@ -30,7 +30,7 @@ class SelectProvider with ChangeNotifier {
 
   Future<void> getCreatedDates() async {
     try {
-      _createdDateKeys = _currentPageNum == 0
+      _createdDates = _currentPageNum == 0
           ? _selectingMap.keys
               .where((key) => _selectingMap[key] != null)
               .toList()
@@ -45,8 +45,8 @@ class SelectProvider with ChangeNotifier {
 
   List<SelectingData> getSelectDatas(int index) {
     List<SelectingData>? _selectDatas = _currentPageNum == 0
-        ? (_selectingMap[_createdDateKeys[index]])
-        : (_selectedMap[_createdDateKeys[index]]);
+        ? (_selectingMap[_createdDates[index]])
+        : (_selectedMap[_createdDates[index]]);
 
     return _selectDatas ?? [];
   }

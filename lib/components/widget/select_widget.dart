@@ -16,7 +16,7 @@ class SelectWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<SelectProvider>(builder: (context, provider, child) {
-      List<String> _createdDateKeys = provider.createdDateKeys;
+      List<String> _createdDates = provider.createdDates;
 
       return Container(
         color: Color(0xFFf8f9fa),
@@ -24,7 +24,7 @@ class SelectWidget extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 10.0.h),
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          itemCount: _createdDateKeys.length,
+          itemCount: _createdDates.length,
           itemBuilder: (context, index) {
             List<SelectingData> selectDatas = provider.getSelectDatas(index);
 
@@ -38,7 +38,7 @@ class SelectWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        _createdDateKeys[index],
+                        _createdDates[index],
                         style: TextStyle(
                           color: Color(0xFFadb5bd),
                           fontSize: 12.0.sp,
