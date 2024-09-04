@@ -1,8 +1,11 @@
 import 'package:collect_er/components/button/bookmark_button.dart';
 import 'package:collect_er/data/model/keyword_model.dart';
+import 'package:collect_er/data/model/selecting_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
+import '../../data/provider/selection_detail_provider.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
@@ -11,6 +14,7 @@ class Selection extends StatelessWidget {
   final String? imageFilePath;
   final List<KeywordData>? keywords;
   final String ownerName;
+  final PropertiesData properties;
 
   const Selection({
     super.key,
@@ -18,16 +22,20 @@ class Selection extends StatelessWidget {
     this.imageFilePath,
     this.keywords,
     required this.ownerName,
+    required this.properties,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        context.read<SelectionDetailProvider>().getSelectionProperties =
+            properties;
+        await context.read<SelectionDetailProvider>().getSelectionDetailData();
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SelectionDetailScreen(title: title),
+            builder: (context) => SelectionDetailScreen(),
           ),
         );
       },

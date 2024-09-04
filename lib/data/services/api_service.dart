@@ -13,6 +13,32 @@ class ApiService {
   static final SupabaseClient _supabase = Supabase.instance.client;
   static final authUser = _supabase.auth.currentUser;
 
+// final authSubscription = _supabase.auth.onAuthStateChange.listen((data) {
+//   final AuthChangeEvent event = data.event;
+//   final Session? session = data.session;
+
+//   print('event: $event, session: $session');
+
+//   switch (event) {
+//     case AuthChangeEvent.initialSession:
+//     // handle initial session
+//     case AuthChangeEvent.signedIn:
+//     // handle signed in
+//     case AuthChangeEvent.signedOut:
+//     // handle signed out
+//     case AuthChangeEvent.passwordRecovery:
+//     // handle password recovery
+//     case AuthChangeEvent.tokenRefreshed:
+//     // handle token refreshed
+//     case AuthChangeEvent.userUpdated:
+//     // handle user updated
+//     case AuthChangeEvent.userDeleted:
+//     // handle user deleted
+//     case AuthChangeEvent.mfaChallengeVerified:
+//     // handle mfa challenge verified
+//   }
+// });
+
   static Future<bool> checkAccessToken() async {
     try {
       final session = Supabase.instance.client.auth.currentSession;
@@ -221,7 +247,7 @@ class ApiService {
       int userId = int.parse(userIdString!);
       final response = await _supabase
           .from('userinfo')
-          .select()
+          .select('name, email, description, image_file_path')
           .eq('user_id', userId)
           .single();
 
@@ -263,7 +289,7 @@ class ApiService {
     }
   }
 
-  static Future<List<SelectingModel>> getSelectModel(String properties) async {
+  static Future<List<SelectingModel>> getSelectModels(String properties) async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
@@ -274,6 +300,7 @@ class ApiService {
           .eq('user_id', userId)
           .single();
       print('getSelectModel');
+      print(responseData);
       List<dynamic> jsonDataList = responseData[properties];
 
       List<SelectingModel> selectingModelList =
@@ -289,29 +316,23 @@ class ApiService {
     }
   }
 
-  static Future<List<SelectionDetailModel>> getSelectionDetails(
-      bool isSelecting) async {
+  static Future<SelectionDetailModel> getSelectionDetails(
+      int collectionId, int selectionId, int userId) async {
     try {
-      final userIdString = await storage.read(key: 'USER_ID');
-      final int userId = int.parse(userIdString!);
-      Future<List<dynamic>> fetchSelections(String column) async {
-        return await _supabase.from('selections').select().eq(column, userId);
-      }
+      final responseData = await _supabase
+          .from('selections')
+          .select(
+              'owner_id, selection_name, selection_description, image_file_path, is_ordered, selection_link, items, keywords, created_at, owner_name')
+          .eq('collection_id', collectionId)
+          .eq('selection_id', selectionId)
+          .eq('user_id', userId)
+          .single();
 
-      List<SelectionDetailModel> parseSelectionModels(
-          List<dynamic> responseData) {
-        return responseData
-            .map((item) =>
-                SelectionDetailModel.fromJson(item as Map<String, dynamic>))
-            .toList();
-      }
+      print(responseData);
+      SelectionDetailModel selectionDetailModel =
+          SelectionDetailModel.fromJson(responseData);
 
-      final responseData = isSelecting
-          ? await fetchSelections('user_id')
-          : await fetchSelections('owner_id');
-      final selectionModels = parseSelectionModels(responseData);
-      print(selectionModels);
-      return selectionModels;
+      return selectionDetailModel;
     } on AuthException catch (e) {
       ErrorMessegeToast();
       throw Exception('Authentication error: ${e.message}');

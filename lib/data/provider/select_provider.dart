@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../model/selecting_model.dart';
 
 class SelectProvider with ChangeNotifier {
+  ConnectionState _state = ConnectionState.none;
   Map<String, List<SelectingData>?> _selectingMap = {};
   Map<String, List<SelectingData>?> _selectedMap = {};
   List<SelectingModel> _selectingModels = [];
@@ -11,6 +12,7 @@ class SelectProvider with ChangeNotifier {
   List<String> _createdDates = [];
   int? _currentPageNum;
 
+  ConnectionState get state => _state;
   List<String> get createdDates => _createdDates;
   int? get currentPage => _currentPageNum;
 
@@ -20,12 +22,22 @@ class SelectProvider with ChangeNotifier {
   }
 
   Future<void> getSelectData() async {
-    if (_currentPageNum == 0 && _selectingMap.isEmpty) {
-      await fetchSelectingData();
-    } else if (_currentPageNum == 1 && _selectedMap.isEmpty) {
-      await fetchSelectedData();
+    _state = ConnectionState.waiting;
+    notifyListeners();
+    await Future.delayed(Duration(seconds: 1));
+    try {
+      if (_currentPageNum == 0 && _selectingMap.isEmpty) {
+        await fetchSelectingData();
+      } else if (_currentPageNum == 1 && _selectedMap.isEmpty) {
+        await fetchSelectedData();
+      }
+      await getCreatedDates();
+      _state = ConnectionState.done;
+    } catch (e) {
+      _state = ConnectionState.none;
+    } finally {
+      notifyListeners();
     }
-    await getCreatedDates();
   }
 
   Future<void> getCreatedDates() async {
@@ -37,9 +49,8 @@ class SelectProvider with ChangeNotifier {
           : _selectedMap.keys
               .where((key) => _selectedMap[key] != null)
               .toList();
-      notifyListeners();
     } catch (e) {
-      print('Failed to fetch selecting data: $e');
+      print('Failed to fetch created dates data: $e');
     }
   }
 
@@ -54,7 +65,7 @@ class SelectProvider with ChangeNotifier {
   Future<void> fetchSelectingData() async {
     try {
       _selectingModels =
-          await ApiService.getSelectModel('selecting_properties');
+          await ApiService.getSelectModels('selecting_properties');
 
       for (var model in _selectingModels) {
         String createdDate = model.createdDate ?? '';
@@ -67,8 +78,6 @@ class SelectProvider with ChangeNotifier {
         }
       }
       print('selecting map $_selectingMap');
-
-      notifyListeners();
     } catch (e) {
       print('Failed to fetch selecting data: $e');
     }
@@ -76,7 +85,7 @@ class SelectProvider with ChangeNotifier {
 
   Future<void> fetchSelectedData() async {
     try {
-      _selectedModels = await ApiService.getSelectModel('selected_properties');
+      _selectedModels = await ApiService.getSelectModels('selected_properties');
 
       for (var model in _selectedModels) {
         String createdDate = model.createdDate ?? '';
@@ -89,8 +98,6 @@ class SelectProvider with ChangeNotifier {
         }
       }
       print('slected map : $_selectedMap');
-
-      notifyListeners();
     } catch (e) {
       print('Failed to fetch selected data: $e');
     }

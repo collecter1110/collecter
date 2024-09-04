@@ -25,6 +25,7 @@ class SelectingData {
   final List<KeywordData>? keywords;
   final String ownerName;
   final String? userName;
+  final PropertiesData properties;
 
   SelectingData({
     required this.createdTime,
@@ -33,6 +34,7 @@ class SelectingData {
     this.keywords,
     required this.ownerName,
     this.userName,
+    required this.properties,
   });
 
   SelectingData.fromJson(Map<String, dynamic> json)
@@ -45,5 +47,23 @@ class SelectingData {
                 .toList()
             : null,
         ownerName = json['owner_name'],
-        userName = json['user_name'] as String?;
+        userName = json['user_name'] as String?,
+        properties = PropertiesData.fromJson(json['properties']);
+}
+
+class PropertiesData {
+  final int collectionId;
+  final int selectionId;
+  final int userId;
+
+  PropertiesData({
+    required this.collectionId,
+    required this.selectionId,
+    required this.userId,
+  });
+
+  PropertiesData.fromJson(Map<String, dynamic> json)
+      : collectionId = json['collection_id'],
+        selectionId = json['selection_id'],
+        userId = json['user_id'];
 }

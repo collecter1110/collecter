@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LinkButton extends StatelessWidget {
-  const LinkButton({super.key});
+  final String linkUrl;
+  const LinkButton({
+    super.key,
+    required this.linkUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
