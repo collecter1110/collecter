@@ -17,7 +17,7 @@ class SelectWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<SelectProvider>(builder: (context, provider, child) {
       List<String> _createdDates = provider.createdDates;
-
+      bool _isSelected = provider.currentPage == 1;
       return Container(
         color: Color(0xFFf8f9fa),
         child: ListView.builder(
@@ -76,7 +76,7 @@ class SelectWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SelectStatusTag(
-                          isSelecting: true,
+                          userName: selectDatas[index].userName,
                           times: selectDatas[index].createdTime,
                         ),
                         Selection(
