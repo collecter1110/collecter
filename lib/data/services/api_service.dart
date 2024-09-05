@@ -352,19 +352,34 @@ class ApiService {
       final responseData = await _supabase
           .from('collections')
           .select(
-              'id, title, description, created_at,image_file_path, tags, user_name, primary_keywords, selection_num')
+              'id, title, description, created_at,image_file_path, tags, user_name, primary_keywords, selection_num, like_num')
           .eq('user_id', userId);
 
-      List<CollectionModel> selectionDetailModel =
+      List<CollectionModel> collections =
           responseData.map((item) => CollectionModel.fromJson(item)).toList();
 
-      return selectionDetailModel;
+      return collections;
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
       handleError('', 'getCollections error');
       throw Exception('An unexpected error occurred: $e');
     }
+  }
+
+  static Future<List<CollectionModel>> getLikeCollections() async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+    final response = await Supabase.instance.client
+        .from('likes')
+        .select('collections(*)')
+        .eq('user_id', userId);
+
+    final List<CollectionModel> likeCollections = response
+        .map((item) => CollectionModel.fromJson(item['collections']))
+        .toList();
+
+    return likeCollections;
   }
 
   static void handleError(String? statusCode, String? message) {

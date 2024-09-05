@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 
 class CollectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
-  List<CollectionModel>? _collections;
+  List<CollectionModel>? _myCollections;
+  List<CollectionModel>? _likeCollections;
 
-  List<CollectionModel>? get collections => _collections;
+  List<CollectionModel>? get myCollections => _myCollections;
+  List<CollectionModel>? get likeCollections => _likeCollections;
+
   ConnectionState get state => _state;
   int? get currentPage => _currentPageNum;
 
@@ -14,14 +17,19 @@ class CollectionProvider with ChangeNotifier {
 
   set setPageChanged(int currentPageNum) {
     _currentPageNum = currentPageNum;
-    getCollections();
+    getCollectionData();
   }
 
-  Future<void> getCollections() async {
+  Future<void> getCollectionData() async {
     _state = ConnectionState.waiting;
     print('getCollections');
+    // await Future.delayed(Duration(seconds: 1));
     try {
-      await fetchCollectionData();
+      if (_currentPageNum == 0 && _myCollections == null) {
+        await fetchCollectionData();
+      } else if (_currentPageNum == 1 && _likeCollections == null) {
+        await fetchLikeCollectionData();
+      }
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
@@ -30,11 +38,23 @@ class CollectionProvider with ChangeNotifier {
     }
   }
 
+  List<CollectionModel>? getCollections() {
+    return _currentPageNum == 0 ? _myCollections : _likeCollections;
+  }
+
   Future<void> fetchCollectionData() async {
     try {
-      _collections = await ApiService.getCollections();
+      _myCollections = await ApiService.getCollections();
     } catch (e) {
       print('Failed to fetch collections: $e');
+    }
+  }
+
+  Future<void> fetchLikeCollectionData() async {
+    try {
+      _likeCollections = await ApiService.getLikeCollections();
+    } catch (e) {
+      print('Failed to fetch like collections: $e');
     }
   }
 }

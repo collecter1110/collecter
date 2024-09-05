@@ -6,22 +6,23 @@ class CollectionModel {
   final String? description;
   final String createdAt;
   final String? imageFilePath;
-  final List<String>? tags;
+  final List<dynamic>? tags;
   final String userName;
   final List<KeywordData>? primaryKeywords;
   final int selectionNum;
+  final int likeNum;
 
-  CollectionModel({
-    required this.id,
-    required this.title,
-    this.description,
-    required this.createdAt,
-    this.imageFilePath,
-    this.tags,
-    required this.userName,
-    this.primaryKeywords,
-    required this.selectionNum,
-  });
+  CollectionModel(
+      {required this.id,
+      required this.title,
+      this.description,
+      required this.createdAt,
+      this.imageFilePath,
+      this.tags,
+      required this.userName,
+      this.primaryKeywords,
+      required this.selectionNum,
+      required this.likeNum});
 
   CollectionModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -36,5 +37,6 @@ class CollectionModel {
                 .map((item) => KeywordData.fromJson(item))
                 .toList()
             : null,
-        selectionNum = json['selection_num'];
+        selectionNum = json['selection_num'],
+        likeNum = json['like_num'];
 }
