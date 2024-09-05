@@ -3,11 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/selecting_model.dart';
-
 import '../../data/provider/select_provider.dart';
 import '../card/selection.dart';
-
-import '../pop_up/error_messege_toast.dart';
 import '../ui_kit/select_status_tag.dart';
 
 class SelectWidget extends StatelessWidget {
@@ -105,7 +102,6 @@ class SelectWidget extends StatelessWidget {
           ),
         );
       } else {
-        ErrorMessegeToast.error();
         return const Center(
           child: Text('Error occurred.'),
         );

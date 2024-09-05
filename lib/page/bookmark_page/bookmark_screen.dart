@@ -1,5 +1,7 @@
+import 'package:collect_er/data/provider/collection_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/button/category_button.dart';
 import '../../components/constants/screen_size.dart';
@@ -19,6 +21,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
   @override
   void initState() {
     super.initState();
+    initializeData();
     _tabController = TabController(length: 2, vsync: this);
     _tabController?.addListener(() {
       setState(() {
@@ -27,8 +30,17 @@ class _BookmarkScreenState extends State<BookmarkScreen>
     });
   }
 
+  Future<void> initializeData() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = context.read<CollectionProvider>();
+      provider.setPageChanged = 0;
+    });
+  }
+
   void _onTap(int index) {
     _tabController!.animateTo(index);
+    final provider = context.read<CollectionProvider>();
+    provider.setPageChanged = index;
   }
 
   @override
@@ -125,35 +137,14 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                   );
                 },
               ),
-              // bottom: TabBar(
-              //   controller: _tabController,
-              //   tabs: [
-              //     Tab(
-              //       child: CategoryButton(
-              //         categoryName: 'My Collection',
-              //         categoryState: false,
-              //       ),
-              //     ),
-              //     Tab(
-              //       child: CategoryButton(
-              //         categoryName: 'Like Collection',
-              //         categoryState: true,
-              //       ),
-              //     ),
-              //   ],
-              // ),
             ),
           ];
         },
         body: TabBarView(
           controller: _tabController,
           children: [
-            CollectionWidget(
-              isMyCollection: true,
-            ),
-            CollectionWidget(
-              isMyCollection: false,
-            ),
+            CollectionWidget(),
+            CollectionWidget(),
           ],
         ),
       ),

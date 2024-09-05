@@ -1,40 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../data/model/keyword_model.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../button/bookmark_button.dart';
 import '../ui_kit/keyword.dart';
 
 class Collection extends StatelessWidget {
-  final int index;
+  final String title;
+  final String? imageFilePath;
+  final List<KeywordData>? primaryKeywords;
+  final int selectionNum;
 
   const Collection({
     super.key,
-    required this.index,
+    required this.title,
+    this.imageFilePath,
+    this.primaryKeywords,
+    required this.selectionNum,
   });
 
   @override
   Widget build(BuildContext context) {
-    List<String> _titleName = [
-      '나만의 레시피북',
-      '다이어트 레시피',
-      '여름 코디룩',
-      '사고 싶은 화장품 리스트',
-      '저소음 기계식 키보드 리스트',
-      '읽은 책 목록',
-      '읽고 싶은 책 목록',
-    ];
-    List<String> _keywords = [
-      '요리',
-      '한식',
-    ];
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                CollectionDetailScreen(title: _titleName[index]),
+            builder: (context) => CollectionDetailScreen(title: title),
           ),
         );
       },
@@ -50,20 +43,12 @@ class Collection extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                       color: Color(0xFFf1f3f5),
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     color: Colors.black.withOpacity(0.1),
-                      //     spreadRadius: 0.5,
-                      //     blurRadius: 3,
-                      //     offset: Offset(0, 0),
-                      //   )
-                      // ],
                       borderRadius: BorderRadius.circular(8)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      index == 0
+                      imageFilePath != null
                           ? Expanded(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.all(
@@ -94,7 +79,7 @@ class Collection extends StatelessWidget {
                         height: 6.0.h,
                       ),
                       Text(
-                        '${_titleName[index]}',
+                        title,
                         style: TextStyle(
                           color: Color(0xFF343A40),
                           fontSize: 15.sp,
@@ -106,7 +91,7 @@ class Collection extends StatelessWidget {
                         maxLines: 1,
                       ),
                       Text(
-                        '45',
+                        '$selectionNum',
                         style: TextStyle(
                           color: Color(0xFF868e96),
                           fontSize: 14.sp,
@@ -115,20 +100,21 @@ class Collection extends StatelessWidget {
                           height: 1.43,
                         ),
                       ),
-                      index == 0
-                          ? Padding(
-                              padding: EdgeInsets.only(top: 10.0.h),
-                              child: Wrap(
+                      Padding(
+                        padding: EdgeInsets.only(top: 10.0.h),
+                        child: primaryKeywords != null
+                            ? Wrap(
                                 direction: Axis.horizontal,
                                 alignment: WrapAlignment.start,
                                 spacing: 5.0.w,
                                 runSpacing: 8.0.h,
-                                children: _keywords.map((keyword) {
-                                  return Keyword(keywordName: keyword);
+                                children: primaryKeywords!.map((keyword) {
+                                  return Keyword(
+                                      keywordName: keyword.keywordName);
                                 }).toList(),
-                              ),
-                            )
-                          : SizedBox.shrink()
+                              )
+                            : SizedBox.shrink(),
+                      )
                     ],
                   ),
                 ),

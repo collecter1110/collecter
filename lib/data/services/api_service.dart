@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/pop_up/error_messege_toast.dart';
+import '../model/collection_model.dart';
 import '../model/selection_detail_model.dart';
 import '../model/user_info_model.dart';
 import '../model/user_overview_model.dart';
@@ -55,6 +56,7 @@ class ApiService {
       return true;
     } catch (e) {
       print('checkAccessToken: $e');
+      handleError('', 'checkAccessToken error');
       return false;
     }
   }
@@ -342,7 +344,31 @@ class ApiService {
     }
   }
 
+  static Future<List<CollectionModel>> getCollections() async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+
+      final responseData = await _supabase
+          .from('collections')
+          .select(
+              'id, title, description, created_at,image_file_path, tags, user_name, primary_keywords, selection_num')
+          .eq('user_id', userId);
+
+      List<CollectionModel> selectionDetailModel =
+          responseData.map((item) => CollectionModel.fromJson(item)).toList();
+
+      return selectionDetailModel;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   static void handleError(String? statusCode, String? message) {
+    ErrorMessegeToast.error();
     if (statusCode == '400') {
       print('Bad Request - 400: 잘못된 요청입니다.');
     } else if (statusCode == '401') {
@@ -352,19 +378,14 @@ class ApiService {
     } else if (statusCode == '404') {
       print('Not Found - 404: 요청한 리소스를 찾을 수 없습니다.');
     } else if (statusCode == '500') {
-      ErrorMessegeToast.error();
       print('Internal Server Error - 500: 서버에 문제가 발생했습니다.');
     } else if (statusCode == '502') {
-      ErrorMessegeToast.error();
       print('Bad Gateway - 502: 잘못된 게이트웨이입니다.');
     } else if (statusCode == '503') {
-      ErrorMessegeToast.error();
       print('Service Unavailable - 503: 서비스가 일시적으로 이용 불가능합니다.');
     } else if (statusCode == '504') {
-      ErrorMessegeToast.error();
       print('Gateway Timeout - 504: 게이트웨이 응답 시간이 초과되었습니다.');
     } else {
-      ErrorMessegeToast.error();
       print('Unknown error: $message');
     }
   }
