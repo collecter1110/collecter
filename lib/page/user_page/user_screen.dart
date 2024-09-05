@@ -69,8 +69,8 @@ class UserScreen extends StatelessWidget {
                     return Center(child: CircularProgressIndicator());
                   }
                   final String _name = provider.userInfo!.name;
-                  final String _description = provider.userInfo!.description;
-                  final String _imageUrl = provider.userInfo!.imageUrl;
+                  final String? _description = provider.userInfo?.description;
+                  final String? _imageUrl = provider.userInfo?.imageFilePath;
 
                   final List<int> _usersLabelIds = provider.userLabelIds!;
                   final int selectingNum = provider.selectingNum;
@@ -115,7 +115,7 @@ class UserScreen extends StatelessWidget {
                                       height: 1.5,
                                     ),
                                   ),
-                                  _description != ''
+                                  _description != null
                                       ? Column(
                                           children: [
                                             SizedBox(
@@ -130,7 +130,7 @@ class UserScreen extends StatelessWidget {
                                                 fontWeight: FontWeight.w500,
                                                 height: 1.43,
                                               ),
-                                              text: _description,
+                                              text: _description!,
                                             ),
                                           ],
                                         )

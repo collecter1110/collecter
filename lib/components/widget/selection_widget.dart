@@ -1,3 +1,4 @@
+import 'package:collect_er/data/model/selecting_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -21,7 +22,12 @@ class SelectionWidget extends StatelessWidget {
       itemCount: 7,
       itemBuilder: (context, index) {
         return Selection(
-          index: index,
+          properties: PropertiesData.fromJson(
+            {"collection_id": 3, "selection_id": 2, "user_id": 31},
+          ),
+          title: 'selectingDatas[index].selectionName',
+          imageFilePath: 'selectingDatas[index].imageFilePath?',
+          ownerName: 'selectingDatas[index].ownerName',
         );
       },
     );

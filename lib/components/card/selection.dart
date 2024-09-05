@@ -1,37 +1,41 @@
 import 'package:collect_er/components/button/bookmark_button.dart';
+import 'package:collect_er/data/model/keyword_model.dart';
+import 'package:collect_er/data/model/selecting_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
+import '../../data/provider/selection_detail_provider.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
 class Selection extends StatelessWidget {
-  final int index;
+  final String title;
+  final String? imageFilePath;
+  final List<KeywordData>? keywords;
+  final String ownerName;
+  final PropertiesData properties;
 
   const Selection({
     super.key,
-    required this.index,
+    required this.title,
+    this.imageFilePath,
+    this.keywords,
+    required this.ownerName,
+    required this.properties,
   });
 
   @override
   Widget build(BuildContext context) {
-    List<String> _titleName = [
-      '낫또 김 파스타',
-      '깨먹는 초코 오나오',
-      '아삭이 고추 비빔밥',
-      '오이 두부 비빔밥',
-      '다이어트 초코 케이크',
-      '송이버섯 숙회',
-      '마녀 스프',
-    ];
-    List<String> _keywords = ['요리', '음식'];
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        context.read<SelectionDetailProvider>().getSelectionProperties =
+            properties;
+        await context.read<SelectionDetailProvider>().getSelectionDetailData();
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                SelectionDetailScreen(title: _titleName[index]),
+            builder: (context) => SelectionDetailScreen(),
           ),
         );
       },
@@ -56,7 +60,7 @@ class Selection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  index == 0
+                  imageFilePath != null
                       ? Expanded(
                           child: ClipRRect(
                             borderRadius: BorderRadius.only(
@@ -81,7 +85,7 @@ class Selection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${_titleName[index]}',
+                          title,
                           style: TextStyle(
                             color: Color(0xFF343A40),
                             fontSize: 15.sp,
@@ -94,21 +98,24 @@ class Selection extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 4.0.h),
-                          child: Wrap(
-                            direction: Axis.horizontal,
-                            alignment: WrapAlignment.start,
-                            spacing: 5.0.w,
-                            runSpacing: 8.0.h,
-                            children: _keywords.map((keyword) {
-                              return Keyword(keywordName: keyword);
-                            }).toList(),
-                          ),
+                          child: keywords != null
+                              ? Wrap(
+                                  direction: Axis.horizontal,
+                                  alignment: WrapAlignment.start,
+                                  spacing: 5.0.w,
+                                  runSpacing: 8.0.h,
+                                  children: keywords!.map((keyword) {
+                                    return Keyword(
+                                        keywordName: keyword.keywordName);
+                                  }).toList(),
+                                )
+                              : SizedBox.shrink(),
                         ),
                         SizedBox(
                           height: 4.0.h,
                         ),
                         Text(
-                          '김가희',
+                          ownerName,
                           style: TextStyle(
                             color: Color(0xFF868e96),
                             fontSize: 12.sp,

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:collect_er/data/model/selecting_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/pop_up/error_messege_toast.dart';
+import '../model/selection_detail_model.dart';
 import '../model/user_info_model.dart';
 import '../model/user_overview_model.dart';
 
@@ -10,6 +12,32 @@ class ApiService {
   static final storage = FlutterSecureStorage();
   static final SupabaseClient _supabase = Supabase.instance.client;
   static final authUser = _supabase.auth.currentUser;
+
+// final authSubscription = _supabase.auth.onAuthStateChange.listen((data) {
+//   final AuthChangeEvent event = data.event;
+//   final Session? session = data.session;
+
+//   print('event: $event, session: $session');
+
+//   switch (event) {
+//     case AuthChangeEvent.initialSession:
+//     // handle initial session
+//     case AuthChangeEvent.signedIn:
+//     // handle signed in
+//     case AuthChangeEvent.signedOut:
+//     // handle signed out
+//     case AuthChangeEvent.passwordRecovery:
+//     // handle password recovery
+//     case AuthChangeEvent.tokenRefreshed:
+//     // handle token refreshed
+//     case AuthChangeEvent.userUpdated:
+//     // handle user updated
+//     case AuthChangeEvent.userDeleted:
+//     // handle user deleted
+//     case AuthChangeEvent.mfaChallengeVerified:
+//     // handle mfa challenge verified
+//   }
+// });
 
   static Future<bool> checkAccessToken() async {
     try {
@@ -213,39 +241,13 @@ class ApiService {
     }
   }
 
-  // static Future<bool> signUp(String email, String userName, String imageUrl,
-  //     String description) async {
-  //   try {
-  //     final AuthResponse response = await _supabase.auth.(
-  //       email: email,
-  //       password: 'kgh753951',
-  //       data: {
-  //         'user_name': 'test_name',
-  //         'image_url': 'test_imageUrl',
-  //         'message': 'test_message',
-  //       },
-  //     );
-  //     if (response.user != null) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } on AuthException catch (e) {
-  //     handleError(e.statusCode, e.message);
-  //     return false;
-  //   } catch (e) {
-  //     print('signUp exception: $e');
-  //     return false;
-  //   }
-  // }
-
   static Future<UserInfoModel> getUserInfo() async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
       final response = await _supabase
           .from('userinfo')
-          .select()
+          .select('name, email, description, image_file_path')
           .eq('user_id', userId)
           .single();
 
@@ -271,12 +273,66 @@ class ApiService {
       int userId = int.parse(userIdString!);
       final responseData = await _supabase
           .from('useroverview')
-          .select()
+          .select('label_ids, selecting_num, selected_num')
           .eq('user_id', userId)
           .single();
+
       UserOverviewModel userOverviewModel =
           UserOverviewModel.fromJson(responseData);
       return Future.value(userOverviewModel);
+    } on AuthException catch (e) {
+      ErrorMessegeToast();
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      ErrorMessegeToast();
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<SelectingModel>> getSelectModels(String properties) async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+
+      final responseData = await _supabase
+          .from('selectingview')
+          .select(properties)
+          .eq('user_id', userId)
+          .single();
+      print('getSelectModel');
+      print(responseData);
+      List<dynamic> jsonDataList = responseData[properties];
+
+      List<SelectingModel> selectingModelList =
+          jsonDataList.map((item) => SelectingModel.fromJson(item)).toList();
+
+      return Future.value(selectingModelList);
+    } on AuthException catch (e) {
+      ErrorMessegeToast();
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      ErrorMessegeToast();
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<SelectionDetailModel> getSelectionDetails(
+      int collectionId, int selectionId, int userId) async {
+    try {
+      final responseData = await _supabase
+          .from('selections')
+          .select(
+              'owner_id, selection_name, selection_description, image_file_path, is_ordered, selection_link, items, keywords, created_at, owner_name')
+          .eq('collection_id', collectionId)
+          .eq('selection_id', selectionId)
+          .eq('user_id', userId)
+          .single();
+
+      print(responseData);
+      SelectionDetailModel selectionDetailModel =
+          SelectionDetailModel.fromJson(responseData);
+
+      return selectionDetailModel;
     } on AuthException catch (e) {
       ErrorMessegeToast();
       throw Exception('Authentication error: ${e.message}');

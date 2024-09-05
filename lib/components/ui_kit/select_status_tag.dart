@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SelectStatusTag extends StatelessWidget {
-  final bool isSelecting;
+  final String? userName;
+  final String times;
   const SelectStatusTag({
     super.key,
-    required this.isSelecting,
+    this.userName,
+    required this.times,
   });
 
   @override
@@ -37,7 +39,7 @@ class SelectStatusTag extends StatelessWidget {
                   width: 4.0.w,
                 ),
                 Text(
-                  '04:48:53',
+                  times,
                   style: TextStyle(
                     color: Color(0xFF868e96),
                     fontSize: 10.0.sp,
@@ -48,10 +50,10 @@ class SelectStatusTag extends StatelessWidget {
                 ),
               ],
             ),
-            isSelecting
+            userName == null
                 ? SizedBox.shrink()
                 : Text(
-                    'test_01',
+                    userName!,
                     style: TextStyle(
                       color: Color(0xFF212529),
                       fontSize: 10.0.sp,

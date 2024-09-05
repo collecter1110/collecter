@@ -6,9 +6,11 @@ import '../card/order_item.dart';
 
 class SelectionItemWidget extends StatelessWidget {
   final bool isOrder;
+  final int itemLength;
   const SelectionItemWidget({
     super.key,
     required this.isOrder,
+    required this.itemLength,
   });
 
   @override
@@ -39,8 +41,8 @@ class SelectionItemWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 20.0.h),
             shrinkWrap: true,
             primary: false,
-            scrollDirection: Axis.vertical,
-            itemCount: 3,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: itemLength,
             itemBuilder: (context, index) {
               return Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0.w),

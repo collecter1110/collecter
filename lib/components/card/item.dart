@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
+import '../../data/model/item_model.dart';
+import '../../data/model/selection_detail_model.dart';
+import '../../data/provider/selection_detail_provider.dart';
 import '../button/link_button.dart';
 
 class Item extends StatelessWidget {
@@ -9,9 +13,12 @@ class Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> _ItemTitle = ['상의', '하의', '신발'];
-    return Expanded(
-      child: Container(
+    return Consumer<SelectionDetailProvider>(
+        builder: (context, provider, child) {
+      final SelectionDetailModel _selection = provider.selectionDetailModel!;
+      List<ItemData> itemData = _selection.items!;
+
+      return Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -31,8 +38,7 @@ class Item extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                // '상의 \n브랜드 : 엽페\n사이즈 : M',
-                '재료를 손질해 주세요.',
+                itemData[index].itemTitle,
                 style: TextStyle(
                   color: Color(0xFF343a40),
                   fontSize: 14.sp,
@@ -44,11 +50,15 @@ class Item extends StatelessWidget {
               SizedBox(
                 height: 16.0.h,
               ),
-              LinkButton(),
+              itemData[index].itemLink != null
+                  ? LinkButton(
+                      linkUrl: itemData[index].itemLink!,
+                    )
+                  : SizedBox.shrink()
             ],
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

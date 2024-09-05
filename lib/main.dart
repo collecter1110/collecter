@@ -7,6 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'data/provider/keyword_provider.dart';
 import 'data/provider/page_route_provider.dart';
+import 'data/provider/select_provider.dart';
+import 'data/provider/selection_detail_provider.dart';
 import 'data/provider/tag_provider.dart';
 import 'page/splash/splash_screen.dart';
 
@@ -32,6 +34,12 @@ void main() async {
         ),
         ChangeNotifierProvider<UserInfoProvider>(
           create: (context) => UserInfoProvider(),
+        ),
+        ChangeNotifierProvider<SelectProvider>(
+          create: (context) => SelectProvider(),
+        ),
+        ChangeNotifierProvider<SelectionDetailProvider>(
+          create: (context) => SelectionDetailProvider(),
         ),
       ],
       builder: (context, child) {
