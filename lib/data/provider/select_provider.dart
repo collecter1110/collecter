@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../model/selecting_model.dart';
 
 class SelectProvider with ChangeNotifier {
-  ConnectionState _state = ConnectionState.none;
+  ConnectionState _state = ConnectionState.waiting;
   Map<String, List<SelectingData>?> _selectingMap = {};
   Map<String, List<SelectingData>?> _selectedMap = {};
   List<SelectingModel> _selectingModels = [];
@@ -23,8 +23,7 @@ class SelectProvider with ChangeNotifier {
 
   Future<void> getSelectData() async {
     _state = ConnectionState.waiting;
-    notifyListeners();
-    await Future.delayed(Duration(seconds: 1));
+
     try {
       if (_currentPageNum == 0 && _selectingMap.isEmpty) {
         await fetchSelectingData();

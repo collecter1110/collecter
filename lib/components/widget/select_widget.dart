@@ -105,8 +105,7 @@ class SelectWidget extends StatelessWidget {
           ),
         );
       } else {
-        ErrorMessegeToast.error(); // 에러 토스트 표시
-        print('get error');
+        ErrorMessegeToast.error();
         return const Center(
           child: Text('Error occurred.'),
         );
