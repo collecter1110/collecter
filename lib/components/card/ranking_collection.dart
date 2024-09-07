@@ -36,14 +36,14 @@ class RankingCollection extends StatelessWidget {
     ];
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CollectionDetailScreen(
-              title: _name[index],
-            ),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => CollectionDetailScreen(
+        //       titlce: _name[index],
+        //     ),
+        //   ),
+        // );
       },
       child: AspectRatio(
         aspectRatio: ratio,
@@ -141,9 +141,7 @@ class RankingCollection extends StatelessWidget {
                 top: 4.0.h,
                 right: 0.0,
                 child: BookmarkButton(
-                  listId: 0,
                   isBookMarked: true,
-                  inListDetail: false,
                 ),
               ),
             ],

@@ -330,7 +330,6 @@ class ApiService {
           .eq('user_id', userId)
           .single();
 
-      print(responseData);
       SelectionDetailModel selectionDetailModel =
           SelectionDetailModel.fromJson(responseData);
 
@@ -349,14 +348,54 @@ class ApiService {
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
 
-      final responseData = await _supabase
-          .from('collections')
-          .select(
-              'id, title, description, created_at,image_file_path, tags, user_name, primary_keywords, selection_num, like_num')
-          .eq('user_id', userId);
+      // final responseData = await _supabase
+      //     .from('collections')
+      //     .select(
+      //         'id, title, description, created_at,image_file_path, tags, user_name, primary_keywords, selection_num, like_num')
+      //     .eq('user_id', userId);
+      final responseData = await _supabase.from('collections').select('''
+        id, 
+        title, 
+        description, 
+        created_at, 
+        image_file_path, 
+        tags, 
+        user_name, 
+        primary_keywords, 
+        selection_num, 
+        like_num, 
+        likes(user_id)
+        ''').eq('user_id', userId);
 
-      List<CollectionModel> collections =
-          responseData.map((item) => CollectionModel.fromJson(item)).toList();
+      print(responseData);
+
+      // List<Map<String, dynamic>> modifiedData = [];
+
+      // for (var collection in responseData) {
+      //   bool isLiked = false;
+
+      //   if (collection['likes'] != null) {
+      //     for (var like in collection['likes']) {
+      //       if (like['user_id'] == userId) {
+      //         isLiked = true;
+      //         break;
+      //       }
+      //     }
+      //   }
+
+      //   modifiedData.add({
+      //     ...collection,
+      //     'is_liked': isLiked,
+      //   });
+      // }
+      List<CollectionModel> collections = responseData.map((item) {
+        // 'likes' 필드에서 현재 사용자가 좋아요를 눌렀는지 확인
+        bool hasLiked = (item['likes'] as List<dynamic>)
+            .any((like) => like['user_id'] == userId);
+
+        // CollectionModel을 생성하면서 hasLiked 값을 추가로 전달
+        return CollectionModel.fromJson(item, hasLiked: hasLiked);
+      }).toList();
 
       return collections;
     } on AuthException catch (e) {
@@ -376,7 +415,8 @@ class ApiService {
         .eq('user_id', userId);
 
     final List<CollectionModel> likeCollections = response
-        .map((item) => CollectionModel.fromJson(item['collections']))
+        .map((item) =>
+            CollectionModel.fromJson(item['collections'], hasLiked: true))
         .toList();
 
     return likeCollections;

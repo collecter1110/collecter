@@ -73,6 +73,7 @@ class SelectProvider with ChangeNotifier {
         if (createdDate.isNotEmpty && data.isNotEmpty) {
           _selectingMap[createdDate] = data;
         } else {
+          // {: null} 이런 형식으로 저장
           _selectingMap[createdDate] = null;
         }
       }
@@ -93,6 +94,7 @@ class SelectProvider with ChangeNotifier {
         if (createdDate.isNotEmpty && data.isNotEmpty) {
           _selectedMap[createdDate] = data;
         } else {
+          // {: null} 이런 형식으로 저장
           _selectedMap[createdDate] = null;
         }
       }

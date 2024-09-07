@@ -34,10 +34,7 @@ class CollectionWidget extends StatelessWidget {
             final CollectionModel _collection = _collections![index];
 
             return Collection(
-              title: _collection.title,
-              imageFilePath: _collection.imageFilePath,
-              primaryKeywords: _collection.primaryKeywords,
-              selectionNum: _collection.selectionNum,
+              collectionDetail: _collection,
             );
           },
         );

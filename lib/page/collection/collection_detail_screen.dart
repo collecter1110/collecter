@@ -5,14 +5,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/button/bookmark_button.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/keyword.dart';
-
 import '../../components/ui_kit/tag_text_style.dart';
+import '../../data/model/collection_model.dart';
 
 class CollectionDetailScreen extends StatelessWidget {
-  final String title;
   const CollectionDetailScreen({
     super.key,
-    required this.title,
   });
 
   @override
@@ -41,7 +39,7 @@ class CollectionDetailScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        title,
+                        'title',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 22.sp,
@@ -53,9 +51,7 @@ class CollectionDetailScreen extends StatelessWidget {
                         maxLines: 1,
                       ),
                       BookmarkButton(
-                        listId: 0,
                         isBookMarked: true,
-                        inListDetail: true,
                       ),
                     ],
                   ),

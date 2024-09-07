@@ -28,10 +28,8 @@ class _AddScreenState extends State<AddScreen>
       setState(() {
         if (_tabController!.indexIsChanging) {
           if (_tabController!.index == 0) {
-            print('dddd');
             Provider.of<TagProvider>(context, listen: false).clearTag();
           } else if (_tabController!.index == 1) {
-            print('dd');
             Provider.of<KeywordProvider>(context, listen: false).clearKeyword();
           }
         }
