@@ -1,36 +1,42 @@
 import 'item_model.dart';
 import 'keyword_model.dart';
 
-class SelectionDetailModel {
-  final int ownerId;
+class SelectionModel {
+  final int? collectionId;
+  final int? selectionId;
+  final int? ownerId;
   final String selectionName;
   final String? selectionDescription;
-  final bool isOrdered;
+  final bool? isOrdered;
   final String? selectionLink;
   final String? imageFilePath;
   final List<ItemData>? items;
   final List<KeywordData>? keywords;
-  final String createdAt;
+  final String? createdAt;
   final String ownerName;
 
-  SelectionDetailModel({
-    required this.ownerId,
+  SelectionModel({
+    this.collectionId,
+    this.selectionId,
+    this.ownerId,
     required this.selectionName,
     this.selectionDescription,
-    required this.isOrdered,
+    this.isOrdered,
     this.selectionLink,
     this.imageFilePath,
     this.items,
     this.keywords,
-    required this.createdAt,
+    this.createdAt,
     required this.ownerName,
   });
 
-  SelectionDetailModel.fromJson(Map<String, dynamic> json)
-      : ownerId = json['owner_id'],
+  SelectionModel.fromJson(Map<String, dynamic> json)
+      : collectionId = json['collection_id'] as int?,
+        selectionId = json['selection_id'] as int?,
+        ownerId = json['owner_id'] as int?,
         selectionName = json['selection_name'],
         selectionDescription = json['selection_description'] as String?,
-        isOrdered = json['is_ordered'],
+        isOrdered = json['is_ordered'] as bool?,
         selectionLink = json['selection_link'] as String?,
         imageFilePath = json['image_file_path'] as String?,
         items = json['items'] != null
@@ -43,6 +49,6 @@ class SelectionDetailModel {
                 .map((item) => KeywordData.fromJson(item))
                 .toList()
             : null,
-        createdAt = json['created_at'].toString(),
+        createdAt = json['created_at'] as String?,
         ownerName = json['owner_name'];
 }

@@ -3,18 +3,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/selecting_model.dart';
-import '../../data/provider/select_provider.dart';
+import '../../data/provider/selecting_provider.dart';
 import '../card/selection.dart';
-import '../ui_kit/select_status_tag.dart';
+import '../ui_kit/status_tag.dart';
 
-class SelectWidget extends StatelessWidget {
-  const SelectWidget({
+class SelectingWidget extends StatelessWidget {
+  const SelectingWidget({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SelectProvider>(builder: (context, provider, child) {
+    return Consumer<SelectingProvider>(builder: (context, provider, child) {
       List<String> _createdDates = provider.createdDates;
       if (provider.state == ConnectionState.waiting) {
         return Center(
@@ -81,7 +81,7 @@ class SelectWidget extends StatelessWidget {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SelectStatusTag(
+                          StatusTag(
                             userName: selectDatas[index].userName,
                             times: selectDatas[index].createdTime,
                           ),

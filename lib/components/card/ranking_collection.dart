@@ -142,6 +142,7 @@ class RankingCollection extends StatelessWidget {
                 right: 0.0,
                 child: BookmarkButton(
                   isBookMarked: true,
+                  likedNum: 100,
                 ),
               ),
             ],

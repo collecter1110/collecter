@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/item_model.dart';
-import '../../data/model/selection_detail_model.dart';
-import '../../data/provider/selection_detail_provider.dart';
+import '../../data/model/selection_model.dart';
+import '../../data/provider/selection_provider.dart';
 import '../button/link_button.dart';
 
 class Item extends StatelessWidget {
@@ -13,9 +13,8 @@ class Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SelectionDetailProvider>(
-        builder: (context, provider, child) {
-      final SelectionDetailModel _selection = provider.selectionDetailModel!;
+    return Consumer<SelectionProvider>(builder: (context, provider, child) {
+      final SelectionModel _selection = provider.selectionDetail!;
       List<ItemData> itemData = _selection.items!;
 
       return Container(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class SelectStatusTag extends StatelessWidget {
+class StatusTag extends StatelessWidget {
   final String? userName;
   final String times;
-  const SelectStatusTag({
+  const StatusTag({
     super.key,
     this.userName,
     required this.times,

@@ -4,26 +4,26 @@ class CollectionModel {
   final int id;
   final String title;
   final String? description;
-  final String createdAt;
+  final String? createdAt;
   final String? imageFilePath;
   final List<dynamic>? tags;
   final String userName;
   final List<KeywordData>? primaryKeywords;
   final int selectionNum;
-  final int likeNum;
+  final int? likeNum;
   final bool isLiked; // 좋아요 여부 필드
 
   CollectionModel({
     required this.id,
     required this.title,
     this.description,
-    required this.createdAt,
+    this.createdAt,
     this.imageFilePath,
     this.tags,
     required this.userName,
     this.primaryKeywords,
     required this.selectionNum,
-    required this.likeNum,
+    this.likeNum,
     required this.isLiked, // 필수 매개변수로 설정
   });
 
@@ -34,15 +34,15 @@ class CollectionModel {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      createdAt: json['created_at'],
-      imageFilePath: json['image_file_path'],
-      tags: json['tags'],
+      createdAt: json['created_at'] as String?,
+      imageFilePath: json['image_file_path'] as String?,
+      tags: json['tags'] as List<dynamic>?,
       userName: json['user_name'],
       primaryKeywords: (json['primary_keywords'] as List<dynamic>?)
           ?.map((keyword) => KeywordData.fromJson(keyword))
           .toList(),
       selectionNum: json['selection_num'],
-      likeNum: json['like_num'],
+      likeNum: json['like_num'] as int?,
       isLiked: hasLiked, // hasLiked 값을 isLiked에 직접 할당
     );
   }

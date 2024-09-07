@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BookmarkButton extends StatelessWidget {
   final bool isBookMarked;
+  final int likedNum;
 
   const BookmarkButton({
     required this.isBookMarked,
+    required this.likedNum,
     Key? key,
   }) : super(key: key);
 

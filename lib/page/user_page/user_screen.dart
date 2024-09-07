@@ -9,7 +9,7 @@ import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/label.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../data/provider/user_info_provider.dart';
-import 'users_select_screen.dart';
+import 'selecting_screen.dart';
 
 class UserScreen extends StatelessWidget {
   const UserScreen({super.key});
@@ -183,7 +183,7 @@ class UserScreen extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UsersSelectScreen(
+                                    builder: (context) => SelectingScreen(
                                       initialPageIndex: 0,
                                     ),
                                   ),
@@ -197,7 +197,7 @@ class UserScreen extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UsersSelectScreen(
+                                    builder: (context) => SelectingScreen(
                                       initialPageIndex: 1,
                                     ),
                                   ),

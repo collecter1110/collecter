@@ -1,24 +1,24 @@
-import 'package:collect_er/components/widget/select_widget.dart';
+import 'package:collect_er/components/widget/selecting_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/button/category_button.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
-import '../../data/provider/select_provider.dart';
+import '../../data/provider/selecting_provider.dart';
 
-class UsersSelectScreen extends StatefulWidget {
+class SelectingScreen extends StatefulWidget {
   final int initialPageIndex;
-  const UsersSelectScreen({
+  const SelectingScreen({
     super.key,
     required this.initialPageIndex,
   });
 
   @override
-  State<UsersSelectScreen> createState() => _UsersSelectScreenState();
+  State<SelectingScreen> createState() => _UsersSelectScreenState();
 }
 
-class _UsersSelectScreenState extends State<UsersSelectScreen>
+class _UsersSelectScreenState extends State<SelectingScreen>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
   @override
@@ -41,7 +41,7 @@ class _UsersSelectScreenState extends State<UsersSelectScreen>
 
   Future<void> initializeData() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final provider = context.read<SelectProvider>();
+      final provider = context.read<SelectingProvider>();
       provider.setPageChanged = widget.initialPageIndex;
     });
   }
@@ -49,7 +49,7 @@ class _UsersSelectScreenState extends State<UsersSelectScreen>
   void _onTap(int index) {
     _tabController!.animateTo(index);
     print('onTap');
-    final provider = context.read<SelectProvider>();
+    final provider = context.read<SelectingProvider>();
     provider.setPageChanged = index;
   }
 
@@ -106,8 +106,8 @@ class _UsersSelectScreenState extends State<UsersSelectScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                SelectWidget(),
-                SelectWidget(),
+                SelectingWidget(),
+                SelectingWidget(),
               ],
             ),
           ),

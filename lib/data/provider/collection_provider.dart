@@ -6,9 +6,12 @@ class CollectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
   List<CollectionModel>? _myCollections;
   List<CollectionModel>? _likeCollections;
+  CollectionModel? _collectionDetail;
+  int? _collectionId;
 
   List<CollectionModel>? get myCollections => _myCollections;
   List<CollectionModel>? get likeCollections => _likeCollections;
+  CollectionModel? get collectionDetail => _collectionDetail;
 
   ConnectionState get state => _state;
   int? get currentPage => _currentPageNum;
@@ -18,6 +21,10 @@ class CollectionProvider with ChangeNotifier {
   set setPageChanged(int currentPageNum) {
     _currentPageNum = currentPageNum;
     getCollectionData();
+  }
+
+  set getCollectionId(int collectionId) {
+    _collectionId = collectionId;
   }
 
   Future<void> getCollectionData() async {
@@ -55,6 +62,19 @@ class CollectionProvider with ChangeNotifier {
       _likeCollections = await ApiService.getLikeCollections();
     } catch (e) {
       print('Failed to fetch like collections: $e');
+    }
+  }
+
+  Future<void> getCollectionDetailData() async {
+    await fetchCollectionDetail();
+  }
+
+  Future<void> fetchCollectionDetail() async {
+    try {
+      _collectionDetail = await ApiService.getCollectionDetail(_collectionId!);
+      notifyListeners();
+    } catch (e) {
+      print('Failed to fetch collection detail data: $e');
     }
   }
 }

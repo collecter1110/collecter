@@ -1,7 +1,9 @@
 import 'package:collect_er/data/model/collection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
+import '../../data/provider/collection_provider.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
@@ -16,7 +18,10 @@ class Collection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        context.read<CollectionProvider>().getCollectionId =
+            collectionDetail.id;
+        await context.read<CollectionProvider>().getCollectionDetailData();
         Navigator.push(
           context,
           MaterialPageRoute(

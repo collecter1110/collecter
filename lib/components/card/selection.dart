@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/provider/selection_detail_provider.dart';
+import '../../data/provider/selection_provider.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
@@ -28,9 +28,8 @@ class Selection extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        context.read<SelectionDetailProvider>().getSelectionProperties =
-            properties;
-        await context.read<SelectionDetailProvider>().getSelectionDetailData();
+        context.read<SelectionProvider>().getSelectionProperties = properties;
+        await context.read<SelectionProvider>().getSelectionDetailData();
         Navigator.push(
           context,
           MaterialPageRoute(
