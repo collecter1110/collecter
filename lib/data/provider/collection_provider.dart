@@ -67,6 +67,7 @@ class CollectionProvider with ChangeNotifier {
 
   Future<void> getCollectionDetailData() async {
     await fetchCollectionDetail();
+    print('getCollectionData');
   }
 
   Future<void> fetchCollectionDetail() async {

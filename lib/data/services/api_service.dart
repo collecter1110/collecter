@@ -449,6 +449,25 @@ class ApiService {
     }
   }
 
+  Future<void> actionLike(int collectionId) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+    await Supabase.instance.client.from('likes').insert({
+      'user_id': userId,
+      'collection_id': collectionId,
+    });
+  }
+
+  Future<void> actionUnlike(int collectionId) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+    await Supabase.instance.client
+        .from('likes')
+        .delete()
+        .eq('user_id', userId)
+        .eq('collection_id', collectionId);
+  }
+
   static void handleError(String? statusCode, String? message) {
     ErrorMessegeToast.error();
     if (statusCode == '400') {

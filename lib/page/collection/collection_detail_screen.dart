@@ -1,10 +1,11 @@
+import 'package:collect_er/components/button/like_button.dart';
 import 'package:collect_er/components/widget/selection_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../components/button/bookmark_button.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
+import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
 import '../../components/ui_kit/tag_text_style.dart';
 import '../../data/model/collection_model.dart';
@@ -54,8 +55,9 @@ class CollectionDetailScreen extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
-                        BookmarkButton(
-                          isBookMarked: _collectionDetail.isLiked,
+                        likedButton(
+                          collectionId: _collectionDetail.id,
+                          isLiked: _collectionDetail.isLiked,
                           likedNum: _collectionDetail.likeNum!,
                         ),
                       ],
@@ -99,6 +101,19 @@ class CollectionDetailScreen extends StatelessWidget {
                       ],
                     ),
                     SizedBox(
+                      height: 22.0.h,
+                    ),
+                    ExpandableText(
+                        maxLine: 3,
+                        textStyle: TextStyle(
+                          color: Color(0xFF343a40),
+                          fontSize: 14.sp,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          height: 1.43,
+                        ),
+                        text: _collectionDetail.description ?? ''),
+                    SizedBox(
                       height: 32.0.h,
                     ),
                     Padding(
@@ -109,9 +124,9 @@ class CollectionDetailScreen extends StatelessWidget {
                               alignment: WrapAlignment.start,
                               spacing: 5.0.w,
                               runSpacing: 5.0.h,
-                              children: _collectionDetail.tags!.map((keyword) {
+                              children: _collectionDetail.tags!.map((tag) {
                                 return TagTextStyle(
-                                  name: keyword,
+                                  name: tag,
                                   color: Color(0xFF868E96),
                                 );
                               }).toList(),

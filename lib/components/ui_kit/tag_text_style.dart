@@ -8,29 +8,31 @@ class TagTextStyle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          '# ',
-          style: TextStyle(
-            color: color,
-            fontFamily: 'PretendardRegular',
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w500,
-            height: 1,
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: '# ',
+            style: TextStyle(
+              color: color,
+              fontFamily: 'PretendardRegular',
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w500,
+              height: 1,
+            ),
           ),
-        ),
-        Text(
-          name,
-          style: TextStyle(
-            color: color,
-            fontSize: 13.sp,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w500,
-            height: 1.5,
+          TextSpan(
+            text: name,
+            style: TextStyle(
+              color: color,
+              fontFamily: 'Pretendard',
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
