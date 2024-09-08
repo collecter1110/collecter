@@ -200,7 +200,9 @@ class _HomeScreenState extends State<HomeScreen>
               padding: EdgeInsets.symmetric(
                 horizontal: 18.0.w,
               ),
-              child: SelectionWidget(),
+              child: SelectionWidget(
+                collectionId: 0,
+              ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(

@@ -4,7 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/pop_up/error_messege_toast.dart';
-import '../model/selection_detail_model.dart';
+import '../model/collection_model.dart';
+import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
 import '../model/user_overview_model.dart';
 
@@ -55,6 +56,7 @@ class ApiService {
       return true;
     } catch (e) {
       print('checkAccessToken: $e');
+      handleError('', 'checkAccessToken error');
       return false;
     }
   }
@@ -289,7 +291,7 @@ class ApiService {
     }
   }
 
-  static Future<List<SelectingModel>> getSelectModels(String properties) async {
+  static Future<List<SelectingModel>> getSelectings(String properties) async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
@@ -299,8 +301,7 @@ class ApiService {
           .select(properties)
           .eq('user_id', userId)
           .single();
-      print('getSelectModel');
-      print(responseData);
+
       List<dynamic> jsonDataList = responseData[properties];
 
       List<SelectingModel> selectingModelList =
@@ -316,23 +317,20 @@ class ApiService {
     }
   }
 
-  static Future<SelectionDetailModel> getSelectionDetails(
-      int collectionId, int selectionId, int userId) async {
+  static Future<List<SelectionModel>> getSelections(
+    int collectionId,
+  ) async {
     try {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'owner_id, selection_name, selection_description, image_file_path, is_ordered, selection_link, items, keywords, created_at, owner_name')
-          .eq('collection_id', collectionId)
-          .eq('selection_id', selectionId)
-          .eq('user_id', userId)
-          .single();
+              'collection_id, selection_id, selection_name, image_file_path, keywords, owner_name')
+          .eq('collection_id', collectionId);
 
-      print(responseData);
-      SelectionDetailModel selectionDetailModel =
-          SelectionDetailModel.fromJson(responseData);
+      List<SelectionModel> selections =
+          responseData.map((item) => SelectionModel.fromJson(item)).toList();
 
-      return selectionDetailModel;
+      return Future.value(selections);
     } on AuthException catch (e) {
       ErrorMessegeToast();
       throw Exception('Authentication error: ${e.message}');
@@ -342,7 +340,136 @@ class ApiService {
     }
   }
 
+  static Future<SelectionModel> getSelectionDetail(
+    int collectionId,
+    int selectionId,
+  ) async {
+    try {
+      final responseData = await _supabase
+          .from('selections')
+          .select(
+              'owner_id, selection_name, selection_description, image_file_path, is_ordered, selection_link, items, keywords, created_at, owner_name')
+          .eq('collection_id', collectionId)
+          .eq('selection_id', selectionId)
+          .single();
+
+      SelectionModel selectionDetailModel =
+          SelectionModel.fromJson(responseData);
+
+      return Future.value(selectionDetailModel);
+    } on AuthException catch (e) {
+      ErrorMessegeToast();
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      ErrorMessegeToast();
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<CollectionModel>> getCollections() async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+
+      final responseData = await _supabase.from('collections').select('''
+        id, 
+        title, 
+        image_file_path, 
+        user_name, 
+        primary_keywords, 
+        selection_num, 
+        likes(user_id)
+        ''').eq('user_id', userId);
+
+      List<CollectionModel> collections = responseData.map((item) {
+        // 'likes' 필드에서 현재 사용자가 좋아요를 눌렀는지 확인
+        bool hasLiked = (item['likes'] as List<dynamic>)
+            .any((like) => like['user_id'] == userId);
+
+        // CollectionModel을 생성하면서 hasLiked 값을 추가로 전달
+        return CollectionModel.fromJson(item, hasLiked: hasLiked);
+      }).toList();
+
+      return collections;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<CollectionModel>> getLikeCollections() async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+    final response = await Supabase.instance.client
+        .from('likes')
+        .select('collections(*)')
+        .eq('user_id', userId);
+
+    final List<CollectionModel> likeCollections = response
+        .map((item) =>
+            CollectionModel.fromJson(item['collections'], hasLiked: true))
+        .toList();
+
+    return likeCollections;
+  }
+
+  static Future<CollectionModel> getCollectionDetail(int collectionId) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+
+    try {
+      final responseData = await _supabase.from('collections').select('''
+        id, 
+        title, 
+        description, 
+        created_at, 
+        image_file_path, 
+        tags, 
+        user_name, 
+        primary_keywords, 
+        selection_num, 
+        like_num, 
+        likes(user_id)
+        ''').eq('id', collectionId).single();
+
+      bool hasLiked = (responseData['likes'] as List<dynamic>)
+          .any((like) => like['user_id'] == userId);
+
+      CollectionModel collection =
+          CollectionModel.fromJson(responseData, hasLiked: hasLiked);
+
+      return collection;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  Future<void> actionLike(int collectionId) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+    await Supabase.instance.client.from('likes').insert({
+      'user_id': userId,
+      'collection_id': collectionId,
+    });
+  }
+
+  Future<void> actionUnlike(int collectionId) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+    await Supabase.instance.client
+        .from('likes')
+        .delete()
+        .eq('user_id', userId)
+        .eq('collection_id', collectionId);
+  }
+
   static void handleError(String? statusCode, String? message) {
+    ErrorMessegeToast.error();
     if (statusCode == '400') {
       print('Bad Request - 400: 잘못된 요청입니다.');
     } else if (statusCode == '401') {
@@ -352,19 +479,14 @@ class ApiService {
     } else if (statusCode == '404') {
       print('Not Found - 404: 요청한 리소스를 찾을 수 없습니다.');
     } else if (statusCode == '500') {
-      ErrorMessegeToast.error();
       print('Internal Server Error - 500: 서버에 문제가 발생했습니다.');
     } else if (statusCode == '502') {
-      ErrorMessegeToast.error();
       print('Bad Gateway - 502: 잘못된 게이트웨이입니다.');
     } else if (statusCode == '503') {
-      ErrorMessegeToast.error();
       print('Service Unavailable - 503: 서비스가 일시적으로 이용 불가능합니다.');
     } else if (statusCode == '504') {
-      ErrorMessegeToast.error();
       print('Gateway Timeout - 504: 게이트웨이 응답 시간이 초과되었습니다.');
     } else {
-      ErrorMessegeToast.error();
       print('Unknown error: $message');
     }
   }

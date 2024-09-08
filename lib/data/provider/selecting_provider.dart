@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../model/selecting_model.dart';
 
-class SelectProvider with ChangeNotifier {
+class SelectingProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
   Map<String, List<SelectingData>?> _selectingMap = {};
   Map<String, List<SelectingData>?> _selectedMap = {};
@@ -63,8 +63,7 @@ class SelectProvider with ChangeNotifier {
 
   Future<void> fetchSelectingData() async {
     try {
-      _selectingModels =
-          await ApiService.getSelectModels('selecting_properties');
+      _selectingModels = await ApiService.getSelectings('selecting_properties');
 
       for (var model in _selectingModels) {
         String createdDate = model.createdDate ?? '';
@@ -73,6 +72,7 @@ class SelectProvider with ChangeNotifier {
         if (createdDate.isNotEmpty && data.isNotEmpty) {
           _selectingMap[createdDate] = data;
         } else {
+          // {: null} 이런 형식으로 저장
           _selectingMap[createdDate] = null;
         }
       }
@@ -84,7 +84,7 @@ class SelectProvider with ChangeNotifier {
 
   Future<void> fetchSelectedData() async {
     try {
-      _selectedModels = await ApiService.getSelectModels('selected_properties');
+      _selectedModels = await ApiService.getSelectings('selected_properties');
 
       for (var model in _selectedModels) {
         String createdDate = model.createdDate ?? '';
@@ -93,6 +93,7 @@ class SelectProvider with ChangeNotifier {
         if (createdDate.isNotEmpty && data.isNotEmpty) {
           _selectedMap[createdDate] = data;
         } else {
+          // {: null} 이런 형식으로 저장
           _selectedMap[createdDate] = null;
         }
       }

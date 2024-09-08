@@ -54,16 +54,13 @@ class SelectingData {
 class PropertiesData {
   final int collectionId;
   final int selectionId;
-  final int userId;
 
   PropertiesData({
     required this.collectionId,
     required this.selectionId,
-    required this.userId,
   });
 
   PropertiesData.fromJson(Map<String, dynamic> json)
       : collectionId = json['collection_id'],
-        selectionId = json['selection_id'],
-        userId = json['user_id'];
+        selectionId = json['selection_id'];
 }
