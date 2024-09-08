@@ -29,9 +29,10 @@ class likedButton extends StatelessWidget {
               isLiked
                   ? await ApiService().actionUnlike(collectionId)
                   : await ApiService().actionLike(collectionId);
-              await context
-                  .read<CollectionProvider>()
-                  .getCollectionDetailData();
+
+              final collectionProvider = context.read<CollectionProvider>();
+              await collectionProvider.getCollectionDetailData();
+              await collectionProvider.fetchLikeCollections();
             },
             child: isLiked
                 ? Image.asset(

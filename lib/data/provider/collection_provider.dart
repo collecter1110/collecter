@@ -33,15 +33,13 @@ class CollectionProvider with ChangeNotifier {
     // await Future.delayed(Duration(seconds: 1));
     try {
       if (_currentPageNum == 0 && _myCollections == null) {
-        await fetchCollectionData();
+        await fetchCollections();
       } else if (_currentPageNum == 1 && _likeCollections == null) {
-        await fetchLikeCollectionData();
+        await fetchLikeCollections();
       }
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {
-      notifyListeners();
     }
   }
 
@@ -49,19 +47,23 @@ class CollectionProvider with ChangeNotifier {
     return _currentPageNum == 0 ? _myCollections : _likeCollections;
   }
 
-  Future<void> fetchCollectionData() async {
+  Future<void> fetchCollections() async {
     try {
       _myCollections = await ApiService.getCollections();
     } catch (e) {
       print('Failed to fetch collections: $e');
+    } finally {
+      notifyListeners();
     }
   }
 
-  Future<void> fetchLikeCollectionData() async {
+  Future<void> fetchLikeCollections() async {
     try {
       _likeCollections = await ApiService.getLikeCollections();
     } catch (e) {
       print('Failed to fetch like collections: $e');
+    } finally {
+      notifyListeners();
     }
   }
 
