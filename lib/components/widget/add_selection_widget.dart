@@ -40,9 +40,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   void _saveForm() {
     _keywordFormKey.currentState?.save();
-    FocusScope.of(context).unfocus();
+
     context.read<KeywordProvider>().addKeyword = _inputKeywordValue;
-    _keywordFormKey.currentState?.reset();
   }
 
   XFile? _image;
@@ -292,6 +291,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                             isMultipleLine: false,
                             onSaved: (value) {
                               _inputKeywordValue = value ?? '';
+                              FocusScope.of(context).unfocus();
+                              _keywordFormKey.currentState?.reset();
                             },
                           ),
                         ),

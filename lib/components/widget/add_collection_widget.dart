@@ -33,9 +33,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
 
   void _saveForm() {
     _tagFormKey.currentState?.save();
-    FocusScope.of(context).unfocus();
     context.read<TagProvider>().addTag = _inputTagValue;
-    _tagFormKey.currentState?.reset();
   }
 
   XFile? _image;
@@ -93,9 +91,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                       hintText: '컬렉션 이름',
                       isMultipleLine: false,
                       onSaved: (value) {
-                        setState(() {
-                          _title = value;
-                        });
+                        _title = value;
                       },
                     ),
                   ),
@@ -144,6 +140,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                               isMultipleLine: false,
                               onSaved: (value) {
                                 _inputTagValue = value ?? '';
+                                FocusScope.of(context).unfocus();
+                                _tagFormKey.currentState?.reset();
                               },
                             ),
                           ),

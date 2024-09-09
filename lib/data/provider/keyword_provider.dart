@@ -11,6 +11,7 @@ class KeywordProvider extends ChangeNotifier {
     if (keywordName == '') {
       return;
     }
+    _keywordNames ??= []; // null이면 빈 리스트로 초기화
     _keywordNames?.add(keywordName);
     print(_keywordNames);
     _keywordState = true;
@@ -18,11 +19,14 @@ class KeywordProvider extends ChangeNotifier {
   }
 
   Future<void> deleteKeyword(int index) async {
-    _keywordNames?.removeAt(index);
-    notifyListeners();
-  }
+    if (_keywordNames != null && _keywordNames!.isNotEmpty) {
+      _keywordNames!.removeAt(index);
 
-  void clearKeyword() {
-    _keywordNames?.clear();
+      if (_keywordNames!.isEmpty) {
+        _keywordNames = null;
+      }
+
+      notifyListeners();
+    }
   }
 }
