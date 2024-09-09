@@ -311,22 +311,26 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                   padding: EdgeInsets.only(bottom: 8.0.h),
                   child: Consumer<KeywordProvider>(
                     builder: (context, provider, child) {
-                      return Wrap(
-                        direction: Axis.horizontal,
-                        alignment: WrapAlignment.start,
-                        spacing: 10.0.w,
-                        runSpacing: 5.0.h,
-                        children:
-                            provider.keywordNames.asMap().entries.map((entry) {
-                          int index = entry.key;
-                          String keywords = entry.value;
+                      return provider.keywordNames != null
+                          ? Wrap(
+                              direction: Axis.horizontal,
+                              alignment: WrapAlignment.start,
+                              spacing: 10.0.w,
+                              runSpacing: 5.0.h,
+                              children: provider.keywordNames!
+                                  .asMap()
+                                  .entries
+                                  .map((entry) {
+                                int index = entry.key;
+                                String keywords = entry.value;
 
-                          return KeywordButton(
-                            keywordName: keywords,
-                            index: index,
-                          );
-                        }).toList(),
-                      );
+                                return KeywordButton(
+                                  keywordName: keywords,
+                                  index: index,
+                                );
+                              }).toList(),
+                            )
+                          : SizedBox.shrink();
                     },
                   ),
                 ),

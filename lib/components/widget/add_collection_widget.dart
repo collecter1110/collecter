@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:collect_er/components/button/add_button.dart';
+import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:collect_er/data/provider/tag_provider.dart';
 import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +25,9 @@ class AddCollectionWidget extends StatefulWidget {
 class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   final GlobalKey<FormState> _tagFormKey = GlobalKey<FormState>();
 
-  String _title = '';
-  String _description = '';
-  String _imageFilePath = '';
+  String? _title;
+  String? _description;
+  String? _imageFilePath;
   bool _isPrivate = false;
   String _inputTagValue = '';
 
@@ -92,7 +93,9 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                       hintText: '컬렉션 이름',
                       isMultipleLine: false,
                       onSaved: (value) {
-                        _title = value ?? '';
+                        setState(() {
+                          _title = value;
+                        });
                       },
                     ),
                   ),
@@ -100,7 +103,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                     height: 20,
                   ),
                   Text(
-                    '태그 추가',
+                    '태그 추가 (선택)',
                     style: TextStyle(
                       fontFamily: 'PretendardRegular',
                       fontSize: 16.sp,
@@ -160,22 +163,26 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                     padding: EdgeInsets.only(bottom: 8.0.h),
                     child: Consumer<TagProvider>(
                       builder: (context, provider, child) {
-                        return Wrap(
-                          direction: Axis.horizontal,
-                          alignment: WrapAlignment.start,
-                          spacing: 10.0.w,
-                          runSpacing: 5.0.h,
-                          children:
-                              provider.tagNames.asMap().entries.map((entry) {
-                            int index = entry.key;
-                            String keywords = entry.value;
+                        return provider.tagNames != null
+                            ? Wrap(
+                                direction: Axis.horizontal,
+                                alignment: WrapAlignment.start,
+                                spacing: 10.0.w,
+                                runSpacing: 5.0.h,
+                                children: provider.tagNames!
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  int index = entry.key;
+                                  String keywords = entry.value;
 
-                            return TagButton(
-                              tagName: keywords,
-                              index: index,
-                            );
-                          }).toList(),
-                        );
+                                  return TagButton(
+                                    tagName: keywords,
+                                    index: index,
+                                  );
+                                }).toList(),
+                              )
+                            : SizedBox.shrink();
                       },
                     ),
                   ),
@@ -279,29 +286,34 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                     height: 40.0.h,
                   ),
                   CompleteButton(
-                    firstFieldState: true,
-                    secondFieldState: true,
-                    text: '저장',
-                    onTap: () async {
-                      FocusScope.of(context).unfocus();
-                      print(_title);
-                      print(_description);
-                      print(context.read<TagProvider>().tagNames);
-                      print(_isPrivate);
+                      firstFieldState: true,
+                      secondFieldState: true,
+                      text: '저장',
+                      onTap: () async {
+                        FocusScope.of(context).unfocus();
 
-                      await ApiService.AddCollection(
-                          _title,
-                          _description,
-                          _imageFilePath,
-                          context.read<TagProvider>().tagNames,
-                          _isPrivate);
+                        WidgetsBinding.instance.addPostFrameCallback((_) async {
+                          print(_title);
+                          print(_description);
+                          print(context.read<TagProvider>().tagNames);
+                          print(_isPrivate);
+                          if (_title != null && _title != '') {
+                            await ApiService.AddCollection(
+                                _title!,
+                                _description,
+                                _imageFilePath,
+                                context.read<TagProvider>().tagNames,
+                                _isPrivate);
 
-                      final collectionProvider =
-                          context.read<CollectionProvider>();
+                            final collectionProvider =
+                                context.read<CollectionProvider>();
 
-                      await collectionProvider.fetchCollections();
-                    },
-                  ),
+                            await collectionProvider.fetchCollections();
+                          } else {
+                            Toast.missingFieldValue();
+                          }
+                        });
+                      }),
                 ],
               ),
             ),
