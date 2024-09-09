@@ -41,6 +41,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   void _saveForm() {
     _keywordFormKey.currentState?.save();
     FocusScope.of(context).unfocus();
+    context.read<KeywordProvider>().addKeyword = _inputKeywordValue;
+    _keywordFormKey.currentState?.reset();
   }
 
   XFile? _image;
@@ -289,11 +291,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                             hintText: '키워드 추가',
                             isMultipleLine: false,
                             onSaved: (value) {
-                              print('dd');
                               _inputKeywordValue = value ?? '';
-                              context.read<KeywordProvider>().addKeyword =
-                                  _inputKeywordValue;
-                              _keywordFormKey.currentState?.reset();
                             },
                           ),
                         ),

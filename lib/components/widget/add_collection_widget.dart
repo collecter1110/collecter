@@ -33,6 +33,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   void _saveForm() {
     _tagFormKey.currentState?.save();
     FocusScope.of(context).unfocus();
+    context.read<TagProvider>().addTag = _inputTagValue;
+    _tagFormKey.currentState?.reset();
   }
 
   XFile? _image;
@@ -139,9 +141,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                               isMultipleLine: false,
                               onSaved: (value) {
                                 _inputTagValue = value ?? '';
-                                context.read<TagProvider>().addTag =
-                                    _inputTagValue;
-                                _tagFormKey.currentState?.reset();
                               },
                             ),
                           ),

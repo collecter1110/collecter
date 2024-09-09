@@ -1,13 +1,10 @@
-import 'package:collect_er/data/provider/keyword_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 
 import '../../components/button/category_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/add_collection_widget.dart';
 import '../../components/widget/add_selection_widget.dart';
-import '../../data/provider/tag_provider.dart';
 
 class AddScreen extends StatefulWidget {
   const AddScreen({super.key});
@@ -25,15 +22,7 @@ class _AddScreenState extends State<AddScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController?.addListener(() {
-      setState(() {
-        if (_tabController!.indexIsChanging) {
-          if (_tabController!.index == 0) {
-            Provider.of<TagProvider>(context, listen: false).clearTag();
-          } else if (_tabController!.index == 1) {
-            Provider.of<KeywordProvider>(context, listen: false).clearKeyword();
-          }
-        }
-      });
+      setState(() {});
     });
   }
 

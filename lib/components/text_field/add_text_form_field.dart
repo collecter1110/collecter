@@ -25,6 +25,7 @@ class AddTextFormField extends StatefulWidget {
 class _AddTextFormFieldState extends State<AddTextFormField> {
   TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  late VoidCallback _listener;
 
   final TextStyle _hintTextStyle = TextStyle(
     color: Color(0xffADB5BD),
@@ -46,21 +47,22 @@ class _AddTextFormFieldState extends State<AddTextFormField> {
   @override
   void initState() {
     super.initState();
-
-    _focusNode.addListener(() {
+    _listener = () {
       if (!_focusNode.hasFocus) {
         widget.onSaved(_controller.text);
       }
-    });
+    };
+    _focusNode.addListener(_listener);
   }
 
   @override
   void dispose() {
-    _focusNode.removeListener(() {});
     _controller.clear();
+    _focusNode.unfocus();
+    _focusNode.removeListener(_listener);
     _controller.dispose();
-
     _focusNode.dispose();
+    print('dispose');
     super.dispose();
   }
 
