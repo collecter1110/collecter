@@ -378,7 +378,8 @@ class ApiService {
         user_name, 
         primary_keywords, 
         selection_num, 
-        likes(user_id)
+        likes(user_id),
+        is_private
         ''').eq('user_id', userId);
 
       List<CollectionModel> collections = responseData.map((item) {
@@ -431,7 +432,8 @@ class ApiService {
         primary_keywords, 
         selection_num, 
         like_num, 
-        likes(user_id)
+        likes(user_id),
+        is_private
         ''').eq('id', collectionId).single();
 
       bool hasLiked = (responseData['likes'] as List<dynamic>)
@@ -441,6 +443,28 @@ class ApiService {
           CollectionModel.fromJson(responseData, hasLiked: hasLiked);
 
       return collection;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<void> AddCollection(String title, String description,
+      String imageFilePath, List<String> tags, bool isPrivate) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+
+    try {
+      await Supabase.instance.client.from('collections').insert({
+        'user_id': userId,
+        'title': title,
+        'description': description,
+        'image_file_path': imageFilePath,
+        'tags': tags,
+        'is_private': isPrivate,
+      });
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {

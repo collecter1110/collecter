@@ -4,9 +4,14 @@ class TagProvider extends ChangeNotifier {
   final List<String> _tagNames = [];
   bool _tagState = false;
 
+  List<String> get tagNames => _tagNames;
+  bool get tagState => _tagState;
+
   set addTag(String tagName) {
+    if (tagName == '') {
+      return;
+    }
     _tagNames.add(tagName);
-    print(_tagNames);
     _tagState = true;
     notifyListeners();
   }
@@ -20,7 +25,4 @@ class TagProvider extends ChangeNotifier {
     _tagNames.clear();
     notifyListeners();
   }
-
-  List<String> get tagNames => _tagNames;
-  bool get tagState => _tagState;
 }

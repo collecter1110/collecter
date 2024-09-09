@@ -10,6 +10,7 @@ import '../button/complete_button.dart';
 import '../button/keyword_button.dart';
 import '../constants/screen_size.dart';
 import '../text_field/Item_text_field.dart';
+import '../text_field/add_text_form_field.dart';
 
 class AddSelectionWidget extends StatefulWidget {
   const AddSelectionWidget({super.key});
@@ -19,13 +20,11 @@ class AddSelectionWidget extends StatefulWidget {
 }
 
 class _AddSelectionWidgetState extends State<AddSelectionWidget> {
-  TextEditingController _keywordController = TextEditingController();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _linkController = TextEditingController();
+  final GlobalKey<FormState> _keywordFormKey = GlobalKey<FormState>();
   bool _isPrivate = false;
   bool _isOrder = false;
   bool _itemState = false;
+  String _inputKeywordValue = '';
 
   int _itemNum = 0;
 
@@ -39,22 +38,10 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     '읽고 싶은 책 목록',
   ];
 
-  final TextStyle _hintTextStyle = TextStyle(
-    color: Color(0xffADB5BD),
-    fontSize: 14.0.sp,
-    fontFamily: 'Pretendard',
-    fontWeight: FontWeight.w500,
-    height: 1.43,
-  );
-
-  final TextStyle _fieldTextStyle = TextStyle(
-    decorationThickness: 0,
-    color: Color(0xFF212529),
-    fontSize: 15.sp,
-    fontFamily: 'Pretendard',
-    fontWeight: FontWeight.w400,
-    height: 1.3,
-  );
+  void _saveForm() {
+    _keywordFormKey.currentState?.save();
+    FocusScope.of(context).unfocus();
+  }
 
   XFile? _image;
   final ImagePicker picker = ImagePicker();
@@ -66,6 +53,12 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
         _image = XFile(pickedFile.path);
       });
     }
+  }
+
+  @override
+  void dispose() {
+    //FocusScope.of(context).unfocus();
+    super.dispose();
   }
 
   void _createGroupDialog(BuildContext context) {
@@ -193,20 +186,6 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _keywordController.dispose();
-    _nameController.dispose();
-    _descriptionController.dispose();
-    _linkController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -261,24 +240,11 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                  child: Container(
-                    child: TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 14.0.w, vertical: 12.0.h),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Color(0xffF5F6F7),
-                        hintText: '셀렉션 이름',
-                        hintStyle: _hintTextStyle,
-                      ),
-                      style: _fieldTextStyle,
-                      onFieldSubmitted: (String value) {},
-                    ),
+                  child: AddTextFormField(
+                    keyboardType: TextInputType.name,
+                    hintText: '셀렉션 이름',
+                    isMultipleLine: false,
+                    onSaved: (string) {},
                   ),
                 ),
                 SizedBox(
@@ -316,26 +282,20 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: TextFormField(
-                          controller: _keywordController,
-                          decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 14.0.w, vertical: 12.0.h),
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                borderSide: BorderSide.none,
-                              ),
-                              filled: true,
-                              fillColor: Color(0xffF5F6F7),
-                              hintText: '키워드 추가',
-                              hintStyle: _hintTextStyle),
-                          style: _fieldTextStyle,
-                          onFieldSubmitted: (String value) {
-                            context.read<KeywordProvider>().addKeyword =
-                                _keywordController.text;
-                            _keywordController.clear();
-                          },
+                        child: Form(
+                          key: _keywordFormKey,
+                          child: AddTextFormField(
+                            keyboardType: TextInputType.name,
+                            hintText: '키워드 추가',
+                            isMultipleLine: false,
+                            onSaved: (value) {
+                              print('dd');
+                              _inputKeywordValue = value ?? '';
+                              context.read<KeywordProvider>().addKeyword =
+                                  _inputKeywordValue;
+                              _keywordFormKey.currentState?.reset();
+                            },
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -343,9 +303,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                       ),
                       AddButton(
                         onPressed: () {
-                          context.read<KeywordProvider>().addKeyword =
-                              _keywordController.text;
-                          _keywordController.clear();
+                          _saveForm();
                         },
                       ),
                     ],
@@ -391,26 +349,11 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                   padding: EdgeInsets.symmetric(vertical: 8.0.h),
                   child: SizedBox(
                     height: 80.0.h,
-                    child: TextFormField(
+                    child: AddTextFormField(
                       keyboardType: TextInputType.multiline,
-                      controller: _descriptionController,
-                      textAlignVertical: TextAlignVertical.top,
-                      textInputAction: TextInputAction.newline,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 14.0.w, vertical: 12.0.h),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            borderSide: BorderSide.none,
-                          ),
-                          filled: true,
-                          fillColor: Color(0xffF5F6F7),
-                          hintText: '설명',
-                          hintStyle: _hintTextStyle),
-                      style: _fieldTextStyle,
-                      onFieldSubmitted: (String value) {},
-                      expands: true,
+                      hintText: '설명',
+                      isMultipleLine: true,
+                      onSaved: (string) {},
                     ),
                   ),
                 ),
@@ -478,21 +421,11 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                  child: TextFormField(
-                    controller: _linkController,
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 14.0.w, vertical: 12.0.h),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Color(0xffF5F6F7),
-                        hintText: 'url 추가',
-                        hintStyle: _hintTextStyle),
-                    style: _fieldTextStyle,
-                    onFieldSubmitted: (String value) {},
+                  child: AddTextFormField(
+                    keyboardType: TextInputType.url,
+                    hintText: 'url 추가',
+                    isMultipleLine: false,
+                    onSaved: (string) {},
                   ),
                 ),
                 SizedBox(
