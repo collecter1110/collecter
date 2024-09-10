@@ -5,10 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/provider/collection_provider.dart';
 import '../../data/provider/keyword_provider.dart';
 import '../button/complete_button.dart';
 import '../button/keyword_button.dart';
-import '../constants/screen_size.dart';
+import '../pop_up/collection_title_dialog.dart';
 import '../text_field/Item_text_field.dart';
 import '../text_field/add_text_form_field.dart';
 
@@ -27,16 +28,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   String _inputKeywordValue = '';
 
   int _itemNum = 0;
-
-  List<String> _titleName = [
-    '나만의 레시피북',
-    '다이어트 레시피',
-    '여름 코디룩',
-    '사고 싶은 화장품 리스트',
-    '저소음 기계식 키보드 리스트',
-    '읽은 책 목록',
-    '읽고 싶은 책 목록',
-  ];
+  // int? _selectedIndex;
 
   void _saveForm() {
     _keywordFormKey.currentState?.save();
@@ -56,134 +48,32 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     }
   }
 
-  @override
-  void dispose() {
-    //FocusScope.of(context).unfocus();
-    super.dispose();
-  }
-
-  void _createGroupDialog(BuildContext context) {
+  void _createGroupDialog() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) {
-        return Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: SingleChildScrollView(
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.0),
-                  topRight: Radius.circular(16.0),
-                ),
-                color: Colors.white,
-              ),
-              height: screenHeight(context) * 1 / 2,
-              width: double.infinity,
-              child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 20.0.h),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'My Collection',
-                          style: TextStyle(
-                            fontFamily: 'PretendardRegular',
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                            height: 1.2,
-                          ),
-                        ),
-                        InkWell(
-                          child: SizedBox(
-                            height: 16.0.h,
-                            child: Image.asset(
-                              'assets/icons/button_delete.png',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20.0.h),
-                        child: ListView.separated(
-                          primary: false,
-                          scrollDirection: Axis.vertical,
-                          itemCount: _titleName.length,
-                          itemBuilder: (context, index) {
-                            return TextButton(
-                              onPressed: () {},
-                              style: TextButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 12.0.h, horizontal: 16.0.w),
-                                backgroundColor: index == 0
-                                    ? Theme.of(context)
-                                        .primaryColor
-                                        .withOpacity(0.3)
-                                    : Colors.white,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                minimumSize: Size.zero,
-                                side: BorderSide(
-                                  color: index == 0
-                                      ? Theme.of(context).primaryColor
-                                      : Color(0xFFf1f3f5),
-                                  width: 1.0,
-                                  style: BorderStyle.solid,
-                                ),
-                              ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  _titleName[index],
-                                  style: TextStyle(
-                                    color: index == 0
-                                        ? Colors.black
-                                        : Color(0xFFadb5bd),
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.43,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return SizedBox(
-                              height: 8.0.h,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    CompleteButton(
-                        firstFieldState: true,
-                        secondFieldState: true,
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        text: '선택')
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
+        return CollectionTitleDialog();
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print('init');
+    initializeData();
+  }
+
+  Future<void> initializeData() async {
+    final provider = context.read<CollectionProvider>();
+    provider.resetCollectionIndex();
+    await provider.fetchCollections();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -217,15 +107,62 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                     ),
                     AddButton(
                       onPressed: () {
-                        _createGroupDialog(context);
+                        _createGroupDialog();
                       },
                     ),
                   ],
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                  child: _image != null ? SizedBox() : SizedBox.shrink(),
+                Consumer<CollectionProvider>(
+                  builder: (context, provider, child) {
+                    int? _collectionIndex = provider.collectionIndex;
+
+                    String? _collectionName = _collectionIndex != null
+                        ? provider.myCollections![_collectionIndex].title
+                        : null;
+
+                    bool isSelected = _collectionName != null;
+
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6.0),
+                          color: isSelected
+                              ? Theme.of(context).primaryColor.withOpacity(0.3)
+                              : Colors.white,
+                          border: Border.all(
+                            color: isSelected
+                                ? Theme.of(context).primaryColor
+                                : const Color(0xFFf1f3f5),
+                            width: 1.0,
+                            style: BorderStyle.solid,
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 12.0.h, horizontal: 16.0.w),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            isSelected ? _collectionName! : '콜렉션을 선택해주세요.',
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Colors.black
+                                  : const Color(0xffADB5BD),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                              height: 1.43,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
+
+                // Padding(
+                //   padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                //   child: _image != null ? SizedBox() : SizedBox.shrink(),
+                // ),
                 SizedBox(
                   height: 20.0.h,
                 ),

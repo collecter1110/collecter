@@ -62,7 +62,6 @@ class _AddTextFormFieldState extends State<AddTextFormField> {
     _focusNode.removeListener(_listener);
     _controller.dispose();
     _focusNode.dispose();
-    print('dispose');
     super.dispose();
   }
 
