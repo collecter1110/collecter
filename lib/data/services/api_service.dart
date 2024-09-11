@@ -468,7 +468,67 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'add collections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<void> AddSelections(
+      int collectionId,
+      String title,
+      String? description,
+      String? imageFilePath,
+      List<Map<String, dynamic>>? keywords,
+      String? link,
+      List<Map<String, dynamic>>? items,
+      bool isPrivate) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+
+    try {
+      await Supabase.instance.client.from('selections').insert({
+        'owner_id': userId,
+        'user_id': userId,
+        'collection_id': collectionId,
+        'selection_name': title,
+        'selection_description': description,
+        'image_file_path': imageFilePath,
+        'keywords': keywords,
+        'selection_link': link,
+        'items': items,
+        'is_select': isPrivate,
+      });
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'addSelections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> AddKeywords(
+    List<String> keywords,
+  ) async {
+    try {
+      List<Map<String, dynamic>> newKeywordEntries =
+          keywords.map((keyword) => {'keyword_name': keyword}).toList();
+
+      await Supabase.instance.client
+          .from('keywordinfo')
+          .upsert(newKeywordEntries,
+              onConflict: 'keyword_name', ignoreDuplicates: true)
+          .select();
+
+      final response = await Supabase.instance.client
+          .from('keywordinfo')
+          .select()
+          .filter('keyword_name', 'in', keywords);
+
+      return response;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'addKeywords error');
       throw Exception('An unexpected error occurred: $e');
     }
   }

@@ -50,6 +50,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
 
   @override
   void dispose() {
+    // context.read<TagProvider>().clearTags();
     super.dispose();
   }
 

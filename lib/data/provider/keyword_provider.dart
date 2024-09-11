@@ -29,4 +29,10 @@ class KeywordProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> clearKeywords() async {
+    _keywordNames = null;
+
+    notifyListeners();
+  }
 }

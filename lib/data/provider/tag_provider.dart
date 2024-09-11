@@ -31,4 +31,10 @@ class TagProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> clearTags() async {
+    _tagNames = null;
+
+    notifyListeners();
+  }
 }
