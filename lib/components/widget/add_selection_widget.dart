@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:collect_er/components/button/add_button.dart';
+import 'package:collect_er/data/provider/item_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,6 +31,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   String? _description;
   String? _imageFilePath;
   String? _link;
+  List<Map<String, dynamic>>? _items;
   bool _isPrivate = false;
   String _inputKeywordValue = '';
 
@@ -533,6 +535,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         if (!fieldValidator.validateFields()) {
                           return;
                         } else {
+                          _items =
+                              context.read<ItemProvider>().itemDataListToJson();
                           _keywords = await ApiService.AddKeywords(
                               context.read<KeywordProvider>().keywordNames!);
                           await ApiService.AddSelections(
@@ -542,8 +546,11 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               _imageFilePath,
                               _keywords,
                               _link,
-                              null,
+                              _items,
+                              _isOrder,
                               _isPrivate);
+
+                          //키워드 & 아이템 리셋
                         }
                       });
                     },

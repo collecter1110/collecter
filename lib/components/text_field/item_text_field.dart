@@ -1,8 +1,8 @@
+import 'package:collect_er/data/provider/item_provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../button/add_link_button.dart';
+import 'package:provider/provider.dart';
 
 class ItemTextField extends StatefulWidget {
   final int itemNum;
@@ -19,21 +19,16 @@ class ItemTextField extends StatefulWidget {
 }
 
 class _ItemTextFieldState extends State<ItemTextField> {
-  List<int> _items = [];
+  List<int> _itemIndexOrder = [];
 
-  late List<TextEditingController> _descriptionControllers = [];
-  late List<TextEditingController> _linkControllers = [];
+  late List<TextEditingController> _titleControllers = [];
 
   @override
   void initState() {
     super.initState();
-    _items = List<int>.generate(widget.itemNum, (int index) => index);
+    _itemIndexOrder = List<int>.generate(widget.itemNum, (int index) => index);
 
-    _descriptionControllers = List.generate(
-      widget.itemNum,
-      (index) => TextEditingController(),
-    );
-    _linkControllers = List.generate(
+    _titleControllers = List.generate(
       widget.itemNum,
       (index) => TextEditingController(),
     );
@@ -42,8 +37,7 @@ class _ItemTextFieldState extends State<ItemTextField> {
   @override
   void dispose() {
     for (int i = 0; i < widget.itemNum; i++) {
-      _descriptionControllers[i];
-      _linkControllers[i];
+      _titleControllers[i];
     }
 
     super.dispose();
@@ -54,11 +48,9 @@ class _ItemTextFieldState extends State<ItemTextField> {
     super.didUpdateWidget(oldWidget);
     if (widget.itemNum != oldWidget.itemNum) {
       setState(() {
-        print('this');
-        _items.add(widget.itemNum - 1);
+        _itemIndexOrder.add(widget.itemNum - 1);
 
-        _descriptionControllers.add(TextEditingController());
-        _linkControllers.add(TextEditingController());
+        _titleControllers.add(TextEditingController());
 
         saveItemsOrder();
       });
@@ -66,7 +58,8 @@ class _ItemTextFieldState extends State<ItemTextField> {
   }
 
   void saveItemsOrder() {
-    //Provider.of<CreateListProvider>(context, listen: false).itemsOrder = _items;
+    print(_itemIndexOrder);
+    context.read<ItemProvider>().saveItemOrder = _itemIndexOrder;
   }
 
   @override
@@ -88,7 +81,7 @@ class _ItemTextFieldState extends State<ItemTextField> {
       buildDefaultDragHandles: widget.orderState,
       physics: ClampingScrollPhysics(),
       shrinkWrap: true,
-      itemCount: _items.length,
+      itemCount: _itemIndexOrder.length,
       itemBuilder: (context, index) {
         return widget.orderState
             ? CustomReorderableDelayedDragStartListener(
@@ -111,33 +104,31 @@ class _ItemTextFieldState extends State<ItemTextField> {
                         ),
                       ),
                     ),
-                    ItemWidget(
-                      key: ValueKey(_items[index]),
-                      descriptionController: _descriptionControllers[index],
-                      linkController: _linkControllers[index],
+                    Flexible(
+                      child: ItemWidget(
+                        key: ValueKey(_itemIndexOrder[index]),
+                        titleController: _titleControllers[index],
+                      ),
                     ),
                   ],
                 ),
               )
             : ItemWidget(
-                key: ValueKey(_items[index]),
-                descriptionController: _descriptionControllers[index],
-                linkController: _linkControllers[index],
+                key: ValueKey(_itemIndexOrder[index]),
+                titleController: _titleControllers[index],
               );
       },
       onReorder: (oldIndex, newIndex) {
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }
-        final int item = _items.removeAt(oldIndex);
-        _items.insert(newIndex, item);
+        final int item = _itemIndexOrder.removeAt(oldIndex);
+        _itemIndexOrder.insert(newIndex, item);
 
-        final descriptionController =
-            _descriptionControllers.removeAt(oldIndex);
+        final titleController = _titleControllers.removeAt(oldIndex);
 
-        _descriptionControllers.insert(newIndex, descriptionController);
-        final linkController = _linkControllers.removeAt(oldIndex);
-        _linkControllers.insert(newIndex, linkController);
+        _titleControllers.insert(newIndex, titleController);
+
         saveItemsOrder();
       },
     );
@@ -168,13 +159,11 @@ class CustomReorderableDelayedDragStartListener
 }
 
 class ItemWidget extends StatefulWidget {
-  final TextEditingController descriptionController;
-  final TextEditingController linkController;
+  final TextEditingController titleController;
 
   const ItemWidget({
     Key? key,
-    required this.descriptionController,
-    required this.linkController,
+    required this.titleController,
   }) : super(key: key);
 
   @override
@@ -182,180 +171,93 @@ class ItemWidget extends StatefulWidget {
 }
 
 class _ItemWidgetState extends State<ItemWidget> {
-  late FocusNode _descriptionFocusNode;
-  late FocusNode _linkFocusNode;
+  late FocusNode _titleFocusNode;
 
   late int itemKey;
-  bool _showLinkField = false;
 
   @override
   void initState() {
     super.initState();
 
-    _descriptionFocusNode = FocusNode();
-    _linkFocusNode = FocusNode();
+    _titleFocusNode = FocusNode();
 
     String keyString = widget.key.toString();
     itemKey = int.tryParse(keyString.replaceAll(RegExp(r'\D'), '')) ?? 0;
 
-    _descriptionFocusNode.addListener(_onDescriptionFocusChanged);
-    _linkFocusNode.addListener(_onLinkFocusChanged);
+    print(itemKey);
+    _titleFocusNode.addListener(_onDescriptionFocusChanged);
   }
 
   @override
   void dispose() {
-    _descriptionFocusNode.dispose();
-    _linkFocusNode.dispose();
+    _titleFocusNode.dispose();
+
     super.dispose();
   }
 
   void _onDescriptionFocusChanged() {
-    // if (!_descriptionFocusNode.hasFocus) {
-    //   Provider.of<CreateListProvider>(context, listen: false).itemDescriptions =
-    //       {itemKey: widget.descriptionController.text};
-    // }
-  }
-  void _onLinkFocusChanged() {
-    // if (!_descriptionFocusNode.hasFocus) {
-    //   Provider.of<CreateListProvider>(context, listen: false).itemDescriptions =
-    //       {itemKey: widget.descriptionController.text};
-    // }
+    if (!_titleFocusNode.hasFocus) {
+      context.read<ItemProvider>().saveItemTitle = {
+        itemKey: widget.titleController.text
+      };
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 5.0.h),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Color(0xffF5F6F7),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 16.0.h),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextFormField(
-                        focusNode: _descriptionFocusNode,
-                        keyboardType: TextInputType.multiline,
-                        controller: widget.descriptionController,
-                        textAlignVertical: TextAlignVertical.top,
-                        textInputAction: TextInputAction.newline,
-                        maxLines: null,
-                        style: TextStyle(
-                          decorationThickness: 0,
-                          color: Color(0xff495057),
-                          fontSize: 14.sp,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w500,
-                          height: 1,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: '내용을 입력헤주세요.',
-                          hintStyle: TextStyle(
-                            color: Color(0xffADB5BD),
-                            fontSize: 14.sp,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w500,
-                          ),
-                          isDense: true,
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 4.0.h,
-                          ),
-                          border: InputBorder.none,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10.0.h,
-                      ),
-                      Row(
-                        children: [
-                          AddLinkButton(
-                            onTap: () {
-                              setState(() {
-                                _showLinkField = !_showLinkField;
-                              });
-                            },
-                          ),
-                          SizedBox(
-                            width: 10.0.w,
-                          ),
-                          _showLinkField
-                              ? Flexible(
-                                  child: TextFormField(
-                                    focusNode: _linkFocusNode,
-                                    controller: widget.linkController,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    expands: false,
-                                    style: TextStyle(
-                                      decorationThickness: 0,
-                                      color: Color(0xff495057),
-                                      fontSize: 12.sp,
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.5,
-                                    ),
-                                    decoration: InputDecoration(
-                                      hintText: '링크 추가',
-                                      hintStyle: TextStyle(
-                                        color: Color(0xffADB5BD),
-                                        fontSize: 12.sp,
-                                        fontFamily: 'Pretendard',
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 0.0, horizontal: 0.0),
-                                      isDense: true,
-                                      border: InputBorder.none,
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color(0xFFdee2e6),
-                                          width: 1.0,
-                                        ),
-                                      ),
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Color(0xFF495057),
-                                          width: 0.1,
-                                        ),
-                                      ),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          Icons.clear,
-                                          size: 12.0.h,
-                                          color: Color(0xFF868e96),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _showLinkField = false;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : SizedBox.shrink(),
-                        ],
-                      ),
-                    ],
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 5.0.h),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xffF5F6F7),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 16.0.h),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextFormField(
+                  focusNode: _titleFocusNode,
+                  keyboardType: TextInputType.multiline,
+                  controller: widget.titleController,
+                  textAlignVertical: TextAlignVertical.top,
+                  textInputAction: TextInputAction.newline,
+                  maxLines: null,
+                  style: TextStyle(
+                    decorationThickness: 0,
+                    color: Color(0xff495057),
+                    fontSize: 14.sp,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
+                    height: 1,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '내용을 입력헤주세요.',
+                    hintStyle: TextStyle(
+                      color: Color(0xffADB5BD),
+                      fontSize: 14.sp,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w500,
+                    ),
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 4.0.h,
+                    ),
+                    border: InputBorder.none,
                   ),
                 ),
-                InkWell(
-                  child: Image.asset(
-                    'assets/icons/icon_delete_fill.png',
-                    width: 20.0.h,
-                    color: Color(0xFF343a40),
-                  ),
-                  onTap: () {},
+              ),
+              InkWell(
+                child: Image.asset(
+                  'assets/icons/icon_delete_fill.png',
+                  width: 20.0.h,
+                  color: Color(0xFF343a40),
                 ),
-              ],
-            ),
+                onTap: () {},
+              ),
+            ],
           ),
         ),
       ),

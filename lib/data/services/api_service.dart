@@ -481,6 +481,7 @@ class ApiService {
       List<Map<String, dynamic>>? keywords,
       String? link,
       List<Map<String, dynamic>>? items,
+      bool isOrder,
       bool isPrivate) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
@@ -496,6 +497,7 @@ class ApiService {
         'keywords': keywords,
         'selection_link': link,
         'items': items,
+        'is_ordered': isOrder,
         'is_select': isPrivate,
       });
     } on AuthException catch (e) {
