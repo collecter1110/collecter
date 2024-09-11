@@ -292,11 +292,13 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                         FocusScope.of(context).unfocus();
 
                         WidgetsBinding.instance.addPostFrameCallback((_) async {
-                          print(_title);
-                          print(_description);
-                          print(context.read<TagProvider>().tagNames);
-                          print(_isPrivate);
-                          if (_title != null && _title != '') {
+                          final fieldValidator = FieldValidator({
+                            '컬렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
+                          });
+
+                          if (!fieldValidator.validateFields()) {
+                            return;
+                          } else {
                             await ApiService.AddCollection(
                                 _title!,
                                 _description,
@@ -308,8 +310,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                                 context.read<CollectionProvider>();
 
                             await collectionProvider.fetchCollections();
-                          } else {
-                            Toast.missingFieldValue();
                           }
                         });
                       }),

@@ -520,21 +520,19 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                     onTap: () async {
                       FocusScope.of(context).unfocus();
                       WidgetsBinding.instance.addPostFrameCallback((_) async {
-                        print(_title);
-                        print(_description);
-                        print(_link);
-                        print(context.read<KeywordProvider>().keywordNames);
-                        print(_isPrivate);
+                        final fieldValidator = FieldValidator({
+                          '컬렉션 ID가 누락되었습니다': _collectionId != null,
+                          '셀렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
+                          '키워드를 입력해주세요': context
+                                  .read<KeywordProvider>()
+                                  .keywordNames
+                                  ?.isNotEmpty ==
+                              true,
+                        });
 
-                        if (_title != null &&
-                            _title != '' &&
-                            _collectionId != null &&
-                            context.read<KeywordProvider>().keywordNames !=
-                                null &&
-                            context
-                                .read<KeywordProvider>()
-                                .keywordNames!
-                                .isNotEmpty) {
+                        if (!fieldValidator.validateFields()) {
+                          return;
+                        } else {
                           _keywords = await ApiService.AddKeywords(
                               context.read<KeywordProvider>().keywordNames!);
                           await ApiService.AddSelections(
@@ -546,8 +544,6 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               _link,
                               null,
                               _isPrivate);
-                        } else {
-                          Toast.missingFieldValue();
                         }
                       });
                     },
