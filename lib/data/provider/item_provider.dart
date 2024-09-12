@@ -25,20 +25,22 @@ class ItemProvider extends ChangeNotifier {
     _itemOrder = itemIndexOrder;
   }
 
-  List<Map<String, dynamic>> itemDataListToJson() {
-    _sortedItems = _itemOrder!.map((index) {
-      return _items.firstWhere((item) => item.itemOrder == index);
-    }).toList();
+  List<Map<String, dynamic>>? itemDataListToJson() {
+    if (_itemOrder != null) {
+      _sortedItems = _itemOrder!.map((index) {
+        return _items.firstWhere((item) => item.itemOrder == index);
+      }).toList();
 
-    for (int i = 0; i < _sortedItems!.length; i++) {
-      _sortedItems![i].itemOrder = i;
+      for (int i = 0; i < _sortedItems!.length; i++) {
+        _sortedItems![i].itemOrder = i;
+      }
+      return _sortedItems!.map((item) {
+        return {
+          'item_order': item.itemOrder,
+          'item_title': item.itemTitle,
+        };
+      }).toList();
     }
-    return _sortedItems!.map((item) {
-      return {
-        'item_order': item.itemOrder,
-        'item_title': item.itemTitle,
-      };
-    }).toList();
   }
 
   Future<void> clearItems() async {

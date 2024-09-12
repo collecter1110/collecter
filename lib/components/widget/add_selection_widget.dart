@@ -40,6 +40,39 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   int _itemNum = 0;
 
+  void _passFieldValidator() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+    try {
+      _items = context.read<ItemProvider>().itemDataListToJson();
+      _keywords = await ApiService.AddKeywords(
+          context.read<KeywordProvider>().keywordNames!);
+      await ApiService.AddSelections(_collectionId!, _title!, _description,
+          _imageFilePath, _keywords, _link, _items, _isOrder, _isPrivate);
+      context.read<KeywordProvider>().clearKeywords();
+    } catch (e) {
+      print('Error: $e');
+    } finally {
+      await Future.delayed(Duration(seconds: 1));
+      if (Navigator.of(context, rootNavigator: true).canPop()) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      if (mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/bookmark',
+          (Route<dynamic> route) => false,
+        );
+      }
+    }
+  }
+
   void _saveForm() {
     _keywordFormKey.currentState?.save();
     context.read<KeywordProvider>().addKeyword = _inputKeywordValue;
@@ -81,7 +114,6 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   @override
   void dispose() {
-    // context.read<KeywordProvider>().clearKeywords();
     super.dispose();
   }
 
@@ -516,45 +548,30 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                     height: 40.0.h,
                   ),
                   CompleteButton(
-                    firstFieldState: true,
-                    secondFieldState: true,
-                    text: '저장',
-                    onTap: () async {
-                      FocusScope.of(context).unfocus();
-                      WidgetsBinding.instance.addPostFrameCallback((_) async {
-                        final fieldValidator = FieldValidator({
-                          '컬렉션 ID가 누락되었습니다': _collectionId != null,
-                          '셀렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
-                          '키워드를 입력해주세요': context
-                                  .read<KeywordProvider>()
-                                  .keywordNames
-                                  ?.isNotEmpty ==
-                              true,
-                        });
-
-                        if (!fieldValidator.validateFields()) {
-                          return;
-                        } else {
-                          _items =
-                              context.read<ItemProvider>().itemDataListToJson();
-                          _keywords = await ApiService.AddKeywords(
-                              context.read<KeywordProvider>().keywordNames!);
-                          await ApiService.AddSelections(
-                              _collectionId!,
-                              _title!,
-                              _description,
-                              _imageFilePath,
-                              _keywords,
-                              _link,
-                              _items,
-                              _isOrder,
-                              _isPrivate);
-
-                          //키워드 & 아이템 리셋
-                        }
-                      });
-                    },
-                  ),
+                      firstFieldState: true,
+                      secondFieldState: true,
+                      text: '저장',
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                        WidgetsBinding.instance.addPostFrameCallback(
+                          (_) {
+                            final fieldValidator = FieldValidator({
+                              '컬렉션 ID가 누락되었습니다': _collectionId != null,
+                              '셀렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
+                              '키워드를 입력해주세요': context
+                                      .read<KeywordProvider>()
+                                      .keywordNames
+                                      ?.isNotEmpty ==
+                                  true,
+                            });
+                            if (!fieldValidator.validateFields()) {
+                              return;
+                            } else {
+                              _passFieldValidator();
+                            }
+                          },
+                        );
+                      }),
                 ],
               ),
             ),

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:collect_er/components/button/add_button.dart';
 import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:collect_er/data/provider/tag_provider.dart';
@@ -31,6 +30,37 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   bool _isPrivate = false;
   String _inputTagValue = '';
 
+  void _passFieldValidator() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+    try {
+      await ApiService.AddCollection(_title!, _description, _imageFilePath,
+          context.read<TagProvider>().tagNames, _isPrivate);
+      await context.read<CollectionProvider>().fetchCollections();
+      context.read<TagProvider>().clearTags();
+    } catch (e) {
+      print('Error: $e');
+    } finally {
+      await Future.delayed(Duration(seconds: 1));
+      if (Navigator.of(context, rootNavigator: true).canPop()) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      if (mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/bookmark',
+          (Route<dynamic> route) => false,
+        );
+      }
+    }
+  }
+
   void _saveForm() {
     _tagFormKey.currentState?.save();
     context.read<TagProvider>().addTag = _inputTagValue;
@@ -50,7 +80,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
 
   @override
   void dispose() {
-    // context.read<TagProvider>().clearTags();
     super.dispose();
   }
 
@@ -291,7 +320,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                       onTap: () async {
                         FocusScope.of(context).unfocus();
 
-                        WidgetsBinding.instance.addPostFrameCallback((_) async {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
                           final fieldValidator = FieldValidator({
                             '컬렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
                           });
@@ -299,17 +328,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                           if (!fieldValidator.validateFields()) {
                             return;
                           } else {
-                            await ApiService.AddCollection(
-                                _title!,
-                                _description,
-                                _imageFilePath,
-                                context.read<TagProvider>().tagNames,
-                                _isPrivate);
-
-                            final collectionProvider =
-                                context.read<CollectionProvider>();
-
-                            await collectionProvider.fetchCollections();
+                            _passFieldValidator();
                           }
                         });
                       }),

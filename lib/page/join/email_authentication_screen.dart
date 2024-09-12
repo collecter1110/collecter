@@ -130,6 +130,9 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
           startTimer();
         }
       }
+    } catch (e) {
+      // 에러 처리 (필요한 경우)
+      print('Error: $e');
     } finally {
       Navigator.of(context, rootNavigator: true).pop();
     }

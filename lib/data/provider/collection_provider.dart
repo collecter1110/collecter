@@ -43,7 +43,7 @@ class CollectionProvider with ChangeNotifier {
 
   Future<void> getCollectionData() async {
     _state = ConnectionState.waiting;
-    print('getCollections');
+
     // await Future.delayed(Duration(seconds: 1));
     try {
       if (_currentPageNum == 0 && _myCollections == null) {
@@ -66,7 +66,7 @@ class CollectionProvider with ChangeNotifier {
   Future<void> fetchCollections() async {
     try {
       _myCollections = await ApiService.getCollections();
-      print('페치');
+      print('getCollections');
     } catch (e) {
       print('Failed to fetch collections: $e');
     } finally {}
