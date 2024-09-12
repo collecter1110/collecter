@@ -3,7 +3,7 @@ import 'package:collect_er/data/model/selecting_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../components/pop_up/error_messege_toast.dart';
+import '../../components/pop_up/toast.dart';
 import '../model/collection_model.dart';
 import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
@@ -261,10 +261,10 @@ class ApiService {
         throw Exception('Response code error <getUserInfo>');
       }
     } on AuthException catch (e) {
-      ErrorMessegeToast();
+      Toast.error();
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      ErrorMessegeToast();
+      Toast.error();
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -283,10 +283,10 @@ class ApiService {
           UserOverviewModel.fromJson(responseData);
       return Future.value(userOverviewModel);
     } on AuthException catch (e) {
-      ErrorMessegeToast();
+      Toast.error();
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      ErrorMessegeToast();
+      Toast.error();
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -309,10 +309,10 @@ class ApiService {
 
       return Future.value(selectingModelList);
     } on AuthException catch (e) {
-      ErrorMessegeToast();
+      Toast.error();
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      ErrorMessegeToast();
+      Toast.error();
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -332,10 +332,10 @@ class ApiService {
 
       return Future.value(selections);
     } on AuthException catch (e) {
-      ErrorMessegeToast();
+      Toast.error();
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      ErrorMessegeToast();
+      Toast.error();
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -358,10 +358,10 @@ class ApiService {
 
       return Future.value(selectionDetailModel);
     } on AuthException catch (e) {
-      ErrorMessegeToast();
+      Toast.error();
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      ErrorMessegeToast();
+      Toast.error();
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -378,7 +378,8 @@ class ApiService {
         user_name, 
         primary_keywords, 
         selection_num, 
-        likes(user_id)
+        likes(user_id),
+        is_private
         ''').eq('user_id', userId);
 
       List<CollectionModel> collections = responseData.map((item) {
@@ -431,7 +432,8 @@ class ApiService {
         primary_keywords, 
         selection_num, 
         like_num, 
-        likes(user_id)
+        likes(user_id),
+        is_private
         ''').eq('id', collectionId).single();
 
       bool hasLiked = (responseData['likes'] as List<dynamic>)
@@ -445,6 +447,90 @@ class ApiService {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
       handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<void> AddCollection(String title, String? description,
+      String? imageFilePath, List<String>? tags, bool isPrivate) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+
+    try {
+      await Supabase.instance.client.from('collections').insert({
+        'user_id': userId,
+        'title': title,
+        'description': description,
+        'image_file_path': imageFilePath,
+        'tags': tags,
+        'is_private': isPrivate,
+      });
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'add collections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<void> AddSelections(
+      int collectionId,
+      String title,
+      String? description,
+      String? imageFilePath,
+      List<Map<String, dynamic>>? keywords,
+      String? link,
+      List<Map<String, dynamic>>? items,
+      bool isOrder,
+      bool isPrivate) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+
+    try {
+      await Supabase.instance.client.from('selections').insert({
+        'owner_id': userId,
+        'user_id': userId,
+        'collection_id': collectionId,
+        'selection_name': title,
+        'selection_description': description,
+        'image_file_path': imageFilePath,
+        'keywords': keywords,
+        'selection_link': link,
+        'items': items,
+        'is_ordered': isOrder,
+        'is_select': isPrivate,
+      });
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'addSelections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> AddKeywords(
+    List<String> keywords,
+  ) async {
+    try {
+      List<Map<String, dynamic>> newKeywordEntries =
+          keywords.map((keyword) => {'keyword_name': keyword}).toList();
+
+      await Supabase.instance.client
+          .from('keywordinfo')
+          .upsert(newKeywordEntries,
+              onConflict: 'keyword_name', ignoreDuplicates: true)
+          .select();
+
+      final response = await Supabase.instance.client
+          .from('keywordinfo')
+          .select()
+          .filter('keyword_name', 'in', keywords);
+
+      return response;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'addKeywords error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -469,7 +555,7 @@ class ApiService {
   }
 
   static void handleError(String? statusCode, String? message) {
-    ErrorMessegeToast.error();
+    Toast.error();
     if (statusCode == '400') {
       print('Bad Request - 400: 잘못된 요청입니다.');
     } else if (statusCode == '401') {

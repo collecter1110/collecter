@@ -1,5 +1,5 @@
 class KeywordData {
-  String keywordId;
+  int keywordId;
   String keywordName;
 
   KeywordData({

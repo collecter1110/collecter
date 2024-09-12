@@ -1,25 +1,38 @@
 import 'package:flutter/material.dart';
 
 class KeywordProvider extends ChangeNotifier {
-  final List<String> _keywordNames = [];
+  List<String>? _keywordNames;
   bool _keywordState = false;
 
+  List<String>? get keywordNames => _keywordNames;
+  bool get keywordState => _keywordState;
+
   set addKeyword(String keywordName) {
-    _keywordNames.add(keywordName);
+    if (keywordName == '') {
+      return;
+    }
+    _keywordNames ??= []; // null이면 빈 리스트로 초기화
+    _keywordNames?.add(keywordName);
     print(_keywordNames);
     _keywordState = true;
     notifyListeners();
   }
 
   Future<void> deleteKeyword(int index) async {
-    _keywordNames.removeAt(index);
+    if (_keywordNames != null && _keywordNames!.isNotEmpty) {
+      _keywordNames!.removeAt(index);
+
+      if (_keywordNames!.isEmpty) {
+        _keywordNames = null;
+      }
+
+      notifyListeners();
+    }
+  }
+
+  Future<void> clearKeywords() async {
+    _keywordNames = null;
+
     notifyListeners();
   }
-
-  void clearKeyword() {
-    _keywordNames.clear();
-  }
-
-  List<String> get keywordNames => _keywordNames;
-  bool get keywordState => _keywordState;
 }

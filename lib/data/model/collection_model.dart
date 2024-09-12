@@ -11,7 +11,8 @@ class CollectionModel {
   final List<KeywordData>? primaryKeywords;
   final int selectionNum;
   final int? likeNum;
-  final bool isLiked; // 좋아요 여부 필드
+  final bool isPrivate;
+  final bool isLiked;
 
   CollectionModel({
     required this.id,
@@ -24,6 +25,7 @@ class CollectionModel {
     this.primaryKeywords,
     required this.selectionNum,
     this.likeNum,
+    required this.isPrivate,
     required this.isLiked, // 필수 매개변수로 설정
   });
 
@@ -43,6 +45,7 @@ class CollectionModel {
           .toList(),
       selectionNum: json['selection_num'],
       likeNum: json['like_num'] as int?,
+      isPrivate: json['is_private'],
       isLiked: hasLiked, // hasLiked 값을 isLiked에 직접 할당
     );
   }

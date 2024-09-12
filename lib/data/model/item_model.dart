@@ -1,13 +1,13 @@
 class ItemData {
-  final String itemTitle;
-  final String? itemLink;
+  String itemTitle;
+  int itemOrder;
 
   ItemData({
     required this.itemTitle,
-    this.itemLink,
+    required this.itemOrder,
   });
 
   ItemData.fromJson(Map<String, dynamic> json)
       : itemTitle = json['item_title'],
-        itemLink = json['item_link'];
+        itemOrder = json['item_order'];
 }

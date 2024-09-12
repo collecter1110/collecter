@@ -32,7 +32,7 @@ class SelectionDetailScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _selectionDetail!.imageFilePath != null
+              _selectionDetail.imageFilePath != null
                   ? Container(
                       height: MediaQuery.of(context).size.width,
                       color: Colors.pink,

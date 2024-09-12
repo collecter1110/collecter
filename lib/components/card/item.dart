@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../data/model/item_model.dart';
 import '../../data/model/selection_model.dart';
 import '../../data/provider/selection_provider.dart';
-import '../button/link_button.dart';
 
 class Item extends StatelessWidget {
   final int index;
@@ -37,7 +36,7 @@ class Item extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                itemData[index].itemTitle,
+                itemData[index].itemTitle!,
                 style: TextStyle(
                   color: Color(0xFF343a40),
                   fontSize: 14.sp,
@@ -49,11 +48,11 @@ class Item extends StatelessWidget {
               SizedBox(
                 height: 16.0.h,
               ),
-              itemData[index].itemLink != null
-                  ? LinkButton(
-                      linkUrl: itemData[index].itemLink!,
-                    )
-                  : SizedBox.shrink()
+              // itemData[index].itemLink != null
+              //     ? LinkButton(
+              //         linkUrl: itemData[index].itemLink!,
+              //       )
+              //     : SizedBox.shrink()
             ],
           ),
         ),

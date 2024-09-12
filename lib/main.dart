@@ -1,4 +1,5 @@
 import 'package:collect_er/data/provider/collection_provider.dart';
+import 'package:collect_er/data/provider/item_provider.dart';
 import 'package:collect_er/data/provider/user_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -44,6 +45,9 @@ void main() async {
         ),
         ChangeNotifierProvider<SelectionProvider>(
           create: (context) => SelectionProvider(),
+        ),
+        ChangeNotifierProvider<ItemProvider>(
+          create: (context) => ItemProvider(),
         ),
       ],
       builder: (context, child) {

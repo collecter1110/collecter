@@ -8,10 +8,13 @@ class CollectionProvider with ChangeNotifier {
   List<CollectionModel>? _likeCollections;
   CollectionModel? _collectionDetail;
   int? _collectionId;
+  int? _collectionIndex;
 
   List<CollectionModel>? get myCollections => _myCollections;
   List<CollectionModel>? get likeCollections => _likeCollections;
   CollectionModel? get collectionDetail => _collectionDetail;
+  int? get collectionId => _collectionId;
+  int? get collectionIndex => _collectionIndex;
 
   ConnectionState get state => _state;
   int? get currentPage => _currentPageNum;
@@ -23,13 +26,24 @@ class CollectionProvider with ChangeNotifier {
     getCollectionData();
   }
 
-  set getCollectionId(int collectionId) {
+  set getCollectionId(int? collectionId) {
     _collectionId = collectionId;
+  }
+
+  set saveCollectionIndex(int? index) {
+    _collectionIndex = index;
+    notifyListeners();
+  }
+
+  void resetCollectionIndex() {
+    if (_collectionIndex != null) {
+      _collectionIndex = null;
+    }
   }
 
   Future<void> getCollectionData() async {
     _state = ConnectionState.waiting;
-    print('getCollections');
+
     // await Future.delayed(Duration(seconds: 1));
     try {
       if (_currentPageNum == 0 && _myCollections == null) {
@@ -40,6 +54,8 @@ class CollectionProvider with ChangeNotifier {
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
+    } finally {
+      notifyListeners();
     }
   }
 
@@ -50,11 +66,10 @@ class CollectionProvider with ChangeNotifier {
   Future<void> fetchCollections() async {
     try {
       _myCollections = await ApiService.getCollections();
+      print('getCollections');
     } catch (e) {
       print('Failed to fetch collections: $e');
-    } finally {
-      notifyListeners();
-    }
+    } finally {}
   }
 
   Future<void> fetchLikeCollections() async {
@@ -62,9 +77,7 @@ class CollectionProvider with ChangeNotifier {
       _likeCollections = await ApiService.getLikeCollections();
     } catch (e) {
       print('Failed to fetch like collections: $e');
-    } finally {
-      notifyListeners();
-    }
+    } finally {}
   }
 
   Future<void> getCollectionDetailData() async {
