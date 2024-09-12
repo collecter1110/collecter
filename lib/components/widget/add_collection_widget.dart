@@ -30,6 +30,27 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   bool _isPrivate = false;
   String _inputTagValue = '';
 
+  XFile? _image;
+  final ImagePicker picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    initializeData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> initializeData() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final tagProvider = context.read<TagProvider>();
+      tagProvider.clearTags();
+    });
+  }
+
   void _passFieldValidator() async {
     showDialog(
       context: context,
@@ -66,9 +87,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     context.read<TagProvider>().addTag = _inputTagValue;
   }
 
-  XFile? _image;
-  final ImagePicker picker = ImagePicker();
-
   Future getImage(ImageSource imageSource) async {
     final XFile? pickedFile = await picker.pickImage(source: imageSource);
     if (pickedFile != null) {
@@ -76,11 +94,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
         _image = XFile(pickedFile.path);
       });
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -317,7 +330,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                       firstFieldState: true,
                       secondFieldState: true,
                       text: '저장',
-                      onTap: () async {
+                      onTap: () {
                         FocusScope.of(context).unfocus();
 
                         WidgetsBinding.instance.addPostFrameCallback((_) {

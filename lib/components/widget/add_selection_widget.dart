@@ -40,6 +40,30 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   int _itemNum = 0;
 
+  XFile? _image;
+  final ImagePicker picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    initializeData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> initializeData() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final collectionProvider = context.read<CollectionProvider>();
+      collectionProvider.resetCollectionIndex();
+
+      final keywordProvider = context.read<KeywordProvider>();
+      keywordProvider.clearKeywords();
+    });
+  }
+
   void _passFieldValidator() async {
     showDialog(
       context: context,
@@ -56,6 +80,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
           context.read<KeywordProvider>().keywordNames!);
       await ApiService.AddSelections(_collectionId!, _title!, _description,
           _imageFilePath, _keywords, _link, _items, _isOrder, _isPrivate);
+      await context.read<CollectionProvider>().fetchCollections();
       context.read<KeywordProvider>().clearKeywords();
     } catch (e) {
       print('Error: $e');
@@ -78,9 +103,6 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     context.read<KeywordProvider>().addKeyword = _inputKeywordValue;
   }
 
-  XFile? _image;
-  final ImagePicker picker = ImagePicker();
-
   Future getImage(ImageSource imageSource) async {
     final XFile? pickedFile = await picker.pickImage(source: imageSource);
     if (pickedFile != null) {
@@ -90,7 +112,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     }
   }
 
-  void _createGroupDialog() {
+  void _createGroupDialog() async {
+    await fetchCollections();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -100,21 +123,9 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    initializeData();
-  }
-
-  Future<void> initializeData() async {
+  Future<void> fetchCollections() async {
     final provider = context.read<CollectionProvider>();
-    provider.resetCollectionIndex();
     await provider.fetchCollections();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
