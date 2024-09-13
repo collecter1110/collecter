@@ -73,6 +73,7 @@ class UserScreen extends StatelessWidget {
                   final String? _imageUrl = provider.userInfo?.imageFilePath;
 
                   final List<int> _usersLabelIds = provider.userLabelIds!;
+                  final int collectionNum = provider.collectionNum;
                   final int selectingNum = provider.selectingNum;
                   final int selectedNum = provider.selectedNum;
 
@@ -176,7 +177,7 @@ class UserScreen extends StatelessWidget {
                                   ),
                                 );
                               },
-                              number: 0,
+                              number: collectionNum,
                               name: 'Collection',
                             ),
                             UsersArchiveButton(
