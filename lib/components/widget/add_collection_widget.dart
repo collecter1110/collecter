@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:collect_er/components/button/add_button.dart';
 import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:collect_er/data/provider/tag_provider.dart';
+import 'package:collect_er/data/provider/user_info_provider.dart';
 import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -65,6 +66,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       await ApiService.AddCollection(_title!, _description, _imageFilePath,
           context.read<TagProvider>().tagNames, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
+      await context.read<UserInfoProvider>().fetchUserOverview();
       context.read<TagProvider>().clearTags();
     } catch (e) {
       print('Error: $e');
