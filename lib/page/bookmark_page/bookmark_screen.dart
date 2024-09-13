@@ -56,6 +56,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
             SliverAppBar(
+              automaticallyImplyLeading: false,
               pinned: true,
               toolbarHeight: 64.0.h,
               expandedHeight: 130.0.h,

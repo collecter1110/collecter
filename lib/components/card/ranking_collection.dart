@@ -3,6 +3,7 @@ import 'package:collect_er/components/ui_kit/tag_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../page/collection/collection_detail_screen.dart';
 import '../ui_kit/label.dart';
 import '../ui_kit/keyword.dart';
 
@@ -33,14 +34,13 @@ class RankingCollection extends StatelessWidget {
     ];
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => CollectionDetailScreen(
-        //       titlce: _name[index],
-        //     ),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CollectionDetailScreen(),
+            settings: RouteSettings(name: '/'),
+          ),
+        );
       },
       child: AspectRatio(
         aspectRatio: ratio,

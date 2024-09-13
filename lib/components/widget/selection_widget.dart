@@ -8,9 +8,11 @@ import '../../data/provider/selection_provider.dart';
 import '../card/selection.dart';
 
 class SelectionWidget extends StatefulWidget {
+  final String routeName;
   final int collectionId;
   const SelectionWidget({
     super.key,
+    required this.routeName,
     required this.collectionId,
   });
 
@@ -56,6 +58,7 @@ class _SelectionWidgetState extends State<SelectionWidget> {
           itemBuilder: (context, index) {
             final SelectionModel _selection = _selections[index];
             return Selection(
+              routeName: widget.routeName,
               properties: PropertiesData.fromJson(
                 {
                   "collection_id": _selection.collectionId,

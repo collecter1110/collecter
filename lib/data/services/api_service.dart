@@ -275,7 +275,7 @@ class ApiService {
       int userId = int.parse(userIdString!);
       final responseData = await _supabase
           .from('useroverview')
-          .select('label_ids, selecting_num, selected_num')
+          .select('label_ids, collection_num, selecting_num, selected_num')
           .eq('user_id', userId)
           .single();
 

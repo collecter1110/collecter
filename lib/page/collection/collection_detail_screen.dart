@@ -18,6 +18,8 @@ class CollectionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? _routeName = ModalRoute.of(context)?.settings.name;
+
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
       final CollectionModel _collectionDetail = provider.collectionDetail!;
 
@@ -182,8 +184,9 @@ class CollectionDetailScreen extends StatelessWidget {
                         horizontal: 18.0.w,
                         vertical: 20.0.h,
                       ),
-                      child:
-                          SelectionWidget(collectionId: _collectionDetail.id),
+                      child: SelectionWidget(
+                          routeName: _routeName!,
+                          collectionId: _collectionDetail.id),
                     ),
                   ],
                 ),

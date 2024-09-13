@@ -72,9 +72,10 @@ class UserScreen extends StatelessWidget {
                   final String? _description = provider.userInfo?.description;
                   final String? _imageUrl = provider.userInfo?.imageFilePath;
 
-                  final List<int> _usersLabelIds = provider.userLabelIds!;
-                  final int selectingNum = provider.selectingNum;
-                  final int selectedNum = provider.selectedNum;
+                  final List<int>? _usersLabelIds = provider.userLabelIds;
+                  final int? collectionNum = provider.collectionNum;
+                  final int? selectingNum = provider.selectingNum;
+                  final int? selectedNum = provider.selectedNum;
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,14 +148,16 @@ class UserScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Expanded(
-                              child: Wrap(
-                                alignment: WrapAlignment.start,
-                                runSpacing: 8.0.h,
-                                spacing: 10.0.w,
-                                children: _usersLabelIds.map((index) {
-                                  return Label.getLabel(index);
-                                }).toList(),
-                              ),
+                              child: _usersLabelIds != null
+                                  ? Wrap(
+                                      alignment: WrapAlignment.start,
+                                      runSpacing: 8.0.h,
+                                      spacing: 10.0.w,
+                                      children: _usersLabelIds.map((index) {
+                                        return Label.getLabel(index);
+                                      }).toList(),
+                                    )
+                                  : SizedBox.shrink(),
                             ),
                           ],
                         ),
@@ -172,10 +175,11 @@ class UserScreen extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => BookmarkScreen(),
+                                    settings: RouteSettings(name: '/bookmark'),
                                   ),
                                 );
                               },
-                              number: 0,
+                              number: collectionNum ?? 0,
                               name: 'Collection',
                             ),
                             UsersArchiveButton(
@@ -186,10 +190,11 @@ class UserScreen extends StatelessWidget {
                                     builder: (context) => SelectingScreen(
                                       initialPageIndex: 0,
                                     ),
+                                    settings: RouteSettings(name: '/user'),
                                   ),
                                 );
                               },
-                              number: selectingNum,
+                              number: selectingNum ?? 0,
                               name: 'Selecting',
                             ),
                             UsersArchiveButton(
@@ -200,10 +205,11 @@ class UserScreen extends StatelessWidget {
                                     builder: (context) => SelectingScreen(
                                       initialPageIndex: 1,
                                     ),
+                                    settings: RouteSettings(name: '/user'),
                                   ),
                                 );
                               },
-                              number: selectedNum,
+                              number: selectedNum ?? 0,
                               name: 'Selected',
                             ),
                           ],
