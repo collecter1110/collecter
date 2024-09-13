@@ -88,8 +88,10 @@ class _PageNavigatorState extends State<PageNavigator> {
                   return;
                 }
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _navigatorKey.currentState
-                      ?.pushReplacementNamed(_routeNames[index]);
+                  _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                    _routeNames[index],
+                    (Route<dynamic> route) => false,
+                  );
                 });
               });
             },

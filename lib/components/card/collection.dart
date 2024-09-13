@@ -26,6 +26,7 @@ class Collection extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => CollectionDetailScreen(),
+            settings: RouteSettings(name: '/bookmark'),
           ),
         );
       },

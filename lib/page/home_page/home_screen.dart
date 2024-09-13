@@ -201,6 +201,7 @@ class _HomeScreenState extends State<HomeScreen>
                 horizontal: 18.0.w,
               ),
               child: SelectionWidget(
+                routeName: '/',
                 collectionId: 0,
               ),
             ),

@@ -172,6 +172,7 @@ class UserScreen extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => BookmarkScreen(),
+                                    settings: RouteSettings(name: '/bookmark'),
                                   ),
                                 );
                               },
@@ -186,6 +187,7 @@ class UserScreen extends StatelessWidget {
                                     builder: (context) => SelectingScreen(
                                       initialPageIndex: 0,
                                     ),
+                                    settings: RouteSettings(name: '/user'),
                                   ),
                                 );
                               },
@@ -200,6 +202,7 @@ class UserScreen extends StatelessWidget {
                                     builder: (context) => SelectingScreen(
                                       initialPageIndex: 1,
                                     ),
+                                    settings: RouteSettings(name: '/user'),
                                   ),
                                 );
                               },

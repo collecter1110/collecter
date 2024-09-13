@@ -11,8 +11,9 @@ class PageRouteProvider extends ChangeNotifier {
   String? get currentRoute => _currentRoute;
   PageRoute<dynamic>? get currentPageRoute => _currentPageRoute;
 
-  set currentPageRoute(PageRoute<dynamic>? value) {
-    _currentPageRoute = value;
+  set currentPageRoute(PageRoute<dynamic>? _previousPageRoute) {
+    _currentPageRoute = _previousPageRoute;
+    _currentRoute = currentPageRoute!.settings.name;
     notifyListeners();
   }
 

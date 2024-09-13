@@ -9,6 +9,7 @@ import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
 class Selection extends StatelessWidget {
+  final String routeName;
   final String title;
   final String? imageFilePath;
   final List<KeywordData>? keywords;
@@ -17,6 +18,7 @@ class Selection extends StatelessWidget {
 
   const Selection({
     super.key,
+    required this.routeName,
     required this.title,
     this.imageFilePath,
     this.keywords,
@@ -34,6 +36,7 @@ class Selection extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => SelectionDetailScreen(),
+            settings: RouteSettings(name: routeName),
           ),
         );
       },
