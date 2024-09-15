@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/custom_ search_bar.dart';
-import '../../components/button/search_category_button.dart';
+import '../../components/button/sub_category_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/search_category_widget.dart';
 
@@ -171,7 +171,7 @@ class _SearchScreenState extends State<SearchScreen>
                         //     ),
                         //   ],
                         // ),
-                        child: SearchKeywordWidget(),
+                        child: SearchCategoryWidget(),
                       ),
                     ),
                     background: Padding(

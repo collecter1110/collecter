@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+
+import '../../data/provider/search_provider.dart';
 
 class DropdownTabBarButton extends StatefulWidget {
-  final ValueChanged<String>? setCategory;
-
+  final String selectedCategoryName;
   DropdownTabBarButton({
-    required this.setCategory,
+    super.key,
+    required this.selectedCategoryName,
   });
 
   @override
@@ -13,7 +16,6 @@ class DropdownTabBarButton extends StatefulWidget {
 }
 
 class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
-  String _selectedCategoryName = 'Collection';
   OverlayEntry? _overlayEntry;
   final LayerLink _layerLink = LayerLink();
 
@@ -39,7 +41,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
   OverlayEntry _createOverlayEntry() {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     var size = renderBox.size;
-
+    final _provider = context.read<SearchProvider>();
     return OverlayEntry(
       builder: (context) => Positioned(
         width: 120.0.w,
@@ -78,7 +80,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
                         fontFamily: 'PretendardRegular',
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
-                        color: _selectedCategoryName == 'Collection'
+                        color: _provider.selectedCategoryIndex == 0
                             ? Colors.black
                             : Color(0xFFced4da),
                         height: 1.43,
@@ -86,7 +88,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
                     ),
                     onTap: () {
                       setState(() {
-                        _selectedCategoryName = 'Collection';
+                        _provider.setCategoryIndex = 0;
                       });
                       _removeDropdown();
                     },
@@ -98,7 +100,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
                         fontFamily: 'PretendardRegular',
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
-                        color: _selectedCategoryName == 'Selection'
+                        color: _provider.selectedCategoryIndex == 1
                             ? Colors.black
                             : Color(0xFFced4da),
                         height: 1.43,
@@ -106,7 +108,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
                     ),
                     onTap: () {
                       setState(() {
-                        _selectedCategoryName = 'Selection';
+                        _provider.setCategoryIndex = 1;
                       });
                       _removeDropdown();
                     },
@@ -118,7 +120,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
                         fontFamily: 'PretendardRegular',
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
-                        color: _selectedCategoryName == 'User'
+                        color: _provider.selectedCategoryIndex == 2
                             ? Colors.black
                             : Color(0xFFced4da),
                         height: 1.43,
@@ -126,7 +128,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
                     ),
                     onTap: () {
                       setState(() {
-                        _selectedCategoryName = 'User';
+                        _provider.setCategoryIndex = 2;
                       });
                       _removeDropdown();
                     },
@@ -163,7 +165,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                _selectedCategoryName,
+                widget.selectedCategoryName,
                 style: TextStyle(
                   fontFamily: 'PretendardRegular',
                   fontSize: 14.sp,
