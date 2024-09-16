@@ -3,7 +3,7 @@ import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class CollectionProvider with ChangeNotifier {
-  ConnectionState _state = ConnectionState.waiting;
+  ConnectionState? _state;
   List<CollectionModel>? _searchCollections;
   List<CollectionModel>? _myCollections;
   List<CollectionModel>? _likeCollections;
@@ -12,7 +12,7 @@ class CollectionProvider with ChangeNotifier {
   int? _collectionIndex;
   int? _currentPageNum;
 
-  ConnectionState get state => _state;
+  ConnectionState? get state => _state;
   List<CollectionModel>? get searchCollections => _searchCollections;
   List<CollectionModel>? get myCollections => _myCollections;
   List<CollectionModel>? get likeCollections => _likeCollections;
@@ -37,7 +37,7 @@ class CollectionProvider with ChangeNotifier {
   Future<void> getCollectionData() async {
     _state = ConnectionState.waiting;
 
-    // await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(milliseconds: 500));
     try {
       if (_currentPageNum == 0 && _myCollections == null) {
         await fetchCollections();
@@ -56,10 +56,12 @@ class CollectionProvider with ChangeNotifier {
       String searchText, bool isKeyword) async {
     _state = ConnectionState.waiting;
 
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(milliseconds: 300));
     try {
+      if (searchText == '') {
+        return;
+      }
       await fetchSearchCollections(searchText, isKeyword);
-
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;

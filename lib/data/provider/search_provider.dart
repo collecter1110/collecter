@@ -4,6 +4,7 @@ class SearchProvider with ChangeNotifier {
   String _selectedCategoryName = 'Collection';
   List<String> _categoryNames = ['Collection', 'Selection', 'User'];
   int _selectedCategoryIndex = 0;
+  String? _searchText;
 
   List<String> _subCategoryNames = ['Keyword', 'Tag'];
   int _selectedSubCategoryIndex = 0;
@@ -12,6 +13,11 @@ class SearchProvider with ChangeNotifier {
   int get selectedCategoryIndex => _selectedCategoryIndex;
   int get selectedSubCategoryIndex => _selectedSubCategoryIndex;
   List<String> get subCategoryNames => _subCategoryNames;
+  String? get searchText => _searchText;
+
+  set saveSearchText(String searchText) {
+    _searchText = searchText;
+  }
 
   set setCategoryIndex(int? categoryIndex) {
     _selectedCategoryIndex = categoryIndex!;

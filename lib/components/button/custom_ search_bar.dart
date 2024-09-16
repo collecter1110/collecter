@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+
+import '../../data/provider/search_provider.dart';
 
 class CustomSearchBar extends StatelessWidget {
-  final ValueChanged<String>? onSearch;
+  final VoidCallback? onSearch;
   final bool autoFocus;
   final bool enabled;
 
-  CustomSearchBar(
-      {Key? key,
-      required this.onSearch,
-      required this.autoFocus,
-      required this.enabled});
+  CustomSearchBar({
+    Key? key,
+    required this.onSearch,
+    required this.autoFocus,
+    required this.enabled,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final _provider = context.read<SearchProvider>();
     return TextFormField(
+      initialValue: _provider.searchText,
       enabled: enabled,
       autofocus: autoFocus,
       decoration: InputDecoration(
@@ -50,9 +56,10 @@ class CustomSearchBar extends StatelessWidget {
         fontFamily: 'Pretendard',
         fontWeight: FontWeight.w600,
       ),
-      onFieldSubmitted: (String value) {
-        if (value.isNotEmpty) {
-          onSearch?.call(value);
+      onFieldSubmitted: (searchText) {
+        if (searchText.isNotEmpty) {
+          _provider.saveSearchText = searchText;
+          onSearch!();
         }
       },
     );

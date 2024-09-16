@@ -22,10 +22,12 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
   }
 
-  Future<void> _onSearch(bool isKeyword) async {
+  Future<void> _doSearch(bool isKeyword) async {
     final _collectionProvider = context.read<CollectionProvider>();
+    final _searchProvider = context.read<SearchProvider>();
 
-    _collectionProvider.getSearchCollectionData(_searchText!, isKeyword);
+    await _collectionProvider.getSearchCollectionData(
+        _searchProvider.searchText!, isKeyword);
   }
 
   @override
@@ -33,17 +35,10 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  String? _searchText;
   bool _isKeyword = true;
 
   @override
   Widget build(BuildContext context) {
-    final _searchProvider = context.watch<SearchProvider>();
-    _isKeyword = _searchProvider.selectedSubCategoryIndex == 0;
-
-    if (_searchText != null && _searchText != '') {
-      _onSearch(_isKeyword);
-    }
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: NestedScrollView(
@@ -70,7 +65,14 @@ class _SearchScreenState extends State<SearchScreen> {
                     title: Padding(
                       padding: EdgeInsets.symmetric(
                           vertical: 10.0.h, horizontal: 16.0.w),
-                      child: SearchCategoryWidget(),
+                      child: SearchCategoryWidget(
+                        onTap: (index) {
+                          setState(() {
+                            _isKeyword = index == 0;
+                            _doSearch(_isKeyword);
+                          });
+                        },
+                      ),
                     ),
                     background: Padding(
                       padding: EdgeInsets.only(
@@ -81,10 +83,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: CustomSearchBar(
                         autoFocus: false,
                         enabled: true,
-                        onSearch: (String value) {
+                        onSearch: () {
                           setState(() {
-                            _searchText = value;
-                            _onSearch(_isKeyword);
+                            _doSearch(_isKeyword);
                           });
                         },
                       ),
@@ -95,7 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ];
         },
-        body: _searchText == null ? Container() : SearchCollectionWidget(),
+        body: SearchCollectionWidget(),
       ),
     );
   }

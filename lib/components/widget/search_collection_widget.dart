@@ -18,26 +18,35 @@ class SearchCollectionWidget extends StatelessWidget {
         return Center(
           child: CircularProgressIndicator(),
         );
-      } else if (provider.state == ConnectionState.done) {
-        return GridView.builder(
-          padding: EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 1,
-            mainAxisSpacing: 24.0.h,
-            crossAxisSpacing: 12.0.w,
-            childAspectRatio: 3,
-          ),
-          itemCount: _collections?.length ?? 0,
-          itemBuilder: (context, index) {
-            final CollectionModel _collection = _collections![index];
-
-            return SearchCollection(
-              collectionDetail: _collection,
-            );
-          },
+      } else if (provider.state == null) {
+        return const Center(
+          child: Text('검색어를 입력해주세요.'),
         );
+      } else if (provider.state == ConnectionState.done) {
+        return _collections != null
+            ? GridView.builder(
+                padding:
+                    EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  mainAxisSpacing: 24.0.h,
+                  crossAxisSpacing: 12.0.w,
+                  childAspectRatio: 3,
+                ),
+                itemCount: _collections.length,
+                itemBuilder: (context, index) {
+                  final CollectionModel _collection = _collections[index];
+
+                  return SearchCollection(
+                    collectionDetail: _collection,
+                  );
+                },
+              )
+            : const Center(
+                child: Text('일치하는 데이터가 없습니다.'),
+              );
       } else {
         return const Center(
           child: Text('Error occurred.'),
