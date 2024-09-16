@@ -59,7 +59,7 @@ class CollectionDetailScreen extends StatelessWidget {
                         ),
                         likedButton(
                           collectionId: _collectionDetail.id,
-                          isLiked: _collectionDetail.isLiked,
+                          isLiked: _collectionDetail.isLiked!,
                           likedNum: _collectionDetail.likeNum!,
                         ),
                       ],
