@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:collect_er/components/button/add_button.dart';
-import 'package:collect_er/data/provider/item_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
+import '../../data/provider/item_provider.dart';
 import '../../data/provider/keyword_provider.dart';
 import '../../data/services/api_service.dart';
 import '../button/complete_button.dart';
@@ -61,6 +61,9 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
       final keywordProvider = context.read<KeywordProvider>();
       keywordProvider.clearKeywords();
+
+      final itemProvider = context.read<ItemProvider>();
+      itemProvider.clearItems();
     });
   }
 
