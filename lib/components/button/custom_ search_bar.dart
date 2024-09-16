@@ -31,7 +31,7 @@ class CustomSearchBar extends StatelessWidget {
           fontSize: 15.0.sp,
           fontFamily: 'Pretendard',
           fontWeight: FontWeight.w500,
-          height: 1.3.h,
+          height: 1.3,
         ),
         prefixIcon: Padding(
           padding: EdgeInsets.only(
@@ -40,7 +40,7 @@ class CustomSearchBar extends StatelessWidget {
             'assets/icons/tab_search.png',
             fit: BoxFit.contain,
             color: Color(0xFFADB5BD),
-            height: 10.0.h,
+            height: 14.0.h,
           ),
         ),
       ),
