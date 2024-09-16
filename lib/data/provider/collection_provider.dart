@@ -4,22 +4,21 @@ import 'package:flutter/material.dart';
 
 class CollectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
+  List<CollectionModel>? _searchCollections;
   List<CollectionModel>? _myCollections;
   List<CollectionModel>? _likeCollections;
   CollectionModel? _collectionDetail;
   int? _collectionId;
   int? _collectionIndex;
+  int? _currentPageNum;
 
+  ConnectionState get state => _state;
+  List<CollectionModel>? get searchCollections => _searchCollections;
   List<CollectionModel>? get myCollections => _myCollections;
   List<CollectionModel>? get likeCollections => _likeCollections;
   CollectionModel? get collectionDetail => _collectionDetail;
   int? get collectionId => _collectionId;
   int? get collectionIndex => _collectionIndex;
-
-  ConnectionState get state => _state;
-  int? get currentPage => _currentPageNum;
-
-  int? _currentPageNum;
 
   set setPageChanged(int currentPageNum) {
     _currentPageNum = currentPageNum;
@@ -33,12 +32,6 @@ class CollectionProvider with ChangeNotifier {
   set saveCollectionIndex(int? index) {
     _collectionIndex = index;
     notifyListeners();
-  }
-
-  void resetCollectionIndex() {
-    if (_collectionIndex != null) {
-      _collectionIndex = null;
-    }
   }
 
   Future<void> getCollectionData() async {
@@ -59,8 +52,28 @@ class CollectionProvider with ChangeNotifier {
     }
   }
 
+  Future<void> getSearchCollectionData(
+      String searchText, bool isKeyword) async {
+    _state = ConnectionState.waiting;
+
+    await Future.delayed(Duration(seconds: 1));
+    try {
+      await fetchSearchCollections(searchText, isKeyword);
+
+      _state = ConnectionState.done;
+    } catch (e) {
+      _state = ConnectionState.none;
+    } finally {
+      notifyListeners();
+    }
+  }
+
   List<CollectionModel>? getCollections() {
     return _currentPageNum == 0 ? _myCollections : _likeCollections;
+  }
+
+  List<CollectionModel>? getSearchCollections() {
+    return _searchCollections;
   }
 
   Future<void> fetchCollections() async {
@@ -80,6 +93,16 @@ class CollectionProvider with ChangeNotifier {
     } finally {}
   }
 
+  Future<void> fetchSearchCollections(String searchText, bool isKeyword) async {
+    try {
+      _searchCollections =
+          await ApiService.searchCollections(searchText, isKeyword);
+      print('get search collection ');
+    } catch (e) {
+      print('Failed to fetch search collection: $e');
+    } finally {}
+  }
+
   Future<void> getCollectionDetailData() async {
     await fetchCollectionDetail();
     print('getCollectionData');
@@ -91,6 +114,12 @@ class CollectionProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Failed to fetch collection detail data: $e');
+    }
+  }
+
+  void resetCollectionIndex() {
+    if (_collectionIndex != null) {
+      _collectionIndex = null;
     }
   }
 }

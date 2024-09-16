@@ -549,10 +549,13 @@ class ApiService {
   }
 
   static Future<List<CollectionModel>?> searchCollections(
-      String searchText) async {
+      String searchText, bool isKeyword) async {
     try {
-      final response = await _supabase
-          .rpc('search_collections', params: {'query': searchText});
+      final response = isKeyword
+          ? await _supabase.rpc('search_collections_by_keyword',
+              params: {'query': searchText})
+          : await _supabase
+              .rpc('search_collections_by_tag', params: {'query': searchText});
 
       if (response.isEmpty) {
         print('No data returned from the server');

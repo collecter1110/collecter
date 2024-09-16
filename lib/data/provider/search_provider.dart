@@ -1,4 +1,3 @@
-import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class SearchProvider with ChangeNotifier {
@@ -31,7 +30,6 @@ class SearchProvider with ChangeNotifier {
   set setSubCategoryIndex(int? index) {
     _selectedSubCategoryIndex = index!;
 
-    print(_selectedSubCategoryIndex);
     notifyListeners();
   }
 }
