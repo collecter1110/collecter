@@ -101,12 +101,17 @@ class RankingCollection extends StatelessWidget {
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 6.0.h),
-                          child: TagTextStyle(
-                            name: '웬만한_냉면보다_맛있음',
-                            color: Color(0xFFf1f3f5),
-                          ),
-                        ),
+                            padding: EdgeInsets.symmetric(vertical: 6.0.h),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TagTextStyle(
+                                  tags: ['웬만한_냉면보다_맛있음'],
+                                  color: Color(0xFFf1f3f5),
+                                  maxLine: 2,
+                                ),
+                              ],
+                            )),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 4.0.h),
                           child: Wrap(

@@ -107,24 +107,15 @@ class SearchCollection extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.only(top: 10.0.h),
                       child: collectionDetail.tags != null
-                          ? ClipRect(
-                              child: Container(
-                                constraints: BoxConstraints(
-                                  maxHeight: double.infinity,
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TagTextStyle(
+                                  tags: collectionDetail.tags!,
+                                  color: Color(0xFF868E96),
+                                  maxLine: 2,
                                 ),
-                                child: Wrap(
-                                  direction: Axis.horizontal,
-                                  alignment: WrapAlignment.start,
-                                  spacing: 5.0.w,
-                                  runSpacing: 8.0.h,
-                                  children: collectionDetail.tags!.map((tag) {
-                                    return TagTextStyle(
-                                      name: tag,
-                                      color: Color(0xFF868E96),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
+                              ],
                             )
                           : SizedBox.shrink(),
                     ),

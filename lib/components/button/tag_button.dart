@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/tag_provider.dart';
-import '../ui_kit/tag_text_style.dart';
 
 class TagButton extends StatelessWidget {
   final String tagName;
@@ -27,9 +26,15 @@ class TagButton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TagTextStyle(
-            name: tagName,
-            color: Color(0xFF495057),
+          Text(
+            tagName,
+            style: TextStyle(
+              color: Color(0xFF495057),
+              fontFamily: 'Pretendard',
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+            ),
           ),
           SizedBox(
             width: 6.0.w,
