@@ -19,25 +19,30 @@ class CollectionWidget extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return GridView.builder(
-          padding: EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 24.0.h,
-            crossAxisSpacing: 12.0.w,
-            childAspectRatio: 0.65,
-          ),
-          itemCount: _collections?.length ?? 0,
-          itemBuilder: (context, index) {
-            final CollectionModel _collection = _collections![index];
+        return _collections != null
+            ? GridView.builder(
+                padding:
+                    EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 24.0.h,
+                  crossAxisSpacing: 12.0.w,
+                  childAspectRatio: 0.65,
+                ),
+                itemCount: _collections.length,
+                itemBuilder: (context, index) {
+                  final CollectionModel _collection = _collections[index];
 
-            return Collection(
-              collectionDetail: _collection,
-            );
-          },
-        );
+                  return Collection(
+                    collectionDetail: _collection,
+                  );
+                },
+              )
+            : const Center(
+                child: Text('콜렉션을 추가해주세요.'),
+              );
       } else {
         return const Center(
           child: Text('Error occurred.'),

@@ -26,8 +26,11 @@ class _SearchScreenState extends State<SearchScreen> {
     final _collectionProvider = context.read<CollectionProvider>();
     final _searchProvider = context.read<SearchProvider>();
 
-    await _collectionProvider.getSearchCollectionData(
-        _searchProvider.searchText!, isKeyword);
+    if (_searchProvider.searchText != null &&
+        _searchProvider.searchText != '') {
+      await _collectionProvider.getSearchCollectionData(
+          _searchProvider.searchText!, isKeyword);
+    }
   }
 
   @override
@@ -96,7 +99,11 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ];
         },
-        body: SearchCollectionWidget(),
+        body: context.read<SearchProvider>().searchText == null
+            ? const Center(
+                child: Text('콜렉션을 추가해주세요.'),
+              )
+            : SearchCollectionWidget(),
       ),
     );
   }
