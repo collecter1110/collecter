@@ -36,34 +36,28 @@ class SearchCollection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           AspectRatio(
-            aspectRatio: 1 / 1,
+            aspectRatio: 0.9,
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
                   color: Color(0xFFf1f3f5),
                   borderRadius: BorderRadius.circular(8)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  collectionDetail.imageFilePath != null
-                      ? Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(6),
-                            ),
-                            child: Container(
-                              width: double.infinity,
-                              child: Image.asset(
-                                'assets/images/IMG_4498.png',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+              child: collectionDetail.imageFilePath != null
+                  ? Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(6),
+                        ),
+                        child: Container(
+                          width: double.infinity,
+                          child: Image.asset(
+                            'assets/images/IMG_4498.png',
+                            fit: BoxFit.cover,
                           ),
-                        )
-                      : SizedBox.shrink(),
-                ],
-              ),
+                        ),
+                      ),
+                    )
+                  : SizedBox.shrink(),
             ),
           ),
           SizedBox(
@@ -80,16 +74,16 @@ class SearchCollection extends StatelessWidget {
                     collectionDetail.title,
                     style: TextStyle(
                       color: Color(0xFF343A40),
-                      fontSize: 15.sp,
+                      fontSize: 16.0.sp,
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w600,
-                      height: 1.33,
+                      height: 1.5,
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 10.0.h),
+                    padding: EdgeInsets.symmetric(vertical: 10.0.h),
                     child: collectionDetail.primaryKeywords != null
                         ? Wrap(
                             direction: Axis.horizontal,
@@ -104,21 +98,18 @@ class SearchCollection extends StatelessWidget {
                         : SizedBox.shrink(),
                   ),
                   Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 10.0.h),
-                      child: collectionDetail.tags != null
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TagTextStyle(
-                                  tags: collectionDetail.tags!,
-                                  color: Color(0xFF868E96),
-                                  maxLine: 2,
-                                ),
-                              ],
-                            )
-                          : SizedBox.shrink(),
-                    ),
+                    child: collectionDetail.tags != null
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TagTextStyle(
+                                tags: collectionDetail.tags!,
+                                color: Color(0xFF868E96),
+                                maxLine: 2,
+                              ),
+                            ],
+                          )
+                        : SizedBox.shrink(),
                   )
                 ],
               ),

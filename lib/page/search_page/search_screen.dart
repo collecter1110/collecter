@@ -33,11 +33,6 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   bool _isKeyword = true;
 
   @override
@@ -59,31 +54,31 @@ class _SearchScreenState extends State<SearchScreen> {
                 fontWeight: FontWeight.w700,
                 fontSize: 18.0.sp,
               ),
-              flexibleSpace: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  return FlexibleSpaceBar(
-                    expandedTitleScale: 1,
-                    centerTitle: false,
-                    titlePadding: EdgeInsets.zero,
-                    title: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.0.h, horizontal: 16.0.w),
-                      child: SearchCategoryWidget(
-                        onTap: (index) {
-                          setState(() {
-                            _isKeyword = index == 0;
-                            _doSearch(_isKeyword);
-                          });
-                        },
-                      ),
-                    ),
-                    background: Padding(
-                      padding: EdgeInsets.only(
-                        left: 16.0.w,
-                        right: 16.0.w,
-                        top: ViewPaddingTopSize(context) + 20.0,
-                      ),
-                      child: CustomSearchBar(
+              flexibleSpace: FlexibleSpaceBar(
+                expandedTitleScale: 1,
+                centerTitle: false,
+                titlePadding: EdgeInsets.zero,
+                title: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+                  child: SearchCategoryWidget(
+                    onTap: (index) {
+                      setState(() {
+                        _isKeyword = index == 0;
+                        _doSearch(_isKeyword);
+                      });
+                    },
+                  ),
+                ),
+                background: Padding(
+                  padding: EdgeInsets.only(
+                    left: 16.0.w,
+                    right: 16.0.w,
+                    top: ViewPaddingTopSize(context) + 20.0.h,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CustomSearchBar(
                         autoFocus: false,
                         enabled: true,
                         onSearch: () {
@@ -92,16 +87,16 @@ class _SearchScreenState extends State<SearchScreen> {
                           });
                         },
                       ),
-                    ),
-                  );
-                },
+                    ],
+                  ),
+                ),
               ),
             ),
           ];
         },
         body: context.read<SearchProvider>().searchText == null
             ? const Center(
-                child: Text('콜렉션을 추가해주세요.'),
+                child: Text('검색어를 입력해주세요.'),
               )
             : SearchCollectionWidget(),
       ),
