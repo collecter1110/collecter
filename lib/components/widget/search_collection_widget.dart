@@ -12,8 +12,7 @@ class SearchCollectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
-      final List<CollectionModel>? _collections =
-          provider.getSearchCollections();
+      final List<CollectionModel>? _collections = provider.searchCollections;
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),

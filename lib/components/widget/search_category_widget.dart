@@ -7,8 +7,9 @@ import '../button/dropdown_tab_bar_button.dart';
 import '../button/sub_category_button.dart';
 
 class SearchCategoryWidget extends StatelessWidget {
-  final ValueChanged<int>? onTap;
-  SearchCategoryWidget({super.key, this.onTap});
+  SearchCategoryWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,9 @@ class SearchCategoryWidget extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          DropdownTabBarButton(selectedCategoryName: _selectCategoryName),
+          DropdownTabBarButton(
+            selectedCategoryName: _selectCategoryName,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: _subCategoryList.asMap().entries.map((entry) {
@@ -32,7 +35,6 @@ class SearchCategoryWidget extends StatelessWidget {
                     selectedIndex: provider.selectedSubCategoryIndex,
                     onTap: (index) {
                       provider.setSubCategoryIndex = index;
-                      onTap!(index);
                     }),
               );
             }).toList(),

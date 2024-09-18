@@ -578,6 +578,37 @@ class ApiService {
     }
   }
 
+  static Future<List<SelectionModel>?> searchSelections(
+      String searchText, bool isKeyword) async {
+    try {
+      final response = isKeyword
+          ? await _supabase.rpc('search_selections_by_keyword',
+              params: {'query': searchText})
+          : await _supabase
+              .rpc('search_selections_by_tag', params: {'query': searchText});
+
+      if (response.isEmpty) {
+        print('No data returned from the server');
+
+        return null;
+      }
+      print(response);
+      final List<Map<String, dynamic>> responseData =
+          List<Map<String, dynamic>>.from(response);
+
+      List<SelectionModel> selections = responseData.map((item) {
+        return SelectionModel.fromJson(item);
+      }).toList();
+      print(selections);
+      return selections;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'get search selections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   static void handleError(String? statusCode, String? message) {
     Toast.error();
     if (statusCode == '400') {

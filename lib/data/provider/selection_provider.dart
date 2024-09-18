@@ -8,12 +8,14 @@ class SelectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
   int? _collectionId;
   List<SelectionModel>? _selections;
+  List<SelectionModel>? _searchSelections;
   SelectionModel? _selectionDetail;
   PropertiesData? _propertiesData;
 
   ConnectionState get state => _state;
   int? get collectionId => _collectionId;
   List<SelectionModel>? get selections => _selections;
+  List<SelectionModel>? get searchSelections => _searchSelections;
   SelectionModel? get selectionDetail => _selectionDetail;
 
   set getCollectionId(int collectionId) {
@@ -36,6 +38,30 @@ class SelectionProvider with ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  Future<void> getSearchSelectionData(String searchText, bool isKeyword) async {
+    _state = ConnectionState.waiting;
+
+    await Future.delayed(Duration(milliseconds: 300));
+    try {
+      await fetchSearchSelections(searchText, isKeyword);
+      _state = ConnectionState.done;
+    } catch (e) {
+      _state = ConnectionState.none;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchSearchSelections(String searchText, bool isKeyword) async {
+    try {
+      _searchSelections =
+          await ApiService.searchSelections(searchText, isKeyword);
+      print('get search selection ');
+    } catch (e) {
+      print('Failed to fetch search collection: $e');
+    } finally {}
   }
 
   Future<void> fetchSelectionData() async {

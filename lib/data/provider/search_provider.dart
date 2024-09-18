@@ -8,10 +8,12 @@ class SearchProvider with ChangeNotifier {
 
   List<String> _subCategoryNames = ['Keyword', 'Tag'];
   int _selectedSubCategoryIndex = 0;
+  bool _isKeyword = true;
 
   String get selectedCategoryName => _selectedCategoryName;
   int get selectedCategoryIndex => _selectedCategoryIndex;
   int get selectedSubCategoryIndex => _selectedSubCategoryIndex;
+  bool get isKeyword => _isKeyword;
   List<String> get subCategoryNames => _subCategoryNames;
   String? get searchText => _searchText;
 
@@ -30,12 +32,13 @@ class SearchProvider with ChangeNotifier {
       _subCategoryNames.clear();
     }
     _selectedSubCategoryIndex = 0;
+    _isKeyword = true;
     notifyListeners();
   }
 
   set setSubCategoryIndex(int? index) {
     _selectedSubCategoryIndex = index!;
-
+    _isKeyword = _selectedSubCategoryIndex == 0;
     notifyListeners();
   }
 }

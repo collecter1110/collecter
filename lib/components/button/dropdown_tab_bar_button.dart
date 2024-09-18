@@ -44,7 +44,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
     final _provider = context.read<SearchProvider>();
     return OverlayEntry(
       builder: (context) => Positioned(
-        width: 120.0.w,
+        width: 126.0.w,
         child: CompositedTransformFollower(
           link: _layerLink,
           showWhenUnlinked: false,
