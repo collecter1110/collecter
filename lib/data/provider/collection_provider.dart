@@ -22,7 +22,6 @@ class CollectionProvider with ChangeNotifier {
 
   set setPageChanged(int currentPageNum) {
     _currentPageNum = currentPageNum;
-    getCollectionData();
   }
 
   set getCollectionId(int? collectionId) {
@@ -35,21 +34,19 @@ class CollectionProvider with ChangeNotifier {
   }
 
   Future<void> getCollectionData() async {
-    _state = ConnectionState.waiting;
-
-    await Future.delayed(Duration(milliseconds: 1000));
     try {
       if (_currentPageNum == 0 && _myCollections == null) {
+        print('이거 테스트');
+        _state = ConnectionState.waiting;
+        notifyListeners();
+        await Future.delayed(Duration(milliseconds: 300));
         await fetchCollections();
-      } else if (_currentPageNum == 1 && _likeCollections == null) {
         await fetchLikeCollections();
       }
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {
-      notifyListeners();
-    }
+    } finally {}
   }
 
   Future<void> getSearchCollectionData(
@@ -67,21 +64,15 @@ class CollectionProvider with ChangeNotifier {
     }
   }
 
-  List<CollectionModel>? getCollections() {
-    return _currentPageNum == 0 ? _myCollections : _likeCollections;
-  }
-
-  List<CollectionModel>? getSearchCollections() {
-    return _searchCollections;
-  }
-
   Future<void> fetchCollections() async {
     try {
       _myCollections = await ApiService.getCollections();
       print('getCollections');
     } catch (e) {
       print('Failed to fetch collections: $e');
-    } finally {}
+    } finally {
+      notifyListeners();
+    }
   }
 
   Future<void> fetchLikeCollections() async {
@@ -89,7 +80,9 @@ class CollectionProvider with ChangeNotifier {
       _likeCollections = await ApiService.getLikeCollections();
     } catch (e) {
       print('Failed to fetch like collections: $e');
-    } finally {}
+    } finally {
+      notifyListeners();
+    }
   }
 
   Future<void> fetchSearchCollections(String searchText, bool isKeyword) async {

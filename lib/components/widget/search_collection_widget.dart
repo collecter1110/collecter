@@ -17,10 +17,6 @@ class SearchCollectionWidget extends StatelessWidget {
         return Center(
           child: CircularProgressIndicator(),
         );
-      } else if (provider.state == null) {
-        return const Center(
-          child: Text('검색어를 입력해주세요.'),
-        );
       } else if (provider.state == ConnectionState.done) {
         return _collections != null
             ? GridView.builder(

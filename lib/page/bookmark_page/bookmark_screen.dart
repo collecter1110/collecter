@@ -34,6 +34,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = context.read<CollectionProvider>();
       provider.setPageChanged = 0;
+      provider.getCollectionData();
     });
   }
 
@@ -144,8 +145,8 @@ class _BookmarkScreenState extends State<BookmarkScreen>
         body: TabBarView(
           controller: _tabController,
           children: [
-            CollectionWidget(),
-            CollectionWidget(),
+            CollectionWidget(isLiked: false),
+            CollectionWidget(isLiked: true),
           ],
         ),
       ),

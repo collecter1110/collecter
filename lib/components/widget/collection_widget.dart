@@ -8,12 +8,17 @@ import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 
 class CollectionWidget extends StatelessWidget {
-  const CollectionWidget({super.key});
+  final bool isLiked;
+  const CollectionWidget({
+    super.key,
+    required this.isLiked,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
-      final List<CollectionModel>? _collections = provider.getCollections();
+      final List<CollectionModel>? _collections =
+          isLiked ? provider.likeCollections : provider.myCollections;
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),
