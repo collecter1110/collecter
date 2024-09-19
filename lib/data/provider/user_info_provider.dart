@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../model/user_info_model.dart';
 import '../model/user_overview_model.dart';
 import '../services/api_service.dart';
 
 class UserInfoProvider with ChangeNotifier {
+  ConnectionState _state = ConnectionState.waiting;
   UserInfoModel? _userInfo;
   UserOverviewModel? _userOverview;
   int? _collectionNum;
   int? _selectingNum;
   int? _selectedNum;
   List<int>? _userLabelIds;
+  List<UserInfoModel>? _users;
+
+  ConnectionState get state => _state;
   UserInfoModel? get userInfo => _userInfo;
   List<int>? get userLabelIds => _userLabelIds;
-
   int? get collectionNum => _collectionNum;
   int? get selectingNum => _selectingNum;
   int? get selectedNum => _selectedNum;
+  List<UserInfoModel>? get users => _users;
 
   Future<void> getUsersData() async {
     try {
@@ -42,5 +47,19 @@ class UserInfoProvider with ChangeNotifier {
     _selectedNum = _userOverview!.selectedNum;
     _userLabelIds = _userOverview!.labels;
     notifyListeners();
+  }
+
+  Future<void> getSearchUsers(String searchText) async {
+    _state = ConnectionState.waiting;
+
+    await Future.delayed(Duration(milliseconds: 300));
+    try {
+      _users = await ApiService.searchUsers(searchText);
+      _state = ConnectionState.done;
+    } catch (e) {
+      _state = ConnectionState.none;
+    } finally {
+      notifyListeners();
+    }
   }
 }

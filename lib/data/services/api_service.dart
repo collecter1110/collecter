@@ -628,6 +628,32 @@ class ApiService {
     }
   }
 
+  static Future<List<UserInfoModel>?> searchUsers(String searchText) async {
+    try {
+      final response =
+          await _supabase.rpc('search_users', params: {'query': searchText});
+
+      if (response.isEmpty) {
+        print('No data returned from the server');
+        return null;
+      }
+
+      final List<Map<String, dynamic>> responseData =
+          List<Map<String, dynamic>>.from(response);
+
+      List<UserInfoModel> users = responseData.map((item) {
+        return UserInfoModel.fromJson(item);
+      }).toList();
+      print(users);
+      return users;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'get search users error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   static void handleError(String? statusCode, String? message) {
     Toast.error();
     if (statusCode == '400') {

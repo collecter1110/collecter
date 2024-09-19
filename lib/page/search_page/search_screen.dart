@@ -1,6 +1,7 @@
 import 'package:collect_er/components/widget/search_collection_widget.dart';
 import 'package:collect_er/data/provider/search_provider.dart';
 import 'package:collect_er/data/provider/selection_provider.dart';
+import 'package:collect_er/data/provider/user_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,7 @@ class _SearchScreenState extends State<SearchScreen> {
       bool isKeyword, int categoryIndex, String? searchText) async {
     final _collectionProvider = context.read<CollectionProvider>();
     final _selectionProvider = context.read<SelectionProvider>();
+    final _userProvider = context.read<UserInfoProvider>();
 
     print('do search $categoryIndex');
     if (searchText != null && searchText != '') {
@@ -37,6 +39,8 @@ class _SearchScreenState extends State<SearchScreen> {
             searchText, isKeyword);
       } else if (categoryIndex == 1) {
         await _selectionProvider.getSearchSelectionData(searchText, isKeyword);
+      } else {
+        await _userProvider.getSearchUsers(searchText);
       }
     }
   }
