@@ -28,16 +28,12 @@ class SubCategoryButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(6.0),
         ),
         side: BorderSide(
-          color: _isSelected
-              ? Theme.of(context).primaryColor
-              : const Color(0xFFf1f3f5),
+          color: _isSelected ? Color(0xFF868e96) : const Color(0xFFf1f3f5),
           width: 1.0,
           style: BorderStyle.solid,
         ),
         padding: EdgeInsets.symmetric(vertical: 8.0.h, horizontal: 14.0.w),
-        backgroundColor: _isSelected
-            ? Theme.of(context).primaryColor.withOpacity(0.3)
-            : Colors.white,
+        backgroundColor: _isSelected ? Colors.white : Colors.white,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         minimumSize: Size.zero,
       ),

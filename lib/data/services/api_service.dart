@@ -366,6 +366,25 @@ class ApiService {
     }
   }
 
+  static Future<String> getCollectionTitle(int collectionId) async {
+    try {
+      final responseData = await _supabase
+          .from('collections')
+          .select('title')
+          .eq('id', collectionId)
+          .single();
+
+      String title = responseData['title'];
+
+      return title;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   static Future<List<CollectionModel>> getCollections() async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
