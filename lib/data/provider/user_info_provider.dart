@@ -50,16 +50,14 @@ class UserInfoProvider with ChangeNotifier {
   }
 
   Future<void> getSearchUsers(String searchText) async {
-    _state = ConnectionState.waiting;
-
-    await Future.delayed(Duration(milliseconds: 300));
     try {
+      _state = ConnectionState.waiting;
+      await Future.delayed(Duration(milliseconds: 300));
       _users = await ApiService.searchUsers(searchText);
       _state = ConnectionState.done;
+      notifyListeners();
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {
-      notifyListeners();
-    }
+    } finally {}
   }
 }

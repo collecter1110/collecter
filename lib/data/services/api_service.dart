@@ -577,8 +577,6 @@ class ApiService {
               .rpc('search_collections_by_tag', params: {'query': searchText});
 
       if (response.isEmpty) {
-        print('No data returned from the server');
-
         return null;
       }
       final List<Map<String, dynamic>> responseData =
@@ -607,8 +605,6 @@ class ApiService {
               .rpc('search_selections_by_tag', params: {'query': searchText});
 
       if (response.isEmpty) {
-        print('No data returned from the server');
-
         return null;
       }
       print(response);
@@ -618,7 +614,7 @@ class ApiService {
       List<SelectionModel> selections = responseData.map((item) {
         return SelectionModel.fromJson(item);
       }).toList();
-      print(selections);
+
       return selections;
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
@@ -634,7 +630,6 @@ class ApiService {
           await _supabase.rpc('search_users', params: {'query': searchText});
 
       if (response.isEmpty) {
-        print('No data returned from the server');
         return null;
       }
 
@@ -644,7 +639,6 @@ class ApiService {
       List<UserInfoModel> users = responseData.map((item) {
         return UserInfoModel.fromJson(item);
       }).toList();
-      print(users);
       return users;
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');

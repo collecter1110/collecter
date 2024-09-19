@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/user_info_provider.dart';
+import '../card/search_user.dart';
 
 class SearchUserWidget extends StatelessWidget {
   const SearchUserWidget({super.key});
@@ -25,15 +26,15 @@ class SearchUserWidget extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 1,
-                  mainAxisSpacing: 24.0.h,
-                  crossAxisSpacing: 12.0.w,
-                  childAspectRatio: 3,
+                  mainAxisSpacing: 16.0.h,
+                  childAspectRatio: 6,
                 ),
                 itemCount: _users.length,
                 itemBuilder: (context, index) {
-                  final UserInfoModel _userInfo = _users[index];
-
-                  return;
+                  final UserInfoModel _userInfoDetail = _users[index];
+                  return SearchUser(
+                    userInfoDetail: _userInfoDetail,
+                  );
                 },
               )
             : const Center(
