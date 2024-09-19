@@ -106,10 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               autoFocus: false,
                               enabled: true,
                               onSearch: () {
-                                setState(() {
-                                  _doSearch(
-                                      isKeyword, categoryIndex, searchText);
-                                });
+                                setState(() {});
                               },
                             ),
                           ],
