@@ -27,7 +27,7 @@ class SearchProvider with ChangeNotifier {
     if (categoryIndex == 0) {
       _subCategoryNames = ['Keyword', 'Tag'];
     } else if (categoryIndex == 1) {
-      _subCategoryNames = ['Keyword', 'Item'];
+      _subCategoryNames = ['Keyword'];
     } else {
       _subCategoryNames.clear();
     }

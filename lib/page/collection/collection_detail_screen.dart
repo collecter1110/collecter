@@ -127,6 +127,7 @@ class CollectionDetailScreen extends StatelessWidget {
                                 TagTextStyle(
                                   tags: _collectionDetail.tags!,
                                   color: Color(0xFF868E96),
+                                  maxLine: 3,
                                 ),
                               ],
                             )
