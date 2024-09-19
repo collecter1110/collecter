@@ -67,6 +67,7 @@ class CollectionProvider with ChangeNotifier {
   Future<void> fetchCollections() async {
     try {
       _myCollections = await ApiService.getCollections();
+      _state = ConnectionState.done;
       print('getCollections');
     } catch (e) {
       print('Failed to fetch collections: $e');
