@@ -19,6 +19,7 @@ class SearchProvider with ChangeNotifier {
 
   set saveSearchText(String searchText) {
     _searchText = searchText;
+    notifyListeners();
   }
 
   set setCategoryIndex(int? categoryIndex) {

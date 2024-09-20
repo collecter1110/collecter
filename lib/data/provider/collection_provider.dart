@@ -4,16 +4,20 @@ import 'package:flutter/material.dart';
 
 class CollectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
-  List<CollectionModel>? _searchCollections;
+  List<CollectionModel>? _searchKeywordCollections;
+  List<CollectionModel>? _searchTagCollections;
   List<CollectionModel>? _myCollections;
   List<CollectionModel>? _likeCollections;
   CollectionModel? _collectionDetail;
   int? _collectionId;
   int? _collectionIndex;
   int? _currentPageNum;
+  String? _currentSearchText;
 
   ConnectionState get state => _state;
-  List<CollectionModel>? get searchCollections => _searchCollections;
+  List<CollectionModel>? get searchKeywordCollections =>
+      _searchKeywordCollections;
+  List<CollectionModel>? get searchTagCollections => _searchTagCollections;
   List<CollectionModel>? get myCollections => _myCollections;
   List<CollectionModel>? get likeCollections => _likeCollections;
   CollectionModel? get collectionDetail => _collectionDetail;
@@ -51,17 +55,20 @@ class CollectionProvider with ChangeNotifier {
 
   Future<void> getSearchCollectionData(
       String searchText, bool isKeyword) async {
-    _state = ConnectionState.waiting;
-
-    await Future.delayed(Duration(milliseconds: 300));
     try {
-      await fetchSearchCollections(searchText, isKeyword);
-      _state = ConnectionState.done;
+      if (isKeyword) {
+        if (_currentSearchText != searchText ||
+            _searchKeywordCollections == null) {
+          await fetchSearchCollections(searchText, isKeyword);
+        }
+      } else {
+        if (_currentSearchText != searchText || _searchTagCollections == null) {
+          await fetchSearchCollections(searchText, isKeyword);
+        }
+      }
+      _currentSearchText = searchText;
     } catch (e) {
-      _state = ConnectionState.none;
-    } finally {
-      notifyListeners();
-    }
+    } finally {}
   }
 
   Future<void> fetchCollections() async {
@@ -88,12 +95,22 @@ class CollectionProvider with ChangeNotifier {
 
   Future<void> fetchSearchCollections(String searchText, bool isKeyword) async {
     try {
-      _searchCollections =
-          await ApiService.searchCollections(searchText, isKeyword);
-      print('get search collection ');
+      _state = ConnectionState.waiting;
+
+      await Future.delayed(Duration(milliseconds: 300));
+      if (isKeyword) {
+        _searchKeywordCollections =
+            await ApiService.searchCollections(searchText, isKeyword);
+      } else {
+        _searchTagCollections =
+            await ApiService.searchCollections(searchText, isKeyword);
+      }
+      _state = ConnectionState.done;
     } catch (e) {
-      print('Failed to fetch search collection: $e');
-    } finally {}
+      _state = ConnectionState.none;
+    } finally {
+      notifyListeners();
+    }
   }
 
   Future<void> getCollectionDetailData() async {

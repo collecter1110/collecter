@@ -13,7 +13,8 @@ class UserInfoProvider with ChangeNotifier {
   int? _selectingNum;
   int? _selectedNum;
   List<int>? _userLabelIds;
-  List<UserInfoModel>? _users;
+  List<UserInfoModel>? _searchUsers;
+  String? _currentSearchText;
 
   ConnectionState get state => _state;
   UserInfoModel? get userInfo => _userInfo;
@@ -21,7 +22,7 @@ class UserInfoProvider with ChangeNotifier {
   int? get collectionNum => _collectionNum;
   int? get selectingNum => _selectingNum;
   int? get selectedNum => _selectedNum;
-  List<UserInfoModel>? get users => _users;
+  List<UserInfoModel>? get searchUsers => _searchUsers;
 
   Future<void> getUsersData() async {
     try {
@@ -51,13 +52,24 @@ class UserInfoProvider with ChangeNotifier {
 
   Future<void> getSearchUsers(String searchText) async {
     try {
+      if (_currentSearchText != searchText || _searchUsers == null) {
+        await fetchSearchUsers(searchText);
+      }
+      _currentSearchText = searchText;
+    } catch (e) {
+    } finally {}
+  }
+
+  Future<void> fetchSearchUsers(String searchText) async {
+    try {
       _state = ConnectionState.waiting;
       await Future.delayed(Duration(milliseconds: 300));
-      _users = await ApiService.searchUsers(searchText);
+      _searchUsers = await ApiService.searchUsers(searchText);
       _state = ConnectionState.done;
-      notifyListeners();
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {}
+    } finally {
+      notifyListeners();
+    }
   }
 }

@@ -7,18 +7,21 @@ import '../../data/provider/collection_provider.dart';
 import '../card/search_collection.dart';
 
 class SearchCollectionWidget extends StatelessWidget {
-  const SearchCollectionWidget({super.key});
+  final bool isKeyword;
+  const SearchCollectionWidget({super.key, required this.isKeyword});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
-      final List<CollectionModel>? _collections = provider.searchCollections;
+      final List<CollectionModel>? _collections = isKeyword
+          ? provider.searchKeywordCollections
+          : provider.searchTagCollections;
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return _collections != null
+        return _collections!.isNotEmpty
             ? GridView.builder(
                 padding:
                     EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),

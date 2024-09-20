@@ -11,6 +11,7 @@ class SelectionProvider with ChangeNotifier {
   List<SelectionModel>? _searchSelections;
   SelectionModel? _selectionDetail;
   PropertiesData? _propertiesData;
+  String? _currentSearchText;
 
   ConnectionState get state => _state;
   int? get collectionId => _collectionId;
@@ -40,28 +41,28 @@ class SelectionProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getSearchSelectionData(String searchText, bool isKeyword) async {
-    _state = ConnectionState.waiting;
-
-    await Future.delayed(Duration(milliseconds: 300));
+  Future<void> getSearchSelectionData(String searchText) async {
     try {
-      await fetchSearchSelections(searchText, isKeyword);
+      if (_currentSearchText != searchText || _searchSelections == null) {
+        await fetchSearchSelections(searchText);
+      }
+      _currentSearchText = searchText;
+    } catch (e) {
+    } finally {}
+  }
+
+  Future<void> fetchSearchSelections(String searchText) async {
+    try {
+      _state = ConnectionState.waiting;
+
+      await Future.delayed(Duration(milliseconds: 300));
+      _searchSelections = await ApiService.searchSelections(searchText);
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
     } finally {
       notifyListeners();
     }
-  }
-
-  Future<void> fetchSearchSelections(String searchText, bool isKeyword) async {
-    try {
-      _searchSelections =
-          await ApiService.searchSelections(searchText, isKeyword);
-      print('get search selection ');
-    } catch (e) {
-      print('Failed to fetch search collection: $e');
-    } finally {}
   }
 
   Future<void> fetchSelectionData() async {
