@@ -5,13 +5,11 @@ import 'package:provider/provider.dart';
 import '../../data/provider/search_provider.dart';
 
 class CustomSearchBar extends StatelessWidget {
-  final VoidCallback? onSearch;
   final bool autoFocus;
   final bool enabled;
 
   CustomSearchBar({
     Key? key,
-    required this.onSearch,
     required this.autoFocus,
     required this.enabled,
   });
@@ -68,7 +66,6 @@ class CustomSearchBar extends StatelessWidget {
       onFieldSubmitted: (searchText) {
         if (searchText.isNotEmpty) {
           _provider.saveSearchText = searchText;
-          onSearch!();
         }
       },
     );

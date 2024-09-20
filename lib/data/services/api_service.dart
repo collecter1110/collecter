@@ -567,7 +567,7 @@ class ApiService {
         .eq('collection_id', collectionId);
   }
 
-  static Future<List<CollectionModel>?> searchCollections(
+  static Future<List<CollectionModel>> searchCollections(
       String searchText, bool isKeyword) async {
     try {
       final response = isKeyword
@@ -576,9 +576,6 @@ class ApiService {
           : await _supabase
               .rpc('search_collections_by_tag', params: {'query': searchText});
 
-      if (response.isEmpty) {
-        return null;
-      }
       final List<Map<String, dynamic>> responseData =
           List<Map<String, dynamic>>.from(response);
 
@@ -595,18 +592,12 @@ class ApiService {
     }
   }
 
-  static Future<List<SelectionModel>?> searchSelections(
-      String searchText, bool isKeyword) async {
+  static Future<List<SelectionModel>> searchSelections(
+      String searchText) async {
     try {
-      final response = isKeyword
-          ? await _supabase.rpc('search_selections_by_keyword',
-              params: {'query': searchText})
-          : await _supabase
-              .rpc('search_selections_by_tag', params: {'query': searchText});
+      final response = await _supabase
+          .rpc('search_selections_by_keyword', params: {'query': searchText});
 
-      if (response.isEmpty) {
-        return null;
-      }
       print(response);
       final List<Map<String, dynamic>> responseData =
           List<Map<String, dynamic>>.from(response);
@@ -624,14 +615,10 @@ class ApiService {
     }
   }
 
-  static Future<List<UserInfoModel>?> searchUsers(String searchText) async {
+  static Future<List<UserInfoModel>> searchUsers(String searchText) async {
     try {
       final response =
           await _supabase.rpc('search_users', params: {'query': searchText});
-
-      if (response.isEmpty) {
-        return null;
-      }
 
       final List<Map<String, dynamic>> responseData =
           List<Map<String, dynamic>>.from(response);

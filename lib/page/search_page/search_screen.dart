@@ -27,44 +27,51 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<void> _doSearch(
-      bool isKeyword, int categoryIndex, String? searchText) async {
+    bool isKeyword,
+    int categoryIndex,
+    String? searchText,
+  ) async {
     final _collectionProvider = context.read<CollectionProvider>();
     final _selectionProvider = context.read<SelectionProvider>();
     final _userProvider = context.read<UserInfoProvider>();
 
     print('do search $categoryIndex');
-    if (searchText != null && searchText != '') {
-      if (categoryIndex == 0) {
+
+    if (searchText == null || searchText.isEmpty) return;
+
+    switch (categoryIndex) {
+      case 0:
         await _collectionProvider.getSearchCollectionData(
             searchText, isKeyword);
-      } else if (categoryIndex == 1) {
-        await _selectionProvider.getSearchSelectionData(searchText, isKeyword);
-      } else {
+        break;
+
+      case 1:
+        await _selectionProvider.getSearchSelectionData(searchText);
+        break;
+
+      case 2:
         await _userProvider.getSearchUsers(searchText);
-      }
+        break;
+
+      default:
+        break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Selector<
-            SearchProvider,
-            ({
-              int item1,
-              bool item2,
-              String? item3,
-            })>(
+    return Selector<SearchProvider, ({int item1, bool item2, String? item3})>(
         selector: (context, searchProvider) => (
               item1: searchProvider.selectedCategoryIndex,
               item2: searchProvider.isKeyword,
               item3: searchProvider.searchText,
             ),
         builder: (context, data, child) {
-          int categoryIndex = data.item1;
-          bool? isKeyword = data.item2;
-          String? searchText = data.item3;
+          int _categoryIndex = data.item1;
+          bool _isKeyword = data.item2;
+          String? _searchText = data.item3;
 
-          _doSearch(isKeyword, categoryIndex, searchText);
+          _doSearch(_isKeyword, _categoryIndex, _searchText);
 
           return Scaffold(
             resizeToAvoidBottomInset: true,
@@ -105,9 +112,6 @@ class _SearchScreenState extends State<SearchScreen> {
                             CustomSearchBar(
                               autoFocus: false,
                               enabled: true,
-                              onSearch: () {
-                                setState(() {});
-                              },
                             ),
                           ],
                         ),
@@ -116,17 +120,17 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ];
               },
-              body: searchText == null
+              body: _searchText == null
                   ? const Center(
                       child: Text('검색어를 입력해주세요.'),
                     )
-                  : categoryIndex == 0
-                      ? SearchCollectionWidget()
-                      : categoryIndex == 1
+                  : _categoryIndex == 0
+                      ? SearchCollectionWidget(isKeyword: _isKeyword)
+                      : _categoryIndex == 1
                           ? SearchSelectionWidget(
                               routeName: '/search',
                             )
-                          : categoryIndex == 2
+                          : _categoryIndex == 2
                               ? SearchUserWidget()
                               : const Center(
                                   child: Text('해당 카테고리가 없습니다.'),

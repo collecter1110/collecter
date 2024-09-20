@@ -25,7 +25,7 @@ class SearchSelectionWidget extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return _selections != null
+        return _selections!.isNotEmpty
             ? GridView.builder(
                 padding:
                     EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),

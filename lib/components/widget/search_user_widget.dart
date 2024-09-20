@@ -12,13 +12,13 @@ class SearchUserWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<UserInfoProvider>(builder: (context, provider, child) {
-      List<UserInfoModel>? _users = provider.users;
+      List<UserInfoModel>? _users = provider.searchUsers;
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return _users != null
+        return _users!.isNotEmpty
             ? GridView.builder(
                 padding:
                     EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),
