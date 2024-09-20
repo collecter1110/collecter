@@ -1,24 +1,18 @@
-import 'package:collect_er/components/card/collection.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
+import '../card/search_collection.dart';
 
-class CollectionWidget extends StatelessWidget {
-  final bool isLiked;
-  const CollectionWidget({
-    super.key,
-    required this.isLiked,
-  });
+class SearchCollectionWidget extends StatelessWidget {
+  const SearchCollectionWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
-      final List<CollectionModel>? _collections =
-          isLiked ? provider.likeCollections : provider.myCollections;
+      final List<CollectionModel>? _collections = provider.searchCollections;
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),
@@ -31,22 +25,22 @@ class CollectionWidget extends StatelessWidget {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: 1,
                   mainAxisSpacing: 24.0.h,
                   crossAxisSpacing: 12.0.w,
-                  childAspectRatio: 0.65,
+                  childAspectRatio: 3,
                 ),
                 itemCount: _collections.length,
                 itemBuilder: (context, index) {
                   final CollectionModel _collection = _collections[index];
 
-                  return Collection(
+                  return SearchCollection(
                     collectionDetail: _collection,
                   );
                 },
               )
             : const Center(
-                child: Text('콜렉션을 추가해주세요.'),
+                child: Text('일치하는 데이터가 없습니다.'),
               );
       } else {
         return const Center(

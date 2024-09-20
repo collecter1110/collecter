@@ -366,6 +366,25 @@ class ApiService {
     }
   }
 
+  static Future<String> getCollectionTitle(int collectionId) async {
+    try {
+      final responseData = await _supabase
+          .from('collections')
+          .select('title')
+          .eq('id', collectionId)
+          .single();
+
+      String title = responseData['title'];
+
+      return title;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   static Future<List<CollectionModel>> getCollections() async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
@@ -383,12 +402,7 @@ class ApiService {
         ''').eq('user_id', userId);
 
       List<CollectionModel> collections = responseData.map((item) {
-        // 'likes' 필드에서 현재 사용자가 좋아요를 눌렀는지 확인
-        bool hasLiked = (item['likes'] as List<dynamic>)
-            .any((like) => like['user_id'] == userId);
-
-        // CollectionModel을 생성하면서 hasLiked 값을 추가로 전달
-        return CollectionModel.fromJson(item, hasLiked: hasLiked);
+        return CollectionModel.fromJson(item);
       }).toList();
 
       return collections;
@@ -409,8 +423,7 @@ class ApiService {
         .eq('user_id', userId);
 
     final List<CollectionModel> likeCollections = response
-        .map((item) =>
-            CollectionModel.fromJson(item['collections'], hasLiked: true))
+        .map((item) => CollectionModel.fromJson(item['collections']))
         .toList();
 
     return likeCollections;
@@ -552,6 +565,87 @@ class ApiService {
         .delete()
         .eq('user_id', userId)
         .eq('collection_id', collectionId);
+  }
+
+  static Future<List<CollectionModel>?> searchCollections(
+      String searchText, bool isKeyword) async {
+    try {
+      final response = isKeyword
+          ? await _supabase.rpc('search_collections_by_keyword',
+              params: {'query': searchText})
+          : await _supabase
+              .rpc('search_collections_by_tag', params: {'query': searchText});
+
+      if (response.isEmpty) {
+        return null;
+      }
+      final List<Map<String, dynamic>> responseData =
+          List<Map<String, dynamic>>.from(response);
+
+      List<CollectionModel> collections = responseData.map((item) {
+        return CollectionModel.fromJson(item);
+      }).toList();
+
+      return collections;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<SelectionModel>?> searchSelections(
+      String searchText, bool isKeyword) async {
+    try {
+      final response = isKeyword
+          ? await _supabase.rpc('search_selections_by_keyword',
+              params: {'query': searchText})
+          : await _supabase
+              .rpc('search_selections_by_tag', params: {'query': searchText});
+
+      if (response.isEmpty) {
+        return null;
+      }
+      print(response);
+      final List<Map<String, dynamic>> responseData =
+          List<Map<String, dynamic>>.from(response);
+
+      List<SelectionModel> selections = responseData.map((item) {
+        return SelectionModel.fromJson(item);
+      }).toList();
+
+      return selections;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'get search selections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<UserInfoModel>?> searchUsers(String searchText) async {
+    try {
+      final response =
+          await _supabase.rpc('search_users', params: {'query': searchText});
+
+      if (response.isEmpty) {
+        return null;
+      }
+
+      final List<Map<String, dynamic>> responseData =
+          List<Map<String, dynamic>>.from(response);
+
+      List<UserInfoModel> users = responseData.map((item) {
+        return UserInfoModel.fromJson(item);
+      }).toList();
+      return users;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'get search users error');
+      throw Exception('An unexpected error occurred: $e');
+    }
   }
 
   static void handleError(String? statusCode, String? message) {

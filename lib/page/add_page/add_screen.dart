@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../components/button/category_button.dart';
+import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/add_collection_widget.dart';
 import '../../components/widget/add_selection_widget.dart';
@@ -77,15 +77,15 @@ class _AddScreenState extends State<AddScreen>
                             },
                             tabs: [
                               Tab(
-                                child: CategoryButton(
-                                  categoryName: 'Add Collection',
-                                  categoryState: _tabController!.index == 0,
+                                child: TabBarButton(
+                                  tabName: 'Add Collection',
+                                  buttonState: _tabController!.index == 0,
                                 ),
                               ),
                               Tab(
-                                child: CategoryButton(
-                                  categoryName: 'Add Selection',
-                                  categoryState: _tabController!.index == 1,
+                                child: TabBarButton(
+                                  tabName: 'Add Selection',
+                                  buttonState: _tabController!.index == 1,
                                 ),
                               ),
                             ],

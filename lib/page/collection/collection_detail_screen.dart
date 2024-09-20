@@ -59,7 +59,7 @@ class CollectionDetailScreen extends StatelessWidget {
                         ),
                         likedButton(
                           collectionId: _collectionDetail.id,
-                          isLiked: _collectionDetail.isLiked,
+                          isLiked: _collectionDetail.isLiked!,
                           likedNum: _collectionDetail.likeNum!,
                         ),
                       ],
@@ -121,17 +121,15 @@ class CollectionDetailScreen extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 4.0.h),
                       child: _collectionDetail.tags != null
-                          ? Wrap(
-                              direction: Axis.horizontal,
-                              alignment: WrapAlignment.start,
-                              spacing: 5.0.w,
-                              runSpacing: 5.0.h,
-                              children: _collectionDetail.tags!.map((tag) {
-                                return TagTextStyle(
-                                  name: tag,
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TagTextStyle(
+                                  tags: _collectionDetail.tags!,
                                   color: Color(0xFF868E96),
-                                );
-                              }).toList(),
+                                  maxLine: 3,
+                                ),
+                              ],
                             )
                           : SizedBox.shrink(),
                     ),

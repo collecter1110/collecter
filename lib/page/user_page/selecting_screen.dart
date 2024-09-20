@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../components/button/category_button.dart';
+import '../../components/button/tab_bar_button.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/provider/selecting_provider.dart';
 
@@ -87,15 +87,15 @@ class _UsersSelectScreenState extends State<SelectingScreen>
                 },
                 tabs: [
                   Tab(
-                    child: CategoryButton(
-                      categoryName: 'Selecting',
-                      categoryState: _tabController!.index == 0,
+                    child: TabBarButton(
+                      tabName: 'Selecting',
+                      buttonState: _tabController!.index == 0,
                     ),
                   ),
                   Tab(
-                    child: CategoryButton(
-                      categoryName: 'Selected',
-                      categoryState: _tabController!.index == 1,
+                    child: TabBarButton(
+                      tabName: 'Selected',
+                      buttonState: _tabController!.index == 1,
                     ),
                   ),
                 ],

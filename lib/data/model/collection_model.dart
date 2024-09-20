@@ -12,7 +12,7 @@ class CollectionModel {
   final int selectionNum;
   final int? likeNum;
   final bool isPrivate;
-  final bool isLiked;
+  final bool? isLiked;
 
   CollectionModel({
     required this.id,
@@ -26,12 +26,12 @@ class CollectionModel {
     required this.selectionNum,
     this.likeNum,
     required this.isPrivate,
-    required this.isLiked, // 필수 매개변수로 설정
+    this.isLiked,
   });
 
   // fromJson 메서드를 수정하여 hasLiked 값을 직접 받을 수 있게 수정
   factory CollectionModel.fromJson(Map<String, dynamic> json,
-      {required bool hasLiked}) {
+      {bool? hasLiked}) {
     return CollectionModel(
       id: json['id'],
       title: json['title'],
@@ -46,7 +46,7 @@ class CollectionModel {
       selectionNum: json['selection_num'],
       likeNum: json['like_num'] as int?,
       isPrivate: json['is_private'],
-      isLiked: hasLiked, // hasLiked 값을 isLiked에 직접 할당
+      isLiked: hasLiked as bool?,
     );
   }
 }

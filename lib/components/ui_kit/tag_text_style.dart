@@ -2,37 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TagTextStyle extends StatelessWidget {
-  final String name;
+  final List<dynamic> tags;
   final Color color;
-  const TagTextStyle({super.key, required this.name, required this.color});
+  final int? maxLine;
+  const TagTextStyle({
+    super.key,
+    required this.tags,
+    required this.color,
+    this.maxLine,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: '# ',
-            style: TextStyle(
-              color: color,
-              fontFamily: 'PretendardRegular',
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w500,
-              height: 1,
-            ),
-          ),
-          TextSpan(
-            text: name,
-            style: TextStyle(
-              color: color,
-              fontFamily: 'Pretendard',
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w500,
-              height: 1.5,
-            ),
-          ),
-        ],
+    final tagsText = tags.map((tag) => '#$tag').join(' ');
+
+    return Text(
+      tagsText,
+      style: TextStyle(
+        color: color,
+        fontFamily: 'Pretendard',
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w500,
+        height: 1.5,
       ),
+      maxLines: maxLine,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

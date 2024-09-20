@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../components/button/category_button.dart';
+import '../../components/button/tab_bar_button.dart';
 
 import '../../components/constants/screen_size.dart';
 import '../../components/card/ranking_collection.dart';
@@ -100,21 +100,21 @@ class _HomeScreenState extends State<HomeScreen>
                           },
                           tabs: [
                             Tab(
-                              child: CategoryButton(
-                                categoryName: 'Collection',
-                                categoryState: _tabController!.index == 0,
+                              child: TabBarButton(
+                                tabName: 'Collection',
+                                buttonState: _tabController!.index == 0,
                               ),
                             ),
                             Tab(
-                              child: CategoryButton(
-                                categoryName: 'Selection',
-                                categoryState: _tabController!.index == 1,
+                              child: TabBarButton(
+                                tabName: 'Selection',
+                                buttonState: _tabController!.index == 1,
                               ),
                             ),
                             Tab(
-                              child: CategoryButton(
-                                categoryName: 'User',
-                                categoryState: _tabController!.index == 2,
+                              child: TabBarButton(
+                                tabName: 'User',
+                                buttonState: _tabController!.index == 2,
                               ),
                             ),
                           ],

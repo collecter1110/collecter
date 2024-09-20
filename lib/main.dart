@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'data/provider/keyword_provider.dart';
 import 'data/provider/page_route_provider.dart';
+import 'data/provider/search_provider.dart';
 import 'data/provider/selecting_provider.dart';
 import 'data/provider/selection_provider.dart';
 import 'data/provider/tag_provider.dart';
@@ -48,6 +49,9 @@ void main() async {
         ),
         ChangeNotifierProvider<ItemProvider>(
           create: (context) => ItemProvider(),
+        ),
+        ChangeNotifierProvider<SearchProvider>(
+          create: (context) => SearchProvider(),
         ),
       ],
       builder: (context, child) {

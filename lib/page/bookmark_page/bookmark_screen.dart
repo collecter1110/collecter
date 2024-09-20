@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../components/button/category_button.dart';
+import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/collection_widget.dart';
 
@@ -34,6 +34,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = context.read<CollectionProvider>();
       provider.setPageChanged = 0;
+      provider.getCollectionData();
     });
   }
 
@@ -90,15 +91,15 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                           },
                           tabs: [
                             Tab(
-                              child: CategoryButton(
-                                categoryName: 'My Collection',
-                                categoryState: _tabController!.index == 0,
+                              child: TabBarButton(
+                                tabName: 'My Collection',
+                                buttonState: _tabController!.index == 0,
                               ),
                             ),
                             Tab(
-                              child: CategoryButton(
-                                categoryName: 'Like Collection',
-                                categoryState: _tabController!.index == 1,
+                              child: TabBarButton(
+                                tabName: 'Like Collection',
+                                buttonState: _tabController!.index == 1,
                               ),
                             ),
                           ],
@@ -144,8 +145,8 @@ class _BookmarkScreenState extends State<BookmarkScreen>
         body: TabBarView(
           controller: _tabController,
           children: [
-            CollectionWidget(),
-            CollectionWidget(),
+            CollectionWidget(isLiked: false),
+            CollectionWidget(isLiked: true),
           ],
         ),
       ),
