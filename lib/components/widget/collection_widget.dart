@@ -8,17 +8,22 @@ import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 
 class CollectionWidget extends StatelessWidget {
-  final bool isLiked;
+  final bool? isLiked;
   const CollectionWidget({
     super.key,
-    required this.isLiked,
+    this.isLiked,
   });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
-      final List<CollectionModel>? _collections =
-          isLiked ? provider.likeCollections : provider.myCollections;
+      final List<CollectionModel>? _collections;
+      if (isLiked == null) {
+        _collections = provider.likeCollections;
+      } else {
+        _collections =
+            isLiked! ? provider.likeCollections : provider.myCollections;
+      }
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),
@@ -38,9 +43,9 @@ class CollectionWidget extends StatelessWidget {
                 ),
                 itemCount: _collections.length,
                 itemBuilder: (context, index) {
-                  final CollectionModel _collection = _collections[index];
-
+                  final CollectionModel _collection = _collections![index];
                   return Collection(
+                    routName: isLiked == null ? '/search' : '/bookmark',
                     collectionDetail: _collection,
                   );
                 },

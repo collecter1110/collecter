@@ -1,4 +1,5 @@
 import 'package:collect_er/data/model/user_info_model.dart';
+import 'package:collect_er/page/search_page/other_user_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,7 +16,18 @@ class SearchUser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async {},
+      onTap: () async {
+        //  context.read<CollectionProvider>().getCollectionId =
+        //     collectionDetail.id;
+        // await context.read<CollectionProvider>().getCollectionDetailData();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtherUserScreen(),
+            settings: RouteSettings(name: '/search'),
+          ),
+        );
+      },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,

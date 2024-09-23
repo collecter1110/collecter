@@ -78,9 +78,11 @@ class UserScreen extends StatelessWidget {
                   final int? selectedNum = provider.selectedNum;
 
                   return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             decoration: BoxDecoration(
@@ -99,45 +101,40 @@ class UserScreen extends StatelessWidget {
                             width: 16.0.w,
                           ),
                           Flexible(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 2.0.h),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    _name,
-                                    style: TextStyle(
-                                      color: Color(0xFF212529),
-                                      fontSize: 18.sp,
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.5,
-                                    ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  _name,
+                                  style: TextStyle(
+                                    color: Color(0xFF212529),
+                                    fontSize: 18.sp,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w700,
                                   ),
-                                  _description != null
-                                      ? Column(
-                                          children: [
-                                            SizedBox(
-                                              height: 4.0.h,
+                                ),
+                                _description != null
+                                    ? Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 4.0.h,
+                                          ),
+                                          ExpandableText(
+                                            maxLine: 2,
+                                            textStyle: TextStyle(
+                                              color: Color(0xFF495057),
+                                              fontSize: 12.sp,
+                                              fontFamily: 'Pretendard',
+                                              fontWeight: FontWeight.w500,
+                                              height: 1.43,
                                             ),
-                                            ExpandableText(
-                                              maxLine: 1,
-                                              textStyle: TextStyle(
-                                                color: Color(0xFF868E96),
-                                                fontSize: 12.sp,
-                                                fontFamily: 'Pretendard',
-                                                fontWeight: FontWeight.w500,
-                                                height: 1.43,
-                                              ),
-                                              text: _description!,
-                                            ),
-                                          ],
-                                        )
-                                      : SizedBox.shrink(),
-                                ],
-                              ),
+                                            text: _description,
+                                          ),
+                                        ],
+                                      )
+                                    : SizedBox.shrink(),
+                              ],
                             ),
                           ),
                         ],
