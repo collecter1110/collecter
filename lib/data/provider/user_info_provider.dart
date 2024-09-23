@@ -52,7 +52,7 @@ class UserInfoProvider with ChangeNotifier {
 
   Future<void> getSearchUsers(String searchText) async {
     try {
-      if (_currentSearchText != searchText || _searchUsers == null) {
+      if (_currentSearchText != searchText) {
         await fetchSearchUsers(searchText);
       }
       _currentSearchText = searchText;

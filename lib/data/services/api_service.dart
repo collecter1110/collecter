@@ -566,14 +566,33 @@ class ApiService {
         .eq('collection_id', collectionId);
   }
 
-  static Future<List<CollectionModel>> searchCollections(
-      String searchText, bool isKeyword) async {
+  static Future<List<CollectionModel>> searchCollectionsByKeyword(
+      String searchText) async {
     try {
-      final response = isKeyword
-          ? await _supabase.rpc('search_collections_by_keyword',
-              params: {'query': searchText})
-          : await _supabase
-              .rpc('search_collections_by_tag', params: {'query': searchText});
+      final response = await _supabase
+          .rpc('search_collections_by_keyword', params: {'query': searchText});
+
+      final List<Map<String, dynamic>> responseData =
+          List<Map<String, dynamic>>.from(response);
+
+      List<CollectionModel> collections = responseData.map((item) {
+        return CollectionModel.fromJson(item);
+      }).toList();
+
+      return collections;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<CollectionModel>> searchCollectionsByTag(
+      String searchText) async {
+    try {
+      final response = await _supabase
+          .rpc('search_collections_by_tag', params: {'query': searchText});
 
       final List<Map<String, dynamic>> responseData =
           List<Map<String, dynamic>>.from(response);
@@ -634,8 +653,7 @@ class ApiService {
     }
   }
 
-  static Future<List<CollectionModel>> searchUsersCollections(
-      int userId) async {
+  static Future<List<CollectionModel>> getUsersCollections(int userId) async {
     try {
       final responseData = await _supabase.from('collections').select('''
         id, 

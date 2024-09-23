@@ -13,7 +13,8 @@ class CollectionProvider with ChangeNotifier {
   int? _collectionId;
   int? _collectionIndex;
   int? _currentPageNum;
-  String? _currentSearchText;
+  String? _keywordCurrentSearchText;
+  String? _tagCurrentSearchText;
 
   ConnectionState get state => _state;
   List<CollectionModel>? get searchKeywordCollections =>
@@ -55,20 +56,22 @@ class CollectionProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getSearchCollectionData(
-      String searchText, bool isKeyword) async {
+  Future<void> getKeywordCollectionData(String searchText) async {
     try {
-      if (isKeyword) {
-        if (_currentSearchText != searchText ||
-            _searchKeywordCollections == null) {
-          await fetchSearchCollections(searchText, isKeyword);
-        }
-      } else {
-        if (_currentSearchText != searchText || _searchTagCollections == null) {
-          await fetchSearchCollections(searchText, isKeyword);
-        }
+      if (_keywordCurrentSearchText != searchText) {
+        await fetchKeywordCollections(searchText);
       }
-      _currentSearchText = searchText;
+      _keywordCurrentSearchText = searchText;
+    } catch (e) {
+    } finally {}
+  }
+
+  Future<void> getTagCollectionData(String searchText) async {
+    try {
+      if (_tagCurrentSearchText != searchText) {
+        await fetchTagCollections(searchText);
+      }
+      _tagCurrentSearchText = searchText;
     } catch (e) {
     } finally {}
   }
@@ -105,7 +108,7 @@ class CollectionProvider with ChangeNotifier {
     try {
       _state = ConnectionState.waiting;
       await Future.delayed(Duration(milliseconds: 300));
-      _searchUsersCollections = await ApiService.searchUsersCollections(userId);
+      _searchUsersCollections = await ApiService.getUsersCollections(userId);
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
@@ -114,17 +117,30 @@ class CollectionProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchSearchCollections(String searchText, bool isKeyword) async {
+  Future<void> fetchKeywordCollections(String searchText) async {
     try {
       _state = ConnectionState.waiting;
       await Future.delayed(Duration(milliseconds: 300));
-      if (isKeyword) {
-        _searchKeywordCollections =
-            await ApiService.searchCollections(searchText, isKeyword);
-      } else {
-        _searchTagCollections =
-            await ApiService.searchCollections(searchText, isKeyword);
-      }
+
+      _searchKeywordCollections =
+          await ApiService.searchCollectionsByKeyword(searchText);
+
+      _state = ConnectionState.done;
+    } catch (e) {
+      _state = ConnectionState.none;
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchTagCollections(String searchText) async {
+    try {
+      _state = ConnectionState.waiting;
+      await Future.delayed(Duration(milliseconds: 300));
+
+      _searchTagCollections =
+          await ApiService.searchCollectionsByTag(searchText);
+
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
