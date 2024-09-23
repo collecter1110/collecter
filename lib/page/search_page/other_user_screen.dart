@@ -5,10 +5,15 @@ import 'package:provider/provider.dart';
 
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
+import '../../data/model/user_info_model.dart';
 import '../../data/provider/user_info_provider.dart';
 
 class OtherUserScreen extends StatelessWidget {
-  const OtherUserScreen({super.key});
+  final UserInfoModel userInfoDetail;
+  const OtherUserScreen({
+    super.key,
+    required this.userInfoDetail,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +29,14 @@ class OtherUserScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Consumer<UserInfoProvider>(builder: (context, provider, child) {
-              provider.getUsersData();
+              // provider.getUsersData();
 
-              if (provider.userInfo == null) {
-                return Center(child: CircularProgressIndicator());
-              }
-              final String _name = provider.userInfo!.name;
-              final String? _description = provider.userInfo?.description;
-              final String? _imageUrl = provider.userInfo?.imageFilePath;
+              // if (provider.sea == null) {
+              //   return Center(child: CircularProgressIndicator());
+              // }
+              final String _name = userInfoDetail.name;
+              final String? _description = userInfoDetail.description;
+              final String? _imageUrl = userInfoDetail.imageFilePath;
 
               return Padding(
                 padding:
@@ -76,13 +81,6 @@ class OtherUserScreen extends StatelessWidget {
                                     ),
                                     ExpandableText(
                                       maxLine: 2,
-                                      // textStyle: TextStyle(
-                                      //   color: Color(0xFF868E96),
-                                      //   fontSize: 12.sp,
-                                      //   fontFamily: 'Pretendard',
-                                      //   fontWeight: FontWeight.w500,
-                                      //   height: 1.43,
-                                      // ),
                                       textStyle: TextStyle(
                                         color: Color(0xFF495057),
                                         fontSize: 12.sp,

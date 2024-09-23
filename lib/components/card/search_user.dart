@@ -1,8 +1,10 @@
-import 'package:collect_er/data/model/user_info_model.dart';
-import 'package:collect_er/page/search_page/other_user_screen.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+
+import '../../data/model/user_info_model.dart';
+import '../../data/provider/collection_provider.dart';
+import '../../page/search_page/other_user_screen.dart';
 
 class SearchUser extends StatelessWidget {
   final UserInfoModel userInfoDetail;
@@ -11,19 +13,21 @@ class SearchUser extends StatelessWidget {
     super.key,
     required this.userInfoDetail,
   });
-  String? collectionTitle;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        //  context.read<CollectionProvider>().getCollectionId =
-        //     collectionDetail.id;
-        // await context.read<CollectionProvider>().getCollectionDetailData();
+        final int _userId = userInfoDetail.userId!;
+        context
+            .read<CollectionProvider>()
+            .getSearchUsersCollectionData(_userId);
+
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => OtherUserScreen(),
+            builder: (context) =>
+                OtherUserScreen(userInfoDetail: userInfoDetail),
             settings: RouteSettings(name: '/search'),
           ),
         );

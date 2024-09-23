@@ -396,8 +396,7 @@ class ApiService {
         image_file_path, 
         user_name, 
         primary_keywords, 
-        selection_num, 
-        likes(user_id),
+        selection_num,
         is_private
         ''').eq('user_id', userId);
 
@@ -631,6 +630,32 @@ class ApiService {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
       handleError('', 'get search users error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<CollectionModel>> searchUsersCollections(
+      int userId) async {
+    try {
+      final responseData = await _supabase.from('collections').select('''
+        id, 
+        title, 
+        image_file_path, 
+        user_name, 
+        primary_keywords, 
+        selection_num, 
+        is_private
+        ''').eq('user_id', userId);
+
+      List<CollectionModel> collections = responseData.map((item) {
+        return CollectionModel.fromJson(item);
+      }).toList();
+
+      return collections;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'getCollections error');
       throw Exception('An unexpected error occurred: $e');
     }
   }

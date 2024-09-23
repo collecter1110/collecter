@@ -19,7 +19,7 @@ class CollectionWidget extends StatelessWidget {
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
       final List<CollectionModel>? _collections;
       if (isLiked == null) {
-        _collections = provider.likeCollections;
+        _collections = provider.searchUsersCollections;
       } else {
         _collections =
             isLiked! ? provider.likeCollections : provider.myCollections;

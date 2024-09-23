@@ -6,6 +6,7 @@ class CollectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
   List<CollectionModel>? _searchKeywordCollections;
   List<CollectionModel>? _searchTagCollections;
+  List<CollectionModel>? _searchUsersCollections;
   List<CollectionModel>? _myCollections;
   List<CollectionModel>? _likeCollections;
   CollectionModel? _collectionDetail;
@@ -18,6 +19,7 @@ class CollectionProvider with ChangeNotifier {
   List<CollectionModel>? get searchKeywordCollections =>
       _searchKeywordCollections;
   List<CollectionModel>? get searchTagCollections => _searchTagCollections;
+  List<CollectionModel>? get searchUsersCollections => _searchUsersCollections;
   List<CollectionModel>? get myCollections => _myCollections;
   List<CollectionModel>? get likeCollections => _likeCollections;
   CollectionModel? get collectionDetail => _collectionDetail;
@@ -40,17 +42,17 @@ class CollectionProvider with ChangeNotifier {
   Future<void> getCollectionData() async {
     try {
       if (_currentPageNum == 0 && _myCollections == null) {
-        print('이거 테스트');
         _state = ConnectionState.waiting;
         notifyListeners();
         await Future.delayed(Duration(milliseconds: 300));
         await fetchCollections();
         await fetchLikeCollections();
       }
-      _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {}
+    } finally {
+      _state = ConnectionState.done;
+    }
   }
 
   Future<void> getSearchCollectionData(
@@ -71,10 +73,16 @@ class CollectionProvider with ChangeNotifier {
     } finally {}
   }
 
+  Future<void> getSearchUsersCollectionData(int userId) async {
+    try {
+      await fetchUsersCollections(userId);
+    } catch (e) {
+    } finally {}
+  }
+
   Future<void> fetchCollections() async {
     try {
       _myCollections = await ApiService.getCollections();
-      _state = ConnectionState.done;
       print('getCollections');
     } catch (e) {
       print('Failed to fetch collections: $e');
@@ -93,10 +101,22 @@ class CollectionProvider with ChangeNotifier {
     }
   }
 
+  Future<void> fetchUsersCollections(int userId) async {
+    try {
+      _state = ConnectionState.waiting;
+      await Future.delayed(Duration(milliseconds: 300));
+      _searchUsersCollections = await ApiService.searchUsersCollections(userId);
+      _state = ConnectionState.done;
+    } catch (e) {
+      _state = ConnectionState.none;
+    } finally {
+      notifyListeners();
+    }
+  }
+
   Future<void> fetchSearchCollections(String searchText, bool isKeyword) async {
     try {
       _state = ConnectionState.waiting;
-
       await Future.delayed(Duration(milliseconds: 300));
       if (isKeyword) {
         _searchKeywordCollections =
@@ -115,7 +135,6 @@ class CollectionProvider with ChangeNotifier {
 
   Future<void> getCollectionDetailData() async {
     await fetchCollectionDetail();
-    print('getCollectionData');
   }
 
   Future<void> fetchCollectionDetail() async {
