@@ -32,7 +32,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   bool _isPrivate = false;
   String _inputTagValue = '';
 
-  XFile? _image;
+  XFile? _uploadImage;
+  XFile? _pickedImage;
   final ImagePicker picker = ImagePicker();
 
   @override
@@ -64,6 +65,11 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       },
     );
     try {
+      if (_uploadImage != null) {
+        _imageFilePath = await ApiService.ImageUploadAndGetPath(
+            _uploadImage!, 'collections');
+      }
+
       await ApiService.AddCollection(_title!, _description, _imageFilePath,
           context.read<TagProvider>().tagNames, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
@@ -94,12 +100,11 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     PermissionStatus status = await Permission.photos.status;
 
     if (status.isGranted || status.isLimited) {
-      final XFile? pickedFile = await picker.pickImage(source: imageSource);
+      _uploadImage = await picker.pickImage(source: imageSource);
 
-      if (pickedFile != null) {
+      if (_uploadImage != null) {
         setState(() {
-          _image = XFile(pickedFile.path);
-          print(_image);
+          _pickedImage = XFile(_uploadImage!.path);
         });
       }
     } else {
@@ -288,11 +293,11 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                    child: _image != null
+                    child: _pickedImage != null
                         ? SizedBox(
                             width: 80.0.w,
                             height: 80.0.h,
-                            child: Image.file(File(_image!.path)),
+                            child: Image.file(File(_pickedImage!.path)),
                           )
                         : SizedBox.shrink(),
                   ),

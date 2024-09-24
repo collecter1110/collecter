@@ -41,7 +41,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   int _itemNum = 0;
 
-  XFile? _image;
+  XFile? _uploadImage;
+  XFile? _pickedImage;
   final ImagePicker picker = ImagePicker();
 
   @override
@@ -82,6 +83,10 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
       _items = context.read<ItemProvider>().itemDataListToJson();
       _keywords = await ApiService.AddKeywords(
           context.read<KeywordProvider>().keywordNames!);
+      if (_uploadImage != null) {
+        _imageFilePath =
+            await ApiService.ImageUploadAndGetPath(_uploadImage!, 'selections');
+      }
       await ApiService.AddSelections(_collectionId!, _title!, _description,
           _imageFilePath, _keywords, _link, _items, _isOrder, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
@@ -111,12 +116,11 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     PermissionStatus status = await Permission.photos.status;
 
     if (status.isGranted || status.isLimited) {
-      final XFile? pickedFile = await picker.pickImage(source: imageSource);
+      _uploadImage = await picker.pickImage(source: imageSource);
 
-      if (pickedFile != null) {
+      if (_uploadImage != null) {
         setState(() {
-          _image = XFile(pickedFile.path);
-          print(_image);
+          _pickedImage = XFile(_uploadImage!.path);
         });
       }
     } else {
@@ -399,12 +403,20 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                      child: _image != null
+                      padding: EdgeInsets.only(top: 16.0.h),
+                      child: _pickedImage != null
                           ? SizedBox(
-                              width: 80.0.w,
-                              height: 80.0.h,
-                              child: Image.file(File(_image!.path)),
+                              width: 100.0.w,
+                              child: AspectRatio(
+                                aspectRatio: 0.9,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(6.0),
+                                  child: Image.file(
+                                    File(_pickedImage!.path),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
                             )
                           : SizedBox.shrink(),
                     ),

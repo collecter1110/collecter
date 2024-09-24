@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:collect_er/data/model/selecting_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:path/path.dart' as path;
 
 import '../../components/pop_up/toast.dart';
 import '../model/collection_model.dart';
@@ -459,6 +462,27 @@ class ApiService {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
       handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<String?> ImageUploadAndGetPath(
+      XFile xfile, String folderName) async {
+    try {
+      String fileName = path.basename(xfile.path);
+      final String filePath = '$folderName/$fileName';
+      File file = File(xfile.path);
+      await _supabase.storage.from('images').upload(filePath, file);
+
+      final String? _publicUrl =
+          _supabase.storage.from('images').getPublicUrl(filePath);
+
+      if (_publicUrl != null) {
+        print('파일 업로드 성공: $_publicUrl');
+        return _publicUrl;
+      }
+    } catch (e) {
+      handleError('', 'upload image error');
       throw Exception('An unexpected error occurred: $e');
     }
   }

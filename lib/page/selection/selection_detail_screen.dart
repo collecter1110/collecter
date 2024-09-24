@@ -35,7 +35,12 @@ class SelectionDetailScreen extends StatelessWidget {
               _selectionDetail.imageFilePath != null
                   ? Container(
                       height: MediaQuery.of(context).size.width,
-                      color: Colors.pink,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(_selectionDetail.imageFilePath!),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     )
                   : SizedBox.shrink(),
               Padding(

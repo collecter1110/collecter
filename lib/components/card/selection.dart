@@ -62,18 +62,19 @@ class Selection extends StatelessWidget {
               imageFilePath != null
                   ? Expanded(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(6),
-                          topRight: Radius.circular(6),
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          child: Image.asset(
-                            'assets/images/IMG_4498.png',
-                            fit: BoxFit.cover,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(6),
+                            topRight: Radius.circular(6),
                           ),
-                        ),
-                      ),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(imageFilePath!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )),
                     )
                   : SizedBox.shrink(),
               Padding(
