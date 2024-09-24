@@ -36,42 +36,64 @@ class _ExpandableTextState extends State<ExpandableText> {
         );
 
         textPainter.layout(
-            minWidth: constraints.minWidth, maxWidth: constraints.maxWidth);
+          minWidth: constraints.minWidth,
+          maxWidth: constraints.maxWidth,
+        );
 
         final bool isTextOverflowing = textPainter.didExceedMaxLines;
+
+        String displayedText = widget.text;
+
+        // 마지막 줄에 "더보기"를 위한 공간 확보하기
+        if (!isExpanded && isTextOverflowing) {
+          final endPosition = textPainter.getPositionForOffset(
+            Offset(textPainter.width - 60.0.w, textPainter.height),
+          );
+          final endOffset = endPosition.offset;
+          displayedText = widget.text.substring(0, endOffset);
+        }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text.rich(
-              textSpan,
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: isExpanded ? widget.text : displayedText,
+                    style: widget.textStyle,
+                  ),
+                  if (!isExpanded && isTextOverflowing)
+                    const TextSpan(
+                      text: '... ',
+                    ),
+                  if (isTextOverflowing)
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.baseline,
+                      baseline: TextBaseline.alphabetic,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isExpanded = !isExpanded;
+                          });
+                        },
+                        child: Text(
+                          isExpanded ? ' 간단히 보기' : ' 더보기',
+                          style: TextStyle(
+                            color: const Color(0xFFced4da),
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
               maxLines: isExpanded ? null : widget.maxLine,
               overflow:
                   isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+              textAlign: TextAlign.start,
             ),
-            if (isTextOverflowing)
-              Column(
-                children: [
-                  SizedBox(
-                    height: 10.0.h,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isExpanded = !isExpanded;
-                      });
-                    },
-                    child: Text(
-                      isExpanded ? '간단히 보기' : '더보기',
-                      style: TextStyle(
-                        color: Color(0xFFced4da),
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
           ],
         );
       },

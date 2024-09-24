@@ -32,8 +32,7 @@ class SearchProvider with ChangeNotifier {
     } else {
       _subCategoryNames.clear();
     }
-    _selectedSubCategoryIndex = 0;
-    _isKeyword = true;
+
     notifyListeners();
   }
 

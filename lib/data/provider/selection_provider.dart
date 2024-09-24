@@ -43,7 +43,7 @@ class SelectionProvider with ChangeNotifier {
 
   Future<void> getSearchSelectionData(String searchText) async {
     try {
-      if (_currentSearchText != searchText || _searchSelections == null) {
+      if (_currentSearchText != searchText) {
         await fetchSearchSelections(searchText);
       }
       _currentSearchText = searchText;

@@ -8,10 +8,12 @@ import '../../page/collection/collection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
 class Collection extends StatelessWidget {
+  final String routName;
   final CollectionModel collectionDetail;
 
   const Collection({
     super.key,
+    required this.routName,
     required this.collectionDetail,
   });
 
@@ -26,7 +28,7 @@ class Collection extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => CollectionDetailScreen(),
-            settings: RouteSettings(name: '/bookmark'),
+            settings: RouteSettings(name: routName),
           ),
         );
       },

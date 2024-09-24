@@ -41,8 +41,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
     switch (categoryIndex) {
       case 0:
-        await _collectionProvider.getSearchCollectionData(
-            searchText, isKeyword);
+        isKeyword
+            ? await _collectionProvider.getKeywordCollectionData(searchText)
+            : await _collectionProvider.getTagCollectionData(searchText);
         break;
 
       case 1:
