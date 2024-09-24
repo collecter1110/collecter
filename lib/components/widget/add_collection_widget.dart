@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
@@ -90,11 +91,19 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   }
 
   Future getImage(ImageSource imageSource) async {
-    final XFile? pickedFile = await picker.pickImage(source: imageSource);
-    if (pickedFile != null) {
-      setState(() {
-        _image = XFile(pickedFile.path);
-      });
+    PermissionStatus status = await Permission.photos.status;
+
+    if (status.isGranted || status.isLimited) {
+      final XFile? pickedFile = await picker.pickImage(source: imageSource);
+
+      if (pickedFile != null) {
+        setState(() {
+          _image = XFile(pickedFile.path);
+          print(_image);
+        });
+      }
+    } else {
+      await Toast.handlePhotoPermission(status);
     }
   }
 
@@ -272,10 +281,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                           height: 1.5,
                         ),
                       ),
-                      AddButton(onPressed: () {
-                        setState(() {
-                          getImage(ImageSource.gallery);
-                        });
+                      AddButton(onPressed: () async {
+                        await getImage(ImageSource.gallery);
                       }),
                     ],
                   ),

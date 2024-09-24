@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Toast {
   // 단순 에러 토스트 메시지 출력
@@ -24,6 +25,31 @@ class Toast {
       textColor: Colors.white,
       fontSize: 18.0,
     );
+  }
+
+  static Future<void> handlePhotoPermission(PermissionStatus status) async {
+    if (status.isDenied) {
+      Fluttertoast.showToast(
+        msg: "앨범 접근 권한이 거부되었습니다.",
+        backgroundColor: Colors.black.withOpacity(0.7),
+        textColor: Colors.white,
+        fontSize: 18.0,
+        gravity: ToastGravity.CENTER,
+      );
+      await Future.delayed(Duration(seconds: 1));
+      await openAppSettings();
+    } else if (status.isPermanentlyDenied) {
+      Fluttertoast.showToast(
+        msg: "앨범 접근 권한이 영구적으로 거부되었습니다. 설정에서 권한을 변경해주세요.",
+        backgroundColor: Colors.black.withOpacity(0.7),
+        textColor: Colors.white,
+        fontSize: 18.0,
+        gravity: ToastGravity.CENTER,
+      );
+      await Future.delayed(Duration(seconds: 1));
+      await openAppSettings();
+    }
+    print(status);
   }
 }
 
