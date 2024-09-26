@@ -493,10 +493,11 @@ class ApiService {
           .where((path) => path != null)
           .cast<String>()
           .toList();
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
+    } on SocketException catch (e) {
+      handleError('', 'Network error: ${e.message}');
+      throw Exception('Network error occurred: ${e.message}');
     } catch (e) {
-      handleError('', 'uploadImages error');
+      handleError('', 'uploadImages error: $e');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -511,9 +512,11 @@ class ApiService {
         print('파일 업로드 성공: $_imageFilePath');
       }
       return _imageFilePath;
+    } on SocketException catch (e) {
+      handleError('File format', 'Invalid file format: ${filePath}');
+      throw Exception('Invalid file format: $e');
     } catch (e) {
-      print('파일 업로드 실패: ${filePath}');
-      handleError('', 'uploadImages error');
+      handleError('Upload', 'uploadImages error ${filePath}');
       throw Exception('An unexpected error occurred: $e');
     }
   }
