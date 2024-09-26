@@ -327,11 +327,20 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, selection_name, image_file_path, keywords, owner_name')
+              'collection_id, selection_id, selection_name, image_file_paths, keywords, owner_name')
           .eq('collection_id', collectionId);
 
-      List<SelectionModel> selections =
-          responseData.map((item) => SelectionModel.fromJson(item)).toList();
+      List<SelectionModel> selections = responseData.map((item) {
+        List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
+        String? firstImagePath =
+            imageFilePaths != null && imageFilePaths.isNotEmpty
+                ? imageFilePaths.first as String
+                : null;
+
+        return SelectionModel.fromJson({
+          ...item,
+        }, thumbFilePath: firstImagePath);
+      }).toList();
 
       return Future.value(selections);
     } on AuthException catch (e) {
@@ -351,7 +360,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'owner_id, selection_name, selection_description, image_file_path, is_ordered, selection_link, items, keywords, created_at, owner_name')
+              'owner_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -466,29 +475,51 @@ class ApiService {
     }
   }
 
-  static Future<String?> ImageUploadAndGetPath(
-      XFile xfile, String folderName) async {
+  static Future<List<String>> uploadAndGetImages(
+      List<XFile> xfiles, String folderName) async {
+    List<Future<String?>> uploadTasks = [];
     try {
-      String fileName = path.basename(xfile.path);
-      final String filePath = '$folderName/$fileName';
-      File file = File(xfile.path);
-      await _supabase.storage.from('images').upload(filePath, file);
+      for (var xfile in xfiles) {
+        String fileName = path.basename(xfile.path);
+        String filePath = '$folderName/$fileName';
+        File file = File(xfile.path);
 
-      final String? _publicUrl =
-          _supabase.storage.from('images').getPublicUrl(filePath);
-
-      if (_publicUrl != null) {
-        print('파일 업로드 성공: $_publicUrl');
-        return _publicUrl;
+        uploadTasks.add(_uploadFileAndGetUrl(file, filePath));
       }
+
+      List<String?> imageFilePaths = await Future.wait(uploadTasks);
+
+      return imageFilePaths
+          .where((path) => path != null)
+          .cast<String>()
+          .toList();
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'upload image error');
+      handleError('', 'uploadImages error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<String?> _uploadFileAndGetUrl(
+      File file, String filePath) async {
+    try {
+      await _supabase.storage.from('images').upload(filePath, file);
+      final String? _imageFilePath =
+          _supabase.storage.from('images').getPublicUrl(filePath);
+      if (_imageFilePath != null) {
+        print('파일 업로드 성공: $_imageFilePath');
+      }
+      return _imageFilePath;
+    } catch (e) {
+      print('파일 업로드 실패: ${filePath}');
+      handleError('', 'uploadImages error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
 
   static Future<void> AddCollection(String title, String? description,
-      String? imageFilePath, List<String>? tags, bool isPrivate) async {
+      List<String>? tags, bool isPrivate) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
@@ -497,7 +528,6 @@ class ApiService {
         'user_id': userId,
         'title': title,
         'description': description,
-        'image_file_path': imageFilePath,
         'tags': tags,
         'is_private': isPrivate,
       });
@@ -513,7 +543,7 @@ class ApiService {
       int collectionId,
       String title,
       String? description,
-      String? imageFilePath,
+      List<String>? imageFilePaths,
       List<Map<String, dynamic>>? keywords,
       String? link,
       List<Map<String, dynamic>>? items,
@@ -529,7 +559,7 @@ class ApiService {
         'collection_id': collectionId,
         'selection_name': title,
         'selection_description': description,
-        'image_file_path': imageFilePath,
+        'image_file_paths': imageFilePaths,
         'keywords': keywords,
         'selection_link': link,
         'items': items,

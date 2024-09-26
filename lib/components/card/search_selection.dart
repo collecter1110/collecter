@@ -63,7 +63,7 @@ class SearchSelection extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: Color(0xFFf1f3f5),
                           borderRadius: BorderRadius.circular(8)),
-                      child: selectionDetail.imageFilePath != null
+                      child: selectionDetail.imageFilePaths != null
                           ? Expanded(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.all(

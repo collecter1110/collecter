@@ -66,8 +66,8 @@
     <string>Calendars</string> -->
 
     <!-- Permission options for the `camera` group -->
-    <!-- <key>NSCameraUsageDescription</key>
-    <string>camera</string> -->
+    <key>NSCameraUsageDescription</key>
+    <string>This app accesses your camera to take pictures.</string>
 
     <!-- Permission options for the `contacts` group -->
     <!-- <key>NSContactsUsageDescription</key>
@@ -87,7 +87,7 @@
 
     <!-- Permission options for the `photos` group -->
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app accesses your photo library to allow you to upload and select photos for your profile picture.</string>
+    <string>The app accesses your photo library to select photos.</string>
 
     <!-- Permission options for the `reminder` group -->
     <!-- <key>NSRemindersUsageDescription</key>

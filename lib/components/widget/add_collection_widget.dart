@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:collect_er/components/button/add_button.dart';
 import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:collect_er/data/provider/tag_provider.dart';
@@ -7,8 +6,6 @@ import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
@@ -28,13 +25,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
 
   String? _title;
   String? _description;
-  String? _imageFilePath;
   bool _isPrivate = false;
   String _inputTagValue = '';
-
-  XFile? _uploadImage;
-  XFile? _pickedImage;
-  final ImagePicker picker = ImagePicker();
 
   @override
   void initState() {
@@ -65,12 +57,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       },
     );
     try {
-      if (_uploadImage != null) {
-        _imageFilePath = await ApiService.ImageUploadAndGetPath(
-            _uploadImage!, 'collections');
-      }
-
-      await ApiService.AddCollection(_title!, _description, _imageFilePath,
+      await ApiService.AddCollection(_title!, _description,
           context.read<TagProvider>().tagNames, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
       await context.read<UserInfoProvider>().fetchUserOverview();
@@ -94,22 +81,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   void _saveForm() {
     _tagFormKey.currentState?.save();
     context.read<TagProvider>().addTag = _inputTagValue;
-  }
-
-  Future getImage(ImageSource imageSource) async {
-    PermissionStatus status = await Permission.photos.status;
-
-    if (status.isGranted || status.isLimited) {
-      _uploadImage = await picker.pickImage(source: imageSource);
-
-      if (_uploadImage != null) {
-        setState(() {
-          _pickedImage = XFile(_uploadImage!.path);
-        });
-      }
-    } else {
-      await Toast.handlePhotoPermission(status);
-    }
   }
 
   @override
@@ -269,37 +240,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                         },
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '사진 추가 (선택)',
-                        style: TextStyle(
-                          fontFamily: 'PretendardRegular',
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff343A40),
-                          height: 1.5,
-                        ),
-                      ),
-                      AddButton(onPressed: () async {
-                        await getImage(ImageSource.gallery);
-                      }),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                    child: _pickedImage != null
-                        ? SizedBox(
-                            width: 80.0.w,
-                            height: 80.0.h,
-                            child: Image.file(File(_pickedImage!.path)),
-                          )
-                        : SizedBox.shrink(),
                   ),
                   SizedBox(
                     height: 20,

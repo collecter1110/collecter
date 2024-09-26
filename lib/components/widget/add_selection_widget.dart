@@ -30,7 +30,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   String? _title;
   List<Map<String, dynamic>>? _keywords;
   String? _description;
-  String? _imageFilePath;
+  List<String>? _imageFilePath;
   String? _link;
   List<Map<String, dynamic>>? _items;
   bool _isPrivate = false;
@@ -41,9 +41,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   int _itemNum = 0;
 
-  XFile? _uploadImage;
-  XFile? _pickedImage;
-  final ImagePicker picker = ImagePicker();
+  final ImagePicker _picker = ImagePicker();
+  List<XFile>? _mediaFileList;
 
   @override
   void initState() {
@@ -83,9 +82,9 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
       _items = context.read<ItemProvider>().itemDataListToJson();
       _keywords = await ApiService.AddKeywords(
           context.read<KeywordProvider>().keywordNames!);
-      if (_uploadImage != null) {
+      if (_mediaFileList != null && _mediaFileList!.isNotEmpty) {
         _imageFilePath =
-            await ApiService.ImageUploadAndGetPath(_uploadImage!, 'selections');
+            await ApiService.uploadAndGetImages(_mediaFileList!, 'selections');
       }
       await ApiService.AddSelections(_collectionId!, _title!, _description,
           _imageFilePath, _keywords, _link, _items, _isOrder, _isPrivate);
@@ -112,17 +111,15 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     context.read<KeywordProvider>().addKeyword = _inputKeywordValue;
   }
 
-  Future getImage(ImageSource imageSource) async {
+  Future _pickImages() async {
     PermissionStatus status = await Permission.photos.status;
 
     if (status.isGranted || status.isLimited) {
-      _uploadImage = await picker.pickImage(source: imageSource);
-
-      if (_uploadImage != null) {
-        setState(() {
-          _pickedImage = XFile(_uploadImage!.path);
-        });
-      }
+      final List<XFile> pickedFileList =
+          await _picker.pickMultiImage(limit: 10);
+      setState(() {
+        _mediaFileList = pickedFileList;
+      });
     } else {
       await Toast.handlePhotoPermission(status);
     }
@@ -397,25 +394,47 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                             height: 1.5,
                           ),
                         ),
-                        AddButton(onPressed: () async {
-                          await getImage(ImageSource.gallery);
+                        AddButton(onPressed: () {
+                          _pickImages();
                         }),
                       ],
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 16.0.h),
-                      child: _pickedImage != null
+                      child: _mediaFileList != null &&
+                              _mediaFileList!.isNotEmpty
                           ? SizedBox(
-                              width: 100.0.w,
-                              child: AspectRatio(
-                                aspectRatio: 0.9,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  child: Image.file(
-                                    File(_pickedImage!.path),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                              height: 100.0.h,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: _mediaFileList!.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return AspectRatio(
+                                    aspectRatio: 0.9,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(6.0),
+                                      child: Image.file(
+                                        File(
+                                          _mediaFileList![index].path,
+                                        ),
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (BuildContext context,
+                                            Object error,
+                                            StackTrace? stackTrace) {
+                                          return const Center(
+                                              child: Text(
+                                                  'This image type is not supported'));
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return SizedBox(
+                                    width: 10.0.w,
+                                  );
+                                },
                               ),
                             )
                           : SizedBox.shrink(),
@@ -624,3 +643,6 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     );
   }
 }
+
+typedef OnPickImageCallback = void Function(
+    double? maxWidth, double? maxHeight, int? quality, int? limit);
