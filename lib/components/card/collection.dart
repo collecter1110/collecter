@@ -38,34 +38,25 @@ class Collection extends StatelessWidget {
         children: [
           AspectRatio(
             aspectRatio: 1 / 1,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  color: Color(0xFFf1f3f5),
-                  borderRadius: BorderRadius.circular(8)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  collectionDetail.imageFilePath != null
-                      ? Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(6),
-                            ),
-                            child: Container(
-                              width: double.infinity,
-                              child: Image.asset(
-                                'assets/images/IMG_4498.png',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        )
-                      : SizedBox.shrink(),
-                ],
-              ),
-            ),
+            child: collectionDetail.imageFilePath != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(collectionDetail.imageFilePath!),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xFFf1f3f5),
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
           ),
           Expanded(
             child: Padding(

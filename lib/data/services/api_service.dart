@@ -475,6 +475,27 @@ class ApiService {
     }
   }
 
+  static Future<String?> uploadAndGetImage(
+      XFile xfile, String folderName) async {
+    try {
+      String fileName = path.basename(xfile.path);
+      final String filePath = '$folderName/$fileName';
+      File file = File(xfile.path);
+      await _supabase.storage.from('images').upload(filePath, file);
+
+      final String? _imageFilePath =
+          _supabase.storage.from('images').getPublicUrl(filePath);
+
+      if (_imageFilePath != null) {
+        print('파일 업로드 성공: $_imageFilePath');
+        return _imageFilePath;
+      }
+    } catch (e) {
+      handleError('', 'upload image error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   static Future<List<String>> uploadAndGetImages(
       List<XFile> xfiles, String folderName) async {
     List<Future<String?>> uploadTasks = [];
@@ -522,7 +543,7 @@ class ApiService {
   }
 
   static Future<void> AddCollection(String title, String? description,
-      List<String>? tags, bool isPrivate) async {
+      String? imageFilePath, List<String>? tags, bool isPrivate) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
@@ -531,6 +552,7 @@ class ApiService {
         'user_id': userId,
         'title': title,
         'description': description,
+        'image_file_path': imageFilePath,
         'tags': tags,
         'is_private': isPrivate,
       });
