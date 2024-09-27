@@ -44,6 +44,7 @@ class _AddScreenState extends State<AddScreen>
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
               SliverAppBar(
+                automaticallyImplyLeading: false,
                 pinned: true,
                 toolbarHeight: 64.0.h,
                 expandedHeight: 130.0.h,
@@ -98,28 +99,13 @@ class _AddScreenState extends State<AddScreen>
                           right: 16.0.w,
                           top: ViewPaddingTopSize(context) + 20.0,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Add',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 18.0.sp,
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.of(context).pushNamed('/search');
-                              },
-                              child: Image.asset(
-                                'assets/icons/tab_search.png',
-                                height: 20.0.h,
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          'Add',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18.0.sp,
+                          ),
                         ),
                       ),
                     );

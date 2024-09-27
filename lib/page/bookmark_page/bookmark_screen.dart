@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/collection_widget.dart';
+import '../add_page/add_screen.dart';
 
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key});
@@ -126,10 +127,16 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                           ),
                           InkWell(
                             onTap: () {
-                              Navigator.of(context).pushNamed('/search');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddScreen(),
+                                  settings: RouteSettings(name: '/add'),
+                                ),
+                              );
                             },
                             child: Image.asset(
-                              'assets/icons/tab_search.png',
+                              'assets/icons/icon_plus_light.png',
                               height: 20.0.h,
                             ),
                           ),

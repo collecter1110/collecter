@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
-  final bool popState;
   final String titleText;
-  final bool titleState;
   final VoidCallback? actionButtonOnTap;
   final String? actionButton;
 
   const CustomAppbar({
     Key? key,
-    required this.popState,
     required this.titleText,
-    required this.titleState,
     required this.actionButtonOnTap,
     required this.actionButton,
   }) : super(key: key);
@@ -32,34 +28,34 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            width: 32.w,
-            child: popState
-                ? InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(Icons.arrow_back), // 임시로 아이콘 사용
-                  )
-                : SizedBox.shrink(), // child가 null일 때 크기를 최소화
+            height: 20.h,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Image.asset(
+                'assets/icons/icon_back.png',
+              ),
+            ),
           ),
-          titleState
-              ? Text(
-                  titleText,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18.0.sp,
-                  ),
-                )
-              : SizedBox.shrink(), // 제목이 없을 때 크기를 최소화
+          Text(
+            titleText,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w700,
+              fontSize: 18.0.sp,
+            ),
+          ),
           SizedBox(
-            width: 32.w,
+            height: 20.0.h,
             child: actionButton != null
                 ? InkWell(
                     onTap: actionButtonOnTap,
-                    child: Icon(Icons.menu), // 임시로 아이콘 사용
+                    child: Image.asset(
+                      'assets/icons/${actionButton}.png',
+                    ),
                   )
-                : SizedBox.shrink(), // child가 null일 때 크기를 최소화
+                : SizedBox.shrink(),
           ),
         ],
       ),

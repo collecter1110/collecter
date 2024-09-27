@@ -19,11 +19,7 @@ class OtherUserScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-          popState: true,
-          titleText: 'User',
-          titleState: true,
-          actionButtonOnTap: () {},
-          actionButton: null),
+          titleText: 'User', actionButtonOnTap: () {}, actionButton: null),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

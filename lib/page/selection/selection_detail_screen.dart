@@ -22,11 +22,10 @@ class SelectionDetailScreen extends StatelessWidget {
 
       return Scaffold(
         appBar: CustomAppbar(
-            popState: true,
-            titleText: '셀렉션',
-            titleState: true,
-            actionButtonOnTap: () {},
-            actionButton: null),
+          titleText: '셀렉션',
+          actionButtonOnTap: () {},
+          actionButton: 'icon_more',
+        ),
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
