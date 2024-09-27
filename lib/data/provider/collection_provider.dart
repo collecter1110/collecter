@@ -88,8 +88,10 @@ class CollectionProvider with ChangeNotifier {
       _myCollections = await ApiService.getCollections();
       print('getCollections');
     } catch (e) {
+      _state = ConnectionState.none;
       print('Failed to fetch collections: $e');
     } finally {
+      _state = ConnectionState.done;
       notifyListeners();
     }
   }

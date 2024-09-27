@@ -11,7 +11,7 @@ import '../ui_kit/keyword.dart';
 class Selection extends StatelessWidget {
   final String routeName;
   final String title;
-  final String? imageFilePath;
+  final String? thumbFilePath;
   final List<KeywordData>? keywords;
   final String ownerName;
   final PropertiesData properties;
@@ -20,7 +20,7 @@ class Selection extends StatelessWidget {
     super.key,
     required this.routeName,
     required this.title,
-    this.imageFilePath,
+    this.thumbFilePath,
     this.keywords,
     required this.ownerName,
     required this.properties,
@@ -59,21 +59,22 @@ class Selection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              imageFilePath != null
+              thumbFilePath != null
                   ? Expanded(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(6),
-                          topRight: Radius.circular(6),
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          child: Image.asset(
-                            'assets/images/IMG_4498.png',
-                            fit: BoxFit.cover,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(6),
+                            topRight: Radius.circular(6),
                           ),
-                        ),
-                      ),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(thumbFilePath!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )),
                     )
                   : SizedBox.shrink(),
               Padding(

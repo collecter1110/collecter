@@ -37,32 +37,60 @@ class CollectionDetailScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.only(
-                    left: 16.0.w, right: 16.0.w, top: 26.0.h, bottom: 42.h),
+                    left: 16.0.w, right: 16.0.w, bottom: 46.0.h),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          _collectionDetail.title,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 22.sp,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w700,
-                            height: 1.4,
+                    _collectionDetail.imageFilePath != null
+                        ? Padding(
+                            padding: EdgeInsets.only(top: 16.0.h),
+                            child: AspectRatio(
+                              aspectRatio: 1 / 1,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                child: Container(
+                                  height: 300.h,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                          _collectionDetail.imageFilePath!),
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: 26.0.h,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _collectionDetail.title,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 22.sp,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w700,
+                              height: 1.4,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                        likedButton(
-                          collectionId: _collectionDetail.id,
-                          isLiked: _collectionDetail.isLiked!,
-                          likedNum: _collectionDetail.likeNum!,
-                        ),
-                      ],
+                          likedButton(
+                            collectionId: _collectionDetail.id,
+                            isLiked: _collectionDetail.isLiked!,
+                            likedNum: _collectionDetail.likeNum!,
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 10.0.h,

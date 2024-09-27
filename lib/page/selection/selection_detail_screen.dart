@@ -32,10 +32,25 @@ class SelectionDetailScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _selectionDetail.imageFilePath != null
+              _selectionDetail.imageFilePaths != null
                   ? Container(
                       height: MediaQuery.of(context).size.width,
-                      color: Colors.pink,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          physics: PageScrollPhysics(),
+                          itemCount: _selectionDetail.imageFilePaths!.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                      _selectionDetail.imageFilePaths![index]),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          }),
                     )
                   : SizedBox.shrink(),
               Padding(

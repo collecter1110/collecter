@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:collect_er/components/button/add_button.dart';
 import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:collect_er/data/provider/tag_provider.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
@@ -31,8 +33,9 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   bool _isPrivate = false;
   String _inputTagValue = '';
 
-  XFile? _image;
-  final ImagePicker picker = ImagePicker();
+  XFile? _uploadImage;
+  XFile? _pickedImage;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -63,6 +66,10 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       },
     );
     try {
+      if (_uploadImage != null && _uploadImage != '') {
+        _imageFilePath =
+            await ApiService.uploadAndGetImage(_uploadImage!, 'collections');
+      }
       await ApiService.AddCollection(_title!, _description, _imageFilePath,
           context.read<TagProvider>().tagNames, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
@@ -71,7 +78,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     } catch (e) {
       print('Error: $e');
     } finally {
-      await Future.delayed(Duration(seconds: 1));
       if (Navigator.of(context, rootNavigator: true).canPop()) {
         Navigator.of(context, rootNavigator: true).pop();
       }
@@ -89,12 +95,19 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     context.read<TagProvider>().addTag = _inputTagValue;
   }
 
-  Future getImage(ImageSource imageSource) async {
-    final XFile? pickedFile = await picker.pickImage(source: imageSource);
-    if (pickedFile != null) {
-      setState(() {
-        _image = XFile(pickedFile.path);
-      });
+  Future _pickImages(ImageSource imageSource) async {
+    PermissionStatus status = await Permission.photos.status;
+
+    if (status.isGranted || status.isLimited) {
+      _uploadImage = await _picker.pickImage(source: imageSource);
+
+      if (_uploadImage != null) {
+        setState(() {
+          _pickedImage = XFile(_uploadImage!.path);
+        });
+      }
+    } else {
+      await Toast.handlePhotoPermission(status);
     }
   }
 
@@ -232,6 +245,52 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                   SizedBox(
                     height: 20,
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '사진 추가 (선택)',
+                        style: TextStyle(
+                          fontFamily: 'PretendardRegular',
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff343A40),
+                          height: 1.5,
+                        ),
+                      ),
+                      AddButton(onPressed: () {
+                        _pickImages(ImageSource.gallery);
+                      }),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16.0.h),
+                    child: _pickedImage != null
+                        ? SizedBox(
+                            height: 100.0.h,
+                            child: AspectRatio(
+                              aspectRatio: 0.9,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(6.0),
+                                child: Image.file(
+                                  File(_pickedImage!.path),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (BuildContext context,
+                                      Object error, StackTrace? stackTrace) {
+                                    return const Center(
+                                      child: Text(
+                                          'This image type is not supported'),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                  ),
+                  SizedBox(
+                    height: 20.0.h,
+                  ),
                   Text(
                     '설명 (선택)',
                     style: TextStyle(
@@ -255,39 +314,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                         },
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '사진 추가 (선택)',
-                        style: TextStyle(
-                          fontFamily: 'PretendardRegular',
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff343A40),
-                          height: 1.5,
-                        ),
-                      ),
-                      AddButton(onPressed: () {
-                        setState(() {
-                          getImage(ImageSource.gallery);
-                        });
-                      }),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                    child: _image != null
-                        ? SizedBox(
-                            width: 80.0.w,
-                            height: 80.0.h,
-                            child: Image.file(File(_image!.path)),
-                          )
-                        : SizedBox.shrink(),
                   ),
                   SizedBox(
                     height: 20,

@@ -88,7 +88,7 @@ class SelectingWidget extends StatelessWidget {
                           Selection(
                             routeName: '/user',
                             title: selectDatas[index].selectionName,
-                            imageFilePath: selectDatas[index].imageFilePath,
+                            thumbFilePath: selectDatas[index].imageFilePath,
                             keywords: selectDatas[index].keywords,
                             ownerName: selectDatas[index].ownerName,
                             properties: selectDatas[index].properties,
