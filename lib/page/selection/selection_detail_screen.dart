@@ -37,6 +37,7 @@ class SelectionDetailScreen extends StatelessWidget {
                       height: MediaQuery.of(context).size.width,
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
+                          physics: PageScrollPhysics(),
                           itemCount: _selectionDetail.imageFilePaths!.length,
                           itemBuilder: (context, index) {
                             return Container(

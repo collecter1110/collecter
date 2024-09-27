@@ -93,7 +93,6 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     } catch (e) {
       print('Error: $e');
     } finally {
-      await Future.delayed(Duration(seconds: 1));
       if (Navigator.of(context, rootNavigator: true).canPop()) {
         Navigator.of(context, rootNavigator: true).pop();
       }

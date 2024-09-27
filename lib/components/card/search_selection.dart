@@ -63,16 +63,17 @@ class SearchSelection extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: Color(0xFFf1f3f5),
                           borderRadius: BorderRadius.circular(8)),
-                      child: selectionDetail.imageFilePaths != null
-                          ? Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(6),
-                                ),
-                                child: Container(
-                                  width: double.infinity,
-                                  child: Image.asset(
-                                    'assets/images/IMG_4498.png',
+                      child: selectionDetail.thumbFilePath != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(6),
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        selectionDetail.thumbFilePath!),
                                     fit: BoxFit.cover,
                                   ),
                                 ),

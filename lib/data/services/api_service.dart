@@ -673,12 +673,19 @@ class ApiService {
       final response = await _supabase
           .rpc('search_selections_by_keyword', params: {'query': searchText});
 
-      print(response);
       final List<Map<String, dynamic>> responseData =
           List<Map<String, dynamic>>.from(response);
 
       List<SelectionModel> selections = responseData.map((item) {
-        return SelectionModel.fromJson(item);
+        List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
+        String? firstImagePath =
+            imageFilePaths != null && imageFilePaths.isNotEmpty
+                ? imageFilePaths.first as String
+                : null;
+
+        return SelectionModel.fromJson({
+          ...item,
+        }, thumbFilePath: firstImagePath);
       }).toList();
 
       return selections;
