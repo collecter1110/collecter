@@ -7,6 +7,7 @@ class CollectionModel {
   final String? createdAt;
   final String? imageFilePath;
   final List<dynamic>? tags;
+  final int userId;
   final String userName;
   final List<KeywordData>? primaryKeywords;
   final int selectionNum;
@@ -21,6 +22,7 @@ class CollectionModel {
     this.createdAt,
     this.imageFilePath,
     this.tags,
+    required this.userId,
     required this.userName,
     this.primaryKeywords,
     required this.selectionNum,
@@ -40,6 +42,7 @@ class CollectionModel {
       imageFilePath: json['image_file_path'] as String?,
       tags: json['tags'] as List<dynamic>?,
       userName: json['user_name'],
+      userId: json['user_id'],
       primaryKeywords: (json['primary_keywords'] as List<dynamic>?)
           ?.map((keyword) => KeywordData.fromJson(keyword))
           .toList(),

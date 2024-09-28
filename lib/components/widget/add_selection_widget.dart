@@ -80,13 +80,13 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     );
     try {
       _items = context.read<ItemProvider>().itemDataListToJson();
-      _keywords = await ApiService.AddKeywords(
+      _keywords = await ApiService.addKeywords(
           context.read<KeywordProvider>().keywordNames!);
       if (_mediaFileList != null && _mediaFileList!.isNotEmpty) {
         _imageFilePath =
             await ApiService.uploadAndGetImages(_mediaFileList!, 'selections');
       }
-      await ApiService.AddSelections(_collectionId!, _title!, _description,
+      await ApiService.addSelections(_collectionId!, _title!, _description,
           _imageFilePath, _keywords, _link, _items, _isOrder, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
       context.read<KeywordProvider>().clearKeywords();
@@ -124,7 +124,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     }
   }
 
-  void _createGroupDialog() async {
+  Future<void> _createGroupDialog() async {
     await fetchCollections();
     showModalBottomSheet(
       context: context,
@@ -181,8 +181,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           ),
                         ),
                         AddButton(
-                          onPressed: () {
-                            _createGroupDialog();
+                          onPressed: () async {
+                            await _createGroupDialog();
                           },
                         ),
                       ],

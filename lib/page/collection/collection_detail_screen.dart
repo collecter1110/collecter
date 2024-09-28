@@ -1,9 +1,12 @@
 import 'package:collect_er/components/button/like_button.dart';
+import 'package:collect_er/components/pop_up/collection_dialog.dart';
 import 'package:collect_er/components/widget/selection_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/pop_up/edit_collection_dialog.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
@@ -22,11 +25,30 @@ class CollectionDetailScreen extends StatelessWidget {
 
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
       final CollectionModel _collectionDetail = provider.collectionDetail!;
+      Future<void> _showDialog() async {
+        final storage = FlutterSecureStorage();
+        final userIdString = await storage.read(key: 'USER_ID');
+
+        int userId = int.parse(userIdString!);
+
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: false,
+          backgroundColor: Colors.transparent,
+          builder: (context) {
+            return userId == _collectionDetail.userId
+                ? EditCollectionDialog()
+                : CollectionDialog();
+          },
+        );
+      }
 
       return Scaffold(
         appBar: CustomAppbar(
           titleText: '컬렉션',
-          actionButtonOnTap: () {},
+          actionButtonOnTap: () async {
+            await _showDialog();
+          },
           actionButton: 'icon_more',
         ),
         body: SingleChildScrollView(

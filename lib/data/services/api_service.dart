@@ -360,7 +360,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'owner_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name')
+              'user_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -406,6 +406,7 @@ class ApiService {
         id, 
         title, 
         image_file_path, 
+        user_id,
         user_name, 
         primary_keywords, 
         selection_num,
@@ -452,6 +453,7 @@ class ApiService {
         created_at, 
         image_file_path, 
         tags, 
+        user_id,
         user_name, 
         primary_keywords, 
         selection_num, 
@@ -542,7 +544,7 @@ class ApiService {
     }
   }
 
-  static Future<void> AddCollection(String title, String? description,
+  static Future<void> addCollection(String title, String? description,
       String? imageFilePath, List<String>? tags, bool isPrivate) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
@@ -564,7 +566,7 @@ class ApiService {
     }
   }
 
-  static Future<void> AddSelections(
+  static Future<void> addSelections(
       int collectionId,
       String title,
       String? description,
@@ -599,7 +601,7 @@ class ApiService {
     }
   }
 
-  static Future<List<Map<String, dynamic>>> AddKeywords(
+  static Future<List<Map<String, dynamic>>> addKeywords(
     List<String> keywords,
   ) async {
     try {
@@ -745,6 +747,7 @@ class ApiService {
         id, 
         title, 
         image_file_path, 
+        user_id,
         user_name, 
         primary_keywords, 
         selection_num, 

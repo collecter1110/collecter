@@ -70,7 +70,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
         _imageFilePath =
             await ApiService.uploadAndGetImage(_uploadImage!, 'collections');
       }
-      await ApiService.AddCollection(_title!, _description, _imageFilePath,
+      await ApiService.addCollection(_title!, _description, _imageFilePath,
           context.read<TagProvider>().tagNames, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
       await context.read<UserInfoProvider>().fetchUserOverview();
