@@ -1,12 +1,17 @@
+import 'package:collect_er/components/pop_up/toast.dart';
+import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../data/model/collection_model.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
 
 class EditCollectionDialog extends StatelessWidget {
+  final CollectionModel collectionDetail;
   EditCollectionDialog({
     super.key,
+    required this.collectionDetail,
   });
 
   @override
@@ -34,7 +39,11 @@ class EditCollectionDialog extends StatelessWidget {
                     DialogText(
                       text: '컬렉션 삭제',
                       textColor: Colors.red,
-                      onTap: () {},
+                      onTap: () async {
+                        print('삭제');
+                        await ApiService.deleteCollection(collectionDetail.id);
+                        Toast.completeToast('컬렉션이 삭제되었습니다');
+                      },
                     ),
                     Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
                     DialogText(
@@ -45,6 +54,12 @@ class EditCollectionDialog extends StatelessWidget {
                     Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
                     DialogText(
                       text: '셀렉션 선택',
+                      textColor: Colors.black,
+                      onTap: () {},
+                    ),
+                    Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
+                    DialogText(
+                      text: '셀렉션 추가',
                       textColor: Colors.black,
                       onTap: () {},
                     ),

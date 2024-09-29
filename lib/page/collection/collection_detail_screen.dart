@@ -37,7 +37,7 @@ class CollectionDetailScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           builder: (context) {
             return userId == _collectionDetail.userId
-                ? EditCollectionDialog()
+                ? EditCollectionDialog(collectionDetail: _collectionDetail)
                 : CollectionDialog();
           },
         );
@@ -78,7 +78,7 @@ class CollectionDetailScreen extends StatelessWidget {
                                     image: DecorationImage(
                                       image: NetworkImage(
                                           _collectionDetail.imageFilePath!),
-                                      fit: BoxFit.contain,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),

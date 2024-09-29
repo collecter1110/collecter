@@ -767,6 +767,21 @@ class ApiService {
     }
   }
 
+  static Future<void> deleteCollection(int collectionId) async {
+    try {
+      final response =
+          await _supabase.from('collections').delete().eq('id', 'collectionId');
+
+      if (response.error == null) {
+      } else {
+        handleError('', '${response.error!.message}');
+      }
+    } catch (e) {
+      handleError('', 'deleteCollection error');
+      print('Failed to delete data: $e');
+    }
+  }
+
   static void handleError(String? statusCode, String? message) {
     Toast.error();
     if (statusCode == '400') {

@@ -15,8 +15,18 @@ class Toast {
     );
   }
 
-  // 필드가 누락되었을 때 기본 토스트 메시지 출력
   static void missingField(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 2,
+      backgroundColor: Colors.black.withOpacity(0.7),
+      textColor: Colors.white,
+      fontSize: 18.0,
+    );
+  }
+
+  static void completeToast(String message) {
     Fluttertoast.showToast(
       msg: message,
       gravity: ToastGravity.CENTER,
