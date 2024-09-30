@@ -22,32 +22,39 @@ class CollectionDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? _routeName = ModalRoute.of(context)?.settings.name;
+    Future<void> _showDialog(CollectionModel _collectionDetail) async {
+      final storage = FlutterSecureStorage();
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+
+      void didPop() {
+        Navigator.pop(context);
+      }
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: false,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return userId == _collectionDetail.userId
+              ? EditCollectionDialog(
+                  collectionDetail: _collectionDetail,
+                  didPop: () {
+                    didPop();
+                  })
+              : CollectionDialog();
+        },
+      );
+    }
 
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
       final CollectionModel _collectionDetail = provider.collectionDetail!;
-      Future<void> _showDialog() async {
-        final storage = FlutterSecureStorage();
-        final userIdString = await storage.read(key: 'USER_ID');
-
-        int userId = int.parse(userIdString!);
-
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: false,
-          backgroundColor: Colors.transparent,
-          builder: (context) {
-            return userId == _collectionDetail.userId
-                ? EditCollectionDialog(collectionDetail: _collectionDetail)
-                : CollectionDialog();
-          },
-        );
-      }
 
       return Scaffold(
         appBar: CustomAppbar(
           titleText: '컬렉션',
           actionButtonOnTap: () async {
-            await _showDialog();
+            await _showDialog(_collectionDetail);
           },
           actionButton: 'icon_more',
         ),
