@@ -10,7 +10,7 @@ class CollectionModel {
   final int userId;
   final String userName;
   final List<KeywordData>? primaryKeywords;
-  final int selectionNum;
+  final int? selectionNum;
   final int? likeNum;
   final bool isPrivate;
   final bool? isLiked;
@@ -25,7 +25,7 @@ class CollectionModel {
     required this.userId,
     required this.userName,
     this.primaryKeywords,
-    required this.selectionNum,
+    this.selectionNum,
     this.likeNum,
     required this.isPrivate,
     this.isLiked,
@@ -46,7 +46,7 @@ class CollectionModel {
       primaryKeywords: (json['primary_keywords'] as List<dynamic>?)
           ?.map((keyword) => KeywordData.fromJson(keyword))
           .toList(),
-      selectionNum: json['selection_num'],
+      selectionNum: json['selection_num'] as int?,
       likeNum: json['like_num'] as int?,
       isPrivate: json['is_private'],
       isLiked: hasLiked as bool?,

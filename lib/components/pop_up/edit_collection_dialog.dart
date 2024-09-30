@@ -2,8 +2,11 @@ import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../../data/model/collection_model.dart';
+import '../../data/provider/collection_provider.dart';
+import '../../page/add_page/add_screen.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
 
@@ -40,7 +43,6 @@ class EditCollectionDialog extends StatelessWidget {
                       text: '컬렉션 삭제',
                       textColor: Colors.red,
                       onTap: () async {
-                        print('삭제');
                         await ApiService.deleteCollection(collectionDetail.id);
                         Toast.completeToast('컬렉션이 삭제되었습니다');
                       },
@@ -53,15 +55,21 @@ class EditCollectionDialog extends StatelessWidget {
                     ),
                     Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
                     DialogText(
-                      text: '셀렉션 선택',
-                      textColor: Colors.black,
-                      onTap: () {},
-                    ),
-                    Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
-                    DialogText(
                       text: '셀렉션 추가',
                       textColor: Colors.black,
-                      onTap: () {},
+                      onTap: () async {
+                        final provider = context.read<CollectionProvider>();
+                        provider.saveCollectionId = collectionDetail.id;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddScreen(
+                              initialTabIndex: 1,
+                            ),
+                            settings: RouteSettings(name: '/add'),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

@@ -7,7 +7,8 @@ import '../../components/widget/add_collection_widget.dart';
 import '../../components/widget/add_selection_widget.dart';
 
 class AddScreen extends StatefulWidget {
-  const AddScreen({super.key});
+  int? initialTabIndex;
+  AddScreen({super.key, this.initialTabIndex});
 
   @override
   State<AddScreen> createState() => _AddScreenState();
@@ -20,7 +21,8 @@ class _AddScreenState extends State<AddScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+        length: 2, vsync: this, initialIndex: widget.initialTabIndex ?? 0);
     _tabController?.addListener(() {
       setState(() {});
     });

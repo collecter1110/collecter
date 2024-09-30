@@ -3,25 +3,25 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SetCollectionButton extends StatelessWidget {
   final String title;
-  final int index;
-  int? selectedIndex;
+  final int collectionId;
+  int? selectedCollectionId;
   final ValueSetter<int> onTap;
 
   SetCollectionButton({
     super.key,
     required this.title,
-    required this.index,
-    this.selectedIndex,
+    required this.collectionId,
+    this.selectedCollectionId,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    bool isSelected = index == selectedIndex;
+    bool isSelected = collectionId == selectedCollectionId;
 
     return TextButton(
       onPressed: () {
-        onTap(index);
+        onTap(collectionId);
       },
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(

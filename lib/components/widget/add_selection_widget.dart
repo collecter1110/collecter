@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/item_provider.dart';
 import '../../data/provider/keyword_provider.dart';
@@ -57,9 +58,6 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   Future<void> initializeData() async {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final collectionProvider = context.read<CollectionProvider>();
-      collectionProvider.resetCollectionIndex();
-
       final keywordProvider = context.read<KeywordProvider>();
       keywordProvider.clearKeywords();
 
@@ -189,49 +187,67 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                     ),
                     Consumer<CollectionProvider>(
                       builder: (context, provider, child) {
-                        int? _collectionIndex = provider.collectionIndex;
+                        _collectionId = provider.collectionId;
                         String? _collectionName;
-
                         bool isSelected = false;
 
-                        if (_collectionIndex != null) {
-                          final collection =
-                              provider.myCollections![_collectionIndex];
-                          _collectionName = collection.title;
-                          _collectionId = collection.id;
-                          isSelected = true;
-                        }
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6.0),
-                              color: isSelected
-                                  ? Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(0.3)
-                                  : Colors.white,
-                              border: Border.all(
-                                color: isSelected
-                                    ? Theme.of(context).primaryColor
-                                    : const Color(0xFFf1f3f5),
-                                width: 1.0,
-                                style: BorderStyle.solid,
-                              ),
+                        if (_collectionId != null) {
+                          CollectionModel collection =
+                              provider.myCollections!.firstWhere(
+                            (collection) => collection.id == _collectionId,
+                            orElse: () => CollectionModel(
+                              id: 0,
+                              title: '',
+                              userId: 0,
+                              userName: '',
+                              isPrivate: false,
                             ),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 12.0.h, horizontal: 16.0.w),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                isSelected ? _collectionName! : '콜렉션을 선택해주세요.',
-                                style: TextStyle(
+                          );
+
+                          if (collection.id == _collectionId) {
+                            _collectionName = collection.title;
+                            _collectionId = collection.id;
+                            isSelected = true;
+                          }
+                        }
+                        return InkWell(
+                          onTap: () async {
+                            await _createGroupDialog();
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6.0),
+                                color: isSelected
+                                    ? Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(0.3)
+                                    : Colors.white,
+                                border: Border.all(
                                   color: isSelected
-                                      ? Colors.black
-                                      : const Color(0xffADB5BD),
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.43,
+                                      ? Theme.of(context).primaryColor
+                                      : const Color(0xFFf1f3f5),
+                                  width: 1.0,
+                                  style: BorderStyle.solid,
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 12.0.h, horizontal: 16.0.w),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  isSelected
+                                      ? _collectionName!
+                                      : '컬렉션을 선택해주세요.',
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.black
+                                        : const Color(0xffADB5BD),
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.43,
+                                  ),
                                 ),
                               ),
                             ),

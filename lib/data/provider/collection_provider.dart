@@ -11,7 +11,6 @@ class CollectionProvider with ChangeNotifier {
   List<CollectionModel>? _likeCollections;
   CollectionModel? _collectionDetail;
   int? _collectionId;
-  int? _collectionIndex;
   int? _currentPageNum;
   String? _keywordCurrentSearchText;
   String? _tagCurrentSearchText;
@@ -25,7 +24,6 @@ class CollectionProvider with ChangeNotifier {
   List<CollectionModel>? get likeCollections => _likeCollections;
   CollectionModel? get collectionDetail => _collectionDetail;
   int? get collectionId => _collectionId;
-  int? get collectionIndex => _collectionIndex;
 
   set setPageChanged(int currentPageNum) {
     _currentPageNum = currentPageNum;
@@ -35,8 +33,8 @@ class CollectionProvider with ChangeNotifier {
     _collectionId = collectionId;
   }
 
-  set saveCollectionIndex(int? index) {
-    _collectionIndex = index;
+  set saveCollectionId(int? collectionId) {
+    _collectionId = collectionId;
     notifyListeners();
   }
 
@@ -161,12 +159,6 @@ class CollectionProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Failed to fetch collection detail data: $e');
-    }
-  }
-
-  void resetCollectionIndex() {
-    if (_collectionIndex != null) {
-      _collectionIndex = null;
     }
   }
 }
