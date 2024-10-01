@@ -8,11 +8,8 @@ import '../../data/provider/selection_provider.dart';
 import '../card/search_selection.dart';
 
 class SearchSelectionWidget extends StatelessWidget {
-  final String routeName;
-
   const SearchSelectionWidget({
     super.key,
-    required this.routeName,
   });
 
   @override

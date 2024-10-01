@@ -128,9 +128,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   : _categoryIndex == 0
                       ? SearchCollectionWidget(isKeyword: _isKeyword)
                       : _categoryIndex == 1
-                          ? SearchSelectionWidget(
-                              routeName: '/search',
-                            )
+                          ? SearchSelectionWidget()
                           : _categoryIndex == 2
                               ? SearchUserWidget()
                               : const Center(

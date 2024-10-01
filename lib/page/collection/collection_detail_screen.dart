@@ -38,6 +38,7 @@ class CollectionDetailScreen extends StatelessWidget {
         builder: (context) {
           return userId == _collectionDetail.userId
               ? EditCollectionDialog(
+                  routeName: _routeName!,
                   collectionDetail: _collectionDetail,
                   didPop: () {
                     didPop();

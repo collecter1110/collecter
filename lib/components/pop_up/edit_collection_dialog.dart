@@ -9,14 +9,17 @@ import '../../data/provider/collection_provider.dart';
 import '../../data/provider/search_provider.dart';
 import '../../data/provider/selection_provider.dart';
 import '../../page/add_page/add_screen.dart';
+import '../../page/collection/edit_collection_screen.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
 
 class EditCollectionDialog extends StatelessWidget {
+  final String routeName;
   final CollectionModel collectionDetail;
   final VoidCallback didPop;
   EditCollectionDialog({
     super.key,
+    required this.routeName,
     required this.collectionDetail,
     required this.didPop,
   });
@@ -115,7 +118,16 @@ class EditCollectionDialog extends StatelessWidget {
                     DialogText(
                       text: '컬렉션 수정',
                       textColor: Colors.black,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditCollectionScreen(
+                                collectionDetail: collectionDetail),
+                            settings: RouteSettings(name: routeName),
+                          ),
+                        );
+                      },
                     ),
                     Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
                     DialogText(
