@@ -63,7 +63,9 @@ class _UsersSelectScreenState extends State<SelectingScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-          titleText: '나의 셀렉트', actionButtonOnTap: () {}, actionButton: null),
+        titleText: '나의 셀렉트',
+        actionButtonOnTap: () {},
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
