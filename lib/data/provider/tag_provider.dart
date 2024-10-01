@@ -7,6 +7,10 @@ class TagProvider extends ChangeNotifier {
   List<String>? get tagNames => _tagNames;
   bool get tagState => _tagState;
 
+  set saveTags(List<dynamic> tags) {
+    _tagNames = tags.map((tag) => tag.toString()).toList();
+  }
+
   set addTag(String tagName) {
     if (tagName == '') {
       return;
