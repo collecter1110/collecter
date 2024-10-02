@@ -392,7 +392,7 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'getCollectionTitle error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -472,7 +472,7 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'getCollectionDetail error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -637,6 +637,29 @@ class ApiService {
     });
   }
 
+  static Future<void> editCollection(
+      int collectionId,
+      String title,
+      String? description,
+      String? imageFilePath,
+      List<String>? tags,
+      bool isPrivate) async {
+    try {
+      await Supabase.instance.client.from('collections').update({
+        'title': title,
+        'description': description,
+        'image_file_path': imageFilePath,
+        'tags': tags,
+        'is_private': isPrivate,
+      }).eq('id', collectionId);
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'edit collections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   Future<void> actionUnlike(int collectionId) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
@@ -664,7 +687,7 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'searchCollectionsByKeyword error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -686,7 +709,7 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'searchCollectionsByTag error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -762,7 +785,7 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'getUsersCollections error');
       throw Exception('An unexpected error occurred: $e');
     }
   }

@@ -33,7 +33,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   bool _isPrivate = false;
   String _inputTagValue = '';
 
-  XFile? _uploadImage;
   XFile? _pickedImage;
   final ImagePicker _picker = ImagePicker();
 
@@ -55,7 +54,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     });
   }
 
-  void _passFieldValidator() async {
+  Future<void> _passFieldValidator() async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -66,15 +65,14 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       },
     );
     try {
-      if (_uploadImage != null && _uploadImage != '') {
+      if (_pickedImage != null && _pickedImage != '') {
         _imageFilePath =
-            await ApiService.uploadAndGetImage(_uploadImage!, 'collections');
+            await ApiService.uploadAndGetImage(_pickedImage!, 'collections');
       }
       await ApiService.addCollection(_title!, _description, _imageFilePath,
           context.read<TagProvider>().tagNames, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
       await context.read<UserInfoProvider>().fetchUserOverview();
-      context.read<TagProvider>().clearTags();
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -99,11 +97,11 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     PermissionStatus status = await Permission.photos.status;
 
     if (status.isGranted || status.isLimited) {
-      _uploadImage = await _picker.pickImage(source: imageSource);
+      _pickedImage = await _picker.pickImage(source: imageSource);
 
-      if (_uploadImage != null) {
+      if (_pickedImage != null) {
         setState(() {
-          _pickedImage = XFile(_uploadImage!.path);
+          _pickedImage = XFile(_pickedImage!.path);
         });
       }
     } else {
@@ -258,8 +256,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                           height: 1.5,
                         ),
                       ),
-                      AddButton(onPressed: () {
-                        _pickImages(ImageSource.gallery);
+                      AddButton(onPressed: () async {
+                        await _pickImages(ImageSource.gallery);
                       }),
                     ],
                   ),
@@ -361,7 +359,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                       onTap: () {
                         FocusScope.of(context).unfocus();
 
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) async {
                           final fieldValidator = FieldValidator({
                             '컬렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
                           });
@@ -369,7 +367,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                           if (!fieldValidator.validateFields()) {
                             return;
                           } else {
-                            _passFieldValidator();
+                            await _passFieldValidator();
                           }
                         });
                       }),

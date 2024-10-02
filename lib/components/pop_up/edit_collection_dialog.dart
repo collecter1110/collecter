@@ -8,6 +8,7 @@ import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/search_provider.dart';
 import '../../data/provider/selection_provider.dart';
+import '../../data/provider/user_info_provider.dart';
 import '../../page/add_page/add_screen.dart';
 import '../../page/collection/edit_collection_screen.dart';
 import '../button/cancel_button.dart';
@@ -26,6 +27,52 @@ class EditCollectionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _updateLocalData() async {
+      Navigator.pop(context);
+      final collectionProvider = context.read<CollectionProvider>();
+      final searchProvider = context.read<SearchProvider>();
+      final selectionProvider = context.read<SelectionProvider>();
+      String? searchText = searchProvider.searchText;
+      await collectionProvider.fetchCollections();
+
+      if (searchText != null) {
+        bool existsKeywordCollections = collectionProvider
+                .searchKeywordCollections
+                ?.any((collection) => collection.id == collectionDetail.id) ??
+            false;
+
+        if (existsKeywordCollections) {
+          await collectionProvider.fetchKeywordCollections(searchText);
+        }
+
+        bool existsTagCollections = collectionProvider.searchTagCollections
+                ?.any((collection) => collection.id == collectionDetail.id) ??
+            false;
+
+        if (existsTagCollections) {
+          await collectionProvider.fetchTagCollections(searchText);
+        }
+
+        bool existsUsersCollections = collectionProvider.searchUsersCollections
+                ?.any((collection) => collection.id == collectionDetail.id) ??
+            false;
+
+        if (existsUsersCollections) {
+          await collectionProvider
+              .fetchUsersCollections(collectionDetail.userId);
+        }
+
+        bool existsSelections = selectionProvider.searchSelections?.any(
+                (selection) => selection.collectionId == collectionDetail.id) ??
+            false;
+
+        if (existsSelections) {
+          await selectionProvider.fetchSearchSelections(searchText);
+        }
+      }
+      didPop();
+    }
+
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
         return Column(
@@ -55,62 +102,10 @@ class EditCollectionDialog extends StatelessWidget {
                           await ApiService.deleteCollection(
                               collectionDetail.id);
                           Toast.completeToast('컬렉션이 삭제되었습니다');
-                          Navigator.pop(context);
-                          final collectionProvider =
-                              context.read<CollectionProvider>();
-                          final searchProvider = context.read<SearchProvider>();
-                          final selectionProvider =
-                              context.read<SelectionProvider>();
-                          String? searchText = searchProvider.searchText;
-                          await collectionProvider.fetchCollections();
-
-                          if (searchText != null) {
-                            bool existsKeywordCollections = collectionProvider
-                                    .searchKeywordCollections
-                                    ?.any((collection) =>
-                                        collection.id == collectionDetail.id) ??
-                                false;
-
-                            if (existsKeywordCollections) {
-                              await collectionProvider
-                                  .fetchKeywordCollections(searchText);
-                            }
-
-                            bool existsTagCollections = collectionProvider
-                                    .searchTagCollections
-                                    ?.any((collection) =>
-                                        collection.id == collectionDetail.id) ??
-                                false;
-
-                            if (existsTagCollections) {
-                              await collectionProvider
-                                  .fetchTagCollections(searchText);
-                            }
-
-                            bool existsUsersCollections = collectionProvider
-                                    .searchUsersCollections
-                                    ?.any((collection) =>
-                                        collection.id == collectionDetail.id) ??
-                                false;
-
-                            if (existsUsersCollections) {
-                              await collectionProvider.fetchUsersCollections(
-                                  collectionDetail.userId);
-                            }
-
-                            bool existsSelections = selectionProvider
-                                    .searchSelections
-                                    ?.any((selection) =>
-                                        selection.collectionId ==
-                                        collectionDetail.id) ??
-                                false;
-
-                            if (existsSelections) {
-                              await selectionProvider
-                                  .fetchSearchSelections(searchText);
-                            }
-                          }
-                          didPop();
+                          await context
+                              .read<UserInfoProvider>()
+                              .fetchUserOverview();
+                          _updateLocalData();
                         }
                       },
                     ),
@@ -123,6 +118,12 @@ class EditCollectionDialog extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) => EditCollectionScreen(
+                                updateLocalData: () async {
+                                  await context
+                                      .read<CollectionProvider>()
+                                      .fetchCollectionDetail();
+                                  _updateLocalData();
+                                },
                                 collectionDetail: collectionDetail),
                             settings: RouteSettings(name: routeName),
                           ),

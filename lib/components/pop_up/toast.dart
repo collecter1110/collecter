@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -24,6 +25,50 @@ class Toast {
               },
             ),
           ],
+        );
+      },
+    );
+  }
+
+  static Future<bool?> selectImageDialog(BuildContext context) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        TextStyle contentTextStyle = TextStyle(
+          fontFamily: 'PretendardRegular',
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w500,
+          color: Colors.black,
+        );
+        return AlertDialog(
+          contentPadding:
+              EdgeInsets.symmetric(vertical: 0.0.h, horizontal: 0.0.h),
+          actions: null,
+          contentTextStyle: TextStyle(fontSize: 16.sp, color: Colors.black),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextButton(
+                child: Text("기본 이미지로 변경", style: contentTextStyle),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+              Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
+              TextButton(
+                child: Text(
+                  "앨범에서 선택",
+                  style: contentTextStyle,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+            ],
+          ),
         );
       },
     );

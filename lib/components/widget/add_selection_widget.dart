@@ -66,7 +66,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     });
   }
 
-  void _passFieldValidator() async {
+  Future<void> _passFieldValidator() async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -630,7 +630,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         onTap: () {
                           FocusScope.of(context).unfocus();
                           WidgetsBinding.instance.addPostFrameCallback(
-                            (_) {
+                            (_) async {
                               final fieldValidator = FieldValidator({
                                 '컬렉션 ID가 누락되었습니다': _collectionId != null,
                                 '셀렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
@@ -643,7 +643,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               if (!fieldValidator.validateFields()) {
                                 return;
                               } else {
-                                _passFieldValidator();
+                                await _passFieldValidator();
                               }
                             },
                           );
