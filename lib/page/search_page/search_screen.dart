@@ -75,14 +75,6 @@ class _SearchScreenState extends State<SearchScreen> {
           return FutureBuilder(
               future: _doSearch(_isKeyword, _categoryIndex, _searchText),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator()); // 로딩 상태 표시
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                // 작업 완료 후의 UI 반환
-
                 return Scaffold(
                   resizeToAvoidBottomInset: true,
                   body: NestedScrollView(
@@ -130,19 +122,23 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ];
                     },
-                    body: _searchText == null
-                        ? const Center(
-                            child: Text('검색어를 입력해주세요.'),
+                    body: snapshot.connectionState == ConnectionState.waiting
+                        ? Center(
+                            child: CircularProgressIndicator(),
                           )
-                        : _categoryIndex == 0
-                            ? SearchCollectionWidget(isKeyword: _isKeyword)
-                            : _categoryIndex == 1
-                                ? SearchSelectionWidget()
-                                : _categoryIndex == 2
-                                    ? SearchUserWidget()
-                                    : const Center(
-                                        child: Text('해당 카테고리가 없습니다.'),
-                                      ),
+                        : _searchText == null
+                            ? const Center(
+                                child: Text('검색어를 입력해주세요.'),
+                              )
+                            : _categoryIndex == 0
+                                ? SearchCollectionWidget(isKeyword: _isKeyword)
+                                : _categoryIndex == 1
+                                    ? SearchSelectionWidget()
+                                    : _categoryIndex == 2
+                                        ? SearchUserWidget()
+                                        : const Center(
+                                            child: Text('해당 카테고리가 없습니다.'),
+                                          ),
                   ),
                 );
               });

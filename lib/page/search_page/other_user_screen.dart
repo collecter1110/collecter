@@ -27,11 +27,6 @@ class OtherUserScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Consumer<UserInfoProvider>(builder: (context, provider, child) {
-              // provider.getUsersData();
-
-              // if (provider.sea == null) {
-              //   return Center(child: CircularProgressIndicator());
-              // }
               final String _name = userInfoDetail.name;
               final String? _description = userInfoDetail.description;
               final String? _imageUrl = userInfoDetail.imageFilePath;

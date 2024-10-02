@@ -31,12 +31,10 @@ class _BookmarkScreenState extends State<BookmarkScreen>
     });
   }
 
-  void initializeData() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<CollectionProvider>();
-      provider.setPageChanged = 0;
-      provider.getCollectionData();
-    });
+  void initializeData() async {
+    final provider = context.read<CollectionProvider>();
+    provider.setPageChanged = 0;
+    await provider.getCollectionData();
   }
 
   void _onTap(int index) {
