@@ -53,13 +53,8 @@ class SelectionProvider with ChangeNotifier {
 
   Future<void> fetchSearchSelections(String searchText) async {
     try {
-      _state = ConnectionState.waiting;
-
-      await Future.delayed(Duration(milliseconds: 300));
       _searchSelections = await ApiService.searchSelections(searchText);
-      _state = ConnectionState.done;
     } catch (e) {
-      _state = ConnectionState.none;
     } finally {
       notifyListeners();
     }

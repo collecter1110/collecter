@@ -11,7 +11,6 @@ class CollectionProvider with ChangeNotifier {
   List<CollectionModel>? _likeCollections;
   CollectionModel? _collectionDetail;
   int? _collectionId;
-  int? _collectionIndex;
   int? _currentPageNum;
   String? _keywordCurrentSearchText;
   String? _tagCurrentSearchText;
@@ -25,7 +24,6 @@ class CollectionProvider with ChangeNotifier {
   List<CollectionModel>? get likeCollections => _likeCollections;
   CollectionModel? get collectionDetail => _collectionDetail;
   int? get collectionId => _collectionId;
-  int? get collectionIndex => _collectionIndex;
 
   set setPageChanged(int currentPageNum) {
     _currentPageNum = currentPageNum;
@@ -35,8 +33,8 @@ class CollectionProvider with ChangeNotifier {
     _collectionId = collectionId;
   }
 
-  set saveCollectionIndex(int? index) {
-    _collectionIndex = index;
+  set saveCollectionId(int? collectionId) {
+    _collectionId = collectionId;
     notifyListeners();
   }
 
@@ -44,15 +42,12 @@ class CollectionProvider with ChangeNotifier {
     try {
       if (_currentPageNum == 0 && _myCollections == null) {
         _state = ConnectionState.waiting;
-        notifyListeners();
         await Future.delayed(Duration(milliseconds: 300));
         await fetchCollections();
         await fetchLikeCollections();
       }
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {
-      _state = ConnectionState.done;
     }
   }
 
@@ -121,15 +116,9 @@ class CollectionProvider with ChangeNotifier {
 
   Future<void> fetchKeywordCollections(String searchText) async {
     try {
-      _state = ConnectionState.waiting;
-      await Future.delayed(Duration(milliseconds: 300));
-
       _searchKeywordCollections =
           await ApiService.searchCollectionsByKeyword(searchText);
-
-      _state = ConnectionState.done;
     } catch (e) {
-      _state = ConnectionState.none;
     } finally {
       notifyListeners();
     }
@@ -137,15 +126,9 @@ class CollectionProvider with ChangeNotifier {
 
   Future<void> fetchTagCollections(String searchText) async {
     try {
-      _state = ConnectionState.waiting;
-      await Future.delayed(Duration(milliseconds: 300));
-
       _searchTagCollections =
           await ApiService.searchCollectionsByTag(searchText);
-
-      _state = ConnectionState.done;
     } catch (e) {
-      _state = ConnectionState.none;
     } finally {
       notifyListeners();
     }
@@ -161,12 +144,6 @@ class CollectionProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Failed to fetch collection detail data: $e');
-    }
-  }
-
-  void resetCollectionIndex() {
-    if (_collectionIndex != null) {
-      _collectionIndex = null;
     }
   }
 }

@@ -5,6 +5,7 @@ class SelectionModel {
   final int? collectionId;
   final int? selectionId;
   final int? ownerId;
+  final int? userId;
   final String selectionName;
   final String? selectionDescription;
   final bool? isOrdered;
@@ -20,6 +21,7 @@ class SelectionModel {
     this.collectionId,
     this.selectionId,
     this.ownerId,
+    this.userId,
     required this.selectionName,
     this.selectionDescription,
     this.isOrdered,
@@ -38,6 +40,7 @@ class SelectionModel {
       collectionId: json['collection_id'] as int?,
       selectionId: json['selection_id'] as int?,
       ownerId: json['owner_id'] as int?,
+      userId: json['user_id'] as int?,
       selectionName: json['selection_name'],
       selectionDescription: json['selection_description'] as String?,
       isOrdered: json['is_ordered'] as bool?,

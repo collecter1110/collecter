@@ -39,8 +39,8 @@ class _UsersSelectScreenState extends State<SelectingScreen>
     }
   }
 
-  Future<void> initializeData() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+  void initializeData() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<SelectingProvider>();
       provider.setPageChanged = widget.initialPageIndex;
     });
@@ -63,11 +63,9 @@ class _UsersSelectScreenState extends State<SelectingScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-          popState: true,
-          titleText: '나의 셀렉트',
-          titleState: true,
-          actionButtonOnTap: () {},
-          actionButton: null),
+        titleText: '나의 셀렉트',
+        actionButtonOnTap: () {},
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

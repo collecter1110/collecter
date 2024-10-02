@@ -72,72 +72,76 @@ class _SearchScreenState extends State<SearchScreen> {
           bool _isKeyword = data.item2;
           String? _searchText = data.item3;
 
-          _doSearch(_isKeyword, _categoryIndex, _searchText);
-
-          return Scaffold(
-            resizeToAvoidBottomInset: true,
-            body: NestedScrollView(
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return [
-                  SliverAppBar(
-                    pinned: true,
-                    toolbarHeight: 64.0.h,
-                    expandedHeight: 140.0.h,
-                    elevation: 0,
-                    scrolledUnderElevation: 0,
-                    foregroundColor: Colors.black,
-                    titleTextStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18.0.sp,
-                    ),
-                    flexibleSpace: FlexibleSpaceBar(
-                      expandedTitleScale: 1,
-                      centerTitle: false,
-                      titlePadding: EdgeInsets.zero,
-                      title: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.0.h, horizontal: 16.0.w),
-                        child: SearchCategoryWidget(),
-                      ),
-                      background: Padding(
-                        padding: EdgeInsets.only(
-                          left: 16.0.w,
-                          right: 16.0.w,
-                          top: ViewPaddingTopSize(context) + 20.0.h,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CustomSearchBar(
-                              autoFocus: false,
-                              enabled: true,
+          return FutureBuilder(
+              future: _doSearch(_isKeyword, _categoryIndex, _searchText),
+              builder: (context, snapshot) {
+                return Scaffold(
+                  resizeToAvoidBottomInset: true,
+                  body: NestedScrollView(
+                    headerSliverBuilder:
+                        (BuildContext context, bool innerBoxIsScrolled) {
+                      return [
+                        SliverAppBar(
+                          pinned: true,
+                          toolbarHeight: 64.0.h,
+                          expandedHeight: 140.0.h,
+                          elevation: 0,
+                          scrolledUnderElevation: 0,
+                          foregroundColor: Colors.black,
+                          titleTextStyle: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18.0.sp,
+                          ),
+                          flexibleSpace: FlexibleSpaceBar(
+                            expandedTitleScale: 1,
+                            centerTitle: false,
+                            titlePadding: EdgeInsets.zero,
+                            title: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10.0.h, horizontal: 16.0.w),
+                              child: SearchCategoryWidget(),
                             ),
-                          ],
+                            background: Padding(
+                              padding: EdgeInsets.only(
+                                left: 16.0.w,
+                                right: 16.0.w,
+                                top: ViewPaddingTopSize(context) + 20.0.h,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CustomSearchBar(
+                                    autoFocus: false,
+                                    enabled: true,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      ];
+                    },
+                    body: snapshot.connectionState == ConnectionState.waiting
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : _searchText == null
+                            ? const Center(
+                                child: Text('검색어를 입력해주세요.'),
+                              )
+                            : _categoryIndex == 0
+                                ? SearchCollectionWidget(isKeyword: _isKeyword)
+                                : _categoryIndex == 1
+                                    ? SearchSelectionWidget()
+                                    : _categoryIndex == 2
+                                        ? SearchUserWidget()
+                                        : const Center(
+                                            child: Text('해당 카테고리가 없습니다.'),
+                                          ),
                   ),
-                ];
-              },
-              body: _searchText == null
-                  ? const Center(
-                      child: Text('검색어를 입력해주세요.'),
-                    )
-                  : _categoryIndex == 0
-                      ? SearchCollectionWidget(isKeyword: _isKeyword)
-                      : _categoryIndex == 1
-                          ? SearchSelectionWidget(
-                              routeName: '/search',
-                            )
-                          : _categoryIndex == 2
-                              ? SearchUserWidget()
-                              : const Center(
-                                  child: Text('해당 카테고리가 없습니다.'),
-                                ),
-            ),
-          );
+                );
+              });
         });
   }
 }

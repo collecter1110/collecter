@@ -7,6 +7,10 @@ class TagProvider extends ChangeNotifier {
   List<String>? get tagNames => _tagNames;
   bool get tagState => _tagState;
 
+  set saveTags(List<dynamic> tags) {
+    _tagNames = tags.map((tag) => tag.toString()).toList();
+  }
+
   set addTag(String tagName) {
     if (tagName == '') {
       return;
@@ -19,7 +23,7 @@ class TagProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteTag(int index) async {
+  void deleteTag(int index) {
     if (_tagNames != null && _tagNames!.isNotEmpty) {
       _tagNames!.removeAt(index);
 
@@ -32,7 +36,7 @@ class TagProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> clearTags() async {
+  clearTags() {
     _tagNames = null;
 
     notifyListeners();

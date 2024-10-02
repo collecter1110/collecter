@@ -19,21 +19,14 @@ class OtherUserScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-          popState: true,
-          titleText: 'User',
-          titleState: true,
-          actionButtonOnTap: () {},
-          actionButton: null),
+        titleText: 'User',
+        actionButtonOnTap: () {},
+      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Consumer<UserInfoProvider>(builder: (context, provider, child) {
-              // provider.getUsersData();
-
-              // if (provider.sea == null) {
-              //   return Center(child: CircularProgressIndicator());
-              // }
               final String _name = userInfoDetail.name;
               final String? _description = userInfoDetail.description;
               final String? _imageUrl = userInfoDetail.imageFilePath;

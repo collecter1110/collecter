@@ -30,7 +30,7 @@ class SelectingProvider with ChangeNotifier {
       } else if (_currentPageNum == 1 && _selectedMap.isEmpty) {
         await fetchSelectedData();
       }
-      await getCreatedDates();
+      getCreatedDates();
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
@@ -39,7 +39,7 @@ class SelectingProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getCreatedDates() async {
+  void getCreatedDates() {
     try {
       _createdDates = _currentPageNum == 0
           ? _selectingMap.keys

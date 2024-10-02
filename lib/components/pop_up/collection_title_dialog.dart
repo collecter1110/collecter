@@ -19,7 +19,7 @@ class CollectionTitleDialog extends StatelessWidget {
         builder: (BuildContext context, StateSetter setState) {
       return Consumer<CollectionProvider>(builder: (context, provider, child) {
         List<CollectionModel>? collections = provider.myCollections;
-        int? selectedIndex = provider.collectionIndex;
+        int? selectedCollectionId = provider.collectionId;
         return Padding(
           padding: MediaQuery.of(context).viewInsets,
           child: SingleChildScrollView(
@@ -79,11 +79,11 @@ class CollectionTitleDialog extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 return SetCollectionButton(
                                   title: collections![index].title,
-                                  index: index,
-                                  selectedIndex: selectedIndex,
+                                  collectionId: collections[index].id,
+                                  selectedCollectionId: selectedCollectionId,
                                   onTap: (value) {
                                     setState(() {
-                                      selectedIndex = value;
+                                      selectedCollectionId = value;
                                     });
                                   },
                                 );
@@ -99,10 +99,10 @@ class CollectionTitleDialog extends StatelessWidget {
                         ),
                         CompleteButton(
                           firstFieldState: true,
-                          secondFieldState: selectedIndex != null,
-                          onTap: () async {
+                          secondFieldState: selectedCollectionId != null,
+                          onTap: () {
                             Navigator.pop(context);
-                            provider.saveCollectionIndex = selectedIndex;
+                            provider.saveCollectionId = selectedCollectionId;
                           },
                           text: '선택',
                         ),

@@ -1,9 +1,12 @@
+import 'package:collect_er/components/pop_up/selection_dialog.dart';
 import 'package:collect_er/data/model/selection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../components/button/link_button.dart';
+import '../../components/pop_up/edit_selection_dialog.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
@@ -19,14 +22,32 @@ class SelectionDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<SelectionProvider>(builder: (context, provider, child) {
       final SelectionModel _selectionDetail = provider.selectionDetail!;
+      Future<void> _showDialog() async {
+        final storage = FlutterSecureStorage();
+        final userIdString = await storage.read(key: 'USER_ID');
+
+        int userId = int.parse(userIdString!);
+
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: false,
+          backgroundColor: Colors.transparent,
+          builder: (context) {
+            return userId == _selectionDetail.userId
+                ? EditSelectionDialog()
+                : SelectionDialog();
+          },
+        );
+      }
 
       return Scaffold(
         appBar: CustomAppbar(
-            popState: true,
-            titleText: '셀렉션',
-            titleState: true,
-            actionButtonOnTap: () {},
-            actionButton: null),
+          titleText: '셀렉션',
+          actionButtonOnTap: () async {
+            await _showDialog();
+          },
+          actionButton: 'icon_more',
+        ),
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

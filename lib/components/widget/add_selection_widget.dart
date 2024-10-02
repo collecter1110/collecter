@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/item_provider.dart';
 import '../../data/provider/keyword_provider.dart';
@@ -55,11 +56,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     super.dispose();
   }
 
-  Future<void> initializeData() async {
+  void initializeData() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final collectionProvider = context.read<CollectionProvider>();
-      collectionProvider.resetCollectionIndex();
-
       final keywordProvider = context.read<KeywordProvider>();
       keywordProvider.clearKeywords();
 
@@ -68,7 +66,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     });
   }
 
-  void _passFieldValidator() async {
+  Future<void> _passFieldValidator() async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -80,13 +78,13 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     );
     try {
       _items = context.read<ItemProvider>().itemDataListToJson();
-      _keywords = await ApiService.AddKeywords(
+      _keywords = await ApiService.addKeywords(
           context.read<KeywordProvider>().keywordNames!);
       if (_mediaFileList != null && _mediaFileList!.isNotEmpty) {
         _imageFilePath =
             await ApiService.uploadAndGetImages(_mediaFileList!, 'selections');
       }
-      await ApiService.AddSelections(_collectionId!, _title!, _description,
+      await ApiService.addSelections(_collectionId!, _title!, _description,
           _imageFilePath, _keywords, _link, _items, _isOrder, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
       context.read<KeywordProvider>().clearKeywords();
@@ -124,7 +122,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     }
   }
 
-  void _createGroupDialog() async {
+  Future<void> _createGroupDialog() async {
     await fetchCollections();
     showModalBottomSheet(
       context: context,
@@ -181,57 +179,75 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           ),
                         ),
                         AddButton(
-                          onPressed: () {
-                            _createGroupDialog();
+                          onPressed: () async {
+                            await _createGroupDialog();
                           },
                         ),
                       ],
                     ),
                     Consumer<CollectionProvider>(
                       builder: (context, provider, child) {
-                        int? _collectionIndex = provider.collectionIndex;
+                        _collectionId = provider.collectionId;
                         String? _collectionName;
-
                         bool isSelected = false;
 
-                        if (_collectionIndex != null) {
-                          final collection =
-                              provider.myCollections![_collectionIndex];
-                          _collectionName = collection.title;
-                          _collectionId = collection.id;
-                          isSelected = true;
-                        }
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6.0),
-                              color: isSelected
-                                  ? Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(0.3)
-                                  : Colors.white,
-                              border: Border.all(
-                                color: isSelected
-                                    ? Theme.of(context).primaryColor
-                                    : const Color(0xFFf1f3f5),
-                                width: 1.0,
-                                style: BorderStyle.solid,
-                              ),
+                        if (_collectionId != null) {
+                          CollectionModel collection =
+                              provider.myCollections!.firstWhere(
+                            (collection) => collection.id == _collectionId,
+                            orElse: () => CollectionModel(
+                              id: 0,
+                              title: '',
+                              userId: 0,
+                              userName: '',
+                              isPrivate: false,
                             ),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 12.0.h, horizontal: 16.0.w),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                isSelected ? _collectionName! : '콜렉션을 선택해주세요.',
-                                style: TextStyle(
+                          );
+
+                          if (collection.id == _collectionId) {
+                            _collectionName = collection.title;
+                            _collectionId = collection.id;
+                            isSelected = true;
+                          }
+                        }
+                        return InkWell(
+                          onTap: () async {
+                            await _createGroupDialog();
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6.0),
+                                color: isSelected
+                                    ? Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(0.3)
+                                    : Colors.white,
+                                border: Border.all(
                                   color: isSelected
-                                      ? Colors.black
-                                      : const Color(0xffADB5BD),
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.43,
+                                      ? Theme.of(context).primaryColor
+                                      : const Color(0xFFf1f3f5),
+                                  width: 1.0,
+                                  style: BorderStyle.solid,
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 12.0.h, horizontal: 16.0.w),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  isSelected
+                                      ? _collectionName!
+                                      : '컬렉션을 선택해주세요.',
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.black
+                                        : const Color(0xffADB5BD),
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.43,
+                                  ),
                                 ),
                               ),
                             ),
@@ -614,7 +630,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         onTap: () {
                           FocusScope.of(context).unfocus();
                           WidgetsBinding.instance.addPostFrameCallback(
-                            (_) {
+                            (_) async {
                               final fieldValidator = FieldValidator({
                                 '컬렉션 ID가 누락되었습니다': _collectionId != null,
                                 '셀렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
@@ -627,7 +643,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               if (!fieldValidator.validateFields()) {
                                 return;
                               } else {
-                                _passFieldValidator();
+                                await _passFieldValidator();
                               }
                             },
                           );

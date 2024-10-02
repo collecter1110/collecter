@@ -360,7 +360,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'owner_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name')
+              'user_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -392,7 +392,7 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'getCollectionTitle error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -406,6 +406,7 @@ class ApiService {
         id, 
         title, 
         image_file_path, 
+        user_id,
         user_name, 
         primary_keywords, 
         selection_num,
@@ -452,6 +453,7 @@ class ApiService {
         created_at, 
         image_file_path, 
         tags, 
+        user_id,
         user_name, 
         primary_keywords, 
         selection_num, 
@@ -470,7 +472,7 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'getCollectionDetail error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -542,7 +544,7 @@ class ApiService {
     }
   }
 
-  static Future<void> AddCollection(String title, String? description,
+  static Future<void> addCollection(String title, String? description,
       String? imageFilePath, List<String>? tags, bool isPrivate) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
@@ -564,7 +566,7 @@ class ApiService {
     }
   }
 
-  static Future<void> AddSelections(
+  static Future<void> addSelections(
       int collectionId,
       String title,
       String? description,
@@ -599,7 +601,7 @@ class ApiService {
     }
   }
 
-  static Future<List<Map<String, dynamic>>> AddKeywords(
+  static Future<List<Map<String, dynamic>>> addKeywords(
     List<String> keywords,
   ) async {
     try {
@@ -635,6 +637,29 @@ class ApiService {
     });
   }
 
+  static Future<void> editCollection(
+      int collectionId,
+      String title,
+      String? description,
+      String? imageFilePath,
+      List<String>? tags,
+      bool isPrivate) async {
+    try {
+      await Supabase.instance.client.from('collections').update({
+        'title': title,
+        'description': description,
+        'image_file_path': imageFilePath,
+        'tags': tags,
+        'is_private': isPrivate,
+      }).eq('id', collectionId);
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'edit collections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   Future<void> actionUnlike(int collectionId) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
@@ -662,7 +687,7 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'searchCollectionsByKeyword error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -684,7 +709,7 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'searchCollectionsByTag error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -745,6 +770,7 @@ class ApiService {
         id, 
         title, 
         image_file_path, 
+        user_id,
         user_name, 
         primary_keywords, 
         selection_num, 
@@ -759,8 +785,17 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'getUsersCollections error');
       throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<void> deleteCollection(int collectionId) async {
+    try {
+      await _supabase.from('collections').delete().eq('id', collectionId);
+    } catch (e) {
+      handleError('', 'deleteCollection error');
+      print('Failed to delete data: $e');
     }
   }
 

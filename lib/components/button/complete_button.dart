@@ -20,7 +20,7 @@ class CompleteButton extends StatelessWidget {
       children: [
         Expanded(
           child: TextButton(
-            onPressed: () async {
+            onPressed: () {
               if (firstFieldState && secondFieldState) {
                 onTap();
               }

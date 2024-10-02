@@ -1,9 +1,12 @@
 import 'package:collect_er/components/button/like_button.dart';
+import 'package:collect_er/components/pop_up/collection_dialog.dart';
 import 'package:collect_er/components/widget/selection_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/pop_up/edit_collection_dialog.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
@@ -19,17 +22,43 @@ class CollectionDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? _routeName = ModalRoute.of(context)?.settings.name;
+    Future<void> _showDialog(CollectionModel _collectionDetail) async {
+      final storage = FlutterSecureStorage();
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+
+      void didPop() {
+        Navigator.pop(context);
+      }
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: false,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return userId == _collectionDetail.userId
+              ? EditCollectionDialog(
+                  routeName: _routeName!,
+                  collectionDetail: _collectionDetail,
+                  didPop: () {
+                    didPop();
+                  })
+              : CollectionDialog();
+        },
+      );
+    }
 
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
       final CollectionModel _collectionDetail = provider.collectionDetail!;
 
       return Scaffold(
         appBar: CustomAppbar(
-            popState: true,
-            titleText: '컬렉션',
-            titleState: true,
-            actionButtonOnTap: () {},
-            actionButton: null),
+          titleText: '컬렉션',
+          actionButtonOnTap: () async {
+            await _showDialog(_collectionDetail);
+          },
+          actionButton: 'icon_more',
+        ),
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -57,7 +86,7 @@ class CollectionDetailScreen extends StatelessWidget {
                                     image: DecorationImage(
                                       image: NetworkImage(
                                           _collectionDetail.imageFilePath!),
-                                      fit: BoxFit.contain,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),

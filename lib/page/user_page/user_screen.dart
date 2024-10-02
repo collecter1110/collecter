@@ -41,11 +41,9 @@ class UserScreen extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/search');
-                  },
+                  onTap: () {},
                   child: Image.asset(
-                    'assets/icons/tab_search.png',
+                    'assets/icons/icon_hamburger.png',
                     height: 20.0.h,
                   ),
                 ),

@@ -4,18 +4,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddTextFormField extends StatefulWidget {
   final TextInputType keyboardType;
-  final String hintText;
+  final String? hintText;
   final TextInputFormatter? formatter;
   final bool isMultipleLine;
   final FormFieldSetter<String> onSaved;
+  final String? initialText;
 
   const AddTextFormField({
     super.key,
     required this.keyboardType,
-    required this.hintText,
+    this.hintText,
     this.formatter,
     required this.isMultipleLine,
     required this.onSaved,
+    this.initialText,
   });
 
   @override
@@ -53,6 +55,7 @@ class _AddTextFormFieldState extends State<AddTextFormField> {
       }
     };
     _focusNode.addListener(_listener);
+    _controller = TextEditingController(text: widget.initialText ?? '');
   }
 
   @override

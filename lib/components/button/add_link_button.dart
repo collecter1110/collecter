@@ -11,7 +11,7 @@ class AddLinkButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () async {
+      onPressed: () {
         onTap();
       },
       style: TextButton.styleFrom(

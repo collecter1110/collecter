@@ -6,7 +6,6 @@ import '../model/user_overview_model.dart';
 import '../services/api_service.dart';
 
 class UserInfoProvider with ChangeNotifier {
-  ConnectionState _state = ConnectionState.waiting;
   UserInfoModel? _userInfo;
   UserOverviewModel? _userOverview;
   int? _collectionNum;
@@ -16,7 +15,6 @@ class UserInfoProvider with ChangeNotifier {
   List<UserInfoModel>? _searchUsers;
   String? _currentSearchText;
 
-  ConnectionState get state => _state;
   UserInfoModel? get userInfo => _userInfo;
   List<int>? get userLabelIds => _userLabelIds;
   int? get collectionNum => _collectionNum;
@@ -62,12 +60,8 @@ class UserInfoProvider with ChangeNotifier {
 
   Future<void> fetchSearchUsers(String searchText) async {
     try {
-      _state = ConnectionState.waiting;
-      await Future.delayed(Duration(milliseconds: 300));
       _searchUsers = await ApiService.searchUsers(searchText);
-      _state = ConnectionState.done;
     } catch (e) {
-      _state = ConnectionState.none;
     } finally {
       notifyListeners();
     }

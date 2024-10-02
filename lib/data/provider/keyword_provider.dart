@@ -18,21 +18,19 @@ class KeywordProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteKeyword(int index) async {
+  void deleteKeyword(int index) {
     if (_keywordNames != null && _keywordNames!.isNotEmpty) {
       _keywordNames!.removeAt(index);
 
       if (_keywordNames!.isEmpty) {
         _keywordNames = null;
       }
-
       notifyListeners();
     }
   }
 
-  Future<void> clearKeywords() async {
+  void clearKeywords() {
     _keywordNames = null;
-
     notifyListeners();
   }
 }

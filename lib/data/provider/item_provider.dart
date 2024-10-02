@@ -43,7 +43,7 @@ class ItemProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> clearItems() async {
+  void clearItems() {
     _items = [];
     _sortedItems = null;
     _itemOrder = null;
