@@ -102,7 +102,7 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
     });
   }
 
-  void _emailVerifiedRequest() async {
+  Future<void> _emailVerifiedRequest() async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -208,7 +208,7 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
                     padding: EdgeInsets.only(
                         right: 16.0.w, top: 12.0.h, bottom: 12.0.h),
                     child: AuthenticationButton(onTap: () async {
-                      _emailVerifiedRequest();
+                      await _emailVerifiedRequest();
                     }),
                   ),
                 ),

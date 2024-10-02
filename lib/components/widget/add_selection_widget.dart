@@ -56,7 +56,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     super.dispose();
   }
 
-  Future<void> initializeData() async {
+  void initializeData() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final keywordProvider = context.read<KeywordProvider>();
       keywordProvider.clearKeywords();

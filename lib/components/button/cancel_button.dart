@@ -12,7 +12,7 @@ class CancelButton extends StatelessWidget {
       children: [
         Expanded(
           child: TextButton(
-            onPressed: () async {
+            onPressed: () {
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(

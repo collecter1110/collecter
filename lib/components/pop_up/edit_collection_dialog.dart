@@ -27,7 +27,7 @@ class EditCollectionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void _updateLocalData() async {
+    Future<void> _updateLocalData() async {
       Navigator.pop(context);
       final collectionProvider = context.read<CollectionProvider>();
       final searchProvider = context.read<SearchProvider>();
@@ -105,7 +105,7 @@ class EditCollectionDialog extends StatelessWidget {
                           await context
                               .read<UserInfoProvider>()
                               .fetchUserOverview();
-                          _updateLocalData();
+                          await _updateLocalData();
                         }
                       },
                     ),
@@ -122,7 +122,7 @@ class EditCollectionDialog extends StatelessWidget {
                                   await context
                                       .read<CollectionProvider>()
                                       .fetchCollectionDetail();
-                                  _updateLocalData();
+                                  await _updateLocalData();
                                 },
                                 collectionDetail: collectionDetail),
                             settings: RouteSettings(name: routeName),

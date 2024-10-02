@@ -40,9 +40,8 @@ class TagButton extends StatelessWidget {
             width: 6.0.w,
           ),
           InkWell(
-            onTap: () async {
-              await Provider.of<TagProvider>(context, listen: false)
-                  .deleteTag(index);
+            onTap: () {
+              Provider.of<TagProvider>(context, listen: false).deleteTag(index);
             },
             child: Container(
               height: 10,

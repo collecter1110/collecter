@@ -27,8 +27,8 @@ class _SelectionWidgetState extends State<SelectionWidget> {
     initializeData();
   }
 
-  Future<void> initializeData() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+  void initializeData() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<SelectionProvider>();
       provider.getCollectionId = widget.collectionId;
     });

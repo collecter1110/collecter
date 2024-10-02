@@ -47,7 +47,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     super.dispose();
   }
 
-  Future<void> initializeData() async {
+  void initializeData() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final tagProvider = context.read<TagProvider>();
       tagProvider.clearTags();

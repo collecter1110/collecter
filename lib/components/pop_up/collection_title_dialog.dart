@@ -100,7 +100,7 @@ class CollectionTitleDialog extends StatelessWidget {
                         CompleteButton(
                           firstFieldState: true,
                           secondFieldState: selectedCollectionId != null,
-                          onTap: () async {
+                          onTap: () {
                             Navigator.pop(context);
                             provider.saveCollectionId = selectedCollectionId;
                           },

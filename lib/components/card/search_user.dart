@@ -17,7 +17,7 @@ class SearchUser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async {
+      onTap: () {
         final int _userId = userInfoDetail.userId!;
         context
             .read<CollectionProvider>()

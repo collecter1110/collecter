@@ -31,8 +31,8 @@ class _BookmarkScreenState extends State<BookmarkScreen>
     });
   }
 
-  Future<void> initializeData() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+  void initializeData() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<CollectionProvider>();
       provider.setPageChanged = 0;
       provider.getCollectionData();

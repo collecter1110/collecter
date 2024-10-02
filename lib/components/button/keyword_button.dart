@@ -43,8 +43,8 @@ class KeywordButton extends StatelessWidget {
               width: 6.0.w,
             ),
             InkWell(
-              onTap: () async {
-                await Provider.of<KeywordProvider>(context, listen: false)
+              onTap: () {
+                Provider.of<KeywordProvider>(context, listen: false)
                     .deleteKeyword(index);
               },
               child: Container(

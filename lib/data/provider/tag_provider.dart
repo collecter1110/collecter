@@ -23,7 +23,7 @@ class TagProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteTag(int index) async {
+  void deleteTag(int index) {
     if (_tagNames != null && _tagNames!.isNotEmpty) {
       _tagNames!.removeAt(index);
 
@@ -36,7 +36,7 @@ class TagProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> clearTags() async {
+  clearTags() {
     _tagNames = null;
 
     notifyListeners();

@@ -39,8 +39,8 @@ class _UsersSelectScreenState extends State<SelectingScreen>
     }
   }
 
-  Future<void> initializeData() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+  void initializeData() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<SelectingProvider>();
       provider.setPageChanged = widget.initialPageIndex;
     });
