@@ -20,6 +20,7 @@ class SelectionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? _routeName = ModalRoute.of(context)?.settings.name;
     return Consumer<SelectionProvider>(builder: (context, provider, child) {
       final SelectionModel _selectionDetail = provider.selectionDetail!;
       Future<void> _showDialog() async {
@@ -27,6 +28,9 @@ class SelectionDetailScreen extends StatelessWidget {
         final userIdString = await storage.read(key: 'USER_ID');
 
         int userId = int.parse(userIdString!);
+        void didPop() {
+          Navigator.pop(context);
+        }
 
         showModalBottomSheet(
           context: context,
@@ -34,7 +38,12 @@ class SelectionDetailScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           builder: (context) {
             return userId == _selectionDetail.userId
-                ? EditSelectionDialog()
+                ? EditSelectionDialog(
+                    routeName: _routeName!,
+                    selectionDetail: _selectionDetail,
+                    didPop: () {
+                      didPop();
+                    })
                 : SelectionDialog();
           },
         );

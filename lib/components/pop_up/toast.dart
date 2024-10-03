@@ -4,13 +4,39 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Toast {
-  static Future<bool?> warningDialog(BuildContext context) async {
+  static Future<bool?> deleteCollectionWarning(BuildContext context) async {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("오류 발생"),
           content: Text("컬렉션과 관련된 셀렉션도 함께 삭제됩니다.\n삭제하시겠습니까?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("확인"),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+            TextButton(
+              child: Text("취소"),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Future<bool?> deleteSelectionWarning(BuildContext context) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("오류 발생"),
+          content: Text("셀렉션을 삭제하시겠습니까?"),
           actions: <Widget>[
             TextButton(
               child: Text("확인"),

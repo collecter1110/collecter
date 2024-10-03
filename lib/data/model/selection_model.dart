@@ -2,8 +2,8 @@ import 'item_model.dart';
 import 'keyword_model.dart';
 
 class SelectionModel {
-  final int? collectionId;
-  final int? selectionId;
+  final int collectionId;
+  final int selectionId;
   final int? ownerId;
   final int? userId;
   final String selectionName;
@@ -18,8 +18,8 @@ class SelectionModel {
   final String? thumbFilePath;
 
   SelectionModel({
-    this.collectionId,
-    this.selectionId,
+    required this.collectionId,
+    required this.selectionId,
     this.ownerId,
     this.userId,
     required this.selectionName,
@@ -37,8 +37,8 @@ class SelectionModel {
   factory SelectionModel.fromJson(Map<String, dynamic> json,
       {String? thumbFilePath}) {
     return SelectionModel(
-      collectionId: json['collection_id'] as int?,
-      selectionId: json['selection_id'] as int?,
+      collectionId: json['collection_id'],
+      selectionId: json['selection_id'],
       ownerId: json['owner_id'] as int?,
       userId: json['user_id'] as int?,
       selectionName: json['selection_name'],

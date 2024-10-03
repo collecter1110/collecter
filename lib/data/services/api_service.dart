@@ -360,7 +360,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'user_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name')
+              'collection_id, selection_id, user_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -795,6 +795,19 @@ class ApiService {
       await _supabase.from('collections').delete().eq('id', collectionId);
     } catch (e) {
       handleError('', 'deleteCollection error');
+      print('Failed to delete data: $e');
+    }
+  }
+
+  static Future<void> deleteSelection(int collectionId, int selectionId) async {
+    try {
+      await _supabase
+          .from('selections')
+          .delete()
+          .eq('collection_id', collectionId)
+          .eq('selection_id', selectionId);
+    } catch (e) {
+      handleError('', 'deleteSelection error');
       print('Failed to delete data: $e');
     }
   }
