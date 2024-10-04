@@ -16,6 +16,7 @@ class SelectionModel {
   final String? createdAt;
   final String ownerName;
   final String? thumbFilePath;
+  final bool? isSelect;
 
   SelectionModel({
     required this.collectionId,
@@ -32,6 +33,7 @@ class SelectionModel {
     this.createdAt,
     required this.ownerName,
     this.thumbFilePath,
+    this.isSelect,
   });
 
   factory SelectionModel.fromJson(Map<String, dynamic> json,
@@ -59,6 +61,7 @@ class SelectionModel {
       createdAt: json['created_at'] as String?,
       ownerName: json['owner_name'],
       thumbFilePath: thumbFilePath as String?,
+      isSelect: json['is_select'] as bool?,
     );
   }
 }

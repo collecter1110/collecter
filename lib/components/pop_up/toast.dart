@@ -111,7 +111,7 @@ class Toast {
     );
   }
 
-  static void missingField(String message) {
+  static void notify(String message) {
     Fluttertoast.showToast(
       msg: message,
       gravity: ToastGravity.CENTER,
@@ -167,7 +167,7 @@ class FieldValidator {
   bool validateFields() {
     for (var condition in conditions.entries) {
       if (!condition.value) {
-        Toast.missingField(condition.key);
+        Toast.notify(condition.key);
         return false;
       }
     }

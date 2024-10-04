@@ -31,7 +31,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   String? _title;
   List<Map<String, dynamic>>? _keywords;
   String? _description;
-  List<String>? _imageFilePath;
+  List<String>? _imageFilePaths;
   String? _link;
   List<Map<String, dynamic>>? _items;
   bool _isPrivate = false;
@@ -43,7 +43,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   int _itemNum = 0;
 
   final ImagePicker _picker = ImagePicker();
-  List<XFile>? _mediaFileList;
+  List<XFile>? _picekdImages;
 
   @override
   void initState() {
@@ -80,14 +80,13 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
       _items = context.read<ItemProvider>().itemDataListToJson();
       _keywords = await ApiService.addKeywords(
           context.read<KeywordProvider>().keywordNames!);
-      if (_mediaFileList != null && _mediaFileList!.isNotEmpty) {
-        _imageFilePath =
-            await ApiService.uploadAndGetImages(_mediaFileList!, 'selections');
+      if (_picekdImages != null && _picekdImages!.isNotEmpty) {
+        _imageFilePaths =
+            await ApiService.uploadAndGetImages(_picekdImages!, 'selections');
       }
       await ApiService.addSelections(_collectionId!, _title!, _description,
-          _imageFilePath, _keywords, _link, _items, _isOrder, _isPrivate);
+          _imageFilePaths, _keywords, _link, _items, _isOrder, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
-      context.read<KeywordProvider>().clearKeywords();
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -112,10 +111,9 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     PermissionStatus status = await Permission.photos.status;
 
     if (status.isGranted || status.isLimited) {
-      final List<XFile> pickedFileList =
-          await _picker.pickMultiImage(limit: 10);
+      final List<XFile> pickedFileList = await _picker.pickMultiImage(limit: 5);
       setState(() {
-        _mediaFileList = pickedFileList;
+        _picekdImages = pickedFileList;
       });
     } else {
       await Toast.handlePhotoPermission(status);
@@ -416,13 +414,12 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 16.0.h),
-                      child: _mediaFileList != null &&
-                              _mediaFileList!.isNotEmpty
+                      child: _picekdImages != null && _picekdImages!.isNotEmpty
                           ? SizedBox(
                               height: 100.0.h,
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: _mediaFileList!.length,
+                                itemCount: _picekdImages!.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return AspectRatio(
                                     aspectRatio: 0.9,
@@ -430,7 +427,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                       child: Image.file(
                                         File(
-                                          _mediaFileList![index].path,
+                                          _picekdImages![index].path,
                                         ),
                                         fit: BoxFit.cover,
                                         errorBuilder: (BuildContext context,
@@ -520,7 +517,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                                 child: Text(
                                   _isOrder
                                       ? '아이템을 꾹 눌러서 순서를 변경해보세요.'
-                                      : '링크 버튼을 눌러 링크를 추가해보세요.',
+                                      : '오른쪽 버튼을 눌러 순서를 설정하세요.',
                                   style: TextStyle(
                                     fontFamily: 'PretendardRegular',
                                     fontSize: 12.sp,
@@ -570,18 +567,18 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                      child: Column(
-                        children: [
-                          _itemState
-                              ? ItemTextField(
+                    Column(
+                      children: [
+                        _itemState
+                            ? Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                                child: ItemTextField(
                                   itemNum: _itemNum,
                                   orderState: _isOrder,
-                                )
-                              : SizedBox.shrink(),
-                        ],
-                      ),
+                                ),
+                              )
+                            : SizedBox.shrink(),
+                      ],
                     ),
                     SizedBox(
                       height: 20.0.h,
@@ -658,6 +655,3 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     );
   }
 }
-
-typedef OnPickImageCallback = void Function(
-    double? maxWidth, double? maxHeight, int? quality, int? limit);

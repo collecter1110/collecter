@@ -8,6 +8,7 @@ import '../../data/provider/collection_provider.dart';
 import '../../data/provider/selection_provider.dart';
 import '../../data/services/api_service.dart';
 import '../../data/services/local_data.dart';
+import '../../page/selection/edit_selection_screen.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
 
@@ -64,6 +65,7 @@ class EditSelectionDialog extends StatelessWidget {
                               selectionDetail.collectionId,
                               selectionDetail.selectionId);
                           Toast.completeToast('셀렉션이 삭제되었습니다');
+                          //셀렉팅 한 셀렉션이면 userOverview 데이터 업데이트
                           // await context
                           //     .read<UserInfoProvider>()
                           //     .fetchUserOverview();
@@ -81,7 +83,28 @@ class EditSelectionDialog extends StatelessWidget {
                     DialogText(
                       text: '셀렉션 수정',
                       textColor: Colors.black,
-                      onTap: () {},
+                      onTap: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditSelectionScreen(
+                                updateLocalData: () async {
+                                  await context
+                                      .read<CollectionProvider>()
+                                      .fetchCollectionDetail();
+                                  await context
+                                      .read<SelectionProvider>()
+                                      .fetchSelectionData();
+                                  await context
+                                      .read<SelectionProvider>()
+                                      .getSelectionDetailData();
+                                  await _updateLocalData();
+                                },
+                                selectionDetail: selectionDetail),
+                            settings: RouteSettings(name: routeName),
+                          ),
+                        );
+                      },
                     ),
                     Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
                     DialogText(
