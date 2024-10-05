@@ -96,8 +96,6 @@ class EditCollectionDialog extends StatelessWidget {
                       text: '셀렉션 추가',
                       textColor: Colors.black,
                       onTap: () async {
-                        final provider = context.read<CollectionProvider>();
-                        provider.saveCollectionId = collectionDetail.id;
                         Navigator.push(
                           context,
                           MaterialPageRoute(

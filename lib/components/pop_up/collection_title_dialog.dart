@@ -103,6 +103,7 @@ class CollectionTitleDialog extends StatelessWidget {
                           onTap: () {
                             Navigator.pop(context);
                             provider.saveCollectionId = selectedCollectionId;
+                            provider.saveCollectionTitle();
                           },
                           text: '선택',
                         ),

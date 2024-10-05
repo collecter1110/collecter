@@ -18,7 +18,7 @@ class GoCollectionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () async {
-        context.read<CollectionProvider>().getCollectionId = collectionId;
+        context.read<CollectionProvider>().saveCollectionId = collectionId;
         await context.read<CollectionProvider>().getCollectionDetailData();
 
         Navigator.push(

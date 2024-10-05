@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/item_provider.dart';
 import '../../data/provider/keyword_provider.dart';
@@ -133,7 +132,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   Future<void> fetchCollections() async {
     final provider = context.read<CollectionProvider>();
-    if (provider.myCollections != null) {
+    if (provider.myCollections == null) {
       await provider.fetchCollections();
     }
   }
@@ -185,31 +184,12 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         ),
                       ],
                     ),
-                    Consumer<CollectionProvider>(
-                      builder: (context, provider, child) {
-                        _collectionId = provider.collectionId;
-                        String? _collectionName;
-                        bool isSelected = false;
+                    Selector<CollectionProvider, ({String? item1})>(
+                      selector: (context, collectionProvider) =>
+                          (item1: collectionProvider.collectionTitle,),
+                      builder: (context, data, child) {
+                        String? _collectionTitle = data.item1;
 
-                        if (_collectionId != null) {
-                          CollectionModel collection =
-                              provider.myCollections!.firstWhere(
-                            (collection) => collection.id == _collectionId,
-                            orElse: () => CollectionModel(
-                              id: 0,
-                              title: '',
-                              userId: 0,
-                              userName: '',
-                              isPrivate: false,
-                            ),
-                          );
-
-                          if (collection.id == _collectionId) {
-                            _collectionName = collection.title;
-                            _collectionId = collection.id;
-                            isSelected = true;
-                          }
-                        }
                         return InkWell(
                           onTap: () async {
                             await _createGroupDialog();
@@ -219,13 +199,13 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6.0),
-                                color: isSelected
+                                color: _collectionTitle != null
                                     ? Theme.of(context)
                                         .primaryColor
                                         .withOpacity(0.3)
                                     : Colors.white,
                                 border: Border.all(
-                                  color: isSelected
+                                  color: _collectionTitle != null
                                       ? Theme.of(context).primaryColor
                                       : const Color(0xFFf1f3f5),
                                   width: 1.0,
@@ -237,11 +217,11 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  isSelected
-                                      ? _collectionName!
+                                  _collectionTitle != null
+                                      ? '${_collectionTitle}'
                                       : '컬렉션을 선택해주세요.',
                                   style: TextStyle(
-                                    color: isSelected
+                                    color: _collectionTitle != null
                                         ? Colors.black
                                         : const Color(0xffADB5BD),
                                     fontSize: 14.sp,

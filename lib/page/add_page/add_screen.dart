@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/add_collection_widget.dart';
 import '../../components/widget/add_selection_widget.dart';
+import '../../data/provider/collection_provider.dart';
 
 class AddScreen extends StatefulWidget {
   int? initialTabIndex;
@@ -23,6 +25,14 @@ class _AddScreenState extends State<AddScreen>
     super.initState();
     _tabController = TabController(
         length: 2, vsync: this, initialIndex: widget.initialTabIndex ?? 0);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final collectionProvider = context.read<CollectionProvider>();
+      if (widget.initialTabIndex == null) {
+        collectionProvider.resetCollectionTitle();
+      } else {
+        collectionProvider.saveCollectionTitle();
+      }
+    });
     _tabController?.addListener(() {
       setState(() {});
     });

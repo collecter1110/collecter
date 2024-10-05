@@ -21,7 +21,7 @@ class Collection extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        context.read<CollectionProvider>().getCollectionId =
+        context.read<CollectionProvider>().saveCollectionId =
             collectionDetail.id;
         await context.read<CollectionProvider>().getCollectionDetailData();
         Navigator.push(
