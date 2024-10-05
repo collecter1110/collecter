@@ -13,11 +13,13 @@ import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
 
 class EditSelectionDialog extends StatelessWidget {
+  final bool isOwner;
   final String routeName;
   final SelectionModel selectionDetail;
   final VoidCallback didPop;
   EditSelectionDialog({
     super.key,
+    required this.isOwner,
     required this.routeName,
     required this.selectionDetail,
     required this.didPop,
@@ -84,26 +86,30 @@ class EditSelectionDialog extends StatelessWidget {
                       text: '셀렉션 수정',
                       textColor: Colors.black,
                       onTap: () async {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditSelectionScreen(
-                                updateLocalData: () async {
-                                  await context
-                                      .read<CollectionProvider>()
-                                      .fetchCollectionDetail();
-                                  await context
-                                      .read<SelectionProvider>()
-                                      .fetchSelectionData();
-                                  await context
-                                      .read<SelectionProvider>()
-                                      .getSelectionDetailData();
-                                  await _updateLocalData();
-                                },
-                                selectionDetail: selectionDetail),
-                            settings: RouteSettings(name: routeName),
-                          ),
-                        );
+                        if (isOwner) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditSelectionScreen(
+                                  updateLocalData: () async {
+                                    await context
+                                        .read<CollectionProvider>()
+                                        .fetchCollectionDetail();
+                                    await context
+                                        .read<SelectionProvider>()
+                                        .fetchSelectionData();
+                                    await context
+                                        .read<SelectionProvider>()
+                                        .getSelectionDetailData();
+                                    await _updateLocalData();
+                                  },
+                                  selectionDetail: selectionDetail),
+                              settings: RouteSettings(name: routeName),
+                            ),
+                          );
+                        } else {
+                          Toast.notify('셀렉팅한 셀렉션은 수정할 수 없습니다.');
+                        }
                       },
                     ),
                     Divider(height: 0.5.h, color: Color(0xFFe9ecef)),

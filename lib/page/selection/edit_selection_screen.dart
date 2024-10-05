@@ -41,7 +41,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   bool? _changedIsOrder;
   bool? _changedIsPrivate;
   List<Map<String, dynamic>>? _changedKeywords;
-  int _changedItemNum = 0;
+  int _itemNum = 0;
   List<Map<String, dynamic>>? _changedItems;
   List<String>? _changedImageFilePaths;
 
@@ -65,33 +65,31 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   }
 
   void initializeData() {
-    final keywordProvider = context.read<KeywordProvider>();
-
-    if (widget.selectionDetail.keywords != null) {
-      keywordProvider.saveKeywords = widget.selectionDetail.keywords!;
-    }
     _changedTitle = widget.selectionDetail.selectionName;
     _changedDescription = widget.selectionDetail.selectionDescription;
+    _changedLink = widget.selectionDetail.selectionLink;
+    _changedIsPrivate = widget.selectionDetail.isSelect;
+    _changedIsOrder = widget.selectionDetail.isOrdered;
 
     _initialImagePaths = widget.selectionDetail.imageFilePaths != null
         ? List<dynamic>.from(widget.selectionDetail.imageFilePaths!)
         : [];
-
     _imageNum = _initialImagePaths.length;
-    _changedIsPrivate = widget.selectionDetail.isSelect;
-    _changedIsOrder = widget.selectionDetail.isOrdered;
-    _changedItemNum = widget.selectionDetail.items != null
-        ? widget.selectionDetail.items!.length
-        : 0;
-    _initialItemData = widget.selectionDetail.items;
+
+    final keywordProvider = context.read<KeywordProvider>();
+    if (widget.selectionDetail.keywords != null) {
+      keywordProvider.saveKeywords = widget.selectionDetail.keywords!;
+    }
 
     final itemProvider = context.read<ItemProvider>();
     itemProvider.clearItems();
-
+    _itemNum = widget.selectionDetail.items != null
+        ? widget.selectionDetail.items!.length
+        : 0;
+    _initialItemData = widget.selectionDetail.items;
     itemProvider.saveItem = _initialItemData ?? [];
     final List<int> _itemOrder =
         _initialItemData?.map((item) => item.itemOrder).toList() ?? [];
-
     itemProvider.saveItemOrder = _itemOrder;
   }
 
@@ -107,18 +105,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
     return uri.scheme == 'http' || uri.scheme == 'https';
   }
 
-  List<XFile> extractLocalImages(List<dynamic> imagePaths) {
-    List<XFile> localImages = [];
-
-    for (var imagePath in imagePaths) {
-      if (!_isNetworkImage(imagePath)) {
-        localImages.add(XFile(imagePath));
-      }
-    }
-    return localImages;
-  }
-
-  Future<List<String>> processAndUploadImages(
+  Future<List<String>> getUploadedImages(
       List<dynamic> imagePaths, String folderName) async {
     List<XFile> localImages = imagePaths
         .where((imagePath) => !_isNetworkImage(imagePath))
@@ -155,10 +142,8 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
           context.read<KeywordProvider>().keywordNames!);
 
       _changedImageFilePaths = _initialImagePaths.isNotEmpty
-          ? await processAndUploadImages(_initialImagePaths, 'selections')
+          ? await getUploadedImages(_initialImagePaths, 'selections')
           : null;
-
-      print(_changedDescription);
 
       await ApiService.editSelection(
         widget.selectionDetail.collectionId,
@@ -166,7 +151,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
         _changedTitle!,
         _changedDescription,
         _changedImageFilePaths,
-        _changedKeywords,
+        _changedKeywords!,
         _changedLink,
         _changedItems,
         _changedIsOrder!,
@@ -199,12 +184,10 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
 
       if (_pickedImage != null) {
         setState(() {
-          File _newImage = File(_pickedImage!.path);
+          _initialImagePaths.insert(
+              _initialImagePaths.length, _pickedImage!.path);
 
-          _initialImagePaths!
-              .insert(_initialImagePaths!.length, _newImage.path);
-
-          _imageNum = _initialImagePaths!.length;
+          _imageNum = _initialImagePaths.length;
         });
       }
     } else {
@@ -255,7 +238,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                           _imageNum <= 4) {
                                         await _pickImages(ImageSource.gallery);
                                       } else {
-                                        Toast.notify('사진 개수가 초과되었습니다.');
+                                        Toast.notify('최대 사진 개수를 초과했습니다.');
                                       }
                                     },
                                     child: Container(
@@ -274,15 +257,14 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                   )
                                 : Stack(
                                     children: [
-                                      _isNetworkImage(
-                                              _initialImagePaths![index])
+                                      _isNetworkImage(_initialImagePaths[index])
                                           ? Container(
                                               height: double.infinity,
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
                                                   image: NetworkImage(
-                                                      _initialImagePaths![
+                                                      _initialImagePaths[
                                                           index]),
                                                   fit: BoxFit.cover,
                                                 ),
@@ -291,7 +273,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                           : Image.file(
                                               height: double.infinity,
                                               width: double.infinity,
-                                              File(_initialImagePaths![index]),
+                                              File(_initialImagePaths[index]),
                                               fit: BoxFit.cover,
                                               errorBuilder:
                                                   (BuildContext context,
@@ -310,7 +292,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                           onTap: () {
                                             setState(() {
                                               print(index);
-                                              _initialImagePaths!
+                                              _initialImagePaths
                                                   .removeAt(index);
                                               _imageNum--;
                                             });
@@ -339,7 +321,6 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                       }),
                 ),
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -359,22 +340,6 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                   ),
                 ),
               ),
-              // Align(
-              //   alignment: Alignment.center,
-              //   child: Padding(
-              //     padding: EdgeInsets.symmetric(vertical: 12.0.h),
-              //     child: Text(
-              //       '커버 변경',
-              //       style: TextStyle(
-              //         color: Colors.black,
-              //         fontSize: 14.sp,
-              //         fontFamily: 'Pretendard',
-              //         fontWeight: FontWeight.w500,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-
               Padding(
                 padding:
                     EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 26.0.h),
@@ -395,7 +360,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                       padding: EdgeInsets.symmetric(vertical: 8.0.h),
                       child: AddTextFormField(
                         keyboardType: TextInputType.name,
-                        initialText: widget.selectionDetail.selectionName,
+                        initialText: _changedTitle,
                         isMultipleLine: false,
                         onSaved: (value) {
                           _changedTitle = value;
@@ -501,8 +466,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                         child: AddTextFormField(
                           keyboardType: TextInputType.multiline,
                           hintText: '설명을 추가해주세요.',
-                          initialText:
-                              widget.selectionDetail.selectionDescription,
+                          initialText: _changedDescription,
                           isMultipleLine: true,
                           onSaved: (value) {
                             value == '' || value == null
@@ -529,11 +493,13 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                       padding: EdgeInsets.symmetric(vertical: 8.0.h),
                       child: AddTextFormField(
                         keyboardType: TextInputType.url,
-                        initialText: widget.selectionDetail.selectionLink,
+                        initialText: _changedLink,
                         hintText: 'url 추가',
                         isMultipleLine: false,
                         onSaved: (value) {
-                          _changedLink = value;
+                          value == '' || value == null
+                              ? _changedLink = null
+                              : _changedLink = value;
                         },
                       ),
                     ),
@@ -585,7 +551,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                 onPressed: () {
                                   setState(() {
                                     FocusScope.of(context).unfocus();
-                                    _changedItemNum++;
+                                    _itemNum++;
                                   });
                                 },
                               ),
@@ -618,7 +584,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                           padding: EdgeInsets.symmetric(vertical: 8.0.h),
                           child: ItemTextField(
                             initialItemValue: _initialItemData,
-                            itemNum: _changedItemNum,
+                            itemNum: _itemNum,
                             orderState: _changedIsOrder!,
                           ),
                         )

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ItemProvider extends ChangeNotifier {
   List<ItemData> _items = [];
   List<ItemData>? _sortedItems;
-  List<int> _itemOrder = [0];
+  List<int> _itemOrder = [];
 
   List<int> get itemOrder => _itemOrder;
   List<ItemData>? get sortedItems => _sortedItems;

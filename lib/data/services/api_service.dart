@@ -360,7 +360,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, user_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name, is_select')
+              'collection_id, selection_id, user_id, owner_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name, is_select')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -571,7 +571,7 @@ class ApiService {
       String title,
       String? description,
       List<String>? imageFilePaths,
-      List<Map<String, dynamic>>? keywords,
+      List<Map<String, dynamic>> keywords,
       String? link,
       List<Map<String, dynamic>>? items,
       bool isOrder,
@@ -666,7 +666,7 @@ class ApiService {
     String title,
     String? description,
     List<String>? imageFilePaths,
-    List<Map<String, dynamic>>? keywords,
+    List<Map<String, dynamic>> keywords,
     String? link,
     List<Map<String, dynamic>>? items,
     bool isOrder,

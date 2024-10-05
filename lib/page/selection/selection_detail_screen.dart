@@ -39,6 +39,7 @@ class SelectionDetailScreen extends StatelessWidget {
           builder: (context) {
             return userId == _selectionDetail.userId
                 ? EditSelectionDialog(
+                    isOwner: userId == _selectionDetail.ownerId,
                     routeName: _routeName!,
                     selectionDetail: _selectionDetail,
                     didPop: () {
