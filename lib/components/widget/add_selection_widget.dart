@@ -108,7 +108,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   }
 
   Future _pickImages() async {
-    PermissionStatus status = await Permission.photos.status;
+    PermissionStatus status = await Permission.photos.request();
 
     if (status.isGranted || status.isLimited) {
       final List<XFile> pickedFileList = await _picker.pickMultiImage(limit: 5);
@@ -133,7 +133,9 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   Future<void> fetchCollections() async {
     final provider = context.read<CollectionProvider>();
-    await provider.fetchCollections();
+    if (provider.myCollections != null) {
+      await provider.fetchCollections();
+    }
   }
 
   @override

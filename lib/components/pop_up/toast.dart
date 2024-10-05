@@ -146,7 +146,7 @@ class Toast {
       await openAppSettings();
     } else if (status.isPermanentlyDenied) {
       Fluttertoast.showToast(
-        msg: "앨범 접근 권한이 영구적으로 거부되었습니다. 설정에서 권한을 변경해주세요.",
+        msg: "앨범 접근 권한이 일시적으로 거부되었습니다. 설정에서 권한을 변경해주세요.",
         backgroundColor: Colors.black.withOpacity(0.7),
         textColor: Colors.white,
         fontSize: 18.0,
