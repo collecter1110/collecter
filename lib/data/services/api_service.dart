@@ -847,6 +847,48 @@ class ApiService {
     }
   }
 
+  static Future<void> moveSelection(
+      int oldCollectionId, int oldSelectionId, int newCollectionId) async {
+    try {
+      final oldData = await _supabase
+          .from('selections')
+          .select()
+          .eq('collection_id', oldCollectionId)
+          .eq('selection_id', oldSelectionId)
+          .single();
+
+      final insertData = Map.of(oldData);
+
+      insertData['collection_id'] = newCollectionId;
+
+      final newData = await Supabase.instance.client
+          .from('selections')
+          .insert(insertData)
+          .select();
+
+      await Supabase.instance.client
+          .from('selections')
+          .delete()
+          .eq('collection_id', oldCollectionId)
+          .eq('selection_id', oldSelectionId);
+
+      final uuid = newData[0]['selecting_uuid'];
+
+      if (uuid != null) {
+        int newSelectionId = newData[0]['selection_id'];
+        await _supabase.from('selecting').update({
+          'selecting_collection_id': newCollectionId,
+          'selecting_selection_id': newSelectionId,
+        }).eq('uuid', uuid);
+      }
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'moveSelections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   static void handleError(String? statusCode, String? message) {
     Toast.error();
     if (statusCode == '400') {

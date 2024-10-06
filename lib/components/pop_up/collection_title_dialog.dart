@@ -9,8 +9,10 @@ import '../button/set_collection_button.dart';
 import '../constants/screen_size.dart';
 
 class CollectionTitleDialog extends StatelessWidget {
+  final Future<void> Function()? moveSelection;
   CollectionTitleDialog({
     super.key,
+    this.moveSelection,
   });
 
   @override
@@ -100,10 +102,11 @@ class CollectionTitleDialog extends StatelessWidget {
                         CompleteButton(
                           firstFieldState: true,
                           secondFieldState: selectedCollectionId != null,
-                          onTap: () {
-                            Navigator.pop(context);
+                          onTap: () async {
                             provider.saveCollectionId = selectedCollectionId;
                             provider.saveCollectionTitle();
+                            await moveSelection?.call();
+                            Navigator.pop(context);
                           },
                           text: '선택',
                         ),

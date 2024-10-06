@@ -28,9 +28,6 @@ class SelectionDetailScreen extends StatelessWidget {
         final userIdString = await storage.read(key: 'USER_ID');
 
         int userId = int.parse(userIdString!);
-        void didPop() {
-          Navigator.pop(context);
-        }
 
         showModalBottomSheet(
           context: context,
@@ -42,9 +39,7 @@ class SelectionDetailScreen extends StatelessWidget {
                     isOwner: userId == _selectionDetail.ownerId,
                     routeName: _routeName!,
                     selectionDetail: _selectionDetail,
-                    didPop: () {
-                      didPop();
-                    })
+                  )
                 : SelectionDialog();
           },
         );
