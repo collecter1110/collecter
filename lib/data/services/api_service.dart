@@ -360,7 +360,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'user_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name')
+              'collection_id, selection_id, user_id, owner_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name, is_select')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -571,7 +571,7 @@ class ApiService {
       String title,
       String? description,
       List<String>? imageFilePaths,
-      List<Map<String, dynamic>>? keywords,
+      List<Map<String, dynamic>> keywords,
       String? link,
       List<Map<String, dynamic>>? items,
       bool isOrder,
@@ -656,6 +656,41 @@ class ApiService {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
       handleError('', 'edit collections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<void> editSelection(
+    int collectionId,
+    int selectionId,
+    String title,
+    String? description,
+    List<String>? imageFilePaths,
+    List<Map<String, dynamic>> keywords,
+    String? link,
+    List<Map<String, dynamic>>? items,
+    bool isOrder,
+    bool isPrivate,
+  ) async {
+    try {
+      await Supabase.instance.client
+          .from('selections')
+          .update({
+            'selection_name': title,
+            'selection_description': description,
+            'image_file_paths': imageFilePaths,
+            'keywords': keywords,
+            'selection_link': link,
+            'items': items,
+            'is_ordered': isOrder,
+            'is_select': isPrivate,
+          })
+          .eq('collection_id', collectionId)
+          .eq('selection_id', selectionId);
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'edit selections error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -796,6 +831,61 @@ class ApiService {
     } catch (e) {
       handleError('', 'deleteCollection error');
       print('Failed to delete data: $e');
+    }
+  }
+
+  static Future<void> deleteSelection(int collectionId, int selectionId) async {
+    try {
+      await _supabase
+          .from('selections')
+          .delete()
+          .eq('collection_id', collectionId)
+          .eq('selection_id', selectionId);
+    } catch (e) {
+      handleError('', 'deleteSelection error');
+      print('Failed to delete data: $e');
+    }
+  }
+
+  static Future<void> moveSelection(
+      int oldCollectionId, int oldSelectionId, int newCollectionId) async {
+    try {
+      final oldData = await _supabase
+          .from('selections')
+          .select()
+          .eq('collection_id', oldCollectionId)
+          .eq('selection_id', oldSelectionId)
+          .single();
+
+      final insertData = Map.of(oldData);
+
+      insertData['collection_id'] = newCollectionId;
+
+      final newData = await Supabase.instance.client
+          .from('selections')
+          .insert(insertData)
+          .select();
+
+      await Supabase.instance.client
+          .from('selections')
+          .delete()
+          .eq('collection_id', oldCollectionId)
+          .eq('selection_id', oldSelectionId);
+
+      final uuid = newData[0]['selecting_uuid'];
+
+      if (uuid != null) {
+        int newSelectionId = newData[0]['selection_id'];
+        await _supabase.from('selecting').update({
+          'selecting_collection_id': newCollectionId,
+          'selecting_selection_id': newSelectionId,
+        }).eq('uuid', uuid);
+      }
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'moveSelections error');
+      throw Exception('An unexpected error occurred: $e');
     }
   }
 

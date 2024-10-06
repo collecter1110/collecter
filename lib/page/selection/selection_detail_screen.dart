@@ -20,6 +20,7 @@ class SelectionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? _routeName = ModalRoute.of(context)?.settings.name;
     return Consumer<SelectionProvider>(builder: (context, provider, child) {
       final SelectionModel _selectionDetail = provider.selectionDetail!;
       Future<void> _showDialog() async {
@@ -34,7 +35,11 @@ class SelectionDetailScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           builder: (context) {
             return userId == _selectionDetail.userId
-                ? EditSelectionDialog()
+                ? EditSelectionDialog(
+                    isOwner: userId == _selectionDetail.ownerId,
+                    routeName: _routeName!,
+                    selectionDetail: _selectionDetail,
+                  )
                 : SelectionDialog();
           },
         );

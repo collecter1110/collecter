@@ -1,3 +1,4 @@
+import 'package:collect_er/data/model/item_model.dart';
 import 'package:collect_er/data/provider/item_provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -5,11 +6,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class ItemTextField extends StatefulWidget {
+  final List<ItemData>? initialItemValue;
   final int itemNum;
   final bool orderState;
 
   const ItemTextField({
     Key? key,
+    this.initialItemValue,
     required this.itemNum,
     required this.orderState,
   }) : super(key: key);
@@ -30,7 +33,8 @@ class _ItemTextFieldState extends State<ItemTextField> {
 
     _titleControllers = List.generate(
       widget.itemNum,
-      (index) => TextEditingController(),
+      (index) => TextEditingController(
+          text: widget.initialItemValue?[index].itemTitle ?? ''),
     );
   }
 
@@ -58,7 +62,6 @@ class _ItemTextFieldState extends State<ItemTextField> {
   }
 
   void saveItemsOrder() {
-    print(_itemIndexOrder);
     context.read<ItemProvider>().saveItemOrder = _itemIndexOrder;
   }
 
@@ -184,8 +187,7 @@ class _ItemWidgetState extends State<ItemWidget> {
     String keyString = widget.key.toString();
     itemKey = int.tryParse(keyString.replaceAll(RegExp(r'\D'), '')) ?? 0;
 
-    print(itemKey);
-    _titleFocusNode.addListener(_onDescriptionFocusChanged);
+    _titleFocusNode.addListener(_onTitleFocusChanged);
   }
 
   @override
@@ -195,7 +197,7 @@ class _ItemWidgetState extends State<ItemWidget> {
     super.dispose();
   }
 
-  void _onDescriptionFocusChanged() {
+  void _onTitleFocusChanged() {
     if (!_titleFocusNode.hasFocus) {
       context.read<ItemProvider>().saveItemTitle = {
         itemKey: widget.titleController.text

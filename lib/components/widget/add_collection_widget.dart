@@ -94,7 +94,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   }
 
   Future _pickImages(ImageSource imageSource) async {
-    PermissionStatus status = await Permission.photos.status;
+    PermissionStatus status = await Permission.photos.request();
 
     if (status.isGranted || status.isLimited) {
       _pickedImage = await _picker.pickImage(source: imageSource);

@@ -26,11 +26,6 @@ class CollectionDetailScreen extends StatelessWidget {
       final storage = FlutterSecureStorage();
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
-
-      void didPop() {
-        Navigator.pop(context);
-      }
-
       showModalBottomSheet(
         context: context,
         isScrollControlled: false,
@@ -38,11 +33,7 @@ class CollectionDetailScreen extends StatelessWidget {
         builder: (context) {
           return userId == _collectionDetail.userId
               ? EditCollectionDialog(
-                  routeName: _routeName!,
-                  collectionDetail: _collectionDetail,
-                  didPop: () {
-                    didPop();
-                  })
+                  routeName: _routeName!, collectionDetail: _collectionDetail)
               : CollectionDialog();
         },
       );

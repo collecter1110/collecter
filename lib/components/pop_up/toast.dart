@@ -4,13 +4,39 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Toast {
-  static Future<bool?> warningDialog(BuildContext context) async {
+  static Future<bool?> deleteCollectionWarning(BuildContext context) async {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("오류 발생"),
           content: Text("컬렉션과 관련된 셀렉션도 함께 삭제됩니다.\n삭제하시겠습니까?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("확인"),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+            TextButton(
+              child: Text("취소"),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Future<bool?> deleteSelectionWarning(BuildContext context) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("오류 발생"),
+          content: Text("셀렉션을 삭제하시겠습니까?"),
           actions: <Widget>[
             TextButton(
               child: Text("확인"),
@@ -85,7 +111,7 @@ class Toast {
     );
   }
 
-  static void missingField(String message) {
+  static void notify(String message) {
     Fluttertoast.showToast(
       msg: message,
       gravity: ToastGravity.CENTER,
@@ -120,7 +146,7 @@ class Toast {
       await openAppSettings();
     } else if (status.isPermanentlyDenied) {
       Fluttertoast.showToast(
-        msg: "앨범 접근 권한이 영구적으로 거부되었습니다. 설정에서 권한을 변경해주세요.",
+        msg: "앨범 접근 권한이 일시적으로 거부되었습니다. 설정에서 권한을 변경해주세요.",
         backgroundColor: Colors.black.withOpacity(0.7),
         textColor: Colors.white,
         fontSize: 18.0,
@@ -141,7 +167,7 @@ class FieldValidator {
   bool validateFields() {
     for (var condition in conditions.entries) {
       if (!condition.value) {
-        Toast.missingField(condition.key);
+        Toast.notify(condition.key);
         return false;
       }
     }

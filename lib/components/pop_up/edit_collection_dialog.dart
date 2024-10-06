@@ -6,9 +6,8 @@ import 'package:provider/provider.dart';
 
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
-import '../../data/provider/search_provider.dart';
-import '../../data/provider/selection_provider.dart';
 import '../../data/provider/user_info_provider.dart';
+import '../../data/services/local_data.dart';
 import '../../page/add_page/add_screen.dart';
 import '../../page/collection/edit_collection_screen.dart';
 import '../button/cancel_button.dart';
@@ -17,59 +16,23 @@ import '../ui_kit/dialog_text.dart';
 class EditCollectionDialog extends StatelessWidget {
   final String routeName;
   final CollectionModel collectionDetail;
-  final VoidCallback didPop;
+
   EditCollectionDialog({
     super.key,
     required this.routeName,
     required this.collectionDetail,
-    required this.didPop,
   });
 
   @override
   Widget build(BuildContext context) {
+    void didPop() {
+      Navigator.pop(context);
+    }
+
     Future<void> _updateLocalData() async {
       Navigator.pop(context);
-      final collectionProvider = context.read<CollectionProvider>();
-      final searchProvider = context.read<SearchProvider>();
-      final selectionProvider = context.read<SelectionProvider>();
-      String? searchText = searchProvider.searchText;
-      await collectionProvider.fetchCollections();
-
-      if (searchText != null) {
-        bool existsKeywordCollections = collectionProvider
-                .searchKeywordCollections
-                ?.any((collection) => collection.id == collectionDetail.id) ??
-            false;
-
-        if (existsKeywordCollections) {
-          await collectionProvider.fetchKeywordCollections(searchText);
-        }
-
-        bool existsTagCollections = collectionProvider.searchTagCollections
-                ?.any((collection) => collection.id == collectionDetail.id) ??
-            false;
-
-        if (existsTagCollections) {
-          await collectionProvider.fetchTagCollections(searchText);
-        }
-
-        bool existsUsersCollections = collectionProvider.searchUsersCollections
-                ?.any((collection) => collection.id == collectionDetail.id) ??
-            false;
-
-        if (existsUsersCollections) {
-          await collectionProvider
-              .fetchUsersCollections(collectionDetail.userId);
-        }
-
-        bool existsSelections = selectionProvider.searchSelections?.any(
-                (selection) => selection.collectionId == collectionDetail.id) ??
-            false;
-
-        if (existsSelections) {
-          await selectionProvider.fetchSearchSelections(searchText);
-        }
-      }
+      await LocalData.updateLocalData(
+          context, collectionDetail.id, collectionDetail.userId, null);
       didPop();
     }
 
@@ -97,7 +60,8 @@ class EditCollectionDialog extends StatelessWidget {
                       text: '컬렉션 삭제',
                       textColor: Colors.red,
                       onTap: () async {
-                        bool? isDelete = await Toast.warningDialog(context);
+                        bool? isDelete =
+                            await Toast.deleteCollectionWarning(context);
                         if (isDelete!) {
                           await ApiService.deleteCollection(
                               collectionDetail.id);
@@ -135,8 +99,6 @@ class EditCollectionDialog extends StatelessWidget {
                       text: '셀렉션 추가',
                       textColor: Colors.black,
                       onTap: () async {
-                        final provider = context.read<CollectionProvider>();
-                        provider.saveCollectionId = collectionDetail.id;
                         Navigator.push(
                           context,
                           MaterialPageRoute(

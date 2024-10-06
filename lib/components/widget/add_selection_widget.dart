@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/item_provider.dart';
 import '../../data/provider/keyword_provider.dart';
@@ -31,7 +30,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   String? _title;
   List<Map<String, dynamic>>? _keywords;
   String? _description;
-  List<String>? _imageFilePath;
+  List<String>? _imageFilePaths;
   String? _link;
   List<Map<String, dynamic>>? _items;
   bool _isPrivate = false;
@@ -43,7 +42,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   int _itemNum = 0;
 
   final ImagePicker _picker = ImagePicker();
-  List<XFile>? _mediaFileList;
+  List<XFile>? _picekdImages;
 
   @override
   void initState() {
@@ -80,14 +79,13 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
       _items = context.read<ItemProvider>().itemDataListToJson();
       _keywords = await ApiService.addKeywords(
           context.read<KeywordProvider>().keywordNames!);
-      if (_mediaFileList != null && _mediaFileList!.isNotEmpty) {
-        _imageFilePath =
-            await ApiService.uploadAndGetImages(_mediaFileList!, 'selections');
+      if (_picekdImages != null && _picekdImages!.isNotEmpty) {
+        _imageFilePaths =
+            await ApiService.uploadAndGetImages(_picekdImages!, 'selections');
       }
       await ApiService.addSelections(_collectionId!, _title!, _description,
-          _imageFilePath, _keywords, _link, _items, _isOrder, _isPrivate);
+          _imageFilePaths, _keywords!, _link, _items, _isOrder, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
-      context.read<KeywordProvider>().clearKeywords();
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -109,13 +107,12 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   }
 
   Future _pickImages() async {
-    PermissionStatus status = await Permission.photos.status;
+    PermissionStatus status = await Permission.photos.request();
 
     if (status.isGranted || status.isLimited) {
-      final List<XFile> pickedFileList =
-          await _picker.pickMultiImage(limit: 10);
+      final List<XFile> pickedFileList = await _picker.pickMultiImage(limit: 5);
       setState(() {
-        _mediaFileList = pickedFileList;
+        _picekdImages = pickedFileList;
       });
     } else {
       await Toast.handlePhotoPermission(status);
@@ -135,7 +132,9 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
   Future<void> fetchCollections() async {
     final provider = context.read<CollectionProvider>();
-    await provider.fetchCollections();
+    if (provider.myCollections == null) {
+      await provider.fetchCollections();
+    }
   }
 
   @override
@@ -185,31 +184,12 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         ),
                       ],
                     ),
-                    Consumer<CollectionProvider>(
-                      builder: (context, provider, child) {
-                        _collectionId = provider.collectionId;
-                        String? _collectionName;
-                        bool isSelected = false;
+                    Selector<CollectionProvider, ({String? item1})>(
+                      selector: (context, collectionProvider) =>
+                          (item1: collectionProvider.collectionTitle,),
+                      builder: (context, data, child) {
+                        String? _collectionTitle = data.item1;
 
-                        if (_collectionId != null) {
-                          CollectionModel collection =
-                              provider.myCollections!.firstWhere(
-                            (collection) => collection.id == _collectionId,
-                            orElse: () => CollectionModel(
-                              id: 0,
-                              title: '',
-                              userId: 0,
-                              userName: '',
-                              isPrivate: false,
-                            ),
-                          );
-
-                          if (collection.id == _collectionId) {
-                            _collectionName = collection.title;
-                            _collectionId = collection.id;
-                            isSelected = true;
-                          }
-                        }
                         return InkWell(
                           onTap: () async {
                             await _createGroupDialog();
@@ -219,13 +199,13 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6.0),
-                                color: isSelected
+                                color: _collectionTitle != null
                                     ? Theme.of(context)
                                         .primaryColor
                                         .withOpacity(0.3)
                                     : Colors.white,
                                 border: Border.all(
-                                  color: isSelected
+                                  color: _collectionTitle != null
                                       ? Theme.of(context).primaryColor
                                       : const Color(0xFFf1f3f5),
                                   width: 1.0,
@@ -237,11 +217,11 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  isSelected
-                                      ? _collectionName!
+                                  _collectionTitle != null
+                                      ? '${_collectionTitle}'
                                       : '컬렉션을 선택해주세요.',
                                   style: TextStyle(
-                                    color: isSelected
+                                    color: _collectionTitle != null
                                         ? Colors.black
                                         : const Color(0xffADB5BD),
                                     fontSize: 14.sp,
@@ -416,13 +396,12 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 16.0.h),
-                      child: _mediaFileList != null &&
-                              _mediaFileList!.isNotEmpty
+                      child: _picekdImages != null && _picekdImages!.isNotEmpty
                           ? SizedBox(
                               height: 100.0.h,
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: _mediaFileList!.length,
+                                itemCount: _picekdImages!.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return AspectRatio(
                                     aspectRatio: 0.9,
@@ -430,7 +409,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                       child: Image.file(
                                         File(
-                                          _mediaFileList![index].path,
+                                          _picekdImages![index].path,
                                         ),
                                         fit: BoxFit.cover,
                                         errorBuilder: (BuildContext context,
@@ -520,7 +499,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                                 child: Text(
                                   _isOrder
                                       ? '아이템을 꾹 눌러서 순서를 변경해보세요.'
-                                      : '링크 버튼을 눌러 링크를 추가해보세요.',
+                                      : '오른쪽 버튼을 눌러 순서를 설정하세요.',
                                   style: TextStyle(
                                     fontFamily: 'PretendardRegular',
                                     fontSize: 12.sp,
@@ -570,18 +549,18 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                      child: Column(
-                        children: [
-                          _itemState
-                              ? ItemTextField(
+                    Column(
+                      children: [
+                        _itemState
+                            ? Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                                child: ItemTextField(
                                   itemNum: _itemNum,
                                   orderState: _isOrder,
-                                )
-                              : SizedBox.shrink(),
-                        ],
-                      ),
+                                ),
+                              )
+                            : SizedBox.shrink(),
+                      ],
                     ),
                     SizedBox(
                       height: 20.0.h,
@@ -658,6 +637,3 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     );
   }
 }
-
-typedef OnPickImageCallback = void Function(
-    double? maxWidth, double? maxHeight, int? quality, int? limit);

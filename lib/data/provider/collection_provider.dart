@@ -11,6 +11,7 @@ class CollectionProvider with ChangeNotifier {
   List<CollectionModel>? _likeCollections;
   CollectionModel? _collectionDetail;
   int? _collectionId;
+  String? _collectionTitle;
   int? _currentPageNum;
   String? _keywordCurrentSearchText;
   String? _tagCurrentSearchText;
@@ -24,18 +25,33 @@ class CollectionProvider with ChangeNotifier {
   List<CollectionModel>? get likeCollections => _likeCollections;
   CollectionModel? get collectionDetail => _collectionDetail;
   int? get collectionId => _collectionId;
+  String? get collectionTitle => _collectionTitle;
 
   set setPageChanged(int currentPageNum) {
     _currentPageNum = currentPageNum;
   }
 
-  set getCollectionId(int? collectionId) {
+  set saveCollectionId(int? collectionId) {
     _collectionId = collectionId;
   }
 
-  set saveCollectionId(int? collectionId) {
-    _collectionId = collectionId;
+  void saveCollectionTitle() {
+    _collectionTitle = _myCollections
+                ?.where((collection) => collection.id == _collectionId)
+                .firstOrNull
+                ?.title ==
+            ''
+        ? null
+        : _myCollections
+            ?.where((collection) => collection.id == _collectionId)
+            .firstOrNull
+            ?.title;
     notifyListeners();
+  }
+
+  void resetCollectionTitle() {
+    _collectionId = null;
+    _collectionTitle = null;
   }
 
   Future<void> getCollectionData() async {
