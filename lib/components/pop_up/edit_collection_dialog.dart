@@ -16,16 +16,19 @@ import '../ui_kit/dialog_text.dart';
 class EditCollectionDialog extends StatelessWidget {
   final String routeName;
   final CollectionModel collectionDetail;
-  final VoidCallback didPop;
+
   EditCollectionDialog({
     super.key,
     required this.routeName,
     required this.collectionDetail,
-    required this.didPop,
   });
 
   @override
   Widget build(BuildContext context) {
+    void didPop() {
+      Navigator.pop(context);
+    }
+
     Future<void> _updateLocalData() async {
       Navigator.pop(context);
       await LocalData.updateLocalData(
