@@ -327,7 +327,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, selection_name, image_file_paths, keywords, owner_name')
+              'collection_id, selection_id, title, image_file_paths, keywords, owner_name')
           .eq('collection_id', collectionId);
 
       List<SelectionModel> selections = responseData.map((item) {
@@ -360,7 +360,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, user_id, owner_id, selection_name, selection_description, image_file_paths, is_ordered, selection_link, items, keywords, created_at, owner_name, is_select')
+              'collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_select')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -584,11 +584,12 @@ class ApiService {
         'owner_id': userId,
         'user_id': userId,
         'collection_id': collectionId,
-        'selection_name': title,
-        'selection_description': description,
+        'selection_id': null,
+        'title': title,
+        'description': description,
         'image_file_paths': imageFilePaths,
         'keywords': keywords,
-        'selection_link': link,
+        'link': link,
         'items': items,
         'is_ordered': isOrder,
         'is_select': isPrivate,
@@ -673,14 +674,14 @@ class ApiService {
     bool isPrivate,
   ) async {
     try {
-      await Supabase.instance.client
+      await _supabase
           .from('selections')
           .update({
-            'selection_name': title,
-            'selection_description': description,
+            'title': title,
+            'description': description,
             'image_file_paths': imageFilePaths,
             'keywords': keywords,
-            'selection_link': link,
+            'link': link,
             'items': items,
             'is_ordered': isOrder,
             'is_select': isPrivate,
@@ -843,44 +844,79 @@ class ApiService {
           .eq('selection_id', selectionId);
     } catch (e) {
       handleError('', 'deleteSelection error');
-      print('Failed to delete data: $e');
+      print('Failed to delete selection data: $e');
     }
   }
 
   static Future<void> moveSelection(
       int oldCollectionId, int oldSelectionId, int newCollectionId) async {
     try {
-      final oldData = await _supabase
+      await _supabase
           .from('selections')
-          .select()
-          .eq('collection_id', oldCollectionId)
-          .eq('selection_id', oldSelectionId)
-          .single();
-
-      final insertData = Map.of(oldData);
-
-      insertData['collection_id'] = newCollectionId;
-
-      final newData = await Supabase.instance.client
-          .from('selections')
-          .insert(insertData)
-          .select();
-
-      await Supabase.instance.client
-          .from('selections')
-          .delete()
+          .update({'collection_id': newCollectionId, 'selection_id': null})
           .eq('collection_id', oldCollectionId)
           .eq('selection_id', oldSelectionId);
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'moveSelections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
 
-      final uuid = newData[0]['selecting_uuid'];
+  static Future<void> selecting(
+      int selectingCollectionId, SelectionModel selectedData) async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+      int _selectedCollectionId = selectedData.collectionId;
+      int _selectedSelectionId = selectedData.selectionId;
 
-      if (uuid != null) {
-        int newSelectionId = newData[0]['selection_id'];
-        await _supabase.from('selecting').update({
-          'selecting_collection_id': newCollectionId,
-          'selecting_selection_id': newSelectionId,
-        }).eq('uuid', uuid);
+      final selectedSelection = await _supabase
+          .from('selections')
+          .select()
+          .eq('collection_id', _selectedCollectionId)
+          .eq('selection_id', _selectedSelectionId)
+          .single();
+
+      if (selectedSelection['is_selecting'] == true) {
+        final selectingSelection = await _supabase
+            .from('selecting')
+            .select('selected_collection_id, selected_selection_id')
+            .eq('uuid', selectedSelection['selecting_uuid'])
+            .single();
+
+        _selectedCollectionId = selectingSelection['selected_collection_id'];
+        _selectedSelectionId = selectingSelection['selected_selection_id'];
       }
+
+      final selectedSelectionData = Map.of(selectedSelection);
+
+      final newData = await _supabase
+          .from('selections')
+          .insert({
+            'collection_id': selectingCollectionId,
+            'selection_id': null,
+            'owner_id': selectedSelectionData['owner_id'],
+            'user_id': userId,
+            'title': selectedSelectionData['title'],
+            'description': selectedSelectionData['description'],
+            'image_file_paths': selectedSelectionData['image_file_paths'],
+            'keywords': selectedSelectionData['keywords'],
+            'link': selectedSelectionData['link'],
+            'items': selectedSelectionData['items'],
+            'is_ordered': selectedSelectionData['is_ordered'],
+            'is_select': selectedSelectionData['is_select'],
+            'is_selecting': true,
+          })
+          .select()
+          .single();
+
+      await _supabase.from('selecting').update({
+        'selected_collection_id': _selectedCollectionId,
+        'selected_selection_id': _selectedSelectionId,
+        'selected_user_id': selectedData.ownerId,
+      }).eq('uuid', newData['selecting_uuid']);
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {

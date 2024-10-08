@@ -1,4 +1,4 @@
-import 'package:collect_er/components/pop_up/selection_dialog.dart';
+import 'package:collect_er/components/pop_up/selecting_dialog.dart';
 import 'package:collect_er/data/model/selection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,7 +40,7 @@ class SelectionDetailScreen extends StatelessWidget {
                     routeName: _routeName!,
                     selectionDetail: _selectionDetail,
                   )
-                : SelectionDialog(
+                : SelectingDialog(
                     selectionDetail: _selectionDetail,
                   );
           },

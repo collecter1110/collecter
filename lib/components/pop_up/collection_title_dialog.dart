@@ -103,9 +103,9 @@ class CollectionTitleDialog extends StatelessWidget {
                           firstFieldState: true,
                           secondFieldState: selectedCollectionId != null,
                           onTap: () async {
-                            Navigator.pop(context);
                             provider.saveCollectionId = selectedCollectionId;
                             provider.saveCollectionTitle();
+                            Navigator.pop(context);
                             await voidCallback?.call();
                           },
                           text: '선택',
