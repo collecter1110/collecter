@@ -184,11 +184,14 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         ),
                       ],
                     ),
-                    Selector<CollectionProvider, ({String? item1})>(
-                      selector: (context, collectionProvider) =>
-                          (item1: collectionProvider.collectionTitle,),
+                    Selector<CollectionProvider, ({String? item1, int? item2})>(
+                      selector: (context, collectionProvider) => (
+                        item1: collectionProvider.collectionTitle,
+                        item2: collectionProvider.collectionId
+                      ),
                       builder: (context, data, child) {
                         String? _collectionTitle = data.item1;
+                        _collectionId = data.item2;
 
                         return InkWell(
                           onTap: () async {

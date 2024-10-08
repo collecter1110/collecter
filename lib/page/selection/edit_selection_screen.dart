@@ -65,9 +65,9 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   }
 
   void initializeData() {
-    _changedTitle = widget.selectionDetail.selectionName;
-    _changedDescription = widget.selectionDetail.selectionDescription;
-    _changedLink = widget.selectionDetail.selectionLink;
+    _changedTitle = widget.selectionDetail.title;
+    _changedDescription = widget.selectionDetail.description;
+    _changedLink = widget.selectionDetail.link;
     _changedIsPrivate = widget.selectionDetail.isSelect;
     _changedIsOrder = widget.selectionDetail.isOrdered;
 

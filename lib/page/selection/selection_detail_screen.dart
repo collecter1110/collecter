@@ -40,7 +40,9 @@ class SelectionDetailScreen extends StatelessWidget {
                     routeName: _routeName!,
                     selectionDetail: _selectionDetail,
                   )
-                : SelectionDialog();
+                : SelectionDialog(
+                    selectionDetail: _selectionDetail,
+                  );
           },
         );
       }
@@ -92,7 +94,7 @@ class SelectionDetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          _selectionDetail.selectionName,
+                          _selectionDetail.title,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 22.sp,
@@ -106,9 +108,9 @@ class SelectionDetailScreen extends StatelessWidget {
                         SizedBox(
                           width: 10.0.w,
                         ),
-                        _selectionDetail.selectionLink != null
+                        _selectionDetail.link != null
                             ? LinkButton(
-                                linkUrl: _selectionDetail.selectionLink!,
+                                linkUrl: _selectionDetail.link!,
                               )
                             : SizedBox.shrink(),
                       ],
@@ -182,7 +184,7 @@ class SelectionDetailScreen extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           height: 1.43,
                         ),
-                        text: _selectionDetail.selectionDescription ?? ''),
+                        text: _selectionDetail.description ?? ''),
                   ],
                 ),
               ),

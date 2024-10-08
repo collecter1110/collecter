@@ -74,7 +74,7 @@ class EditSelectionDialog extends StatelessWidget {
         isScrollControlled: true,
         builder: (context) {
           return CollectionTitleDialog(
-            moveSelection: () async {
+            voidCallback: () async {
               await ApiService.moveSelection(selectionDetail.collectionId,
                   selectionDetail.selectionId, provider.collectionId!);
               await context

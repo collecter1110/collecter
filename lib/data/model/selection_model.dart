@@ -6,10 +6,10 @@ class SelectionModel {
   final int selectionId;
   final int? ownerId;
   final int? userId;
-  final String selectionName;
-  final String? selectionDescription;
+  final String title;
+  final String? description;
   final bool? isOrdered;
-  final String? selectionLink;
+  final String? link;
   final List<dynamic>? imageFilePaths;
   final List<ItemData>? items;
   final List<KeywordData>? keywords;
@@ -23,10 +23,10 @@ class SelectionModel {
     required this.selectionId,
     this.ownerId,
     this.userId,
-    required this.selectionName,
-    this.selectionDescription,
+    required this.title,
+    this.description,
     this.isOrdered,
-    this.selectionLink,
+    this.link,
     this.imageFilePaths,
     this.items,
     this.keywords,
@@ -43,10 +43,10 @@ class SelectionModel {
       selectionId: json['selection_id'],
       ownerId: json['owner_id'] as int?,
       userId: json['user_id'] as int?,
-      selectionName: json['selection_name'],
-      selectionDescription: json['selection_description'] as String?,
+      title: json['title'],
+      description: json['description'] as String?,
       isOrdered: json['is_ordered'] as bool?,
-      selectionLink: json['selection_link'] as String?,
+      link: json['link'] as String?,
       imageFilePaths: json['image_file_paths'] as List<dynamic>?,
       items: json['items'] != null
           ? (json['items'] as List<dynamic>)
