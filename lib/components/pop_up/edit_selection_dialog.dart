@@ -44,12 +44,11 @@ class EditSelectionDialog extends StatelessWidget {
       });
     }
 
-    void didPop() {
+    void closeDialog() {
       Navigator.pop(context);
     }
 
     Future<void> _updateLocalData() async {
-      Navigator.pop(context);
       await LocalData.updateLocalData(
         context,
         selectionDetail.collectionId,
@@ -81,6 +80,7 @@ class EditSelectionDialog extends StatelessWidget {
                   .read<CollectionProvider>()
                   .getCollectionDetailData();
               await _updateLocalData();
+              closeDialog();
               await didPush();
             },
           );
@@ -127,8 +127,9 @@ class EditSelectionDialog extends StatelessWidget {
                               context.read<SelectionProvider>();
                           await collectionProvider.fetchCollectionDetail();
                           await selectionProvider.fetchSelectionData();
+                          closeDialog();
                           await _updateLocalData();
-                          didPop();
+                          Navigator.pop(context);
                         }
                       },
                     ),
@@ -153,7 +154,7 @@ class EditSelectionDialog extends StatelessWidget {
                                         .read<SelectionProvider>()
                                         .getSelectionDetailData();
                                     await _updateLocalData();
-                                    didPop();
+                                    closeDialog();
                                   },
                                   selectionDetail: selectionDetail),
                               settings: RouteSettings(name: routeName),

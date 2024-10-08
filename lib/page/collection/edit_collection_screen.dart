@@ -148,6 +148,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
         Navigator.of(context, rootNavigator: true).pop();
       }
       if (mounted) {
+        Navigator.pop(context);
         widget.updateLocalData();
       }
     }

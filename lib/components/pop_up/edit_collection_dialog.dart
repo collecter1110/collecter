@@ -25,15 +25,13 @@ class EditCollectionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void didPop() {
+    void closeDialog() {
       Navigator.pop(context);
     }
 
     Future<void> _updateLocalData() async {
-      Navigator.pop(context);
       await LocalData.updateLocalData(
           context, collectionDetail.id, collectionDetail.userId, null);
-      didPop();
     }
 
     return StatefulBuilder(
@@ -70,6 +68,8 @@ class EditCollectionDialog extends StatelessWidget {
                               .read<UserInfoProvider>()
                               .fetchUserOverview();
                           await _updateLocalData();
+                          closeDialog();
+                          Navigator.pop(context);
                         }
                       },
                     ),
@@ -87,6 +87,7 @@ class EditCollectionDialog extends StatelessWidget {
                                       .read<CollectionProvider>()
                                       .fetchCollectionDetail();
                                   await _updateLocalData();
+                                  closeDialog();
                                 },
                                 collectionDetail: collectionDetail),
                             settings: RouteSettings(name: routeName),
@@ -99,6 +100,7 @@ class EditCollectionDialog extends StatelessWidget {
                       text: '셀렉션 추가',
                       textColor: Colors.black,
                       onTap: () async {
+                        closeDialog();
                         Navigator.push(
                           context,
                           MaterialPageRoute(

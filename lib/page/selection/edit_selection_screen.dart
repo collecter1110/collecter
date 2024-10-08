@@ -166,6 +166,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
         Navigator.of(context, rootNavigator: true).pop();
       }
       if (mounted) {
+        Navigator.pop(context);
         widget.updateLocalData();
       }
     }

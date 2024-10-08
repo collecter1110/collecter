@@ -48,7 +48,7 @@ class CollectionTitleDialog extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'My Collection',
+                              '콜렉션을 선택해주세요.',
                               style: TextStyle(
                                 fontFamily: 'PretendardRegular',
                                 fontSize: 20.sp,
@@ -103,11 +103,10 @@ class CollectionTitleDialog extends StatelessWidget {
                           firstFieldState: true,
                           secondFieldState: selectedCollectionId != null,
                           onTap: () async {
+                            Navigator.pop(context);
                             provider.saveCollectionId = selectedCollectionId;
                             provider.saveCollectionTitle();
                             await voidCallback?.call();
-
-                            Navigator.pop(context);
                           },
                           text: '선택',
                         ),
