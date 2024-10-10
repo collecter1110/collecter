@@ -1,4 +1,5 @@
 import 'package:collect_er/components/pop_up/collection_title_dialog.dart';
+import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:collect_er/data/model/selection_model.dart';
 import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
-import '../../data/services/local_data.dart';
+import '../../data/services/data_management.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
@@ -17,11 +18,7 @@ class SelectingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void closeDialog() {
-      Navigator.pop(context);
-    }
-
-    Future<void> didPush() async {
+    Future<void> _didPush() async {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/bookmark',
@@ -37,13 +34,8 @@ class SelectingDialog extends StatelessWidget {
       });
     }
 
-    Future<void> _updateLocalData() async {
-      await LocalData.updateLocalData(
-        context,
-        selectionDetail.collectionId,
-        selectionDetail.userId!,
-        selectionDetail.selectionId,
-      );
+    void _closeDialog() {
+      Navigator.pop(context);
     }
 
     Future<void> _getCollectionTitle() async {
@@ -54,7 +46,7 @@ class SelectingDialog extends StatelessWidget {
       provider.saveCollectionId = selectionDetail.collectionId;
     }
 
-    Future<void> _createGroupDialog() async {
+    Future<void> _showGroupDialog() async {
       final provider = context.read<CollectionProvider>();
       await _getCollectionTitle();
       showModalBottomSheet(
@@ -63,12 +55,22 @@ class SelectingDialog extends StatelessWidget {
         builder: (context) {
           return CollectionTitleDialog(
             voidCallback: () async {
-              await ApiService.selecting(
-                  provider.collectionId!, selectionDetail);
-              await provider.getCollectionDetailData();
-              await _updateLocalData();
-              closeDialog();
-              await didPush();
+              await DataManagement.updateDataProcessHandler(
+                context,
+                selectionDetail.collectionId,
+                selectionDetail.userId!,
+                selectionDetail.selectionId,
+                () async {
+                  await ApiService.selecting(
+                      provider.collectionId!, selectionDetail);
+                  await provider.getCollectionDetailData();
+                },
+                () async {
+                  _closeDialog();
+                  await _didPush();
+                  Toast.completeToast('나의 컬렉션에 셀렉팅되었습니다.');
+                },
+              );
             },
           );
         },
@@ -94,7 +96,7 @@ class SelectingDialog extends StatelessWidget {
                   text: '셀렉팅',
                   textColor: Colors.black,
                   onTap: () async {
-                    await _createGroupDialog();
+                    await _showGroupDialog();
                   },
                 ),
               ),

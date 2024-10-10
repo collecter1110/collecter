@@ -21,11 +21,11 @@ import '../../data/provider/item_provider.dart';
 
 class EditSelectionScreen extends StatefulWidget {
   final SelectionModel selectionDetail;
-  final VoidCallback updateLocalData;
+  final VoidCallback callback;
 
   const EditSelectionScreen({
     super.key,
-    required this.updateLocalData,
+    required this.callback,
     required this.selectionDetail,
   });
 
@@ -157,8 +157,6 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
         _changedIsOrder!,
         _changedIsPrivate!,
       );
-
-      Toast.completeToast('셀렉션이 수정되었습니다');
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -167,7 +165,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
       }
       if (mounted) {
         Navigator.pop(context);
-        widget.updateLocalData();
+        widget.callback();
       }
     }
   }

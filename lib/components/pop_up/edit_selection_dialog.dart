@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/selection_provider.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/local_data.dart';
+import '../../data/services/data_management.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../../page/selection/edit_selection_screen.dart';
 import '../button/cancel_button.dart';
@@ -28,7 +28,7 @@ class EditSelectionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> didPush() async {
+    Future<void> _didPush() async {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/bookmark',
@@ -44,17 +44,8 @@ class EditSelectionDialog extends StatelessWidget {
       });
     }
 
-    void closeDialog() {
+    void _closeDialog() {
       Navigator.pop(context);
-    }
-
-    Future<void> _updateLocalData() async {
-      await LocalData.updateLocalData(
-        context,
-        selectionDetail.collectionId,
-        selectionDetail.userId!,
-        selectionDetail.selectionId,
-      );
     }
 
     Future<void> _getCollectionTitle() async {
@@ -65,7 +56,7 @@ class EditSelectionDialog extends StatelessWidget {
       provider.saveCollectionId = selectionDetail.collectionId;
     }
 
-    Future<void> _createGroupDialog() async {
+    Future<void> _showGroupDialog() async {
       final provider = context.read<CollectionProvider>();
       await _getCollectionTitle();
       showModalBottomSheet(
@@ -74,14 +65,22 @@ class EditSelectionDialog extends StatelessWidget {
         builder: (context) {
           return CollectionTitleDialog(
             voidCallback: () async {
-              await ApiService.moveSelection(selectionDetail.collectionId,
-                  selectionDetail.selectionId, provider.collectionId!);
-              await context
-                  .read<CollectionProvider>()
-                  .getCollectionDetailData();
-              await _updateLocalData();
-              closeDialog();
-              await didPush();
+              await DataManagement.updateDataProcessHandler(
+                context,
+                selectionDetail.collectionId,
+                selectionDetail.userId!,
+                selectionDetail.selectionId,
+                () async {
+                  await ApiService.moveSelection(selectionDetail.collectionId,
+                      selectionDetail.selectionId, provider.collectionId!);
+                  provider.getCollectionDetailData();
+                },
+                () async {
+                  _closeDialog();
+                  await _didPush();
+                  Toast.completeToast('셀렉션이 이동되었습니다');
+                },
+              );
             },
           );
         },
@@ -113,23 +112,29 @@ class EditSelectionDialog extends StatelessWidget {
                         bool? isDelete =
                             await Toast.deleteSelectionWarning(context);
                         if (isDelete!) {
-                          await ApiService.deleteSelection(
-                              selectionDetail.collectionId,
-                              selectionDetail.selectionId);
-                          Toast.completeToast('셀렉션이 삭제되었습니다');
-                          //셀렉팅 한 셀렉션이면 userOverview 데이터 업데이트
-                          // await context
-                          //     .read<UserInfoProvider>()
-                          //     .fetchUserOverview();
-                          final collectionProvider =
-                              context.read<CollectionProvider>();
-                          final selectionProvider =
-                              context.read<SelectionProvider>();
-                          await collectionProvider.fetchCollectionDetail();
-                          await selectionProvider.fetchSelectionData();
-                          closeDialog();
-                          await _updateLocalData();
-                          Navigator.pop(context);
+                          await DataManagement.updateDataProcessHandler(
+                            context,
+                            selectionDetail.collectionId,
+                            selectionDetail.userId!,
+                            selectionDetail.selectionId,
+                            () async {
+                              await ApiService.deleteSelection(
+                                selectionDetail.collectionId,
+                                selectionDetail.selectionId,
+                              );
+                              final collectionProvider =
+                                  context.read<CollectionProvider>();
+                              final selectionProvider =
+                                  context.read<SelectionProvider>();
+                              await collectionProvider.fetchCollectionDetail();
+                              await selectionProvider.fetchSelectionData();
+                            },
+                            () async {
+                              _closeDialog();
+                              Navigator.pop(context);
+                              Toast.completeToast('셀렉션이 삭제되었습니다');
+                            },
+                          );
                         }
                       },
                     ),
@@ -143,18 +148,29 @@ class EditSelectionDialog extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => EditSelectionScreen(
-                                  updateLocalData: () async {
-                                    await context
-                                        .read<CollectionProvider>()
-                                        .fetchCollectionDetail();
-                                    await context
-                                        .read<SelectionProvider>()
-                                        .fetchSelectionData();
-                                    await context
-                                        .read<SelectionProvider>()
-                                        .getSelectionDetailData();
-                                    await _updateLocalData();
-                                    closeDialog();
+                                  callback: () async {
+                                    await DataManagement
+                                        .updateDataProcessHandler(
+                                      context,
+                                      selectionDetail.collectionId,
+                                      selectionDetail.userId!,
+                                      selectionDetail.selectionId,
+                                      () async {
+                                        await context
+                                            .read<CollectionProvider>()
+                                            .fetchCollectionDetail();
+                                        await context
+                                            .read<SelectionProvider>()
+                                            .fetchSelectionData();
+                                        await context
+                                            .read<SelectionProvider>()
+                                            .getSelectionDetailData();
+                                      },
+                                      () async {
+                                        _closeDialog();
+                                        Toast.completeToast('셀렉션이 수정되었습니다');
+                                      },
+                                    );
                                   },
                                   selectionDetail: selectionDetail),
                               settings: RouteSettings(name: routeName),
@@ -170,7 +186,7 @@ class EditSelectionDialog extends StatelessWidget {
                       text: '컬렉션 이동',
                       textColor: Colors.black,
                       onTap: () async {
-                        await _createGroupDialog();
+                        await _showGroupDialog();
                       },
                     ),
                   ],

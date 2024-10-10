@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/user_info_provider.dart';
-import '../../data/services/local_data.dart';
+import '../../data/services/data_management.dart';
 import '../../page/add_page/add_screen.dart';
 import '../../page/collection/edit_collection_screen.dart';
 import '../button/cancel_button.dart';
@@ -25,13 +25,8 @@ class EditCollectionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void closeDialog() {
+    void _closeDialog() {
       Navigator.pop(context);
-    }
-
-    Future<void> _updateLocalData() async {
-      await LocalData.updateLocalData(
-          context, collectionDetail.id, collectionDetail.userId, null);
     }
 
     return StatefulBuilder(
@@ -61,15 +56,24 @@ class EditCollectionDialog extends StatelessWidget {
                         bool? isDelete =
                             await Toast.deleteCollectionWarning(context);
                         if (isDelete!) {
-                          await ApiService.deleteCollection(
-                              collectionDetail.id);
-                          Toast.completeToast('컬렉션이 삭제되었습니다');
-                          await context
-                              .read<UserInfoProvider>()
-                              .fetchUserOverview();
-                          await _updateLocalData();
-                          closeDialog();
-                          Navigator.pop(context);
+                          await DataManagement.updateDataProcessHandler(
+                            context,
+                            collectionDetail.id,
+                            collectionDetail.userId,
+                            null,
+                            () async {
+                              await ApiService.deleteCollection(
+                                  collectionDetail.id);
+                              await context
+                                  .read<UserInfoProvider>()
+                                  .fetchUserOverview();
+                            },
+                            () async {
+                              _closeDialog();
+                              Navigator.pop(context);
+                              Toast.completeToast('컬렉션이 삭제되었습니다');
+                            },
+                          );
                         }
                       },
                     ),
@@ -82,12 +86,22 @@ class EditCollectionDialog extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) => EditCollectionScreen(
-                                updateLocalData: () async {
-                                  await context
-                                      .read<CollectionProvider>()
-                                      .fetchCollectionDetail();
-                                  await _updateLocalData();
-                                  closeDialog();
+                                callback: () async {
+                                  await DataManagement.updateDataProcessHandler(
+                                    context,
+                                    collectionDetail.id,
+                                    collectionDetail.userId,
+                                    null,
+                                    () async {
+                                      await context
+                                          .read<CollectionProvider>()
+                                          .fetchCollectionDetail();
+                                    },
+                                    () async {
+                                      _closeDialog();
+                                      Toast.completeToast('컬렉션이 수정되었습니다.');
+                                    },
+                                  );
                                 },
                                 collectionDetail: collectionDetail),
                             settings: RouteSettings(name: routeName),
@@ -100,7 +114,7 @@ class EditCollectionDialog extends StatelessWidget {
                       text: '셀렉션 추가',
                       textColor: Colors.black,
                       onTap: () async {
-                        closeDialog();
+                        _closeDialog();
                         Navigator.push(
                           context,
                           MaterialPageRoute(

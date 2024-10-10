@@ -119,7 +119,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     }
   }
 
-  Future<void> _createGroupDialog() async {
+  Future<void> _showGroupDialog() async {
     await fetchCollections();
     showModalBottomSheet(
       context: context,
@@ -179,7 +179,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         ),
                         AddButton(
                           onPressed: () async {
-                            await _createGroupDialog();
+                            await _showGroupDialog();
                           },
                         ),
                       ],
@@ -195,7 +195,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
 
                         return InkWell(
                           onTap: () async {
-                            await _createGroupDialog();
+                            await _showGroupDialog();
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 8.0.h),
