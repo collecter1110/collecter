@@ -119,7 +119,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     }
   }
 
-  Future<void> _createGroupDialog() async {
+  Future<void> _showGroupDialog() async {
     await fetchCollections();
     showModalBottomSheet(
       context: context,
@@ -179,20 +179,23 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         ),
                         AddButton(
                           onPressed: () async {
-                            await _createGroupDialog();
+                            await _showGroupDialog();
                           },
                         ),
                       ],
                     ),
-                    Selector<CollectionProvider, ({String? item1})>(
-                      selector: (context, collectionProvider) =>
-                          (item1: collectionProvider.collectionTitle,),
+                    Selector<CollectionProvider, ({String? item1, int? item2})>(
+                      selector: (context, collectionProvider) => (
+                        item1: collectionProvider.collectionTitle,
+                        item2: collectionProvider.collectionId
+                      ),
                       builder: (context, data, child) {
                         String? _collectionTitle = data.item1;
+                        _collectionId = data.item2;
 
                         return InkWell(
                           onTap: () async {
-                            await _createGroupDialog();
+                            await _showGroupDialog();
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 8.0.h),

@@ -6,8 +6,8 @@ import '../provider/collection_provider.dart';
 import '../provider/search_provider.dart';
 import '../provider/selection_provider.dart';
 
-class LocalData {
-  static Future<void> updateLocalData(BuildContext context, int collectionId,
+class DataManagement {
+  static Future<void> reloadLocalData(BuildContext context, int collectionId,
       int userId, int? selectionId) async {
     final collectionProvider = context.read<CollectionProvider>();
     final searchProvider = context.read<SearchProvider>();
@@ -48,8 +48,43 @@ class LocalData {
           false;
 
       if (existsSelections) {
+        print('dd');
         await selectionProvider.fetchSearchSelections(searchText);
       }
+    }
+  }
+
+  static Future<void> updateDataProcessHandler(
+    BuildContext context,
+    int collectionId,
+    int userId,
+    int? selectionId,
+    Future<void> Function() updateData,
+    Future<void> Function() nextNavigate,
+  ) async {
+    BuildContext? dialogContext;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext newContext) {
+        dialogContext = newContext;
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    try {
+      await updateData();
+      await reloadLocalData(context, collectionId, userId, selectionId);
+    } catch (e) {
+      print('Error: $e');
+    } finally {
+      if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+        Navigator.of(dialogContext!).pop();
+      }
+      await nextNavigate();
     }
   }
 }

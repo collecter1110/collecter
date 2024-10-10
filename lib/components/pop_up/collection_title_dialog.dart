@@ -9,10 +9,10 @@ import '../button/set_collection_button.dart';
 import '../constants/screen_size.dart';
 
 class CollectionTitleDialog extends StatelessWidget {
-  final Future<void> Function()? moveSelection;
+  final Future<void> Function()? voidCallback;
   CollectionTitleDialog({
     super.key,
-    this.moveSelection,
+    this.voidCallback,
   });
 
   @override
@@ -48,7 +48,7 @@ class CollectionTitleDialog extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'My Collection',
+                              '콜렉션을 선택해주세요.',
                               style: TextStyle(
                                 fontFamily: 'PretendardRegular',
                                 fontSize: 20.sp,
@@ -105,8 +105,8 @@ class CollectionTitleDialog extends StatelessWidget {
                           onTap: () async {
                             provider.saveCollectionId = selectedCollectionId;
                             provider.saveCollectionTitle();
-                            await moveSelection?.call();
                             Navigator.pop(context);
+                            await voidCallback?.call();
                           },
                           text: '선택',
                         ),

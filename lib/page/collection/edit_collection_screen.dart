@@ -18,11 +18,11 @@ import '../../data/services/api_service.dart';
 
 class EditCollectionScreen extends StatefulWidget {
   final CollectionModel collectionDetail;
-  final VoidCallback updateLocalData;
+  final VoidCallback callback;
 
   const EditCollectionScreen({
     super.key,
-    required this.updateLocalData,
+    required this.callback,
     required this.collectionDetail,
   });
 
@@ -139,8 +139,6 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
           _changedImageFilePath,
           context.read<TagProvider>().tagNames,
           _changedIsPrivate!);
-
-      Toast.completeToast('컬렉션이 수정되었습니다');
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -148,7 +146,8 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
         Navigator.of(context, rootNavigator: true).pop();
       }
       if (mounted) {
-        widget.updateLocalData();
+        Navigator.pop(context);
+        widget.callback();
       }
     }
   }

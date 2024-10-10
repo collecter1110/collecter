@@ -1,4 +1,4 @@
-import 'package:collect_er/components/pop_up/selection_dialog.dart';
+import 'package:collect_er/components/pop_up/selecting_dialog.dart';
 import 'package:collect_er/data/model/selection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,7 +40,9 @@ class SelectionDetailScreen extends StatelessWidget {
                     routeName: _routeName!,
                     selectionDetail: _selectionDetail,
                   )
-                : SelectionDialog();
+                : SelectingDialog(
+                    selectionDetail: _selectionDetail,
+                  );
           },
         );
       }
@@ -92,7 +94,7 @@ class SelectionDetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          _selectionDetail.selectionName,
+                          _selectionDetail.title,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 22.sp,
@@ -106,9 +108,9 @@ class SelectionDetailScreen extends StatelessWidget {
                         SizedBox(
                           width: 10.0.w,
                         ),
-                        _selectionDetail.selectionLink != null
+                        _selectionDetail.link != null
                             ? LinkButton(
-                                linkUrl: _selectionDetail.selectionLink!,
+                                linkUrl: _selectionDetail.link!,
                               )
                             : SizedBox.shrink(),
                       ],
@@ -182,7 +184,7 @@ class SelectionDetailScreen extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           height: 1.43,
                         ),
-                        text: _selectionDetail.selectionDescription ?? ''),
+                        text: _selectionDetail.description ?? ''),
                   ],
                 ),
               ),

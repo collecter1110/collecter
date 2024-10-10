@@ -99,7 +99,7 @@ class SearchSelection extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 8.0.h),
                             child: Text(
-                              selectionDetail.selectionName,
+                              selectionDetail.title,
                               style: TextStyle(
                                 color: Color(0xFF343A40),
                                 fontSize: 16.0.sp,
