@@ -17,6 +17,6 @@ class UserInfoModel {
       : name = json['name'],
         email = json['email'] as String?,
         description = json['description'] as String?,
-        imageFilePath = json['image_url'] as String?,
+        imageFilePath = json['image_file_path'] as String?,
         userId = json['user_id'] as int?;
 }

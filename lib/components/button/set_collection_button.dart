@@ -25,7 +25,7 @@ class SetCollectionButton extends StatelessWidget {
       },
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6.0),
+          borderRadius: BorderRadius.circular(8.0),
         ),
         padding: EdgeInsets.symmetric(vertical: 12.0.h, horizontal: 16.0.w),
         backgroundColor: isSelected

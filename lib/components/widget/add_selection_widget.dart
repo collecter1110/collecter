@@ -201,7 +201,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                             padding: EdgeInsets.symmetric(vertical: 8.0.h),
                             child: Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6.0),
+                                borderRadius: BorderRadius.circular(8.0),
                                 color: _collectionTitle != null
                                     ? Theme.of(context)
                                         .primaryColor
@@ -614,7 +614,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           WidgetsBinding.instance.addPostFrameCallback(
                             (_) async {
                               final fieldValidator = FieldValidator({
-                                '컬렉션 ID가 누락되었습니다': _collectionId != null,
+                                '컬렉션을 선택해주세요.': _collectionId != null,
                                 '셀렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
                                 '키워드를 입력해주세요': context
                                         .read<KeywordProvider>()

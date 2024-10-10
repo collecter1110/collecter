@@ -1,4 +1,5 @@
 import 'package:collect_er/page/bookmark_page/bookmark_screen.dart';
+import 'package:collect_er/page/user_page/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -68,7 +69,8 @@ class UserScreen extends StatelessWidget {
                   }
                   final String _name = provider.userInfo!.name;
                   final String? _description = provider.userInfo?.description;
-                  final String? _imageUrl = provider.userInfo?.imageFilePath;
+                  final String? _imageFilePath =
+                      provider.userInfo?.imageFilePath;
 
                   final List<int>? _usersLabelIds = provider.userLabelIds;
                   final int? collectionNum = provider.collectionNum;
@@ -82,19 +84,31 @@ class UserScreen extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xFFe9ecef),
-                            ),
-                            child: ClipOval(
-                              child: Image.asset(
-                                'assets/icons/tab_user.png',
-                                height: 64.0.h,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                          _imageFilePath == null
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xFFe9ecef),
+                                  ),
+                                  child: ClipOval(
+                                    child: Image.asset(
+                                      'assets/icons/tab_user.png',
+                                      height: 64.0.h,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: 80.0.w,
+                                  height: 80.0.w,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100.0),
+                                    image: DecorationImage(
+                                      image: NetworkImage(_imageFilePath),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
                           SizedBox(
                             width: 16.0.w,
                           ),
@@ -215,7 +229,17 @@ class UserScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            UserPageEditButton(name: '프로필 편집', onTap: () {}),
+                            UserPageEditButton(
+                                name: '프로필 편집',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditProfileScreen(),
+                                      settings: RouteSettings(name: '/user'),
+                                    ),
+                                  );
+                                }),
                             SizedBox(
                               width: 6.0.w,
                             ),

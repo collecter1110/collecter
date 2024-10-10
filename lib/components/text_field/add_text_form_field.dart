@@ -70,7 +70,8 @@ class _AddTextFormFieldState extends State<AddTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
+      height: 48.0.h,
       child: TextFormField(
         keyboardType: widget.keyboardType,
         controller: _controller,
@@ -78,8 +79,12 @@ class _AddTextFormFieldState extends State<AddTextFormField> {
         textAlignVertical: widget.isMultipleLine
             ? TextAlignVertical.top
             : TextAlignVertical.center,
-        textInputAction: widget.isMultipleLine ? TextInputAction.newline : null,
-        maxLines: widget.isMultipleLine ? null : 1,
+        textInputAction: widget.isMultipleLine
+            ? TextInputAction.newline
+            : TextInputAction.done,
+        minLines: null,
+        maxLines: null,
+        expands: true,
         decoration: InputDecoration(
           contentPadding:
               EdgeInsets.symmetric(horizontal: 14.0.w, vertical: 12.0.h),
@@ -95,7 +100,6 @@ class _AddTextFormFieldState extends State<AddTextFormField> {
         inputFormatters: widget.formatter != null ? [widget.formatter!] : [],
         style: _fieldTextStyle,
         onSaved: widget.onSaved,
-        expands: widget.isMultipleLine,
       ),
     );
   }
