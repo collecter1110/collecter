@@ -120,6 +120,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       await ApiService.editUserInfo(
           _changedName!, _changedDescription, _changedImageFilePath);
+      final provider = context.read<UserInfoProvider>();
+      await provider.fetchUserInfo();
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -183,7 +185,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 if (isDefaultImage) {
                                   setState(() {
                                     _pickedImage = null;
-                                    print(_pickedImage);
                                     _changedImageFilePath = null;
                                   });
                                 } else if (!isDefaultImage) {
