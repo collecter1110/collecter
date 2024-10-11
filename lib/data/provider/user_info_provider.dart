@@ -6,6 +6,7 @@ import '../model/user_overview_model.dart';
 import '../services/api_service.dart';
 
 class UserInfoProvider with ChangeNotifier {
+  ConnectionState _state = ConnectionState.waiting;
   UserInfoModel? _userInfo;
   UserOverviewModel? _userOverview;
   int? _collectionNum;
@@ -15,6 +16,7 @@ class UserInfoProvider with ChangeNotifier {
   List<UserInfoModel>? _searchUsers;
   String? _currentSearchText;
 
+  ConnectionState get state => _state;
   UserInfoModel? get userInfo => _userInfo;
   List<int>? get userLabelIds => _userLabelIds;
   int? get collectionNum => _collectionNum;
@@ -35,8 +37,17 @@ class UserInfoProvider with ChangeNotifier {
   }
 
   Future<void> fetchUserInfo() async {
-    _userInfo = await ApiService.getUserInfo();
-    notifyListeners();
+    try {
+      _state = ConnectionState.waiting;
+      await Future.delayed(Duration(milliseconds: 300));
+      _userInfo = await ApiService.getUserInfo();
+    } catch (e) {
+      _state = ConnectionState.none;
+      print('Failed to fetch collections: $e');
+    } finally {
+      _state = ConnectionState.done;
+      notifyListeners();
+    }
   }
 
   Future<void> fetchUserOverview() async {

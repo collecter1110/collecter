@@ -696,6 +696,27 @@ class ApiService {
     }
   }
 
+  static Future<void> editUserInfo(
+    String name,
+    String? description,
+    String? imageFilePath,
+  ) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+    try {
+      await _supabase.from('userinfo').update({
+        'name': name,
+        'description': description,
+        'image_file_path': imageFilePath,
+      }).eq('user_id', userId);
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'edit userInfo error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   Future<void> actionUnlike(int collectionId) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
