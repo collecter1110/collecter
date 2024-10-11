@@ -36,20 +36,35 @@ class SearchUser extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(0xFFe9ecef),
-            ),
-            child: ClipOval(
-              child: userInfoDetail.imageFilePath == null
-                  ? Image.asset(
-                      'assets/icons/tab_user.png',
-                      height: 50.0.h,
-                      color: Colors.white,
-                    )
-                  : SizedBox.shrink(),
-            ),
+          AspectRatio(
+            aspectRatio: 1 / 1,
+            child: userInfoDetail.imageFilePath == null
+                ? Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFFe9ecef),
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/icons/tab_user.png',
+                        height: 64.0.h,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100.0),
+                      border: Border.all(
+                        color: Color(0xFFced4da),
+                        width: 0.5.w,
+                      ),
+                      image: DecorationImage(
+                        image: NetworkImage(userInfoDetail.imageFilePath!),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
           ),
           SizedBox(
             width: 16.0.w,

@@ -266,7 +266,9 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                         initialText: widget.collectionDetail.title,
                         isMultipleLine: false,
                         onSaved: (value) {
-                          _changedTitle = value;
+                          value == '' || value == null
+                              ? _changedTitle = null
+                              : _changedTitle = value;
                         },
                       ),
                     ),
@@ -372,7 +374,9 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                           initialText: widget.collectionDetail.description,
                           isMultipleLine: true,
                           onSaved: (value) {
-                            _changedDescription = value ?? '';
+                            value == '' || value == null
+                                ? _changedDescription = null
+                                : _changedDescription = value;
                           },
                         ),
                       ),

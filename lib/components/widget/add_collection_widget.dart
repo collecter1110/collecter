@@ -147,7 +147,9 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                       hintText: '컬렉션 이름',
                       isMultipleLine: false,
                       onSaved: (value) {
-                        _title = value;
+                        value == '' || value == null
+                            ? _title = null
+                            : _title = value;
                       },
                     ),
                   ),
@@ -308,7 +310,9 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                         hintText: '설명',
                         isMultipleLine: true,
                         onSaved: (value) {
-                          _description = value ?? '';
+                          value == '' || value == null
+                              ? _description = null
+                              : _description = value;
                         },
                       ),
                     ),

@@ -821,6 +821,32 @@ class ApiService {
     }
   }
 
+  static Future<UserInfoModel> getOtherUserInfo(int userId) async {
+    try {
+      final response = await _supabase
+          .from('userinfo')
+          .select('name, description, image_file_path')
+          .eq('user_id', userId)
+          .single();
+
+      if (response.isNotEmpty) {
+        final responseData = response;
+        UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
+        return Future.value(userInfoData);
+      } else {
+        Toast.error();
+        throw Exception('Response code error <getUserInfo>');
+      }
+    } on AuthException catch (e) {
+      Toast.error();
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      Toast.error();
+      handleError('', 'getOtherUserInfo error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   static Future<List<CollectionModel>> getUsersCollections(int userId) async {
     try {
       final responseData = await _supabase.from('collections').select('''

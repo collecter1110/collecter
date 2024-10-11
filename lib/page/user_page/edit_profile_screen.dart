@@ -23,6 +23,8 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  String? _initialName;
+
   String? _changedEmail;
   String? _changedName;
   String? _changedDescription;
@@ -43,6 +45,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final provider = context.read<UserInfoProvider>();
     final UserInfoModel _userInfo = provider.userInfo!;
     _changedEmail = _userInfo.email!;
+    _initialName = _userInfo.name;
     _changedName = _userInfo.name;
     _changedDescription = _userInfo.description;
     _changedImageFilePath = _userInfo.imageFilePath;
@@ -315,7 +318,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       padding: EdgeInsets.symmetric(vertical: 8.0.h),
                       child: AddTextFormField(
                         keyboardType: TextInputType.name,
-                        initialText: _changedName,
+                        initialText: _initialName,
                         isMultipleLine: false,
                         onSaved: (value) {
                           value == '' || value == null
@@ -361,26 +364,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       height: 26.0.h,
                     ),
                     CompleteButton(
-                        firstFieldState: true,
-                        secondFieldState: true,
-                        text: '수정 완료',
-                        onTap: () {
-                          FocusScope.of(context).unfocus();
+                      firstFieldState: true,
+                      secondFieldState: true,
+                      text: '수정 완료',
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
 
-                          WidgetsBinding.instance.addPostFrameCallback(
-                            (_) async {
-                              final fieldValidator = FieldValidator({
-                                '이름을 입력해주세요': _changedName?.isNotEmpty == true,
-                              });
-
-                              if (!fieldValidator.validateFields()) {
-                                return;
-                              } else {
-                                await _passFieldValidator();
+                        WidgetsBinding.instance.addPostFrameCallback(
+                          (_) async {
+                            final Map<String, bool> conditions = {
+                              '이름을 입력해주세요': _changedName?.isNotEmpty == true,
+                            };
+                            if (_changedName != null &&
+                                _changedName!.isNotEmpty &&
+                                _changedName != _initialName) {
+                              bool isDuplicate =
+                                  await ApiService.checkUserNameDuplicate(
+                                      _changedName!);
+                              if (!isDuplicate) {
+                                conditions['이미 사용 중인 이름입니다'] = false;
                               }
-                            },
-                          );
-                        }),
+                            }
+
+                            final fieldValidator = FieldValidator(conditions);
+
+                            if (!fieldValidator.validateFields()) {
+                              return;
+                            } else {
+                              await _passFieldValidator();
+                            }
+                          },
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),

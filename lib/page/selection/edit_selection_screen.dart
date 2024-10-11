@@ -362,7 +362,9 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                         initialText: _changedTitle,
                         isMultipleLine: false,
                         onSaved: (value) {
-                          _changedTitle = value;
+                          value == '' || value == null
+                              ? _changedTitle = null
+                              : _changedTitle = value;
                         },
                       ),
                     ),
