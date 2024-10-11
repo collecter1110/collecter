@@ -258,7 +258,9 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         hintText: '셀렉션 이름',
                         isMultipleLine: false,
                         onSaved: (value) {
-                          _title = value;
+                          value == '' || value == null
+                              ? _title = null
+                              : _title = value;
                         },
                       ),
                     ),
@@ -371,7 +373,9 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           hintText: '설명',
                           isMultipleLine: true,
                           onSaved: (value) {
-                            _description = value ?? '';
+                            value == '' || value == null
+                                ? _description = null
+                                : _description = value;
                           },
                         ),
                       ),
@@ -472,7 +476,9 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         hintText: 'url 추가',
                         isMultipleLine: false,
                         onSaved: (value) {
-                          _link = value;
+                          value == '' || value == null
+                              ? _link = null
+                              : _link = value;
                         },
                       ),
                     ),
