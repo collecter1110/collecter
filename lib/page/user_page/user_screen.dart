@@ -37,35 +37,32 @@ class _UserScreenState extends State<UserScreen> {
         body: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-          height: 130.0.h,
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 16.0.w,
-              right: 16.0.w,
-              top: ViewPaddingTopSize(context) + 20.0.h,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'My Page',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18.0.sp,
-                  ),
+        Padding(
+          padding: EdgeInsets.only(
+            left: 16.0.w,
+            right: 16.0.w,
+            top: ViewPaddingTopSize(context) + 20.0.h,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                'My Page',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18.0.sp,
                 ),
-                InkWell(
-                  onTap: () {},
-                  child: Image.asset(
-                    'assets/icons/icon_hamburger.png',
-                    height: 20.0.h,
-                  ),
+              ),
+              InkWell(
+                onTap: () {},
+                child: Image.asset(
+                  'assets/icons/icon_hamburger.png',
+                  height: 20.0.h,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         Expanded(
@@ -96,101 +93,107 @@ class _UserScreenState extends State<UserScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              _imageFilePath == null
-                                  ? Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Color(0xFFe9ecef),
-                                      ),
-                                      child: ClipOval(
-                                        child: Image.asset(
-                                          'assets/icons/tab_user.png',
-                                          height: 64.0.h,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    )
-                                  : Container(
-                                      width: 80.0.w,
-                                      height: 80.0.w,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100.0),
-                                        image: DecorationImage(
-                                          image: NetworkImage(_imageFilePath),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                              SizedBox(
-                                width: 16.0.w,
-                              ),
-                              Flexible(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      _name,
-                                      style: TextStyle(
-                                        color: Color(0xFF212529),
-                                        fontSize: 18.sp,
-                                        fontFamily: 'Pretendard',
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                    _description != null
-                                        ? Column(
-                                            children: [
-                                              SizedBox(
-                                                height: 4.0.h,
-                                              ),
-                                              ExpandableText(
-                                                maxLine: 2,
-                                                textStyle: TextStyle(
-                                                  color: Color(0xFF495057),
-                                                  fontSize: 12.sp,
-                                                  fontFamily: 'Pretendard',
-                                                  fontWeight: FontWeight.w500,
-                                                  height: 1.43,
-                                                ),
-                                                text: _description,
-                                              ),
-                                            ],
-                                          )
-                                        : SizedBox.shrink(),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.0.h),
+                            padding:
+                                EdgeInsets.only(top: 36.0.h, bottom: 24.0.h),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Expanded(
-                                  child: _usersLabelIds != null
-                                      ? Wrap(
-                                          alignment: WrapAlignment.start,
-                                          runSpacing: 8.0.h,
-                                          spacing: 10.0.w,
-                                          children: _usersLabelIds.map((index) {
-                                            return Label.getLabel(index);
-                                          }).toList(),
-                                        )
-                                      : SizedBox.shrink(),
+                                _imageFilePath == null
+                                    ? Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color(0xFFe9ecef),
+                                        ),
+                                        child: ClipOval(
+                                          child: Image.asset(
+                                            'assets/icons/tab_user.png',
+                                            height: 64.0.h,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                        width: 80.0.w,
+                                        height: 80.0.w,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(100.0),
+                                          border: Border.all(
+                                            color: Color(0xFFced4da),
+                                            width: 0.5.w,
+                                          ),
+                                          image: DecorationImage(
+                                            image: NetworkImage(_imageFilePath),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                SizedBox(
+                                  width: 16.0.w,
+                                ),
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _name,
+                                        style: TextStyle(
+                                          color: Color(0xFF212529),
+                                          fontSize: 18.sp,
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      _description != null
+                                          ? Column(
+                                              children: [
+                                                SizedBox(
+                                                  height: 4.0.h,
+                                                ),
+                                                ExpandableText(
+                                                  maxLine: 2,
+                                                  textStyle: TextStyle(
+                                                    color: Color(0xFF495057),
+                                                    fontSize: 12.sp,
+                                                    fontFamily: 'Pretendard',
+                                                    fontWeight: FontWeight.w500,
+                                                    height: 1.43,
+                                                  ),
+                                                  text: _description,
+                                                ),
+                                              ],
+                                            )
+                                          : SizedBox.shrink(),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: _usersLabelIds != null
+                                    ? Wrap(
+                                        alignment: WrapAlignment.start,
+                                        runSpacing: 8.0.h,
+                                        spacing: 10.0.w,
+                                        children: _usersLabelIds.map((index) {
+                                          return Label.getLabel(index);
+                                        }).toList(),
+                                      )
+                                    : SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
                           Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 50.0.w, vertical: 12.0.h),
+                                horizontal: 50.0.w, vertical: 20.0.h),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
