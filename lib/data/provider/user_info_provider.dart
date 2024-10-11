@@ -8,6 +8,7 @@ import '../services/api_service.dart';
 class UserInfoProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
   UserInfoModel? _userInfo;
+  UserInfoModel? _otherUserInfo;
   UserOverviewModel? _userOverview;
   int? _collectionNum;
   int? _selectingNum;
@@ -18,6 +19,7 @@ class UserInfoProvider with ChangeNotifier {
 
   ConnectionState get state => _state;
   UserInfoModel? get userInfo => _userInfo;
+  UserInfoModel? get otherUserInfo => _otherUserInfo;
   List<int>? get userLabelIds => _userLabelIds;
   int? get collectionNum => _collectionNum;
   int? get selectingNum => _selectingNum;
@@ -57,6 +59,14 @@ class UserInfoProvider with ChangeNotifier {
     _selectedNum = _userOverview!.selectedNum;
     _userLabelIds = _userOverview!.labels;
     notifyListeners();
+  }
+
+  Future<void> fetchOtherUserInfo(int userId) async {
+    try {
+      _otherUserInfo = await ApiService.getOtherUserInfo(userId);
+    } catch (e) {
+      print('Failed to fetch other user info: $e');
+    } finally {}
   }
 
   Future<void> getSearchUsers(String searchText) async {

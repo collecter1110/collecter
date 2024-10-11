@@ -29,7 +29,7 @@ class OtherUserScreen extends StatelessWidget {
             Consumer<UserInfoProvider>(builder: (context, provider, child) {
               final String _name = userInfoDetail.name;
               final String? _description = userInfoDetail.description;
-              final String? _imageUrl = userInfoDetail.imageFilePath;
+              final String? _imageFilePath = userInfoDetail.imageFilePath;
 
               return Padding(
                 padding:
@@ -37,19 +37,31 @@ class OtherUserScreen extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFFe9ecef),
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/icons/tab_user.png',
-                          height: 64.0.h,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                    _imageFilePath == null
+                        ? Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFFe9ecef),
+                            ),
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/icons/tab_user.png',
+                                height: 64.0.h,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            width: 80.0.w,
+                            height: 80.0.w,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100.0),
+                              image: DecorationImage(
+                                image: NetworkImage(_imageFilePath),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                     SizedBox(
                       width: 16.0.w,
                     ),
