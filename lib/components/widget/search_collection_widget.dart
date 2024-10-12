@@ -38,8 +38,16 @@ class SearchCollectionWidget extends StatelessWidget {
                 );
               },
             )
-          : const Center(
-              child: Text('일치하는 데이터가 없습니다.'),
+          : Center(
+              child: Text(
+                '일치하는 데이터가 없습니다.',
+                style: TextStyle(
+                  color: Color(0xFF868e96),
+                  fontSize: 14.sp,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             );
     });
   }
