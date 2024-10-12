@@ -56,6 +56,7 @@ class SelectionDetailScreen extends StatelessWidget {
           actionButton: 'icon_more',
         ),
         body: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
