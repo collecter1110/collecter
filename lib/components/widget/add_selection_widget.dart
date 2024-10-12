@@ -123,7 +123,10 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     await fetchCollections();
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: double.infinity,
+      ),
+      isScrollControlled: false,
       builder: (context) {
         return CollectionTitleDialog();
       },
