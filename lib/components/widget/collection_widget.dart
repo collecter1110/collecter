@@ -51,7 +51,7 @@ class CollectionWidget extends StatelessWidget {
                 },
               )
             : const Center(
-                child: Text('콜렉션을 추가해주세요.'),
+                child: Text('컬렉션을 추가해주세요.'),
               );
       } else {
         return const Center(

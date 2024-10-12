@@ -48,7 +48,7 @@ class CollectionTitleDialog extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '콜렉션을 선택해주세요.',
+                              '컬렉션을 선택해주세요.',
                               style: TextStyle(
                                 fontFamily: 'PretendardRegular',
                                 fontSize: 20.sp,
