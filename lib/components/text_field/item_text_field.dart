@@ -40,7 +40,8 @@ class _ItemTextFieldState extends State<ItemTextField> {
           _titleControllers.clear();
         }
       }
-      saveItemsOrder();
+      _removeItemsTitle(itemKey);
+      _saveItemsOrder();
     });
   }
 
@@ -58,10 +59,9 @@ class _ItemTextFieldState extends State<ItemTextField> {
 
   @override
   void dispose() {
-    for (int i = 0; i < widget.itemNum; i++) {
+    for (int i = 0; i < _titleControllers.length; i++) {
       _titleControllers[i];
     }
-
     super.dispose();
   }
 
@@ -74,13 +74,17 @@ class _ItemTextFieldState extends State<ItemTextField> {
 
         _titleControllers.add(TextEditingController());
 
-        saveItemsOrder();
+        _saveItemsOrder();
       });
     }
   }
 
-  void saveItemsOrder() {
+  void _saveItemsOrder() {
     context.read<ItemProvider>().saveItemOrder = _itemIndexOrder;
+  }
+
+  void _removeItemsTitle(itemKey) {
+    context.read<ItemProvider>().removeItemTitle(itemKey);
   }
 
   @override
@@ -116,6 +120,7 @@ class _ItemTextFieldState extends State<ItemTextField> {
                 delay: const Duration(
                   milliseconds: 150,
                 ),
+                parentContext: context,
                 index: index,
                 child: Row(
                   children: [
@@ -162,7 +167,7 @@ class _ItemTextFieldState extends State<ItemTextField> {
 
         _titleControllers.insert(newIndex, titleController);
 
-        saveItemsOrder();
+        _saveItemsOrder();
       },
     );
   }
@@ -171,12 +176,14 @@ class _ItemTextFieldState extends State<ItemTextField> {
 class CustomReorderableDelayedDragStartListener
     extends ReorderableDragStartListener {
   final Duration delay;
+  final BuildContext parentContext;
 
   const CustomReorderableDelayedDragStartListener({
     this.delay = kLongPressTimeout,
     Key? key,
     required Widget child,
     required int index,
+    required this.parentContext,
     bool enabled = true,
   }) : super(
           key: key,
@@ -187,6 +194,7 @@ class CustomReorderableDelayedDragStartListener
 
   @override
   MultiDragGestureRecognizer createRecognizer() {
+    FocusScope.of(parentContext).unfocus();
     return DelayedMultiDragGestureRecognizer(delay: delay, debugOwner: this);
   }
 }
@@ -290,7 +298,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                   color: Color(0xFF343a40),
                 ),
                 onTap: () {
-                  _titleFocusNode.unfocus();
+                  FocusScope.of(context).unfocus();
                   widget.onDelete(itemKey);
                 },
               ),

@@ -627,6 +627,10 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                                         .keywordNames
                                         ?.isNotEmpty ==
                                     true,
+                                '비어있는 아이템이 있습니다.': context
+                                        .read<ItemProvider>()
+                                        .hasNullItemTitle() ==
+                                    false
                               });
                               if (!fieldValidator.validateFields()) {
                                 return;
