@@ -83,6 +83,6 @@ class ItemProvider extends ChangeNotifier {
   void clearItems() {
     _items = [];
     _sortedItems = null;
-    _itemOrder = [0];
+    _itemOrder = [];
   }
 }
