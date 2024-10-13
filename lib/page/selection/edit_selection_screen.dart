@@ -217,115 +217,109 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
               children: [
                 AspectRatio(
                   aspectRatio: 1 / 1,
-                  child: Container(
-                    width: double.infinity,
-                    child: PageView.builder(
-                        controller: _pageController,
-                        onPageChanged: (index) {
-                          setState(() {
-                            _currentPage = index;
-                          });
-                        },
-                        scrollDirection: Axis.horizontal,
-                        physics: PageScrollPhysics(),
-                        itemCount: _imageNum + 1,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.0.w, vertical: 16.0.h),
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8)),
-                              child: index == _imageNum
-                                  ? InkWell(
-                                      onTap: () async {
-                                        if (index == _imageNum &&
-                                            _imageNum <= 4) {
-                                          await _pickImages(
-                                              ImageSource.gallery);
-                                        } else {
-                                          Toast.notify('최대 사진 개수를 초과했습니다.');
-                                        }
-                                      },
-                                      child: Container(
-                                        color: Color(0xFFf1f3f5),
-                                        child: Center(
-                                          child: SizedBox(
-                                            height: 26.0.h,
-                                            child: Image.asset(
-                                              'assets/icons/tab_add.png',
-                                              fit: BoxFit.contain,
-                                              color: Color(0xFF343a40),
-                                            ),
+                  child: PageView.builder(
+                      controller: _pageController,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentPage = index;
+                        });
+                      },
+                      scrollDirection: Axis.horizontal,
+                      physics: PageScrollPhysics(),
+                      itemCount: _imageNum + 1,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.0.w, vertical: 16.0.h),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            child: index == _imageNum
+                                ? InkWell(
+                                    onTap: () async {
+                                      if (index == _imageNum &&
+                                          _imageNum <= 4) {
+                                        await _pickImages(ImageSource.gallery);
+                                      } else {
+                                        Toast.notify('최대 사진 개수를 초과했습니다.');
+                                      }
+                                    },
+                                    child: Container(
+                                      color: Color(0xFFf1f3f5),
+                                      child: Center(
+                                        child: SizedBox(
+                                          height: 26.0.h,
+                                          child: Image.asset(
+                                            'assets/icons/tab_add.png',
+                                            fit: BoxFit.contain,
+                                            color: Color(0xFF343a40),
                                           ),
                                         ),
                                       ),
-                                    )
-                                  : Stack(
-                                      children: [
-                                        _isNetworkImage(
-                                                _initialImagePaths[index])
-                                            ? Container(
-                                                height: double.infinity,
-                                                width: double.infinity,
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                    image: NetworkImage(
-                                                        _initialImagePaths[
-                                                            index]),
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              )
-                                            : Image.file(
-                                                height: double.infinity,
-                                                width: double.infinity,
-                                                File(_initialImagePaths[index]),
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (BuildContext
-                                                        context,
-                                                    Object error,
-                                                    StackTrace? stackTrace) {
-                                                  return const Center(
-                                                    child: Text(
-                                                        'This image type is not supported'),
-                                                  );
-                                                },
-                                              ),
-                                        Positioned(
-                                          bottom: 14.0.h,
-                                          left: 14.0.w,
-                                          child: InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _initialImagePaths
-                                                    .removeAt(index);
-                                                _imageNum--;
-                                              });
-                                            },
-                                            child: Container(
-                                              child: Padding(
-                                                padding: EdgeInsets.all(7.0.h),
-                                                child: Image.asset(
-                                                  'assets/icons/icon_trash.png',
-                                                  color: Colors.white,
-                                                  fit: BoxFit.contain,
-                                                  height: 12.0.h,
-                                                ),
-                                              ),
+                                    ),
+                                  )
+                                : Stack(
+                                    children: [
+                                      _isNetworkImage(_initialImagePaths[index])
+                                          ? Container(
+                                              height: double.infinity,
+                                              width: double.infinity,
                                               decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.black
-                                                      .withOpacity(0.5)),
+                                                image: DecorationImage(
+                                                  image: NetworkImage(
+                                                      _initialImagePaths[
+                                                          index]),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            )
+                                          : Image.file(
+                                              height: double.infinity,
+                                              width: double.infinity,
+                                              File(_initialImagePaths[index]),
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (BuildContext context,
+                                                      Object error,
+                                                      StackTrace? stackTrace) {
+                                                return const Center(
+                                                  child: Text(
+                                                      'This image type is not supported'),
+                                                );
+                                              },
                                             ),
+                                      Positioned(
+                                        bottom: 14.0.h,
+                                        left: 14.0.w,
+                                        child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              _initialImagePaths
+                                                  .removeAt(index);
+                                              _imageNum--;
+                                            });
+                                          },
+                                          child: Container(
+                                            child: Padding(
+                                              padding: EdgeInsets.all(7.0.h),
+                                              child: Image.asset(
+                                                'assets/icons/icon_trash.png',
+                                                color: Colors.white,
+                                                fit: BoxFit.contain,
+                                                height: 12.0.h,
+                                              ),
+                                            ),
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.black
+                                                    .withOpacity(0.5)),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                            ),
-                          );
-                        }),
-                  ),
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        );
+                      }),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

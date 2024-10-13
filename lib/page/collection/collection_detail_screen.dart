@@ -72,28 +72,28 @@ class CollectionDetailScreen extends StatelessWidget {
                   color: Colors.white,
                   child: Padding(
                     padding: EdgeInsets.only(
-                        left: 16.0.w, right: 16.0.w, bottom: 36.0.h),
+                        top: 16.0.h,
+                        left: 16.0.w,
+                        right: 16.0.w,
+                        bottom: 36.0.h),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _collectionDetail.imageFilePath != null
-                            ? Padding(
-                                padding: EdgeInsets.only(top: 16.0.h),
-                                child: AspectRatio(
-                                  aspectRatio: 1 / 1,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8),
-                                    ),
-                                    child: Container(
-                                      height: 300.h,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                              _collectionDetail.imageFilePath!),
-                                          fit: BoxFit.cover,
-                                        ),
+                            ? AspectRatio(
+                                aspectRatio: 1 / 1,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(8),
+                                  ),
+                                  child: Container(
+                                    height: 300.h,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                            _collectionDetail.imageFilePath!),
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
