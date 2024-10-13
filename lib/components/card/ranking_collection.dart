@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:collect_er/components/ui_kit/tag_text_style.dart';
+import 'package:collect_er/components/ui_kit/tag_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -105,7 +105,7 @@ class RankingCollection extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TagTextStyle(
+                                TagText(
                                   tags: ['웬만한_냉면보다_맛있음'],
                                   color: Color(0xFFf1f3f5),
                                   maxLine: 2,

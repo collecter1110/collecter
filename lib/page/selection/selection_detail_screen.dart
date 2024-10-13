@@ -96,107 +96,106 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _selectionDetail.imageFilePaths != null
-                    ? Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: [
-                            AspectRatio(
-                              aspectRatio: 1 / 1,
-                              child: PageView.builder(
-                                  controller: _pageController,
-                                  onPageChanged: (index) {
-                                    setState(() {
-                                      _currentPage = index;
-                                    });
-                                  },
-                                  scrollDirection: Axis.horizontal,
-                                  physics: PageScrollPhysics(),
-                                  itemCount:
-                                      _selectionDetail.imageFilePaths!.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 16.0.h,
-                                        horizontal: 16.0.w,
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(8),
-                                        ),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: NetworkImage(
-                                                  _selectionDetail
-                                                      .imageFilePaths![index]),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                imageNum,
-                                (index) => Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 2.0.w),
-                                  child: Container(
-                                    width: 7.0.h,
-                                    height: 7.0.h,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: _currentPage == index
-                                          ? Color(0xFF212529)
-                                          : Color(0xFFdee2e6),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : SizedBox.shrink(),
                 Container(
                   color: Colors.white,
                   child: Padding(
                     padding: EdgeInsets.only(
-                        left: 16.0.w,
-                        right: 16.0.w,
-                        top: 26.0.h,
-                        bottom: 22.0.h),
+                      left: 16.0.w,
+                      right: 16.0.w,
+                      bottom: 36.0.h,
+                    ),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              _selectionDetail.title,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 22.sp,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w700,
-                                height: 1.45,
+                        _selectionDetail.imageFilePaths != null
+                            ? Padding(
+                                padding: EdgeInsets.only(top: 26.0.h),
+                                child: Column(
+                                  children: [
+                                    AspectRatio(
+                                      aspectRatio: 1 / 1,
+                                      child: PageView.builder(
+                                          controller: _pageController,
+                                          onPageChanged: (index) {
+                                            setState(() {
+                                              _currentPage = index;
+                                            });
+                                          },
+                                          scrollDirection: Axis.horizontal,
+                                          physics: PageScrollPhysics(),
+                                          itemCount: _selectionDetail
+                                              .imageFilePaths!.length,
+                                          itemBuilder: (context, index) {
+                                            return ClipRRect(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(8),
+                                              ),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                        _selectionDetail
+                                                                .imageFilePaths![
+                                                            index]),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                    SizedBox(height: 16.0.h),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: List.generate(
+                                        imageNum,
+                                        (index) => Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 2.0.w),
+                                          child: Container(
+                                            width: 7.0.h,
+                                            height: 7.0.h,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: _currentPage == index
+                                                  ? Color(0xFF212529)
+                                                  : Color(0xFFdee2e6),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : SizedBox.shrink(),
+                        Padding(
+                          padding: EdgeInsets.only(top: 26.0.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                _selectionDetail.title,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 22.sp,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.45,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                            _selectionDetail.link != null
-                                ? LinkButton(
-                                    linkUrl: _selectionDetail.link!,
-                                  )
-                                : SizedBox.shrink(),
-                          ],
+                              _selectionDetail.link != null
+                                  ? LinkButton(
+                                      linkUrl: _selectionDetail.link!,
+                                    )
+                                  : SizedBox.shrink(),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: 10.0.h,

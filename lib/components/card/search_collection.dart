@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
-import '../ui_kit/tag_text_style.dart';
+import '../ui_kit/tag_text.dart';
 
 class SearchCollection extends StatelessWidget {
   final CollectionModel collectionDetail;
@@ -99,7 +99,7 @@ class SearchCollection extends StatelessWidget {
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TagTextStyle(
+                              TagText(
                                 tags: collectionDetail.tags!,
                                 color: Color(0xFF868E96),
                                 maxLine: 2,
