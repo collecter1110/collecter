@@ -17,12 +17,13 @@ class CollectionTitleDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return Consumer<CollectionProvider>(
-            builder: (context, provider, child) {
-          List<CollectionModel>? collections = provider.myCollections;
-          int? selectedCollectionId = provider.collectionId;
+    return Consumer<CollectionProvider>(
+      builder: (context, provider, child) {
+        List<CollectionModel>? collections = provider.myCollections;
+        int? selectedCollectionId = provider.collectionId;
+
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
           return Container(
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
@@ -81,6 +82,7 @@ class CollectionTitleDialog extends StatelessWidget {
                             onTap: (value) {
                               setState(() {
                                 selectedCollectionId = value;
+                                // print(selectedCollectionId);
                               });
                             },
                           );
