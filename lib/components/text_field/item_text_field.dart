@@ -26,6 +26,25 @@ class _ItemTextFieldState extends State<ItemTextField> {
 
   late List<TextEditingController> _titleControllers = [];
 
+  void _removeItem(int itemKey) {
+    setState(() {
+      final int findItemIndex =
+          _itemIndexOrder.indexWhere((item) => item == itemKey);
+
+      if (findItemIndex != -1) {
+        if (_itemIndexOrder.length > 1) {
+          _itemIndexOrder.removeAt(findItemIndex);
+          _titleControllers.removeAt(findItemIndex);
+        } else {
+          _itemIndexOrder.clear();
+          _titleControllers.clear();
+        }
+      }
+      _removeItemsTitle(itemKey);
+      _saveItemsOrder();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -40,10 +59,9 @@ class _ItemTextFieldState extends State<ItemTextField> {
 
   @override
   void dispose() {
-    for (int i = 0; i < widget.itemNum; i++) {
+    for (int i = 0; i < _titleControllers.length; i++) {
       _titleControllers[i];
     }
-
     super.dispose();
   }
 
@@ -56,13 +74,17 @@ class _ItemTextFieldState extends State<ItemTextField> {
 
         _titleControllers.add(TextEditingController());
 
-        saveItemsOrder();
+        _saveItemsOrder();
       });
     }
   }
 
-  void saveItemsOrder() {
+  void _saveItemsOrder() {
     context.read<ItemProvider>().saveItemOrder = _itemIndexOrder;
+  }
+
+  void _removeItemsTitle(itemKey) {
+    context.read<ItemProvider>().removeItemTitle(itemKey);
   }
 
   @override
@@ -77,7 +99,13 @@ class _ItemTextFieldState extends State<ItemTextField> {
                 CurveTween(curve: Curves.linear),
               ),
             ),
-            child: child,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width,
+                maxHeight: MediaQuery.of(context).size.height * 0.9,
+              ),
+              child: child,
+            ),
           ),
         );
       },
@@ -92,6 +120,7 @@ class _ItemTextFieldState extends State<ItemTextField> {
                 delay: const Duration(
                   milliseconds: 150,
                 ),
+                parentContext: context,
                 index: index,
                 child: Row(
                   children: [
@@ -111,6 +140,9 @@ class _ItemTextFieldState extends State<ItemTextField> {
                       child: ItemWidget(
                         key: ValueKey(_itemIndexOrder[index]),
                         titleController: _titleControllers[index],
+                        onDelete: (itemKey) {
+                          _removeItem(itemKey);
+                        },
                       ),
                     ),
                   ],
@@ -119,6 +151,9 @@ class _ItemTextFieldState extends State<ItemTextField> {
             : ItemWidget(
                 key: ValueKey(_itemIndexOrder[index]),
                 titleController: _titleControllers[index],
+                onDelete: (itemKey) {
+                  _removeItem(itemKey);
+                },
               );
       },
       onReorder: (oldIndex, newIndex) {
@@ -132,7 +167,7 @@ class _ItemTextFieldState extends State<ItemTextField> {
 
         _titleControllers.insert(newIndex, titleController);
 
-        saveItemsOrder();
+        _saveItemsOrder();
       },
     );
   }
@@ -141,12 +176,14 @@ class _ItemTextFieldState extends State<ItemTextField> {
 class CustomReorderableDelayedDragStartListener
     extends ReorderableDragStartListener {
   final Duration delay;
+  final BuildContext parentContext;
 
   const CustomReorderableDelayedDragStartListener({
     this.delay = kLongPressTimeout,
     Key? key,
     required Widget child,
     required int index,
+    required this.parentContext,
     bool enabled = true,
   }) : super(
           key: key,
@@ -157,16 +194,19 @@ class CustomReorderableDelayedDragStartListener
 
   @override
   MultiDragGestureRecognizer createRecognizer() {
+    FocusScope.of(parentContext).unfocus();
     return DelayedMultiDragGestureRecognizer(delay: delay, debugOwner: this);
   }
 }
 
 class ItemWidget extends StatefulWidget {
   final TextEditingController titleController;
+  final Function(int) onDelete;
 
   const ItemWidget({
     Key? key,
     required this.titleController,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
@@ -236,7 +276,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                     height: 1,
                   ),
                   decoration: InputDecoration(
-                    hintText: '내용을 입력헤주세요.',
+                    hintText: '내용을 입력해주세요.',
                     hintStyle: TextStyle(
                       color: Color(0xffADB5BD),
                       fontSize: 14.sp,
@@ -257,7 +297,10 @@ class _ItemWidgetState extends State<ItemWidget> {
                   width: 20.0.h,
                   color: Color(0xFF343a40),
                 ),
-                onTap: () {},
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  widget.onDelete(itemKey);
+                },
               ),
             ],
           ),

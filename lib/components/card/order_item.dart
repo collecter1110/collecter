@@ -24,7 +24,7 @@ class OrderItem extends StatelessWidget {
             ),
           ),
         ),
-        Item(index: index),
+        Expanded(child: Item(index: index)),
       ],
     );
   }

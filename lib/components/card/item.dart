@@ -19,12 +19,12 @@ class Item extends StatelessWidget {
       return Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              spreadRadius: 0.5,
-              blurRadius: 3,
+              color: Color(0xFFe9ecef),
+              spreadRadius: 0,
+              blurRadius: 10,
               offset: Offset(0, 0),
             )
           ],
@@ -36,7 +36,7 @@ class Item extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                itemData[index].itemTitle!,
+                itemData[index].itemTitle,
                 style: TextStyle(
                   color: Color(0xFF343a40),
                   fontSize: 14.sp,
@@ -48,11 +48,6 @@ class Item extends StatelessWidget {
               SizedBox(
                 height: 16.0.h,
               ),
-              // itemData[index].itemLink != null
-              //     ? LinkButton(
-              //         linkUrl: itemData[index].itemLink!,
-              //       )
-              //     : SizedBox.shrink()
             ],
           ),
         ),

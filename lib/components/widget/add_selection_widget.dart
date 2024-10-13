@@ -123,7 +123,10 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     await fetchCollections();
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: double.infinity,
+      ),
+      isScrollControlled: false,
       builder: (context) {
         return CollectionTitleDialog();
       },
@@ -627,6 +630,10 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                                         .keywordNames
                                         ?.isNotEmpty ==
                                     true,
+                                '비어있는 아이템이 있습니다.': context
+                                        .read<ItemProvider>()
+                                        .hasNullItemTitle() ==
+                                    false
                               });
                               if (!fieldValidator.validateFields()) {
                                 return;

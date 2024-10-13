@@ -48,6 +48,8 @@ class SelectionDetailScreen extends StatelessWidget {
       }
 
       return Scaffold(
+        backgroundColor:
+            _selectionDetail.items == null ? Colors.white : Color(0xFFf8f9fa),
         appBar: CustomAppbar(
           titleText: '셀렉션',
           actionButtonOnTap: () async {
@@ -55,144 +57,167 @@ class SelectionDetailScreen extends StatelessWidget {
           },
           actionButton: 'icon_more',
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _selectionDetail.imageFilePaths != null
-                  ? Container(
-                      height: MediaQuery.of(context).size.width,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          physics: PageScrollPhysics(),
-                          itemCount: _selectionDetail.imageFilePaths!.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                      _selectionDetail.imageFilePaths![index]),
-                                  fit: BoxFit.cover,
+        body: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.white,
+                Color(0xFFf8f9fa),
+              ],
+              stops: [0.49, 0.51],
+            ),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _selectionDetail.imageFilePaths != null
+                    ? Container(
+                        height: MediaQuery.of(context).size.width,
+                        child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            physics: PageScrollPhysics(),
+                            itemCount: _selectionDetail.imageFilePaths!.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage(_selectionDetail
+                                        .imageFilePaths![index]),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                            );
-                          }),
-                    )
-                  : SizedBox.shrink(),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: 16.0.w, right: 16.0.w, top: 26.0.h, bottom: 42.0.h),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                              );
+                            }),
+                      )
+                    : SizedBox.shrink(),
+                Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        left: 16.0.w,
+                        right: 16.0.w,
+                        top: 26.0.h,
+                        bottom: 42.0.h),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          _selectionDetail.title,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 22.sp,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w700,
-                            height: 1.45,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              _selectionDetail.title,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 22.sp,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w700,
+                                height: 1.45,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                            SizedBox(
+                              width: 10.0.w,
+                            ),
+                            _selectionDetail.link != null
+                                ? LinkButton(
+                                    linkUrl: _selectionDetail.link!,
+                                  )
+                                : SizedBox.shrink(),
+                          ],
                         ),
                         SizedBox(
-                          width: 10.0.w,
+                          height: 10.0.h,
                         ),
-                        _selectionDetail.link != null
-                            ? LinkButton(
-                                linkUrl: _selectionDetail.link!,
-                              )
-                            : SizedBox.shrink(),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10.0.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          _selectionDetail.ownerName,
-                          style: TextStyle(
-                            color: Color(0xFF868e96),
-                            fontSize: 12.sp,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            height: 1.5,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              _selectionDetail.ownerName,
+                              style: TextStyle(
+                                color: Color(0xFF868e96),
+                                fontSize: 12.sp,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w600,
+                                height: 1.5,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2.0.w),
+                              child: Image.asset(
+                                'assets/images/image_vertical_line.png',
+                                fit: BoxFit.contain,
+                                color: Color(0xFF868e96),
+                                height: 10.0.h,
+                              ),
+                            ),
+                            Text(
+                              _selectionDetail.createdAt!,
+                              style: TextStyle(
+                                color: Color(0xFF868e96),
+                                fontSize: 12.sp,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w600,
+                                height: 1.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 22.0.h,
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 2.0.w),
-                          child: Image.asset(
-                            'assets/images/image_vertical_line.png',
-                            fit: BoxFit.contain,
-                            color: Color(0xFF868e96),
-                            height: 10.0.h,
-                          ),
+                          padding: EdgeInsets.symmetric(vertical: 4.0.h),
+                          child: _selectionDetail.keywords != null
+                              ? Wrap(
+                                  direction: Axis.horizontal,
+                                  alignment: WrapAlignment.start,
+                                  spacing: 5.0.w,
+                                  runSpacing: 8.0.h,
+                                  children:
+                                      _selectionDetail.keywords!.map((keyword) {
+                                    return Keyword(
+                                        keywordName: keyword.keywordName);
+                                  }).toList(),
+                                )
+                              : SizedBox.shrink(),
                         ),
-                        Text(
-                          _selectionDetail.createdAt!,
-                          style: TextStyle(
-                            color: Color(0xFF868e96),
-                            fontSize: 12.sp,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w600,
-                            height: 1.5,
-                          ),
+                        SizedBox(
+                          height: 22.0.h,
                         ),
+                        _selectionDetail.description != null
+                            ? ExpandableText(
+                                maxLine: 3,
+                                textStyle: TextStyle(
+                                  color: Color(0xFF343a40),
+                                  fontSize: 14.sp,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.43,
+                                ),
+                                text: _selectionDetail.description!)
+                            : SizedBox.shrink()
                       ],
                     ),
-                    SizedBox(
-                      height: 22.0.h,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4.0.h),
-                      child: _selectionDetail.keywords != null
-                          ? Wrap(
-                              direction: Axis.horizontal,
-                              alignment: WrapAlignment.start,
-                              spacing: 5.0.w,
-                              runSpacing: 8.0.h,
-                              children:
-                                  _selectionDetail.keywords!.map((keyword) {
-                                return Keyword(
-                                    keywordName: keyword.keywordName);
-                              }).toList(),
-                            )
-                          : SizedBox.shrink(),
-                    ),
-                    SizedBox(
-                      height: 22.0.h,
-                    ),
-                    ExpandableText(
-                        maxLine: 3,
-                        textStyle: TextStyle(
-                          color: Color(0xFF343a40),
-                          fontSize: 14.sp,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w500,
-                          height: 1.43,
-                        ),
-                        text: _selectionDetail.description ?? ''),
-                  ],
+                  ),
                 ),
-              ),
-              SelectionItemWidget(
-                isOrder: _selectionDetail.isOrdered!,
-                itemLength: _selectionDetail.items?.length ?? 0,
-              ),
-            ],
+                _selectionDetail.items != null
+                    ? SelectionItemWidget(
+                        isOrder: _selectionDetail.isOrdered!,
+                        itemLength: _selectionDetail.items!.length,
+                      )
+                    : SizedBox.shrink()
+              ],
+            ),
           ),
         ),
       );

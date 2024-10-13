@@ -127,8 +127,16 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: CircularProgressIndicator(),
                           )
                         : _searchText == null
-                            ? const Center(
-                                child: Text('검색어를 입력해주세요.'),
+                            ? Center(
+                                child: Text(
+                                  '검색어를 입력해보세요!',
+                                  style: TextStyle(
+                                    color: Color(0xFF868e96),
+                                    fontSize: 14.sp,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                               )
                             : _categoryIndex == 0
                                 ? SearchCollectionWidget(isKeyword: _isKeyword)

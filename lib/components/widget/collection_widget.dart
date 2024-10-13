@@ -18,6 +18,7 @@ class CollectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
       final List<CollectionModel>? _collections;
+      // print('${_collections?.length}');
       if (isLiked == null) {
         _collections = provider.searchUsersCollections;
       } else {
@@ -29,7 +30,7 @@ class CollectionWidget extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return _collections != null
+        return _collections!.isNotEmpty
             ? GridView.builder(
                 padding:
                     EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),
@@ -50,8 +51,18 @@ class CollectionWidget extends StatelessWidget {
                   );
                 },
               )
-            : const Center(
-                child: Text('콜렉션을 추가해주세요.'),
+            : Center(
+                child: Text(
+                  isLiked == true
+                      ? '좋아요를 눌러 마음에 드는 컬렉션을 저장해보세요!'
+                      : '새로운 컬렉션을 추가해보세요!',
+                  style: TextStyle(
+                    color: Color(0xFF868e96),
+                    fontSize: 14.sp,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               );
       } else {
         return const Center(
