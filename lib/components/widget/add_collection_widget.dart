@@ -66,8 +66,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     );
     try {
       if (_pickedImage != null && _pickedImage != '') {
-        _imageFilePath =
-            await ApiService.uploadAndGetImage(_pickedImage!, 'collections');
+        _imageFilePath = await ApiService.uploadAndGetImageFilePath(
+            _pickedImage!, 'collections');
       }
       await ApiService.addCollection(_title!, _description, _imageFilePath,
           context.read<TagProvider>().tagNames, _isPrivate);

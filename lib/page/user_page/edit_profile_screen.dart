@@ -12,6 +12,7 @@ import '../../components/pop_up/toast.dart';
 import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/services/api_service.dart';
+import '../../data/services/data_management.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({
@@ -77,7 +78,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(_changedImageFilePath!),
+            image: NetworkImage(
+              DataManagement.getFullImageUrl('user', _changedImageFilePath!),
+            ),
             fit: BoxFit.cover,
           ),
         ),
@@ -115,7 +118,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (_isChangedImage) {
         if (_pickedImage != null) {
           _changedImageFilePath =
-              await ApiService.uploadAndGetImage(_pickedImage!, 'user');
+              await ApiService.uploadAndGetImageFilePath(_pickedImage!, 'user');
         } else {
           _changedImageFilePath = null;
         }

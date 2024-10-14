@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/collection_provider.dart';
@@ -86,5 +87,14 @@ class DataManagement {
       }
       await nextNavigate();
     }
+  }
+
+  static String getFullImageUrl(
+      String storageFolderName, String imageFilePath) {
+    // 환경 변수에서 Supabase URL 가져오기
+    final String supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
+
+    // 전체 URL 생성 (버킷 이름과 폴더 경로 포함)
+    return '$supabaseUrl/storage/v1/object/public/images/$storageFolderName/$imageFilePath';
   }
 }

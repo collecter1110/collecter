@@ -1,6 +1,7 @@
 import 'package:collect_er/components/button/like_button.dart';
 import 'package:collect_er/components/pop_up/user_info_dialog.dart';
 import 'package:collect_er/components/widget/selection_widget.dart';
+import 'package:collect_er/data/services/data_management.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -94,7 +95,11 @@ class CollectionDetailScreen extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
                                           image: NetworkImage(
-                                              _collectionDetail.imageFilePath!),
+                                            DataManagement.getFullImageUrl(
+                                                'collections',
+                                                _collectionDetail
+                                                    .imageFilePath!),
+                                          ),
                                           fit: BoxFit.cover,
                                         ),
                                       ),

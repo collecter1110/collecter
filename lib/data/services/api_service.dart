@@ -477,69 +477,36 @@ class ApiService {
     }
   }
 
-  static Future<String?> uploadAndGetImage(
+  static Future<String> uploadAndGetImageFilePath(
       XFile xfile, String folderName) async {
     try {
-      String fileName = path.basename(xfile.path);
-      final String filePath = '$folderName/$fileName';
+      String _fileName = path.basename(xfile.path);
+      final String filePath = '$folderName/$_fileName';
       File file = File(xfile.path);
       await _supabase.storage.from('images').upload(filePath, file);
 
-      final String? _imageFilePath =
-          _supabase.storage.from('images').getPublicUrl(filePath);
-
-      if (_imageFilePath != null) {
-        print('파일 업로드 성공: $_imageFilePath');
-        return _imageFilePath;
-      }
+      print('파일 업로드 성공: $_fileName');
+      return _fileName;
     } catch (e) {
       handleError('', 'upload image error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
 
-  static Future<List<String>> uploadAndGetImages(
+  static Future<List<String>> uploadAndGetImageFilePaths(
       List<XFile> xfiles, String folderName) async {
-    List<Future<String?>> uploadTasks = [];
+    List<String> _fileNames = [];
     try {
       for (var xfile in xfiles) {
-        String fileName = path.basename(xfile.path);
-        String filePath = '$folderName/$fileName';
-        File file = File(xfile.path);
-
-        uploadTasks.add(_uploadFileAndGetUrl(file, filePath));
+        String _fileName = await uploadAndGetImageFilePath(xfile, 'selections');
+        _fileNames.add(_fileName);
       }
-
-      List<String?> imageFilePaths = await Future.wait(uploadTasks);
-
-      return imageFilePaths
-          .where((path) => path != null)
-          .cast<String>()
-          .toList();
+      return _fileNames;
     } on SocketException catch (e) {
       handleError('', 'Network error: ${e.message}');
       throw Exception('Network error occurred: ${e.message}');
     } catch (e) {
       handleError('', 'uploadImages error: $e');
-      throw Exception('An unexpected error occurred: $e');
-    }
-  }
-
-  static Future<String?> _uploadFileAndGetUrl(
-      File file, String filePath) async {
-    try {
-      await _supabase.storage.from('images').upload(filePath, file);
-      final String? _imageFilePath =
-          _supabase.storage.from('images').getPublicUrl(filePath);
-      if (_imageFilePath != null) {
-        print('파일 업로드 성공: $_imageFilePath');
-      }
-      return _imageFilePath;
-    } on SocketException catch (e) {
-      handleError('File format', 'Invalid file format: ${filePath}');
-      throw Exception('Invalid file format: $e');
-    } catch (e) {
-      handleError('Upload', 'uploadImages error ${filePath}');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -875,7 +842,21 @@ class ApiService {
 
   static Future<void> deleteCollection(int collectionId) async {
     try {
-      await _supabase.from('collections').delete().eq('id', collectionId);
+      final response = await _supabase
+          .from('collections')
+          .delete()
+          .eq('id', collectionId)
+          .select('image_file_path')
+          .single();
+
+      String? imageFilePath = response['image_file_path'];
+
+      if (imageFilePath != null) {
+        print(imageFilePath);
+        await deleteStorageImage('collections', imageFilePath);
+      } else {
+        print('No images to delete');
+      }
     } catch (e) {
       handleError('', 'deleteCollection error');
       print('Failed to delete data: $e');
@@ -892,6 +873,24 @@ class ApiService {
     } catch (e) {
       handleError('', 'deleteSelection error');
       print('Failed to delete selection data: $e');
+    }
+  }
+
+  static Future<void> deleteStorageImage(
+      String storageFolderName, String imageFilePath) async {
+    try {
+      final response = await _supabase.storage
+          .from('images')
+          .remove(['$storageFolderName/$imageFilePath']);
+      print(response);
+
+      if (response.isEmpty) {
+        print('Deleting image from path: collections/$imageFilePath');
+        print('Failed to delete storage image');
+      }
+    } catch (e) {
+      handleError('', 'deleteStorageImage error');
+      print('Failed to delete storage image: $e');
     }
   }
 

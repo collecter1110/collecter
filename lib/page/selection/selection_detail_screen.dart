@@ -12,6 +12,7 @@ import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
 import '../../components/widget/selection_item_widget.dart';
 import '../../data/provider/selection_provider.dart';
+import '../../data/services/data_management.dart';
 
 class SelectionDetailScreen extends StatefulWidget {
   const SelectionDetailScreen({
@@ -135,9 +136,13 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                     image: NetworkImage(
-                                                        _selectionDetail
-                                                                .imageFilePaths![
-                                                            index]),
+                                                      DataManagement
+                                                          .getFullImageUrl(
+                                                              'selections',
+                                                              _selectionDetail
+                                                                      .imageFilePaths![
+                                                                  index]),
+                                                    ),
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),

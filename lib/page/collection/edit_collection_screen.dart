@@ -15,6 +15,7 @@ import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/model/collection_model.dart';
 import '../../data/provider/tag_provider.dart';
 import '../../data/services/api_service.dart';
+import '../../data/services/data_management.dart';
 
 class EditCollectionScreen extends StatefulWidget {
   final CollectionModel collectionDetail;
@@ -88,7 +89,10 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       return Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(_changedImageFilePath!),
+            image: NetworkImage(
+              DataManagement.getFullImageUrl(
+                  'collections', _changedImageFilePath!),
+            ),
             fit: BoxFit.cover,
           ),
         ),
@@ -125,8 +129,8 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
     try {
       if (_isChangedImage) {
         if (_pickedImage != null) {
-          _changedImageFilePath =
-              await ApiService.uploadAndGetImage(_pickedImage!, 'collections');
+          _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
+              _pickedImage!, 'collections');
         } else {
           _changedImageFilePath = null;
         }

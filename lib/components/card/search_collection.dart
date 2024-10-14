@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
+import '../../data/services/data_management.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 import '../ui_kit/tag_text.dart';
@@ -45,7 +46,10 @@ class SearchCollection extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: NetworkImage(collectionDetail.imageFilePath!),
+                          image: NetworkImage(
+                            DataManagement.getFullImageUrl(
+                                'collections', collectionDetail.imageFilePath!),
+                          ),
                           fit: BoxFit.cover,
                         ),
                       ),

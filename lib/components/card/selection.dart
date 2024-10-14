@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/selection_provider.dart';
+import '../../data/services/data_management.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
@@ -70,7 +71,10 @@ class Selection extends StatelessWidget {
                             width: double.infinity,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: NetworkImage(thumbFilePath!),
+                                image: NetworkImage(
+                                  DataManagement.getFullImageUrl(
+                                      'selections', thumbFilePath!),
+                                ),
                                 fit: BoxFit.cover,
                               ),
                             ),

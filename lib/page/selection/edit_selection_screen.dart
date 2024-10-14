@@ -18,6 +18,7 @@ import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/model/selection_model.dart';
 import '../../data/provider/item_provider.dart';
+import '../../data/services/data_management.dart';
 
 class EditSelectionScreen extends StatefulWidget {
   final SelectionModel selectionDetail;
@@ -119,7 +120,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
 
     if (localImages.isNotEmpty) {
       List<String> uploadedImageUrls =
-          await ApiService.uploadAndGetImages(localImages, folderName);
+          await ApiService.uploadAndGetImageFilePaths(localImages, folderName);
       finalImagePaths.addAll(uploadedImageUrls);
     }
 
@@ -266,8 +267,12 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
                                                   image: NetworkImage(
-                                                      _initialImagePaths[
-                                                          index]),
+                                                    DataManagement
+                                                        .getFullImageUrl(
+                                                            'selections',
+                                                            _initialImagePaths[
+                                                                index]),
+                                                  ),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
