@@ -840,31 +840,64 @@ class ApiService {
     }
   }
 
-  static Future<void> deleteCollection(int collectionId) async {
+  static Future<void> deleteCollection(int collectionId, int userId) async {
     try {
-      final response = await _supabase
+      final collectionData = await _supabase
           .from('collections')
-          .delete()
+          .select('image_file_path, selection_num')
           .eq('id', collectionId)
-          .select('image_file_path')
           .single();
 
-      String? imageFilePath = response['image_file_path'];
+      String? imageFilePath = collectionData['image_file_path'];
+      int selectionNum = collectionData['selection_num'];
 
       if (imageFilePath != null) {
-        print(imageFilePath);
-        await deleteStorageImage('collections', imageFilePath);
-      } else {
-        print('No images to delete');
+        List<String> imageFilePaths = [];
+        imageFilePaths.add(imageFilePath);
+        await deleteStorageImages('collections', imageFilePaths);
       }
+
+      if (selectionNum != 0) {
+        final selectionImageFilePaths = await _supabase
+            .from('selections')
+            .select('image_file_paths')
+            .eq('collection_id', collectionId)
+            .eq('owner_id', userId);
+
+        List<String> imageFilePaths = [];
+
+        for (var item in selectionImageFilePaths) {
+          if (item['image_file_paths'] != null) {
+            imageFilePaths.addAll(List<String>.from(item['image_file_paths']));
+          }
+        }
+        await deleteStorageImages('selections', imageFilePaths);
+      }
+      await _supabase.from('collections').delete().eq('id', collectionId);
     } catch (e) {
       handleError('', 'deleteCollection error');
       print('Failed to delete data: $e');
     }
   }
 
-  static Future<void> deleteSelection(int collectionId, int selectionId) async {
+  static Future<void> deleteSelection(
+      int collectionId, int selectionId, int ownerId, int userId) async {
     try {
+      if (ownerId == userId) {
+        final selectionImageFilePaths = await _supabase
+            .from('selections')
+            .select('image_file_paths')
+            .eq('collection_id', collectionId)
+            .eq('selection_id', selectionId)
+            .single();
+
+        if (selectionImageFilePaths['image_file_paths'] != null) {
+          List<String> imageFilePaths = [];
+          imageFilePaths =
+              List<String>.from(selectionImageFilePaths['image_file_paths']);
+          await deleteStorageImages('selections', imageFilePaths);
+        }
+      }
       await _supabase
           .from('selections')
           .delete()
@@ -876,20 +909,26 @@ class ApiService {
     }
   }
 
-  static Future<void> deleteStorageImage(
-      String storageFolderName, String imageFilePath) async {
+  static Future<void> deleteStorageImages(
+    String storageFolderName,
+    List<String> imageFilePaths,
+  ) async {
     try {
-      final response = await _supabase.storage
-          .from('images')
-          .remove(['$storageFolderName/$imageFilePath']);
-      print(response);
+      List<String> fullFilePaths = [];
+
+      fullFilePaths = imageFilePaths
+          .map((filePath) => '$storageFolderName/$filePath')
+          .toList();
+
+      final response =
+          await _supabase.storage.from('images').remove(fullFilePaths);
 
       if (response.isEmpty) {
-        print('Deleting image from path: collections/$imageFilePath');
-        print('Failed to delete storage image');
+        print('Deleting images from paths: $fullFilePaths');
+        print('Failed to delete storage images');
       }
     } catch (e) {
-      handleError('', 'deleteStorageImage error');
+      handleError('', 'deleteStorageImages error');
       print('Failed to delete storage image: $e');
     }
   }
