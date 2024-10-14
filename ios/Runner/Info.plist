@@ -105,5 +105,10 @@
     <!-- Permission options for the `appTrackingTransparency` -->
     <!-- <key>NSUserTrackingUsageDescription</key>
 	<string>This identifier will be used to deliver personalized ads to you.</string> -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+  		<string>sms</string>
+  		<string>tel</string>
+	</array>
 </dict>
 </plist>

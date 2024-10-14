@@ -13,16 +13,38 @@ import '../../components/ui_kit/keyword.dart';
 import '../../components/widget/selection_item_widget.dart';
 import '../../data/provider/selection_provider.dart';
 
-class SelectionDetailScreen extends StatelessWidget {
+class SelectionDetailScreen extends StatefulWidget {
   const SelectionDetailScreen({
     super.key,
   });
+
+  @override
+  State<SelectionDetailScreen> createState() => _SelectionDetailScreenState();
+}
+
+class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
+  final PageController _pageController = PageController();
+
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final String? _routeName = ModalRoute.of(context)?.settings.name;
     return Consumer<SelectionProvider>(builder: (context, provider, child) {
       final SelectionModel _selectionDetail = provider.selectionDetail!;
+      final int imageNum = _selectionDetail.imageFilePaths?.length ?? 0;
+
       Future<void> _showDialog() async {
         final storage = FlutterSecureStorage();
         final userIdString = await storage.read(key: 'USER_ID');
@@ -74,65 +96,106 @@ class SelectionDetailScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _selectionDetail.imageFilePaths != null
-                    ? Container(
-                        height: MediaQuery.of(context).size.width,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            physics: PageScrollPhysics(),
-                            itemCount: _selectionDetail.imageFilePaths!.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(_selectionDetail
-                                        .imageFilePaths![index]),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              );
-                            }),
-                      )
-                    : SizedBox.shrink(),
                 Container(
                   color: Colors.white,
                   child: Padding(
                     padding: EdgeInsets.only(
-                        left: 16.0.w,
-                        right: 16.0.w,
-                        top: 26.0.h,
-                        bottom: 42.0.h),
+                      left: 16.0.w,
+                      right: 16.0.w,
+                      bottom: 36.0.h,
+                    ),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              _selectionDetail.title,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 22.sp,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w700,
-                                height: 1.45,
+                        _selectionDetail.imageFilePaths != null
+                            ? Padding(
+                                padding: EdgeInsets.only(top: 26.0.h),
+                                child: Column(
+                                  children: [
+                                    AspectRatio(
+                                      aspectRatio: 1 / 1,
+                                      child: PageView.builder(
+                                          controller: _pageController,
+                                          onPageChanged: (index) {
+                                            setState(() {
+                                              _currentPage = index;
+                                            });
+                                          },
+                                          scrollDirection: Axis.horizontal,
+                                          physics: PageScrollPhysics(),
+                                          itemCount: _selectionDetail
+                                              .imageFilePaths!.length,
+                                          itemBuilder: (context, index) {
+                                            return ClipRRect(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(8),
+                                              ),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                        _selectionDetail
+                                                                .imageFilePaths![
+                                                            index]),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                    SizedBox(height: 16.0.h),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: List.generate(
+                                        imageNum,
+                                        (index) => Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 2.0.w),
+                                          child: Container(
+                                            width: 7.0.h,
+                                            height: 7.0.h,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: _currentPage == index
+                                                  ? Color(0xFF212529)
+                                                  : Color(0xFFdee2e6),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : SizedBox.shrink(),
+                        Padding(
+                          padding: EdgeInsets.only(top: 26.0.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                _selectionDetail.title,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 22.sp,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.45,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                            SizedBox(
-                              width: 10.0.w,
-                            ),
-                            _selectionDetail.link != null
-                                ? LinkButton(
-                                    linkUrl: _selectionDetail.link!,
-                                  )
-                                : SizedBox.shrink(),
-                          ],
+                              _selectionDetail.link != null
+                                  ? LinkButton(
+                                      linkUrl: _selectionDetail.link!,
+                                    )
+                                  : SizedBox.shrink(),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: 10.0.h,
@@ -144,7 +207,7 @@ class SelectionDetailScreen extends StatelessWidget {
                             Text(
                               _selectionDetail.ownerName,
                               style: TextStyle(
-                                color: Color(0xFF868e96),
+                                color: Color(0xFFadb5bd),
                                 fontSize: 12.sp,
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w600,
@@ -156,14 +219,14 @@ class SelectionDetailScreen extends StatelessWidget {
                               child: Image.asset(
                                 'assets/images/image_vertical_line.png',
                                 fit: BoxFit.contain,
-                                color: Color(0xFF868e96),
+                                color: Color(0xFFadb5bd),
                                 height: 10.0.h,
                               ),
                             ),
                             Text(
                               _selectionDetail.createdAt!,
                               style: TextStyle(
-                                color: Color(0xFF868e96),
+                                color: Color(0xFFadb5bd),
                                 fontSize: 12.sp,
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w600,
@@ -175,37 +238,34 @@ class SelectionDetailScreen extends StatelessWidget {
                         SizedBox(
                           height: 22.0.h,
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 4.0.h),
-                          child: _selectionDetail.keywords != null
-                              ? Wrap(
-                                  direction: Axis.horizontal,
-                                  alignment: WrapAlignment.start,
-                                  spacing: 5.0.w,
-                                  runSpacing: 8.0.h,
-                                  children:
-                                      _selectionDetail.keywords!.map((keyword) {
-                                    return Keyword(
-                                        keywordName: keyword.keywordName);
-                                  }).toList(),
-                                )
-                              : SizedBox.shrink(),
-                        ),
-                        SizedBox(
-                          height: 22.0.h,
-                        ),
                         _selectionDetail.description != null
-                            ? ExpandableText(
-                                maxLine: 3,
-                                textStyle: TextStyle(
-                                  color: Color(0xFF343a40),
-                                  fontSize: 14.sp,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.43,
-                                ),
-                                text: _selectionDetail.description!)
-                            : SizedBox.shrink()
+                            ? Padding(
+                                padding: EdgeInsets.only(bottom: 22.0.h),
+                                child: ExpandableText(
+                                    maxLine: 3,
+                                    textStyle: TextStyle(
+                                      color: Color(0xFF343a40),
+                                      fontSize: 14.sp,
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.43,
+                                    ),
+                                    text: _selectionDetail.description!),
+                              )
+                            : SizedBox.shrink(),
+                        _selectionDetail.keywords != null
+                            ? Wrap(
+                                direction: Axis.horizontal,
+                                alignment: WrapAlignment.start,
+                                spacing: 5.0.w,
+                                runSpacing: 8.0.h,
+                                children:
+                                    _selectionDetail.keywords!.map((keyword) {
+                                  return Keyword(
+                                      keywordName: keyword.keywordName);
+                                }).toList(),
+                              )
+                            : SizedBox.shrink(),
                       ],
                     ),
                   ),

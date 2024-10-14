@@ -10,7 +10,7 @@ import '../../components/pop_up/edit_collection_dialog.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
-import '../../components/ui_kit/tag_text_style.dart';
+import '../../components/ui_kit/tag_text.dart';
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 
@@ -72,14 +72,17 @@ class CollectionDetailScreen extends StatelessWidget {
                   color: Colors.white,
                   child: Padding(
                     padding: EdgeInsets.only(
-                        left: 16.0.w, right: 16.0.w, bottom: 36.0.h),
+                      left: 16.0.w,
+                      right: 16.0.w,
+                      bottom: 36.0.h,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _collectionDetail.imageFilePath != null
                             ? Padding(
-                                padding: EdgeInsets.only(top: 16.0.h),
+                                padding: EdgeInsets.only(top: 26.0.h),
                                 child: AspectRatio(
                                   aspectRatio: 1 / 1,
                                   child: ClipRRect(
@@ -100,32 +103,30 @@ class CollectionDetailScreen extends StatelessWidget {
                                 ),
                               )
                             : SizedBox.shrink(),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 26.0.h,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                _collectionDetail.title,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 22.sp,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.4,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
+                        SizedBox(
+                          height: 26.0.h,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              _collectionDetail.title,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 22.sp,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w700,
+                                height: 1.4,
                               ),
-                              likedButton(
-                                collectionId: _collectionDetail.id,
-                                isLiked: _collectionDetail.isLiked!,
-                                likedNum: _collectionDetail.likeNum!,
-                              ),
-                            ],
-                          ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                            likedButton(
+                              collectionId: _collectionDetail.id,
+                              isLiked: _collectionDetail.isLiked!,
+                              likedNum: _collectionDetail.likeNum!,
+                            ),
+                          ],
                         ),
                         SizedBox(
                           height: 10.0.h,
@@ -137,7 +138,7 @@ class CollectionDetailScreen extends StatelessWidget {
                             Text(
                               _collectionDetail.userName,
                               style: TextStyle(
-                                color: Color(0xFF868e96),
+                                color: Color(0xFFadb5bd),
                                 fontSize: 12.sp,
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w600,
@@ -149,14 +150,14 @@ class CollectionDetailScreen extends StatelessWidget {
                               child: Image.asset(
                                 'assets/images/image_vertical_line.png',
                                 fit: BoxFit.contain,
-                                color: Color(0xFF868e96),
+                                color: Color(0xFFadb5bd),
                                 height: 10.0.h,
                               ),
                             ),
                             Text(
                               _collectionDetail.createdAt!,
                               style: TextStyle(
-                                color: Color(0xFF868e96),
+                                color: Color(0xFFadb5bd),
                                 fontSize: 12.sp,
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w600,
@@ -165,43 +166,35 @@ class CollectionDetailScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        _collectionDetail.description != null
-                            ? Padding(
-                                padding: EdgeInsets.symmetric(vertical: 22.0.h),
-                                child: ExpandableText(
-                                    maxLine: 3,
-                                    textStyle: TextStyle(
-                                      color: Color(0xFF343a40),
-                                      fontSize: 14.sp,
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w500,
-                                      height: 1.43,
-                                    ),
-                                    text: _collectionDetail.description!),
-                              )
-                            : SizedBox.shrink(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 4.0.h),
-                          child: _collectionDetail.tags != null
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TagTextStyle(
-                                      tags: _collectionDetail.tags!,
-                                      color: Color(0xFF868E96),
-                                      maxLine: 3,
-                                    ),
-                                  ],
-                                )
-                              : SizedBox.shrink(),
-                        ),
                         SizedBox(
                           height: 22.0.h,
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 4.0.h),
-                          child: _collectionDetail.primaryKeywords != null
-                              ? Wrap(
+                        _collectionDetail.description != null
+                            ? ExpandableText(
+                                maxLine: 3,
+                                textStyle: TextStyle(
+                                  color: Color(0xFF343a40),
+                                  fontSize: 14.sp,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.43,
+                                ),
+                                text: _collectionDetail.description!)
+                            : SizedBox.shrink(),
+                        _collectionDetail.tags != null
+                            ? Padding(
+                                padding: EdgeInsets.only(top: 14.0.h),
+                                child: TagText(
+                                  tags: _collectionDetail.tags!,
+                                  color: Color(0xFF868E96),
+                                  maxLine: 3,
+                                ),
+                              )
+                            : SizedBox.shrink(),
+                        _collectionDetail.primaryKeywords != null
+                            ? Padding(
+                                padding: EdgeInsets.only(top: 22.0.h),
+                                child: Wrap(
                                   direction: Axis.horizontal,
                                   alignment: WrapAlignment.start,
                                   spacing: 5.0.w,
@@ -211,9 +204,9 @@ class CollectionDetailScreen extends StatelessWidget {
                                     return Keyword(
                                         keywordName: keyword.keywordName);
                                   }).toList(),
-                                )
-                              : SizedBox.shrink(),
-                        ),
+                                ),
+                              )
+                            : SizedBox.shrink(),
                       ],
                     ),
                   ),
@@ -244,7 +237,6 @@ class CollectionDetailScreen extends StatelessWidget {
                           ? Padding(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 18.0.w,
-                                vertical: 20.0.h,
                               ),
                               child: SelectionWidget(
                                   routeName: _routeName!,

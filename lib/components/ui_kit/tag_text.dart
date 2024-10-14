@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class TagTextStyle extends StatelessWidget {
+class TagText extends StatelessWidget {
   final List<dynamic> tags;
   final Color color;
   final int? maxLine;
-  const TagTextStyle({
+  const TagText({
     super.key,
     required this.tags,
     required this.color,

@@ -21,7 +21,6 @@ class SelectionProvider with ChangeNotifier {
 
   set getCollectionId(int collectionId) {
     _collectionId = collectionId;
-    getSelectionData();
   }
 
   set getSelectionProperties(PropertiesData properties) {
@@ -30,6 +29,7 @@ class SelectionProvider with ChangeNotifier {
 
   Future<void> getSelectionData() async {
     _state = ConnectionState.waiting;
+    await Future.delayed(Duration(milliseconds: 300));
 
     try {
       await fetchSelectionData();
