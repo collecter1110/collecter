@@ -484,7 +484,6 @@ class ApiService {
       final String filePath = '$folderName/$_fileName';
       File file = File(xfile.path);
       await _supabase.storage.from('images').upload(filePath, file);
-
       print('파일 업로드 성공: $_fileName');
       return _fileName;
     } catch (e) {
@@ -609,11 +608,17 @@ class ApiService {
       int collectionId,
       String title,
       String? description,
+      String? deleteImageFilePath,
       String? imageFilePath,
       List<String>? tags,
       bool isPrivate) async {
     try {
-      await Supabase.instance.client.from('collections').update({
+      if (deleteImageFilePath != null) {
+        await _supabase.storage
+            .from('images')
+            .remove(['collections/${deleteImageFilePath}']);
+      }
+      await _supabase.from('collections').update({
         'title': title,
         'description': description,
         'image_file_path': imageFilePath,
@@ -633,6 +638,7 @@ class ApiService {
     int selectionId,
     String title,
     String? description,
+    List<String> deleteImgaeFilePaths,
     List<String>? imageFilePaths,
     List<Map<String, dynamic>> keywords,
     String? link,
@@ -641,6 +647,9 @@ class ApiService {
     bool isPrivate,
   ) async {
     try {
+      if (deleteImgaeFilePaths.isNotEmpty) {
+        deleteStorageImages('selections', deleteImgaeFilePaths);
+      }
       await _supabase
           .from('selections')
           .update({

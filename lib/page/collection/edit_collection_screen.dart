@@ -35,6 +35,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
   final GlobalKey<FormState> _tagFormKey = GlobalKey<FormState>();
   String? _changedTitle;
   String? _changedDescription;
+  String? _initialImageFilePath;
   String? _changedImageFilePath;
   bool? _changedIsPrivate;
 
@@ -59,7 +60,8 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
     }
     _changedTitle = widget.collectionDetail.title;
     _changedDescription = widget.collectionDetail.description;
-    _changedImageFilePath = widget.collectionDetail.imageFilePath;
+    _initialImageFilePath = widget.collectionDetail.imageFilePath;
+    _changedImageFilePath = _initialImageFilePath;
     _pickedImage =
         _changedImageFilePath != null ? XFile(_changedImageFilePath!) : null;
     _changedIsPrivate = widget.collectionDetail.isPrivate;
@@ -135,11 +137,16 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
           _changedImageFilePath = null;
         }
       }
+      String? _deleteImageFilePath;
+      if (_initialImageFilePath != _changedImageFilePath) {
+        _deleteImageFilePath = _initialImageFilePath;
+      }
 
       await ApiService.editCollection(
           widget.collectionDetail.id,
           _changedTitle!,
           _changedDescription,
+          _deleteImageFilePath,
           _changedImageFilePath,
           context.read<TagProvider>().tagNames,
           _changedIsPrivate!);
