@@ -4,7 +4,7 @@ import 'keyword_model.dart';
 class SelectionModel {
   final int collectionId;
   final int selectionId;
-  final int? ownerId;
+  final int ownerId;
   final int? userId;
   final String title;
   final String? description;
@@ -21,7 +21,7 @@ class SelectionModel {
   SelectionModel({
     required this.collectionId,
     required this.selectionId,
-    this.ownerId,
+    required this.ownerId,
     this.userId,
     required this.title,
     this.description,
@@ -41,7 +41,7 @@ class SelectionModel {
     return SelectionModel(
       collectionId: json['collection_id'],
       selectionId: json['selection_id'],
-      ownerId: json['owner_id'] as int?,
+      ownerId: json['owner_id'],
       userId: json['user_id'] as int?,
       title: json['title'],
       description: json['description'] as String?,

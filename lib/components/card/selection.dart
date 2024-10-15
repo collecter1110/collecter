@@ -15,6 +15,7 @@ class Selection extends StatelessWidget {
   final String? thumbFilePath;
   final List<KeywordData>? keywords;
   final String ownerName;
+  final int ownerId;
   final PropertiesData properties;
 
   const Selection({
@@ -24,6 +25,7 @@ class Selection extends StatelessWidget {
     this.thumbFilePath,
     this.keywords,
     required this.ownerName,
+    required this.ownerId,
     required this.properties,
   });
 
@@ -73,7 +75,7 @@ class Selection extends StatelessWidget {
                               image: DecorationImage(
                                 image: NetworkImage(
                                   DataManagement.getFullImageUrl(
-                                      'selections', thumbFilePath!),
+                                      '$ownerId/selections', thumbFilePath!),
                                 ),
                                 fit: BoxFit.cover,
                               ),

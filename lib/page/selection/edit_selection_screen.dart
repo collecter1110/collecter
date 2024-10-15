@@ -270,11 +270,10 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
                                                   image: NetworkImage(
-                                                    DataManagement
-                                                        .getFullImageUrl(
-                                                            'selections',
-                                                            _changedImagePaths[
-                                                                index]),
+                                                    DataManagement.getFullImageUrl(
+                                                        '${widget.selectionDetail.ownerId}/selections',
+                                                        _changedImagePaths[
+                                                            index]),
                                                   ),
                                                   fit: BoxFit.cover,
                                                 ),

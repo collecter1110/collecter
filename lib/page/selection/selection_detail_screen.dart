@@ -134,7 +134,7 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                                                 image: DecorationImage(
                                                   image: NetworkImage(
                                                     DataManagement.getFullImageUrl(
-                                                        'selections',
+                                                        '${_selectionDetail.ownerId}/selections',
                                                         _selectionDetail
                                                                 .imageFilePaths![
                                                             index]),

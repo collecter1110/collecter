@@ -24,6 +24,7 @@ class SelectingData {
   final String? imageFilePath;
   final List<KeywordData>? keywords;
   final String ownerName;
+  final int ownerId;
   final String? userName;
   final PropertiesData properties;
 
@@ -33,6 +34,7 @@ class SelectingData {
     this.imageFilePath,
     this.keywords,
     required this.ownerName,
+    required this.ownerId,
     this.userName,
     required this.properties,
   });
@@ -47,6 +49,7 @@ class SelectingData {
                 .toList()
             : null,
         ownerName = json['owner_name'],
+        ownerId = json['owner_id'],
         userName = json['user_name'] as String?,
         properties = PropertiesData.fromJson(json['properties']);
 }

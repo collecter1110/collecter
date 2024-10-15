@@ -75,7 +75,7 @@ class SearchSelection extends StatelessWidget {
                                   image: DecorationImage(
                                     image: NetworkImage(
                                       DataManagement.getFullImageUrl(
-                                          'selections',
+                                          '${selectionDetail.ownerId}/selections',
                                           selectionDetail.thumbFilePath!),
                                     ),
                                     fit: BoxFit.cover,

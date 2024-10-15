@@ -327,7 +327,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, title, image_file_paths, keywords, owner_name')
+              'collection_id, selection_id, title, image_file_paths, keywords, owner_name, owner_id')
           .eq('collection_id', collectionId);
 
       List<SelectionModel> selections = responseData.map((item) {
@@ -478,10 +478,14 @@ class ApiService {
   }
 
   static Future<String> uploadAndGetImageFilePath(
-      XFile xfile, String folderName) async {
+    XFile xfile,
+    String folderPath,
+  ) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
     try {
       String _fileName = path.basename(xfile.path);
-      final String filePath = '$folderName/$_fileName';
+      final String filePath = '$userId/$folderPath/$_fileName';
       File file = File(xfile.path);
       await _supabase.storage.from('images').upload(filePath, file);
       print('파일 업로드 성공: $_fileName');
@@ -493,11 +497,12 @@ class ApiService {
   }
 
   static Future<List<String>> uploadAndGetImageFilePaths(
-      List<XFile> xfiles, String folderName) async {
+      List<XFile> xfiles, String folderPath) async {
     List<String> _fileNames = [];
+
     try {
       final uploadFutures = xfiles.map((xfile) {
-        return uploadAndGetImageFilePath(xfile, folderName);
+        return uploadAndGetImageFilePath(xfile, folderPath);
       }).toList();
 
       _fileNames = await Future.wait(uploadFutures);
@@ -915,10 +920,12 @@ class ApiService {
     List<String> imageFilePaths,
   ) async {
     try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
       List<String> fullFilePaths = [];
 
       fullFilePaths = imageFilePaths
-          .map((filePath) => '$storageFolderName/$filePath')
+          .map((filePath) => '$userId/$storageFolderName/$filePath')
           .toList();
 
       final response =
