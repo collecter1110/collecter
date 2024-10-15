@@ -64,7 +64,8 @@ class OtherUserScreen extends StatelessWidget {
                               image: DecorationImage(
                                 image: NetworkImage(
                                   DataManagement.getFullImageUrl(
-                                      'user', _imageFilePath),
+                                      '${userInfoDetail.userId}/userinfo',
+                                      _imageFilePath),
                                 ),
                                 fit: BoxFit.cover,
                               ),

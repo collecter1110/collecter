@@ -25,7 +25,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _initialName;
-
+  int? _userId;
   String? _changedEmail;
   String? _changedName;
   String? _changedDescription;
@@ -48,6 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final UserInfoModel _userInfo = provider.userInfo!;
     _changedEmail = _userInfo.email!;
     _initialName = _userInfo.name;
+    _userId = _userInfo.userId;
     _changedName = _userInfo.name;
     _changedDescription = _userInfo.description;
     _initialImageFilePath = _userInfo.imageFilePath;
@@ -82,7 +83,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: NetworkImage(
-              DataManagement.getFullImageUrl('user', _changedImageFilePath!),
+              DataManagement.getFullImageUrl(
+                  '${_userId}/userinfo', _changedImageFilePath!),
             ),
             fit: BoxFit.cover,
           ),
@@ -119,8 +121,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
     try {
       if (_pickedImage != null) {
-        _changedImageFilePath =
-            await ApiService.uploadAndGetImageFilePath(_pickedImage!, 'user');
+        _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
+            _pickedImage!, 'userinfo');
       }
 
       if (_changedImageFilePath != _initialImageFilePath &&

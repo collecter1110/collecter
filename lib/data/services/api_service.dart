@@ -252,7 +252,7 @@ class ApiService {
       int userId = int.parse(userIdString!);
       final response = await _supabase
           .from('userinfo')
-          .select('name, email, description, image_file_path')
+          .select('name, email, description, image_file_path, user_id')
           .eq('user_id', userId)
           .single();
 
@@ -798,7 +798,7 @@ class ApiService {
     try {
       final response = await _supabase
           .from('userinfo')
-          .select('name, description, image_file_path')
+          .select('name, description, image_file_path, user_id')
           .eq('user_id', userId)
           .single();
 

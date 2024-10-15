@@ -3,14 +3,14 @@ class UserInfoModel {
   final String? email;
   final String? description;
   final String? imageFilePath;
-  final int? userId;
+  final int userId;
 
   UserInfoModel({
     required this.name,
     this.email,
     this.description,
     this.imageFilePath,
-    this.userId,
+    required this.userId,
   });
 
   UserInfoModel.fromJson(Map<String, dynamic> json)
@@ -18,5 +18,5 @@ class UserInfoModel {
         email = json['email'] as String?,
         description = json['description'] as String?,
         imageFilePath = json['image_file_path'] as String?,
-        userId = json['user_id'] as int?;
+        userId = json['user_id'];
 }

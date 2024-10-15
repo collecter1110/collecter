@@ -63,7 +63,8 @@ class SearchUser extends StatelessWidget {
                       image: DecorationImage(
                         image: NetworkImage(
                           DataManagement.getFullImageUrl(
-                              'user', userInfoDetail.imageFilePath!),
+                              '${userInfoDetail.userId}/userinfo',
+                              userInfoDetail.imageFilePath!),
                         ),
                         fit: BoxFit.cover,
                       ),

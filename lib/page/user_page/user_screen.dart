@@ -79,6 +79,7 @@ class _UserScreenState extends State<UserScreen> {
                     if (provider.state == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
                     } else if (provider.state == ConnectionState.done) {
+                      final int _userId = provider.userInfo!.userId;
                       final String _name = provider.userInfo!.name;
                       final String? _description =
                           provider.userInfo?.description;
@@ -127,7 +128,8 @@ class _UserScreenState extends State<UserScreen> {
                                           image: DecorationImage(
                                             image: NetworkImage(
                                               DataManagement.getFullImageUrl(
-                                                  'user', _imageFilePath),
+                                                  '${_userId}/userinfo',
+                                                  _imageFilePath),
                                             ),
                                             fit: BoxFit.cover,
                                           ),
