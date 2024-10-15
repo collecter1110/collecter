@@ -29,6 +29,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _changedEmail;
   String? _changedName;
   String? _changedDescription;
+  String? _initialImageFilePath;
   String? _changedImageFilePath;
 
   bool _isChangedImage = false;
@@ -49,7 +50,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _initialName = _userInfo.name;
     _changedName = _userInfo.name;
     _changedDescription = _userInfo.description;
+    _initialImageFilePath = _userInfo.imageFilePath;
     _changedImageFilePath = _userInfo.imageFilePath;
+
     _pickedImage =
         _changedImageFilePath != null ? XFile(_changedImageFilePath!) : null;
   }
@@ -115,15 +118,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
     );
     try {
-      if (_isChangedImage) {
-        if (_pickedImage != null) {
-          _changedImageFilePath =
-              await ApiService.uploadAndGetImageFilePath(_pickedImage!, 'user');
-        } else {
-          _changedImageFilePath = null;
-        }
+      if (_pickedImage != null) {
+        _changedImageFilePath =
+            await ApiService.uploadAndGetImageFilePath(_pickedImage!, 'user');
       }
 
+      if (_changedImageFilePath != _initialImageFilePath &&
+          _initialImageFilePath != null) {
+        List<String> imageFilePaths = [];
+        imageFilePaths.add(_initialImageFilePath!);
+        await ApiService.deleteStorageImages('user', imageFilePaths);
+        print('삭제');
+      }
       await ApiService.editUserInfo(
           _changedName!, _changedDescription, _changedImageFilePath);
       final provider = context.read<UserInfoProvider>();
