@@ -496,10 +496,12 @@ class ApiService {
       List<XFile> xfiles, String folderName) async {
     List<String> _fileNames = [];
     try {
-      for (var xfile in xfiles) {
-        String _fileName = await uploadAndGetImageFilePath(xfile, 'selections');
-        _fileNames.add(_fileName);
-      }
+      final uploadFutures = xfiles.map((xfile) {
+        return uploadAndGetImageFilePath(xfile, folderName);
+      }).toList();
+
+      _fileNames = await Future.wait(uploadFutures);
+
       return _fileNames;
     } on SocketException catch (e) {
       handleError('', 'Network error: ${e.message}');
