@@ -61,7 +61,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
     _changedTitle = widget.collectionDetail.title;
     _changedDescription = widget.collectionDetail.description;
     _initialImageFilePath = widget.collectionDetail.imageFilePath;
-    _changedImageFilePath = _initialImageFilePath;
+    _changedImageFilePath = widget.collectionDetail.imageFilePath;
     _pickedImage =
         _changedImageFilePath != null ? XFile(_changedImageFilePath!) : null;
     _changedIsPrivate = widget.collectionDetail.isPrivate;
@@ -129,24 +129,23 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       },
     );
     try {
-      if (_isChangedImage) {
-        if (_pickedImage != null) {
-          _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
-              _pickedImage!, 'collections');
-        } else {
-          _changedImageFilePath = null;
-        }
-      }
-      String? _deleteImageFilePath;
-      if (_initialImageFilePath != _changedImageFilePath) {
-        _deleteImageFilePath = _initialImageFilePath;
+      if (_pickedImage != null) {
+        _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
+            _pickedImage!, 'collections');
       }
 
+      if (_changedImageFilePath != _initialImageFilePath &&
+          _initialImageFilePath != null) {
+        List<String> imageFilePaths = [];
+        imageFilePaths.add(_initialImageFilePath!);
+        await ApiService.deleteStorageImages('collections', imageFilePaths);
+        print('삭제');
+      }
+      print(_changedImageFilePath);
       await ApiService.editCollection(
           widget.collectionDetail.id,
           _changedTitle!,
           _changedDescription,
-          _deleteImageFilePath,
           _changedImageFilePath,
           context.read<TagProvider>().tagNames,
           _changedIsPrivate!);

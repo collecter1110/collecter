@@ -610,16 +610,10 @@ class ApiService {
       int collectionId,
       String title,
       String? description,
-      String? deleteImageFilePath,
       String? imageFilePath,
       List<String>? tags,
       bool isPrivate) async {
     try {
-      if (deleteImageFilePath != null) {
-        await _supabase.storage
-            .from('images')
-            .remove(['collections/${deleteImageFilePath}']);
-      }
       await _supabase.from('collections').update({
         'title': title,
         'description': description,
@@ -640,7 +634,6 @@ class ApiService {
     int selectionId,
     String title,
     String? description,
-    List<String> deleteImgaeFilePaths,
     List<String>? imageFilePaths,
     List<Map<String, dynamic>> keywords,
     String? link,
@@ -649,9 +642,6 @@ class ApiService {
     bool isPrivate,
   ) async {
     try {
-      if (deleteImgaeFilePaths.isNotEmpty) {
-        deleteStorageImages('selections', deleteImgaeFilePaths);
-      }
       await _supabase
           .from('selections')
           .update({

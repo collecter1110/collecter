@@ -142,6 +142,9 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
       _changedItems = context.read<ItemProvider>().itemDataListToJson();
       _changedKeywords = await ApiService.addKeywords(
           context.read<KeywordProvider>().keywordNames!);
+      if (_deletedImages.isNotEmpty) {
+        ApiService.deleteStorageImages('selections', _deletedImages);
+      }
       List<String>? _changedImageFilePaths = _changedImagePaths.isNotEmpty
           ? await _uploadAndGetImageNames(_changedImagePaths)
           : null;
@@ -151,7 +154,6 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
         widget.selectionDetail.selectionId,
         _changedTitle!,
         _changedDescription,
-        _deletedImages,
         _changedImageFilePaths,
         _changedKeywords!,
         _changedLink,
