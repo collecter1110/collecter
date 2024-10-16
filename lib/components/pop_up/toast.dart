@@ -86,7 +86,7 @@ class Toast {
               Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
               TextButton(
                 child: Text(
-                  "앨범에서 선택",
+                  "커버 선택",
                   style: contentTextStyle,
                 ),
                 onPressed: () {

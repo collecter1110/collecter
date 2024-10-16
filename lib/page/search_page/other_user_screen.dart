@@ -7,6 +7,7 @@ import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../data/model/user_info_model.dart';
 import '../../data/provider/user_info_provider.dart';
+import '../../data/services/data_management.dart';
 
 class OtherUserScreen extends StatelessWidget {
   final UserInfoModel userInfoDetail;
@@ -61,7 +62,11 @@ class OtherUserScreen extends StatelessWidget {
                                 width: 0.5.w, // 테두리 두께
                               ),
                               image: DecorationImage(
-                                image: NetworkImage(_imageFilePath),
+                                image: NetworkImage(
+                                  DataManagement.getFullImageUrl(
+                                      '${userInfoDetail.userId}/userinfo',
+                                      _imageFilePath),
+                                ),
                                 fit: BoxFit.cover,
                               ),
                             ),

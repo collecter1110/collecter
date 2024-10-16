@@ -10,6 +10,7 @@ import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/label.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../data/provider/user_info_provider.dart';
+import '../../data/services/data_management.dart';
 import 'selecting_screen.dart';
 
 class UserScreen extends StatefulWidget {
@@ -78,6 +79,7 @@ class _UserScreenState extends State<UserScreen> {
                     if (provider.state == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
                     } else if (provider.state == ConnectionState.done) {
+                      final int _userId = provider.userInfo!.userId;
                       final String _name = provider.userInfo!.name;
                       final String? _description =
                           provider.userInfo?.description;
@@ -124,7 +126,11 @@ class _UserScreenState extends State<UserScreen> {
                                             width: 0.5.w,
                                           ),
                                           image: DecorationImage(
-                                            image: NetworkImage(_imageFilePath),
+                                            image: NetworkImage(
+                                              DataManagement.getFullImageUrl(
+                                                  '${_userId}/userinfo',
+                                                  _imageFilePath),
+                                            ),
                                             fit: BoxFit.cover,
                                           ),
                                         ),

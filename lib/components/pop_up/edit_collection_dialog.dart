@@ -63,7 +63,9 @@ class EditCollectionDialog extends StatelessWidget {
                             null,
                             () async {
                               await ApiService.deleteCollection(
-                                  collectionDetail.id);
+                                collectionDetail.id,
+                                collectionDetail.userId,
+                              );
                               await context
                                   .read<UserInfoProvider>()
                                   .fetchUserOverview();

@@ -111,7 +111,8 @@ class EditSelectionDialog extends StatelessWidget {
                       onTap: () async {
                         bool? isDelete =
                             await Toast.deleteSelectionWarning(context);
-                        if (isDelete!) {
+
+                        if (isDelete == true) {
                           await DataManagement.updateDataProcessHandler(
                             context,
                             selectionDetail.collectionId,
@@ -119,9 +120,10 @@ class EditSelectionDialog extends StatelessWidget {
                             selectionDetail.selectionId,
                             () async {
                               await ApiService.deleteSelection(
-                                selectionDetail.collectionId,
-                                selectionDetail.selectionId,
-                              );
+                                  selectionDetail.collectionId,
+                                  selectionDetail.selectionId,
+                                  selectionDetail.ownerId!,
+                                  selectionDetail.userId!);
                               final collectionProvider =
                                   context.read<CollectionProvider>();
                               final selectionProvider =

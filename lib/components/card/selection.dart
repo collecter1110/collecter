@@ -5,24 +5,27 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/selection_provider.dart';
+import '../../data/services/data_management.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
 class Selection extends StatelessWidget {
-  final String routeName;
+  final String? routeName;
   final String title;
   final String? thumbFilePath;
   final List<KeywordData>? keywords;
   final String ownerName;
+  final int ownerId;
   final PropertiesData properties;
 
   const Selection({
     super.key,
-    required this.routeName,
+    this.routeName,
     required this.title,
     this.thumbFilePath,
     this.keywords,
     required this.ownerName,
+    required this.ownerId,
     required this.properties,
   });
 
@@ -70,7 +73,10 @@ class Selection extends StatelessWidget {
                             width: double.infinity,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: NetworkImage(thumbFilePath!),
+                                image: NetworkImage(
+                                  DataManagement.getFullImageUrl(
+                                      '$ownerId/selections', thumbFilePath!),
+                                ),
                                 fit: BoxFit.cover,
                               ),
                             ),

@@ -29,12 +29,9 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
 
   String? _title;
   String? _description;
-  String? _imageFilePath;
+
   bool _isPrivate = false;
   String _inputTagValue = '';
-
-  XFile? _pickedImage;
-  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -65,11 +62,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       },
     );
     try {
-      if (_pickedImage != null && _pickedImage != '') {
-        _imageFilePath =
-            await ApiService.uploadAndGetImage(_pickedImage!, 'collections');
-      }
-      await ApiService.addCollection(_title!, _description, _imageFilePath,
+      await ApiService.addCollection(_title!, _description,
           context.read<TagProvider>().tagNames, _isPrivate);
       await context.read<CollectionProvider>().fetchCollections();
       await context.read<UserInfoProvider>().fetchUserOverview();
@@ -91,22 +84,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   void _saveForm() {
     _tagFormKey.currentState?.save();
     context.read<TagProvider>().addTag = _inputTagValue;
-  }
-
-  Future _pickImages(ImageSource imageSource) async {
-    PermissionStatus status = await Permission.photos.request();
-
-    if (status.isGranted || status.isLimited) {
-      _pickedImage = await _picker.pickImage(source: imageSource);
-
-      if (_pickedImage != null) {
-        setState(() {
-          _pickedImage = XFile(_pickedImage!.path);
-        });
-      }
-    } else {
-      await Toast.handlePhotoPermission(status);
-    }
   }
 
   @override
@@ -245,52 +222,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                   SizedBox(
                     height: 20,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '사진 추가 (선택)',
-                        style: TextStyle(
-                          fontFamily: 'PretendardRegular',
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff343A40),
-                          height: 1.5,
-                        ),
-                      ),
-                      AddButton(onPressed: () async {
-                        await _pickImages(ImageSource.gallery);
-                      }),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16.0.h),
-                    child: _pickedImage != null
-                        ? SizedBox(
-                            height: 100.0.h,
-                            child: AspectRatio(
-                              aspectRatio: 0.9,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(6.0),
-                                child: Image.file(
-                                  File(_pickedImage!.path),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (BuildContext context,
-                                      Object error, StackTrace? stackTrace) {
-                                    return const Center(
-                                      child: Text(
-                                          'This image type is not supported'),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          )
-                        : SizedBox.shrink(),
-                  ),
-                  SizedBox(
-                    height: 20.0.h,
-                  ),
                   Text(
                     '설명 (선택)',
                     style: TextStyle(
@@ -354,7 +285,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                     ],
                   ),
                   SizedBox(
-                    height: 40.0.h,
+                    height: 20.0.h,
                   ),
                   CompleteButton(
                       firstFieldState: true,

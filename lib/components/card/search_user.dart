@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/model/user_info_model.dart';
 import '../../data/provider/collection_provider.dart';
+import '../../data/services/data_management.dart';
 import '../../page/search_page/other_user_screen.dart';
 
 class SearchUser extends StatelessWidget {
@@ -60,7 +61,11 @@ class SearchUser extends StatelessWidget {
                         width: 0.5.w,
                       ),
                       image: DecorationImage(
-                        image: NetworkImage(userInfoDetail.imageFilePath!),
+                        image: NetworkImage(
+                          DataManagement.getFullImageUrl(
+                              '${userInfoDetail.userId}/userinfo',
+                              userInfoDetail.imageFilePath!),
+                        ),
                         fit: BoxFit.cover,
                       ),
                     ),

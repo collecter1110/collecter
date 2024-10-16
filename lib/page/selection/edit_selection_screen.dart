@@ -18,6 +18,7 @@ import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/model/selection_model.dart';
 import '../../data/provider/item_provider.dart';
+import '../../data/services/data_management.dart';
 
 class EditSelectionScreen extends StatefulWidget {
   final SelectionModel selectionDetail;
@@ -43,9 +44,10 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   List<Map<String, dynamic>>? _changedKeywords;
   int _itemNum = 0;
   List<Map<String, dynamic>>? _changedItems;
-  List<String>? _changedImageFilePaths;
 
-  List<dynamic> _initialImagePaths = [];
+  List<String> _initialImagePaths = [];
+  List<String> _changedImagePaths = [];
+  List<String> _deletedImages = [];
   List<ItemData>? _initialItemData;
 
   String _inputKeywordValue = '';
@@ -70,11 +72,13 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
     _changedLink = widget.selectionDetail.link;
     _changedIsPrivate = widget.selectionDetail.isSelect;
     _changedIsOrder = widget.selectionDetail.isOrdered;
-
     _initialImagePaths = widget.selectionDetail.imageFilePaths != null
         ? List<dynamic>.from(widget.selectionDetail.imageFilePaths!)
+            .cast<String>()
         : [];
-    _imageNum = _initialImagePaths.length;
+    _changedImagePaths = List<String>.from(_initialImagePaths);
+
+    _imageNum = _changedImagePaths.length;
 
     final keywordProvider = context.read<KeywordProvider>();
     if (widget.selectionDetail.keywords != null) {
@@ -100,13 +104,10 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   }
 
   bool _isNetworkImage(String imagePath) {
-    final uri = Uri.tryParse(imagePath);
-    if (uri == null) return false;
-    return uri.scheme == 'http' || uri.scheme == 'https';
+    return _initialImagePaths.contains(imagePath);
   }
 
-  Future<List<String>> getUploadedImages(
-      List<dynamic> imagePaths, String folderName) async {
+  Future<List<String>> _uploadAndGetImageNames(List<dynamic> imagePaths) async {
     List<XFile> localImages = imagePaths
         .where((imagePath) => !_isNetworkImage(imagePath))
         .map((path) => XFile(path))
@@ -119,7 +120,8 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
 
     if (localImages.isNotEmpty) {
       List<String> uploadedImageUrls =
-          await ApiService.uploadAndGetImages(localImages, folderName);
+          await ApiService.uploadAndGetImageFilePaths(
+              localImages, 'selections');
       finalImagePaths.addAll(uploadedImageUrls);
     }
 
@@ -140,9 +142,11 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
       _changedItems = context.read<ItemProvider>().itemDataListToJson();
       _changedKeywords = await ApiService.addKeywords(
           context.read<KeywordProvider>().keywordNames!);
-
-      _changedImageFilePaths = _initialImagePaths.isNotEmpty
-          ? await getUploadedImages(_initialImagePaths, 'selections')
+      if (_deletedImages.isNotEmpty) {
+        ApiService.deleteStorageImages('selections', _deletedImages);
+      }
+      List<String>? _changedImageFilePaths = _changedImagePaths.isNotEmpty
+          ? await _uploadAndGetImageNames(_changedImagePaths)
           : null;
 
       await ApiService.editSelection(
@@ -183,10 +187,10 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
 
       if (_pickedImage != null) {
         setState(() {
-          _initialImagePaths.insert(
-              _initialImagePaths.length, _pickedImage!.path);
+          _changedImagePaths.insert(
+              _changedImagePaths.length, _pickedImage!.path);
 
-          _imageNum = _initialImagePaths.length;
+          _imageNum = _changedImagePaths.length;
         });
       }
     } else {
@@ -259,15 +263,18 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                   )
                                 : Stack(
                                     children: [
-                                      _isNetworkImage(_initialImagePaths[index])
+                                      _isNetworkImage(_changedImagePaths[index])
                                           ? Container(
                                               height: double.infinity,
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
                                                   image: NetworkImage(
-                                                      _initialImagePaths[
-                                                          index]),
+                                                    DataManagement.getFullImageUrl(
+                                                        '${widget.selectionDetail.ownerId}/selections',
+                                                        _changedImagePaths[
+                                                            index]),
+                                                  ),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -275,7 +282,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                           : Image.file(
                                               height: double.infinity,
                                               width: double.infinity,
-                                              File(_initialImagePaths[index]),
+                                              File(_changedImagePaths[index]),
                                               fit: BoxFit.cover,
                                               errorBuilder:
                                                   (BuildContext context,
@@ -293,7 +300,9 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                         child: InkWell(
                                           onTap: () {
                                             setState(() {
-                                              _initialImagePaths
+                                              _deletedImages.add(
+                                                  _changedImagePaths[index]);
+                                              _changedImagePaths
                                                   .removeAt(index);
                                               _imageNum--;
                                             });

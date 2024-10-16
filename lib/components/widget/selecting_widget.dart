@@ -91,6 +91,7 @@ class SelectingWidget extends StatelessWidget {
                             thumbFilePath: selectDatas[index].imageFilePath,
                             keywords: selectDatas[index].keywords,
                             ownerName: selectDatas[index].ownerName,
+                            ownerId: selectDatas[index].ownerId,
                             properties: selectDatas[index].properties,
                           ),
                         ],

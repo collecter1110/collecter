@@ -252,7 +252,7 @@ class ApiService {
       int userId = int.parse(userIdString!);
       final response = await _supabase
           .from('userinfo')
-          .select('name, email, description, image_file_path')
+          .select('name, email, description, image_file_path, user_id')
           .eq('user_id', userId)
           .single();
 
@@ -327,7 +327,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, title, image_file_paths, keywords, owner_name')
+              'collection_id, selection_id, title, image_file_paths, keywords, owner_name, owner_id')
           .eq('collection_id', collectionId);
 
       List<SelectionModel> selections = responseData.map((item) {
@@ -477,45 +477,37 @@ class ApiService {
     }
   }
 
-  static Future<String?> uploadAndGetImage(
-      XFile xfile, String folderName) async {
+  static Future<String> uploadAndGetImageFilePath(
+    XFile xfile,
+    String folderPath,
+  ) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
     try {
-      String fileName = path.basename(xfile.path);
-      final String filePath = '$folderName/$fileName';
+      String _fileName = path.basename(xfile.path);
+      final String filePath = '$userId/$folderPath/$_fileName';
       File file = File(xfile.path);
       await _supabase.storage.from('images').upload(filePath, file);
-
-      final String? _imageFilePath =
-          _supabase.storage.from('images').getPublicUrl(filePath);
-
-      if (_imageFilePath != null) {
-        print('파일 업로드 성공: $_imageFilePath');
-        return _imageFilePath;
-      }
+      print('파일 업로드 성공: $_fileName');
+      return _fileName;
     } catch (e) {
       handleError('', 'upload image error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
 
-  static Future<List<String>> uploadAndGetImages(
-      List<XFile> xfiles, String folderName) async {
-    List<Future<String?>> uploadTasks = [];
+  static Future<List<String>> uploadAndGetImageFilePaths(
+      List<XFile> xfiles, String folderPath) async {
+    List<String> _fileNames = [];
+
     try {
-      for (var xfile in xfiles) {
-        String fileName = path.basename(xfile.path);
-        String filePath = '$folderName/$fileName';
-        File file = File(xfile.path);
+      final uploadFutures = xfiles.map((xfile) {
+        return uploadAndGetImageFilePath(xfile, folderPath);
+      }).toList();
 
-        uploadTasks.add(_uploadFileAndGetUrl(file, filePath));
-      }
+      _fileNames = await Future.wait(uploadFutures);
 
-      List<String?> imageFilePaths = await Future.wait(uploadTasks);
-
-      return imageFilePaths
-          .where((path) => path != null)
-          .cast<String>()
-          .toList();
+      return _fileNames;
     } on SocketException catch (e) {
       handleError('', 'Network error: ${e.message}');
       throw Exception('Network error occurred: ${e.message}');
@@ -525,27 +517,8 @@ class ApiService {
     }
   }
 
-  static Future<String?> _uploadFileAndGetUrl(
-      File file, String filePath) async {
-    try {
-      await _supabase.storage.from('images').upload(filePath, file);
-      final String? _imageFilePath =
-          _supabase.storage.from('images').getPublicUrl(filePath);
-      if (_imageFilePath != null) {
-        print('파일 업로드 성공: $_imageFilePath');
-      }
-      return _imageFilePath;
-    } on SocketException catch (e) {
-      handleError('File format', 'Invalid file format: ${filePath}');
-      throw Exception('Invalid file format: $e');
-    } catch (e) {
-      handleError('Upload', 'uploadImages error ${filePath}');
-      throw Exception('An unexpected error occurred: $e');
-    }
-  }
-
   static Future<void> addCollection(String title, String? description,
-      String? imageFilePath, List<String>? tags, bool isPrivate) async {
+      List<String>? tags, bool isPrivate) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
@@ -554,7 +527,6 @@ class ApiService {
         'user_id': userId,
         'title': title,
         'description': description,
-        'image_file_path': imageFilePath,
         'tags': tags,
         'is_private': isPrivate,
       });
@@ -646,7 +618,7 @@ class ApiService {
       List<String>? tags,
       bool isPrivate) async {
     try {
-      await Supabase.instance.client.from('collections').update({
+      await _supabase.from('collections').update({
         'title': title,
         'description': description,
         'image_file_path': imageFilePath,
@@ -825,7 +797,7 @@ class ApiService {
     try {
       final response = await _supabase
           .from('userinfo')
-          .select('name, description, image_file_path')
+          .select('name, description, image_file_path, user_id')
           .eq('user_id', userId)
           .single();
 
@@ -873,8 +845,32 @@ class ApiService {
     }
   }
 
-  static Future<void> deleteCollection(int collectionId) async {
+  static Future<void> deleteCollection(int collectionId, int userId) async {
     try {
+      final collectionData = await _supabase
+          .from('collections')
+          .select('selection_num')
+          .eq('id', collectionId)
+          .single();
+
+      int selectionNum = collectionData['selection_num'];
+
+      if (selectionNum != 0) {
+        final selectionImageFilePaths = await _supabase
+            .from('selections')
+            .select('image_file_paths')
+            .eq('collection_id', collectionId)
+            .eq('owner_id', userId);
+
+        List<String> imageFilePaths = [];
+
+        for (var item in selectionImageFilePaths) {
+          if (item['image_file_paths'] != null) {
+            imageFilePaths.addAll(List<String>.from(item['image_file_paths']));
+          }
+        }
+        await deleteStorageImages('selections', imageFilePaths);
+      }
       await _supabase.from('collections').delete().eq('id', collectionId);
     } catch (e) {
       handleError('', 'deleteCollection error');
@@ -882,8 +878,24 @@ class ApiService {
     }
   }
 
-  static Future<void> deleteSelection(int collectionId, int selectionId) async {
+  static Future<void> deleteSelection(
+      int collectionId, int selectionId, int ownerId, int userId) async {
     try {
+      if (ownerId == userId) {
+        final selectionImageFilePaths = await _supabase
+            .from('selections')
+            .select('image_file_paths')
+            .eq('collection_id', collectionId)
+            .eq('selection_id', selectionId)
+            .single();
+
+        if (selectionImageFilePaths['image_file_paths'] != null) {
+          List<String> imageFilePaths = [];
+          imageFilePaths =
+              List<String>.from(selectionImageFilePaths['image_file_paths']);
+          await deleteStorageImages('selections', imageFilePaths);
+        }
+      }
       await _supabase
           .from('selections')
           .delete()
@@ -892,6 +904,32 @@ class ApiService {
     } catch (e) {
       handleError('', 'deleteSelection error');
       print('Failed to delete selection data: $e');
+    }
+  }
+
+  static Future<void> deleteStorageImages(
+    String storageFolderName,
+    List<String> imageFilePaths,
+  ) async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+      List<String> fullFilePaths = [];
+
+      fullFilePaths = imageFilePaths
+          .map((filePath) => '$userId/$storageFolderName/$filePath')
+          .toList();
+
+      final response =
+          await _supabase.storage.from('images').remove(fullFilePaths);
+
+      if (response.isEmpty) {
+        print('Deleting images from paths: $fullFilePaths');
+        print('Failed to delete storage images');
+      }
+    } catch (e) {
+      handleError('', 'deleteStorageImages error');
+      print('Failed to delete storage image: $e');
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/model/selecting_model.dart';
 import '../../data/services/api_service.dart';
+import '../../data/services/data_management.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../button/go_collection_button.dart';
 import '../ui_kit/keyword.dart';
@@ -73,7 +74,10 @@ class SearchSelection extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                        selectionDetail.thumbFilePath!),
+                                      DataManagement.getFullImageUrl(
+                                          '${selectionDetail.ownerId}/selections',
+                                          selectionDetail.thumbFilePath!),
+                                    ),
                                     fit: BoxFit.cover,
                                   ),
                                 ),

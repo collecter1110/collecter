@@ -67,6 +67,7 @@ class _SelectionWidgetState extends State<SelectionWidget> {
               title: _selection.title,
               thumbFilePath: _selection.thumbFilePath,
               ownerName: _selection.ownerName,
+              ownerId: _selection.ownerId,
               keywords: _selection.keywords,
             );
           },

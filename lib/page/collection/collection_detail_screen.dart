@@ -1,6 +1,7 @@
 import 'package:collect_er/components/button/like_button.dart';
 import 'package:collect_er/components/pop_up/user_info_dialog.dart';
 import 'package:collect_er/components/widget/selection_widget.dart';
+import 'package:collect_er/data/services/data_management.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -72,6 +73,7 @@ class CollectionDetailScreen extends StatelessWidget {
                   color: Colors.white,
                   child: Padding(
                     padding: EdgeInsets.only(
+                      top: 26.0.h,
                       left: 16.0.w,
                       right: 16.0.w,
                       bottom: 36.0.h,
@@ -80,32 +82,6 @@ class CollectionDetailScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _collectionDetail.imageFilePath != null
-                            ? Padding(
-                                padding: EdgeInsets.only(top: 26.0.h),
-                                child: AspectRatio(
-                                  aspectRatio: 1 / 1,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8),
-                                    ),
-                                    child: Container(
-                                      height: 300.h,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                              _collectionDetail.imageFilePath!),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : SizedBox.shrink(),
-                        SizedBox(
-                          height: 26.0.h,
-                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

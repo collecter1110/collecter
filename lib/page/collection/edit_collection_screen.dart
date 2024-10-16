@@ -1,9 +1,7 @@
-import 'dart:io';
+import 'package:collect_er/components/pop_up/collection_cover_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/button/add_button.dart';
@@ -13,8 +11,10 @@ import '../../components/pop_up/toast.dart';
 import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/model/collection_model.dart';
+import '../../data/provider/selection_provider.dart';
 import '../../data/provider/tag_provider.dart';
 import '../../data/services/api_service.dart';
+import '../../data/services/data_management.dart';
 
 class EditCollectionScreen extends StatefulWidget {
   final CollectionModel collectionDetail;
@@ -32,17 +32,14 @@ class EditCollectionScreen extends StatefulWidget {
 
 class _EditCollectionScreenState extends State<EditCollectionScreen> {
   final GlobalKey<FormState> _tagFormKey = GlobalKey<FormState>();
+  int? _userId;
+  int? _collectionId;
   String? _changedTitle;
   String? _changedDescription;
   String? _changedImageFilePath;
   bool? _changedIsPrivate;
 
   String _inputTagValue = '';
-
-  bool _isChangedImage = false;
-
-  XFile? _pickedImage;
-  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -56,11 +53,11 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
     if (widget.collectionDetail.tags != null) {
       tagProvider.saveTags = widget.collectionDetail.tags!;
     }
+    _userId = widget.collectionDetail.userId;
+    _collectionId = widget.collectionDetail.id;
     _changedTitle = widget.collectionDetail.title;
     _changedDescription = widget.collectionDetail.description;
     _changedImageFilePath = widget.collectionDetail.imageFilePath;
-    _pickedImage =
-        _changedImageFilePath != null ? XFile(_changedImageFilePath!) : null;
     _changedIsPrivate = widget.collectionDetail.isPrivate;
   }
 
@@ -70,7 +67,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
   }
 
   Widget _buildImageWidget() {
-    if (_pickedImage == null) {
+    if (_changedImageFilePath == null) {
       return Container(
         color: Color(0xffF8F9FA),
         child: Center(
@@ -84,25 +81,17 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
           ),
         ),
       );
-    } else if (!_isChangedImage) {
+    } else if (_changedImageFilePath != null) {
       return Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(_changedImageFilePath!),
+            image: NetworkImage(
+              DataManagement.getFullImageUrl(
+                  '$_userId/selections', _changedImageFilePath!),
+            ),
             fit: BoxFit.cover,
           ),
         ),
-      );
-    } else if (_isChangedImage) {
-      return Image.file(
-        File(_pickedImage!.path),
-        fit: BoxFit.cover,
-        errorBuilder:
-            (BuildContext context, Object error, StackTrace? stackTrace) {
-          return const Center(
-            child: Text('This image type is not supported'),
-          );
-        },
       );
     } else {
       return Container(
@@ -123,15 +112,19 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       },
     );
     try {
-      if (_isChangedImage) {
-        if (_pickedImage != null) {
-          _changedImageFilePath =
-              await ApiService.uploadAndGetImage(_pickedImage!, 'collections');
-        } else {
-          _changedImageFilePath = null;
-        }
-      }
+      // if (_pickedImage != null) {
+      //   _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
+      //       _pickedImage!, 'collections');
+      // }
 
+      // if (_changedImageFilePath != _initialImageFilePath &&
+      //     _initialImageFilePath != null) {
+      //   List<String> imageFilePaths = [];
+      //   imageFilePaths.add(_initialImageFilePath!);
+      //   await ApiService.deleteStorageImages('collections', imageFilePaths);
+      //   print('삭제');
+      // }
+      print(_changedImageFilePath);
       await ApiService.editCollection(
           widget.collectionDetail.id,
           _changedTitle!,
@@ -157,20 +150,23 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
     context.read<TagProvider>().addTag = _inputTagValue;
   }
 
-  Future _pickImages(ImageSource imageSource) async {
-    PermissionStatus status = await Permission.photos.request();
-
-    if (status.isGranted || status.isLimited) {
-      _pickedImage = await _picker.pickImage(source: imageSource);
-
-      if (_pickedImage != null) {
-        setState(() {
-          _pickedImage = XFile(_pickedImage!.path);
-        });
-      }
-    } else {
-      await Toast.handlePhotoPermission(status);
-    }
+  Future<void> _showCoverImageDialog() async {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: false,
+      builder: (context) {
+        return CollectionCoverDialog(
+          collectionId: _collectionId!,
+          voidCallback: () async {
+            final provider = context.read<SelectionProvider>();
+            setState(() {
+              _changedImageFilePath = provider.collectionCoverImage;
+              print(_changedImageFilePath);
+            });
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -201,27 +197,34 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                         children: [
                           InkWell(
                             onTap: () async {
-                              _isChangedImage = true;
                               bool? isDefaultImage =
                                   await Toast.selectImageDialog(context);
                               if (isDefaultImage != null) {
                                 if (isDefaultImage) {
                                   setState(() {
-                                    _pickedImage = null;
                                     _changedImageFilePath = null;
                                   });
                                 } else if (!isDefaultImage) {
-                                  await _pickImages(ImageSource.gallery);
+                                  await _showCoverImageDialog();
                                 }
                               }
                             },
                             child: Container(
-                              width: 100.w,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Color(0xFFced4da),
+                                  width: 0.5.w,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10.r),
+                                ),
+                              ),
+                              width: 140.w,
                               child: AspectRatio(
                                 aspectRatio: 1 / 1,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
+                                    Radius.circular(10.r),
                                   ),
                                   child: _buildImageWidget(),
                                 ),

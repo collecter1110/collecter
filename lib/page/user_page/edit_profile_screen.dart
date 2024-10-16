@@ -12,6 +12,7 @@ import '../../components/pop_up/toast.dart';
 import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/services/api_service.dart';
+import '../../data/services/data_management.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({
@@ -24,10 +25,11 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _initialName;
-
+  int? _userId;
   String? _changedEmail;
   String? _changedName;
   String? _changedDescription;
+  String? _initialImageFilePath;
   String? _changedImageFilePath;
 
   bool _isChangedImage = false;
@@ -46,9 +48,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final UserInfoModel _userInfo = provider.userInfo!;
     _changedEmail = _userInfo.email!;
     _initialName = _userInfo.name;
+    _userId = _userInfo.userId;
     _changedName = _userInfo.name;
     _changedDescription = _userInfo.description;
+    _initialImageFilePath = _userInfo.imageFilePath;
     _changedImageFilePath = _userInfo.imageFilePath;
+
     _pickedImage =
         _changedImageFilePath != null ? XFile(_changedImageFilePath!) : null;
   }
@@ -77,7 +82,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(_changedImageFilePath!),
+            image: NetworkImage(
+              DataManagement.getFullImageUrl(
+                  '${_userId}/userinfo', _changedImageFilePath!),
+            ),
             fit: BoxFit.cover,
           ),
         ),
@@ -112,15 +120,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
     );
     try {
-      if (_isChangedImage) {
-        if (_pickedImage != null) {
-          _changedImageFilePath =
-              await ApiService.uploadAndGetImage(_pickedImage!, 'user');
-        } else {
-          _changedImageFilePath = null;
-        }
+      if (_pickedImage != null) {
+        _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
+            _pickedImage!, 'userinfo');
       }
 
+      if (_changedImageFilePath != _initialImageFilePath &&
+          _initialImageFilePath != null) {
+        List<String> imageFilePaths = [];
+        imageFilePaths.add(_initialImageFilePath!);
+        await ApiService.deleteStorageImages('user', imageFilePaths);
+        print('삭제');
+      }
       await ApiService.editUserInfo(
           _changedName!, _changedDescription, _changedImageFilePath);
       final provider = context.read<UserInfoProvider>();

@@ -12,6 +12,7 @@ import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
 import '../../components/widget/selection_item_widget.dart';
 import '../../data/provider/selection_provider.dart';
+import '../../data/services/data_management.dart';
 
 class SelectionDetailScreen extends StatefulWidget {
   const SelectionDetailScreen({
@@ -98,176 +99,185 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
               children: [
                 Container(
                   color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: 16.0.w,
-                      right: 16.0.w,
-                      bottom: 36.0.h,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _selectionDetail.imageFilePaths != null
-                            ? Padding(
-                                padding: EdgeInsets.only(top: 26.0.h),
-                                child: Column(
-                                  children: [
-                                    AspectRatio(
-                                      aspectRatio: 1 / 1,
-                                      child: PageView.builder(
-                                          controller: _pageController,
-                                          onPageChanged: (index) {
-                                            setState(() {
-                                              _currentPage = index;
-                                            });
-                                          },
-                                          scrollDirection: Axis.horizontal,
-                                          physics: PageScrollPhysics(),
-                                          itemCount: _selectionDetail
-                                              .imageFilePaths!.length,
-                                          itemBuilder: (context, index) {
-                                            return ClipRRect(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(8),
-                                              ),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                    image: NetworkImage(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _selectionDetail.imageFilePaths != null
+                          ? Column(
+                              children: [
+                                AspectRatio(
+                                  aspectRatio: 1 / 1,
+                                  child: PageView.builder(
+                                      controller: _pageController,
+                                      onPageChanged: (index) {
+                                        setState(() {
+                                          _currentPage = index;
+                                        });
+                                      },
+                                      scrollDirection: Axis.horizontal,
+                                      physics: PageScrollPhysics(),
+                                      itemCount: _selectionDetail
+                                          .imageFilePaths!.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 16.0.w,
+                                              right: 16.0.w,
+                                              top: 16.0.h),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(8),
+                                            ),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: NetworkImage(
+                                                    DataManagement.getFullImageUrl(
+                                                        '${_selectionDetail.ownerId}/selections',
                                                         _selectionDetail
                                                                 .imageFilePaths![
                                                             index]),
-                                                    fit: BoxFit.cover,
                                                   ),
+                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
-                                            );
-                                          }),
-                                    ),
-                                    SizedBox(height: 16.0.h),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: List.generate(
-                                        imageNum,
-                                        (index) => Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 2.0.w),
-                                          child: Container(
-                                            width: 7.0.h,
-                                            height: 7.0.h,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: _currentPage == index
-                                                  ? Color(0xFF212529)
-                                                  : Color(0xFFdee2e6),
                                             ),
                                           ),
+                                        );
+                                      }),
+                                ),
+                                SizedBox(height: 16.0.h),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(
+                                    imageNum,
+                                    (index) => Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 2.0.w),
+                                      child: Container(
+                                        width: 7.0.h,
+                                        height: 7.0.h,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: _currentPage == index
+                                              ? Color(0xFF212529)
+                                              : Color(0xFFdee2e6),
                                         ),
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              )
-                            : SizedBox.shrink(),
-                        Padding(
-                          padding: EdgeInsets.only(top: 26.0.h),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                _selectionDetail.title,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 22.sp,
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.45,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              _selectionDetail.link != null
-                                  ? LinkButton(
-                                      linkUrl: _selectionDetail.link!,
-                                    )
-                                  : SizedBox.shrink(),
-                            ],
-                          ),
+                              ],
+                            )
+                          : SizedBox.shrink(),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: 26.0.h,
+                          left: 16.0.w,
+                          right: 16.0.w,
+                          bottom: 36.0.h,
                         ),
-                        SizedBox(
-                          height: 10.0.h,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              _selectionDetail.ownerName,
-                              style: TextStyle(
-                                color: Color(0xFFadb5bd),
-                                fontSize: 12.sp,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w600,
-                                height: 1.5,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  _selectionDetail.title,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 22.sp,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.45,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                _selectionDetail.link != null
+                                    ? LinkButton(
+                                        linkUrl: _selectionDetail.link!,
+                                      )
+                                    : SizedBox.shrink(),
+                              ],
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 2.0.w),
-                              child: Image.asset(
-                                'assets/images/image_vertical_line.png',
-                                fit: BoxFit.contain,
-                                color: Color(0xFFadb5bd),
-                                height: 10.0.h,
-                              ),
+                            SizedBox(
+                              height: 10.0.h,
                             ),
-                            Text(
-                              _selectionDetail.createdAt!,
-                              style: TextStyle(
-                                color: Color(0xFFadb5bd),
-                                fontSize: 12.sp,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w600,
-                                height: 1.5,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  _selectionDetail.ownerName,
+                                  style: TextStyle(
+                                    color: Color(0xFFadb5bd),
+                                    fontSize: 12.sp,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.5,
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 2.0.w),
+                                  child: Image.asset(
+                                    'assets/images/image_vertical_line.png',
+                                    fit: BoxFit.contain,
+                                    color: Color(0xFFadb5bd),
+                                    height: 10.0.h,
+                                  ),
+                                ),
+                                Text(
+                                  _selectionDetail.createdAt!,
+                                  style: TextStyle(
+                                    color: Color(0xFFadb5bd),
+                                    fontSize: 12.sp,
+                                    fontFamily: 'Pretendard',
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.5,
+                                  ),
+                                ),
+                              ],
                             ),
+                            SizedBox(
+                              height: 22.0.h,
+                            ),
+                            _selectionDetail.description != null
+                                ? Padding(
+                                    padding: EdgeInsets.only(bottom: 22.0.h),
+                                    child: ExpandableText(
+                                        maxLine: 3,
+                                        textStyle: TextStyle(
+                                          color: Color(0xFF343a40),
+                                          fontSize: 14.sp,
+                                          fontFamily: 'Pretendard',
+                                          fontWeight: FontWeight.w500,
+                                          height: 1.43,
+                                        ),
+                                        text: _selectionDetail.description!),
+                                  )
+                                : SizedBox.shrink(),
+                            _selectionDetail.keywords != null
+                                ? Wrap(
+                                    direction: Axis.horizontal,
+                                    alignment: WrapAlignment.start,
+                                    spacing: 5.0.w,
+                                    runSpacing: 8.0.h,
+                                    children: _selectionDetail.keywords!
+                                        .map((keyword) {
+                                      return Keyword(
+                                          keywordName: keyword.keywordName);
+                                    }).toList(),
+                                  )
+                                : SizedBox.shrink(),
                           ],
                         ),
-                        SizedBox(
-                          height: 22.0.h,
-                        ),
-                        _selectionDetail.description != null
-                            ? Padding(
-                                padding: EdgeInsets.only(bottom: 22.0.h),
-                                child: ExpandableText(
-                                    maxLine: 3,
-                                    textStyle: TextStyle(
-                                      color: Color(0xFF343a40),
-                                      fontSize: 14.sp,
-                                      fontFamily: 'Pretendard',
-                                      fontWeight: FontWeight.w500,
-                                      height: 1.43,
-                                    ),
-                                    text: _selectionDetail.description!),
-                              )
-                            : SizedBox.shrink(),
-                        _selectionDetail.keywords != null
-                            ? Wrap(
-                                direction: Axis.horizontal,
-                                alignment: WrapAlignment.start,
-                                spacing: 5.0.w,
-                                runSpacing: 8.0.h,
-                                children:
-                                    _selectionDetail.keywords!.map((keyword) {
-                                  return Keyword(
-                                      keywordName: keyword.keywordName);
-                                }).toList(),
-                              )
-                            : SizedBox.shrink(),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 _selectionDetail.items != null
