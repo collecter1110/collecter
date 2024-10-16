@@ -12,12 +12,14 @@ class SelectionProvider with ChangeNotifier {
   SelectionModel? _selectionDetail;
   PropertiesData? _propertiesData;
   String? _currentSearchText;
+  String? _collectionCoverImage;
 
   ConnectionState get state => _state;
   int? get collectionId => _collectionId;
   List<SelectionModel>? get selections => _selections;
   List<SelectionModel>? get searchSelections => _searchSelections;
   SelectionModel? get selectionDetail => _selectionDetail;
+  String? get collectionCoverImage => _collectionCoverImage;
 
   set getCollectionId(int collectionId) {
     _collectionId = collectionId;
@@ -25,6 +27,10 @@ class SelectionProvider with ChangeNotifier {
 
   set getSelectionProperties(PropertiesData properties) {
     _propertiesData = properties;
+  }
+
+  set saveCollectionCoverImage(String coverImage) {
+    _collectionCoverImage = coverImage;
   }
 
   Future<void> getSelectionData() async {

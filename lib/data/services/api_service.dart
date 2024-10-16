@@ -518,7 +518,7 @@ class ApiService {
   }
 
   static Future<void> addCollection(String title, String? description,
-      String? imageFilePath, List<String>? tags, bool isPrivate) async {
+      List<String>? tags, bool isPrivate) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
@@ -527,7 +527,6 @@ class ApiService {
         'user_id': userId,
         'title': title,
         'description': description,
-        'image_file_path': imageFilePath,
         'tags': tags,
         'is_private': isPrivate,
       });
@@ -850,18 +849,11 @@ class ApiService {
     try {
       final collectionData = await _supabase
           .from('collections')
-          .select('image_file_path, selection_num')
+          .select('selection_num')
           .eq('id', collectionId)
           .single();
 
-      String? imageFilePath = collectionData['image_file_path'];
       int selectionNum = collectionData['selection_num'];
-
-      if (imageFilePath != null) {
-        List<String> imageFilePaths = [];
-        imageFilePaths.add(imageFilePath);
-        await deleteStorageImages('collections', imageFilePaths);
-      }
 
       if (selectionNum != 0) {
         final selectionImageFilePaths = await _supabase

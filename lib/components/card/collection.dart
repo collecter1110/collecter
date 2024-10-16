@@ -49,7 +49,8 @@ class Collection extends StatelessWidget {
                         image: DecorationImage(
                           image: NetworkImage(
                             DataManagement.getFullImageUrl(
-                                'collections', collectionDetail.imageFilePath!),
+                                '${collectionDetail.userId}/selections',
+                                collectionDetail.imageFilePath!),
                           ),
                           fit: BoxFit.cover,
                         ),

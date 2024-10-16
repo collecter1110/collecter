@@ -96,7 +96,7 @@ class CollectionDetailScreen extends StatelessWidget {
                                         image: DecorationImage(
                                           image: NetworkImage(
                                             DataManagement.getFullImageUrl(
-                                                'collections',
+                                                '${_collectionDetail.userId}/selections',
                                                 _collectionDetail
                                                     .imageFilePath!),
                                           ),

@@ -10,7 +10,7 @@ import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
 class Selection extends StatelessWidget {
-  final String routeName;
+  final String? routeName;
   final String title;
   final String? thumbFilePath;
   final List<KeywordData>? keywords;
@@ -20,7 +20,7 @@ class Selection extends StatelessWidget {
 
   const Selection({
     super.key,
-    required this.routeName,
+    this.routeName,
     required this.title,
     this.thumbFilePath,
     this.keywords,
