@@ -285,7 +285,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                     ],
                   ),
                   SizedBox(
-                    height: 40.0.h,
+                    height: 20.0.h,
                   ),
                   CompleteButton(
                       firstFieldState: true,

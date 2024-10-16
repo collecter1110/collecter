@@ -124,7 +124,7 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                                           padding: EdgeInsets.only(
                                               left: 16.0.w,
                                               right: 16.0.w,
-                                              top: 26.0.h),
+                                              top: 16.0.h),
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.all(
                                               Radius.circular(8),
