@@ -1,39 +1,66 @@
+import 'package:collect_er/components/card/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
-import '../card/ranking_collection.dart';
+import '../../data/model/collection_model.dart';
+import '../../data/provider/collection_provider.dart';
 
 class RankingCollectionWidget extends StatelessWidget {
-  const RankingCollectionWidget({super.key});
+  const RankingCollectionWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    List<String> _name = [
-      '나만의 레시피북',
-      '다이어트 레시피',
-      '여름 코디룩',
-      '사고 싶은 화장품 리스트',
-      '저소음 기계식 키보드 리스트',
-      '읽은 책 목록',
-      '읽고 싶은 책 목록',
-    ];
-    final double _collectionRatio = 2.4;
-    return GridView.builder(
-        padding: EdgeInsets.symmetric(vertical: 22.0.h),
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 1,
-          mainAxisSpacing: 14.0.h,
-          crossAxisSpacing: 10.0.w,
-          childAspectRatio: _collectionRatio,
-        ),
-        itemCount: _name.length,
-        itemBuilder: (context, index) {
-          return RankingCollection(
-            index: index,
-            ratio: _collectionRatio,
-          );
-        });
+    return Consumer<CollectionProvider>(builder: (context, provider, child) {
+      final List<CollectionModel>? _collections;
+
+      _collections = provider.rankingCollections;
+      print('ddd ${_collections}');
+      if (provider.state == ConnectionState.waiting) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      } else if (provider.state == ConnectionState.done) {
+        return _collections != null
+            ? GridView.builder(
+                padding: EdgeInsets.symmetric(
+                  vertical: 22.0.h,
+                ),
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 24.0.h,
+                  crossAxisSpacing: 12.0.w,
+                  childAspectRatio: 0.65,
+                ),
+                itemCount: _collections.length,
+                itemBuilder: (context, index) {
+                  final CollectionModel _collection = _collections![index];
+                  return Collection(
+                    routName: '/',
+                    collectionDetail: _collection,
+                  );
+                },
+              )
+            : Center(
+                child: Text(
+                  '랭킹 컬렉션이 없습니다. 랭킹 컬렉션에 도전해보세요!',
+                  style: TextStyle(
+                    color: Color(0xFF868e96),
+                    fontSize: 14.sp,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+      } else {
+        return const Center(
+          child: Text('Error occurred.'),
+        );
+      }
+    });
   }
 }

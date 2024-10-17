@@ -29,6 +29,12 @@ class CollectionProvider with ChangeNotifier {
   int? get collectionId => _collectionId;
   String? get collectionTitle => _collectionTitle;
 
+  set updateRankingCollections(List<CollectionModel> updateRankingCollection) {
+    _rankingCollections = updateRankingCollection;
+    print('updateRankingCollections');
+    notifyListeners();
+  }
+
   set setPageChanged(int currentPageNum) {
     _currentPageNum = currentPageNum;
   }
@@ -108,6 +114,9 @@ class CollectionProvider with ChangeNotifier {
 
   Future<void> fetchRankingCollections() async {
     try {
+      if (_rankingCollections != null) {
+        return;
+      }
       _rankingCollections = await ApiService.getRankingCollections();
       print('get ranking collections');
     } catch (e) {

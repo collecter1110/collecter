@@ -36,15 +36,15 @@ class _HomeScreenState extends State<HomeScreen>
         // _currentTabIndex = _tabController?.index ?? 0;
       });
     });
-    // initializeData();
+    initializeRankingData();
   }
 
-  // void initializeData() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
-  //     final collectionProvider = context.read<CollectionProvider>();
-  //     await collectionProvider.getRankingCollectionData();
-  //   });
-  // }
+  void initializeRankingData() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final collectionProvider = context.read<CollectionProvider>();
+      await collectionProvider.getRankingCollectionData();
+    });
+  }
 
   @override
   void dispose() {

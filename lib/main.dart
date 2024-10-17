@@ -14,6 +14,7 @@ import 'data/provider/search_provider.dart';
 import 'data/provider/selecting_provider.dart';
 import 'data/provider/selection_provider.dart';
 import 'data/provider/tag_provider.dart';
+import 'data/services/locator.dart';
 import 'page/splash/splash_screen.dart';
 
 void main() async {
@@ -23,7 +24,7 @@ void main() async {
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_API_KEY'] ?? '',
   );
-
+  setupLocator();
   runApp(
     MultiProvider(
       providers: [
@@ -45,8 +46,8 @@ void main() async {
         ChangeNotifierProvider<RankingProvider>(
           create: (context) => RankingProvider(),
         ),
-        ChangeNotifierProvider<CollectionProvider>(
-          create: (context) => CollectionProvider(),
+        ChangeNotifierProvider(
+          create: (_) => locator<CollectionProvider>(),
         ),
         ChangeNotifierProvider<SelectionProvider>(
           create: (context) => SelectionProvider(),

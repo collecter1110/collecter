@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:collect_er/data/model/selecting_model.dart';
+import 'package:collect_er/data/services/locator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,6 +12,7 @@ import '../model/collection_model.dart';
 import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
 import '../model/user_overview_model.dart';
+import '../provider/collection_provider.dart';
 
 class ApiService {
   static final storage = FlutterSecureStorage();
@@ -399,26 +401,28 @@ class ApiService {
 
   static Future<List<CollectionModel>> getRankingCollections() async {
     try {
-      final response = await _supabase
+      final completer = Completer<List<CollectionModel>>();
+      List<CollectionModel>? updatedCollections;
+      _supabase
           .from('collections')
-          .select('''
-        id, 
-        title, 
-        image_file_path, 
-        user_id,
-        user_name, 
-        primary_keywords, 
-        selection_num,
-        is_private
-        ''')
-          .order('like_num', ascending: false) // like_num 내림차순으로 정렬
-          .limit(20);
+          .stream(primaryKey: ['id'])
+          .order('like_num')
+          .limit(20)
+          .listen((snapshot) {
+            updatedCollections = snapshot.map((item) {
+              return CollectionModel.fromJson(item);
+            }).toList();
+            // Provider에 데이터 저장
+            locator<CollectionProvider>().updateRankingCollections =
+                updatedCollections!;
 
-      List<CollectionModel> collections = response.map((item) {
-        return CollectionModel.fromJson(item);
-      }).toList();
+            // Completer에 데이터 완료 상태로 전달
+            if (!completer.isCompleted) {
+              completer.complete(updatedCollections!);
+            }
+          });
 
-      return collections;
+      return completer.future;
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
