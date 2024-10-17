@@ -40,20 +40,25 @@ class Collection extends StatelessWidget {
           AspectRatio(
             aspectRatio: 1 / 1,
             child: collectionDetail.imageFilePath != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8),
+                ? Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Color(0xFFdee2e6),
+                        width: 0.5.w,
+                      ),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8),
+                      ),
                     ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            DataManagement.getFullImageUrl(
-                                '${collectionDetail.userId}/selections',
-                                collectionDetail.imageFilePath!),
-                          ),
-                          fit: BoxFit.cover,
-                        ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8),
+                      ),
+                      child: Image.network(
+                        DataManagement.getFullImageUrl(
+                            '${collectionDetail.userId}/selections',
+                            collectionDetail.imageFilePath!),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   )

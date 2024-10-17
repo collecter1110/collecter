@@ -58,7 +58,7 @@ class OtherUserScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100.0),
                               border: Border.all(
-                                color: Color(0xFFced4da), // 테두리 색상을 회색으로 설정
+                                color: Color(0xFFdee2e6),
                                 width: 0.5.w, // 테두리 두께
                               ),
                               image: DecorationImage(

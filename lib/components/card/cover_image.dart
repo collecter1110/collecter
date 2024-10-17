@@ -36,7 +36,7 @@ class CoverImage extends StatelessWidget {
                 border: Border.all(
                   color: isSelected
                       ? Theme.of(context).primaryColor
-                      : Color(0xFFced4da),
+                      : Color(0xFFdee2e6),
                   width: isSelected ? 3.0.w : 0.5.w,
                 ),
                 borderRadius: BorderRadius.circular(8.r),
