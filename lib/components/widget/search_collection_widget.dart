@@ -17,7 +17,7 @@ class SearchCollectionWidget extends StatelessWidget {
           ? provider.searchKeywordCollections
           : provider.searchTagCollections;
 
-      return _collections!.isNotEmpty
+      return _collections != null
           ? GridView.builder(
               padding:
                   EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),
@@ -31,7 +31,7 @@ class SearchCollectionWidget extends StatelessWidget {
               ),
               itemCount: _collections.length,
               itemBuilder: (context, index) {
-                final CollectionModel _collection = _collections[index];
+                final CollectionModel _collection = _collections![index];
 
                 return SearchCollection(
                   collectionDetail: _collection,

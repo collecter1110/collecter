@@ -397,6 +397,36 @@ class ApiService {
     }
   }
 
+  static Future<List<CollectionModel>> getRankingCollections() async {
+    try {
+      final response = await _supabase
+          .from('collections')
+          .select('''
+        id, 
+        title, 
+        image_file_path, 
+        user_id,
+        user_name, 
+        primary_keywords, 
+        selection_num,
+        is_private
+        ''')
+          .order('like_num', ascending: false) // like_num 내림차순으로 정렬
+          .limit(20);
+
+      List<CollectionModel> collections = response.map((item) {
+        return CollectionModel.fromJson(item);
+      }).toList();
+
+      return collections;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'getCollections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
   static Future<List<CollectionModel>> getCollections() async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');

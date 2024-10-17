@@ -1,5 +1,6 @@
 import 'package:collect_er/data/provider/collection_provider.dart';
 import 'package:collect_er/data/provider/item_provider.dart';
+import 'package:collect_er/data/provider/ranking_provider.dart';
 import 'package:collect_er/data/provider/user_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -40,6 +41,9 @@ void main() async {
         ),
         ChangeNotifierProvider<SelectingProvider>(
           create: (context) => SelectingProvider(),
+        ),
+        ChangeNotifierProvider<RankingProvider>(
+          create: (context) => RankingProvider(),
         ),
         ChangeNotifierProvider<CollectionProvider>(
           create: (context) => CollectionProvider(),
