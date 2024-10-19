@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:collect_er/data/model/selecting_model.dart';
-import 'package:collect_er/data/services/locator.dart';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -9,10 +8,12 @@ import 'package:path/path.dart' as path;
 
 import '../../components/pop_up/toast.dart';
 import '../model/collection_model.dart';
+import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
 import '../model/user_overview_model.dart';
-import '../provider/collection_provider.dart';
+import '../provider/ranking_provider.dart';
+import 'locator.dart';
 
 class ApiService {
   static final storage = FlutterSecureStorage();
@@ -401,24 +402,88 @@ class ApiService {
 
   static Future<List<CollectionModel>> getRankingCollections() async {
     try {
-      final completer = Completer<List<CollectionModel>>();
-      List<CollectionModel>? updatedCollections;
+      final _completer = Completer<List<CollectionModel>>();
+      List<CollectionModel>? _updatedCollections;
+
+      final _initialRankingCollections = await _supabase
+          .from('collections')
+          .select()
+          .order('like_num')
+          .limit(10);
+
+      List<int> _initialRankingCollectionIds =
+          (_initialRankingCollections as List<dynamic>)
+              .map((item) => item['id'] as int)
+              .toList();
+
       _supabase
           .from('collections')
           .stream(primaryKey: ['id'])
+          .inFilter('id', _initialRankingCollectionIds)
           .order('like_num')
-          .limit(20)
           .listen((snapshot) {
-            updatedCollections = snapshot.map((item) {
+            print('callback');
+            _updatedCollections = snapshot.map((item) {
               return CollectionModel.fromJson(item);
             }).toList();
-            // Provider에 데이터 저장
-            locator<CollectionProvider>().updateRankingCollections =
-                updatedCollections!;
 
-            // Completer에 데이터 완료 상태로 전달
+            locator<RankingProvider>().updateRankingCollections =
+                _updatedCollections!;
+
+            if (!_completer.isCompleted) {
+              _completer.complete(_updatedCollections!);
+            }
+          });
+
+      return _completer.future;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'get ranking collection error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<SelectionModel>> getRankingSelections() async {
+    try {
+      final completer = Completer<List<SelectionModel>>();
+      List<SelectionModel>? updatedSelections;
+
+      _supabase
+          .from('selections')
+          .stream(primaryKey: ['collection_id', 'selection_id'])
+          .eq('is_selecting', false)
+          .order('select_num')
+          .limit(20)
+          .listen((snapshot) {
+            print('listen');
+
+            updatedSelections = snapshot.where((item) {
+              return item['is_selecting'] == false;
+            }).map((item) {
+              List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
+              String? firstImagePath =
+                  imageFilePaths != null && imageFilePaths.isNotEmpty
+                      ? imageFilePaths.first as String
+                      : null;
+
+              // updatedSelections = snapshot.map((item) {
+              //   List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
+              //   String? firstImagePath =
+              //       imageFilePaths != null && imageFilePaths.isNotEmpty
+              //           ? imageFilePaths.first as String
+              //           : null;
+
+              return SelectionModel.fromJson({
+                ...item,
+              }, thumbFilePath: firstImagePath);
+            }).toList();
+
+            locator<RankingProvider>().updateRankingSelections =
+                updatedSelections!;
+
             if (!completer.isCompleted) {
-              completer.complete(updatedCollections!);
+              completer.complete(updatedSelections!);
             }
           });
 
@@ -426,7 +491,37 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'getCollections error');
+      handleError('', 'get ranking selection error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<UserInfoModel>> getRankingUsers() async {
+    try {
+      final completer = Completer<List<UserInfoModel>>();
+      List<UserInfoModel>? updatedUsers;
+      _supabase
+          .from('userinfo')
+          .stream(primaryKey: ['user_id'])
+          .order('created_at', ascending: false)
+          .limit(10)
+          .listen((snapshot) {
+            updatedUsers = snapshot.map((item) {
+              return UserInfoModel.fromJson(item);
+            }).toList();
+
+            locator<RankingProvider>().updateRankingUsers = updatedUsers!;
+
+            if (!completer.isCompleted) {
+              completer.complete(updatedUsers!);
+            }
+          });
+
+      return completer.future;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'get ranking collection error');
       throw Exception('An unexpected error occurred: $e');
     }
   }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class CollectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
-  List<CollectionModel>? _rankingCollections;
+
   List<CollectionModel>? _searchKeywordCollections;
   List<CollectionModel>? _searchTagCollections;
   List<CollectionModel>? _searchUsersCollections;
@@ -20,7 +20,7 @@ class CollectionProvider with ChangeNotifier {
   ConnectionState get state => _state;
   List<CollectionModel>? get searchKeywordCollections =>
       _searchKeywordCollections;
-  List<CollectionModel>? get rankingCollections => _rankingCollections;
+
   List<CollectionModel>? get searchTagCollections => _searchTagCollections;
   List<CollectionModel>? get searchUsersCollections => _searchUsersCollections;
   List<CollectionModel>? get myCollections => _myCollections;
@@ -28,12 +28,6 @@ class CollectionProvider with ChangeNotifier {
   CollectionModel? get collectionDetail => _collectionDetail;
   int? get collectionId => _collectionId;
   String? get collectionTitle => _collectionTitle;
-
-  set updateRankingCollections(List<CollectionModel> updateRankingCollection) {
-    _rankingCollections = updateRankingCollection;
-    print('updateRankingCollections');
-    notifyListeners();
-  }
 
   set setPageChanged(int currentPageNum) {
     _currentPageNum = currentPageNum;
@@ -60,16 +54,6 @@ class CollectionProvider with ChangeNotifier {
   void resetCollectionTitle() {
     _collectionId = null;
     _collectionTitle = null;
-  }
-
-  Future<void> getRankingCollectionData() async {
-    try {
-      _state = ConnectionState.waiting;
-      await Future.delayed(Duration(milliseconds: 300));
-      await fetchRankingCollections();
-    } catch (e) {
-      _state = ConnectionState.none;
-    }
   }
 
   Future<void> getCollectionData() async {
@@ -110,22 +94,6 @@ class CollectionProvider with ChangeNotifier {
       await fetchUsersCollections(userId);
     } catch (e) {
     } finally {}
-  }
-
-  Future<void> fetchRankingCollections() async {
-    try {
-      if (_rankingCollections != null) {
-        return;
-      }
-      _rankingCollections = await ApiService.getRankingCollections();
-      print('get ranking collections');
-    } catch (e) {
-      _state = ConnectionState.none;
-      print('Failed to fetch ranking collections: $e');
-    } finally {
-      _state = ConnectionState.done;
-      notifyListeners();
-    }
   }
 
   Future<void> fetchCollections() async {

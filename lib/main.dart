@@ -31,6 +31,9 @@ void main() async {
         ChangeNotifierProvider<PageRouteProvider>(
           create: (context) => PageRouteProvider(),
         ),
+        ChangeNotifierProvider<RankingProvider>(
+          create: (context) => locator<RankingProvider>(),
+        ),
         ChangeNotifierProvider<TagProvider>(
           create: (context) => TagProvider(),
         ),
@@ -43,11 +46,8 @@ void main() async {
         ChangeNotifierProvider<SelectingProvider>(
           create: (context) => SelectingProvider(),
         ),
-        ChangeNotifierProvider<RankingProvider>(
-          create: (context) => RankingProvider(),
-        ),
         ChangeNotifierProvider(
-          create: (_) => locator<CollectionProvider>(),
+          create: (_) => CollectionProvider(),
         ),
         ChangeNotifierProvider<SelectionProvider>(
           create: (context) => SelectionProvider(),
