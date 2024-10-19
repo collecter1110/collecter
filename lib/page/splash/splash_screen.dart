@@ -2,6 +2,7 @@ import 'package:collect_er/data/services/api_service.dart';
 import 'package:collect_er/page/join/set_user_info_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../page_navigator.dart';
 import '../login/enter_login_screen.dart';
@@ -22,12 +23,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _getAccessToken(BuildContext context) async {
     await Future.delayed(Duration(seconds: 2));
-
+    final storage = FlutterSecureStorage();
+    String? userIdString = await storage.read(key: 'USER_ID');
     bool _isAccessToken = await ApiService.checkAccessToken();
 
     if (_isAccessToken) {
-      bool _isUserInfo = await ApiService.checkUserEmailInUserInfo();
-      if (_isUserInfo) {
+      if (userIdString != null) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PageNavigator()),

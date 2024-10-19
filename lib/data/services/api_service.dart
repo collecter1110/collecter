@@ -84,35 +84,6 @@ class ApiService {
     }
   }
 
-  static Future<bool> checkUserEmailInUserInfo() async {
-    try {
-      String email = await getEmailFromAuthentication();
-      final response = await _supabase
-          .from('userinfo')
-          .select('name') // 'name' 속성만 선택
-          .eq('email', email) // 특정 이메일 조건
-          .maybeSingle(); // 결과가 단일 항목일 때 사용
-
-      if (response != null) {
-        if (response['name'] != null) {
-          return true;
-        } else {
-          print('Need user info');
-          return false;
-        }
-      } else {
-        print('Membership was registered, but userInfo was not entered.');
-        return false;
-      }
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-      return false;
-    } catch (e) {
-      print('checkUserInfoExist : $e');
-      return false;
-    }
-  }
-
   static Future<bool> checkEmailDuplicate(String email) async {
     try {
       final response = await _supabase
@@ -158,7 +129,6 @@ class ApiService {
       );
 
       if (response.user != null) {
-        writeUserIdToStorage();
         return true;
       } else {
         return false;
@@ -190,22 +160,16 @@ class ApiService {
     }
   }
 
-  static Future<void> updateUserInfo(
-      String userName, String userDescription) async {
+  static Future<void> setUserInfo(
+      String userName, String? userDescription) async {
     try {
       String email = await getEmailFromAuthentication();
-      final response = await _supabase
-          .from('userinfo')
-          .update({
-            'name': userName,
-            'description': userDescription,
-          })
-          .eq('email', email)
-          .select();
-      if (response.isNotEmpty) {
-      } else {
-        throw Exception('User information not saved');
-      }
+      await _supabase.from('userinfo').update({
+        'name': userName,
+        'description': userDescription,
+      }).eq('email', email);
+
+      await writeUserIdToStorage(email);
     } on AuthException catch (e) {
       handleError(e.statusCode, e.message);
     } catch (e) {
@@ -231,13 +195,12 @@ class ApiService {
     }
   }
 
-  static Future<void> writeUserIdToStorage() async {
+  static Future<void> writeUserIdToStorage(String email) async {
     try {
-      final userUuid = authUser!.id;
       final response = await _supabase
           .from('userinfo')
           .select('user_id')
-          .eq('id', userUuid)
+          .eq('email', email)
           .single();
       int userId = response['user_id'];
       await storage.write(key: 'USER_ID', value: userId.toString());
