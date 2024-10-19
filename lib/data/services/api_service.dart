@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:collect_er/data/model/selecting_model.dart';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,9 +8,12 @@ import 'package:path/path.dart' as path;
 
 import '../../components/pop_up/toast.dart';
 import '../model/collection_model.dart';
+import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
 import '../model/user_overview_model.dart';
+import '../provider/ranking_provider.dart';
+import 'locator.dart';
 
 class ApiService {
   static final storage = FlutterSecureStorage();
@@ -81,35 +84,6 @@ class ApiService {
     }
   }
 
-  static Future<bool> checkUserEmailInUserInfo() async {
-    try {
-      String email = await getEmailFromAuthentication();
-      final response = await _supabase
-          .from('userinfo')
-          .select('name') // 'name' 속성만 선택
-          .eq('email', email) // 특정 이메일 조건
-          .maybeSingle(); // 결과가 단일 항목일 때 사용
-
-      if (response != null) {
-        if (response['name'] != null) {
-          return true;
-        } else {
-          print('Need user info');
-          return false;
-        }
-      } else {
-        print('Membership was registered, but userInfo was not entered.');
-        return false;
-      }
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-      return false;
-    } catch (e) {
-      print('checkUserInfoExist : $e');
-      return false;
-    }
-  }
-
   static Future<bool> checkEmailDuplicate(String email) async {
     try {
       final response = await _supabase
@@ -155,7 +129,6 @@ class ApiService {
       );
 
       if (response.user != null) {
-        writeUserIdToStorage();
         return true;
       } else {
         return false;
@@ -187,22 +160,16 @@ class ApiService {
     }
   }
 
-  static Future<void> updateUserInfo(
-      String userName, String userDescription) async {
+  static Future<void> setUserInfo(
+      String userName, String? userDescription) async {
     try {
       String email = await getEmailFromAuthentication();
-      final response = await _supabase
-          .from('userinfo')
-          .update({
-            'name': userName,
-            'description': userDescription,
-          })
-          .eq('email', email)
-          .select();
-      if (response.isNotEmpty) {
-      } else {
-        throw Exception('User information not saved');
-      }
+      await _supabase.from('userinfo').update({
+        'name': userName,
+        'description': userDescription,
+      }).eq('email', email);
+
+      await writeUserIdToStorage(email);
     } on AuthException catch (e) {
       handleError(e.statusCode, e.message);
     } catch (e) {
@@ -228,13 +195,12 @@ class ApiService {
     }
   }
 
-  static Future<void> writeUserIdToStorage() async {
+  static Future<void> writeUserIdToStorage(String email) async {
     try {
-      final userUuid = authUser!.id;
       final response = await _supabase
           .from('userinfo')
           .select('user_id')
-          .eq('id', userUuid)
+          .eq('email', email)
           .single();
       int userId = response['user_id'];
       await storage.write(key: 'USER_ID', value: userId.toString());
@@ -393,6 +359,132 @@ class ApiService {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
       handleError('', 'getCollectionTitle error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<CollectionModel>> getRankingCollections() async {
+    try {
+      final _completer = Completer<List<CollectionModel>>();
+      List<CollectionModel>? _updatedCollections;
+
+      final _initialRankingCollections = await _supabase
+          .from('collections')
+          .select()
+          .order('like_num')
+          .limit(10);
+
+      List<int> _initialRankingCollectionIds =
+          (_initialRankingCollections as List<dynamic>)
+              .map((item) => item['id'] as int)
+              .toList();
+
+      _supabase
+          .from('collections')
+          .stream(primaryKey: ['id'])
+          .inFilter('id', _initialRankingCollectionIds)
+          .order('like_num')
+          .listen((snapshot) {
+            print('callback');
+            _updatedCollections = snapshot.map((item) {
+              return CollectionModel.fromJson(item);
+            }).toList();
+
+            locator<RankingProvider>().updateRankingCollections =
+                _updatedCollections!;
+
+            if (!_completer.isCompleted) {
+              _completer.complete(_updatedCollections!);
+            }
+          });
+
+      return _completer.future;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'get ranking collection error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<SelectionModel>> getRankingSelections() async {
+    try {
+      final completer = Completer<List<SelectionModel>>();
+      List<SelectionModel>? updatedSelections;
+
+      _supabase
+          .from('selections')
+          .stream(primaryKey: ['collection_id', 'selection_id'])
+          .eq('is_selecting', false)
+          .order('select_num')
+          .limit(20)
+          .listen((snapshot) {
+            print('listen');
+
+            updatedSelections = snapshot.where((item) {
+              return item['is_selecting'] == false;
+            }).map((item) {
+              List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
+              String? firstImagePath =
+                  imageFilePaths != null && imageFilePaths.isNotEmpty
+                      ? imageFilePaths.first as String
+                      : null;
+
+              // updatedSelections = snapshot.map((item) {
+              //   List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
+              //   String? firstImagePath =
+              //       imageFilePaths != null && imageFilePaths.isNotEmpty
+              //           ? imageFilePaths.first as String
+              //           : null;
+
+              return SelectionModel.fromJson({
+                ...item,
+              }, thumbFilePath: firstImagePath);
+            }).toList();
+
+            locator<RankingProvider>().updateRankingSelections =
+                updatedSelections!;
+
+            if (!completer.isCompleted) {
+              completer.complete(updatedSelections!);
+            }
+          });
+
+      return completer.future;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'get ranking selection error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<List<UserInfoModel>> getRankingUsers() async {
+    try {
+      final completer = Completer<List<UserInfoModel>>();
+      List<UserInfoModel>? updatedUsers;
+      _supabase
+          .from('userinfo')
+          .stream(primaryKey: ['user_id'])
+          .order('created_at', ascending: false)
+          .limit(10)
+          .listen((snapshot) {
+            updatedUsers = snapshot.map((item) {
+              return UserInfoModel.fromJson(item);
+            }).toList();
+
+            locator<RankingProvider>().updateRankingUsers = updatedUsers!;
+
+            if (!completer.isCompleted) {
+              completer.complete(updatedUsers!);
+            }
+          });
+
+      return completer.future;
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'get ranking collection error');
       throw Exception('An unexpected error occurred: $e');
     }
   }

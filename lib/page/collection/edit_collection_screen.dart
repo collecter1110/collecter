@@ -212,7 +212,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                             child: Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Color(0xFFced4da),
+                                  color: Color(0xFFdee2e6),
                                   width: 0.5.w,
                                 ),
                                 borderRadius: BorderRadius.all(

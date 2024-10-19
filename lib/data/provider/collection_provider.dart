@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class CollectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
+
   List<CollectionModel>? _searchKeywordCollections;
   List<CollectionModel>? _searchTagCollections;
   List<CollectionModel>? _searchUsersCollections;
@@ -19,6 +20,7 @@ class CollectionProvider with ChangeNotifier {
   ConnectionState get state => _state;
   List<CollectionModel>? get searchKeywordCollections =>
       _searchKeywordCollections;
+
   List<CollectionModel>? get searchTagCollections => _searchTagCollections;
   List<CollectionModel>? get searchUsersCollections => _searchUsersCollections;
   List<CollectionModel>? get myCollections => _myCollections;

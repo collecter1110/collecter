@@ -57,7 +57,7 @@ class SearchUser extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100.0),
                       border: Border.all(
-                        color: Color(0xFFced4da),
+                        color: Color(0xFFdee2e6),
                         width: 0.5.w,
                       ),
                       image: DecorationImage(

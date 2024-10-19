@@ -65,21 +65,25 @@ class SearchSelection extends StatelessWidget {
                           color: Color(0xFFf1f3f5),
                           borderRadius: BorderRadius.circular(8)),
                       child: selectionDetail.thumbFilePath != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(6),
+                          ? Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Color(0xFFdee2e6),
+                                  width: 0.5.w,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
                               ),
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      DataManagement.getFullImageUrl(
-                                          '${selectionDetail.ownerId}/selections',
-                                          selectionDetail.thumbFilePath!),
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                child: Image.network(
+                                  DataManagement.getFullImageUrl(
+                                      '${selectionDetail.ownerId}/selections',
+                                      selectionDetail.thumbFilePath!),
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                             )

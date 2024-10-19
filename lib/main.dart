@@ -1,5 +1,6 @@
 import 'package:collect_er/data/provider/collection_provider.dart';
 import 'package:collect_er/data/provider/item_provider.dart';
+import 'package:collect_er/data/provider/ranking_provider.dart';
 import 'package:collect_er/data/provider/user_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -13,6 +14,7 @@ import 'data/provider/search_provider.dart';
 import 'data/provider/selecting_provider.dart';
 import 'data/provider/selection_provider.dart';
 import 'data/provider/tag_provider.dart';
+import 'data/services/locator.dart';
 import 'page/splash/splash_screen.dart';
 
 void main() async {
@@ -22,12 +24,15 @@ void main() async {
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_API_KEY'] ?? '',
   );
-
+  setupLocator();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<PageRouteProvider>(
           create: (context) => PageRouteProvider(),
+        ),
+        ChangeNotifierProvider<RankingProvider>(
+          create: (context) => locator<RankingProvider>(),
         ),
         ChangeNotifierProvider<TagProvider>(
           create: (context) => TagProvider(),
@@ -41,8 +46,8 @@ void main() async {
         ChangeNotifierProvider<SelectingProvider>(
           create: (context) => SelectingProvider(),
         ),
-        ChangeNotifierProvider<CollectionProvider>(
-          create: (context) => CollectionProvider(),
+        ChangeNotifierProvider(
+          create: (_) => CollectionProvider(),
         ),
         ChangeNotifierProvider<SelectionProvider>(
           create: (context) => SelectionProvider(),

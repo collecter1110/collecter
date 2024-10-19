@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/button/tab_bar_button.dart';
-
 import '../../components/constants/screen_size.dart';
-import '../../components/card/ranking_collection.dart';
 import '../../components/widget/ranking_collection_widget.dart';
-import '../../components/widget/selection_widget.dart';
-import '../../components/widget/user_widget.dart';
+import '../../components/widget/ranking_selection_widget.dart';
+import '../../components/widget/ranking_user_widget.dart';
+import '../../data/provider/ranking_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,11 +23,24 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+    );
     _tabController?.addListener(() {
       setState(() {
         // _currentTabIndex = _tabController?.index ?? 0;
       });
+    });
+    initializeRankingData();
+  }
+
+  void initializeRankingData() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = context.read<RankingProvider>();
+      await provider.getRankingCollectionData();
+      await provider.getRankingSelectionData();
+      await provider.getRankingUserData();
     });
   }
 
@@ -39,19 +52,10 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _onTap(int index) {
     _tabController!.animateTo(index);
-    print('object');
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> _titleName = [
-      '화제의 컬랙션 랭킹',
-      '많이 검색한 키워드',
-      '팔로우 많은 유저 랭킹',
-    ];
-
-    final double _selectionRatio = 0.8;
-
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) {
@@ -200,16 +204,13 @@ class _HomeScreenState extends State<HomeScreen>
               padding: EdgeInsets.symmetric(
                 horizontal: 18.0.w,
               ),
-              child: SelectionWidget(
-                routeName: '/',
-                collectionId: 0,
-              ),
+              child: RankingSelectionWidget(),
             ),
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: 18.0.w,
               ),
-              child: UserWidget(),
+              child: RankingUserWidget(),
             ),
           ],
         ),

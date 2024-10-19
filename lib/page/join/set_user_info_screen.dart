@@ -140,8 +140,11 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
                         formKeyState.save();
                       }
                     } else {
-                      await ApiService.updateUserInfo(
-                          userName, _userDescriptionController.text);
+                      String? _description =
+                          _userDescriptionController.text.isNotEmpty
+                              ? _userDescriptionController.text
+                              : null;
+                      await ApiService.setUserInfo(userName, _description);
 
                       Navigator.pushReplacement(
                         context,

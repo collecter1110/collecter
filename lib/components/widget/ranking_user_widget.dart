@@ -1,30 +1,29 @@
-import 'package:collect_er/components/card/collection.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/model/collection_model.dart';
+import '../../data/model/user_info_model.dart';
 import '../../data/provider/ranking_provider.dart';
+import '../card/search_user.dart';
 
-class RankingCollectionWidget extends StatelessWidget {
-  const RankingCollectionWidget({
+class RankingUserWidget extends StatelessWidget {
+  const RankingUserWidget({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<RankingProvider>(builder: (context, provider, child) {
-      final List<CollectionModel>? _collections;
+      final List<UserInfoModel>? _users;
 
-      _collections = provider.rankingCollections;
-      print(_collections);
+      _users = provider.rankingUsers;
+
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return (_collections != null && _collections.isNotEmpty)
+        return (_users != null && _users.isNotEmpty)
             ? GridView.builder(
                 padding: EdgeInsets.symmetric(
                   vertical: 22.0.h,
@@ -32,30 +31,27 @@ class RankingCollectionWidget extends StatelessWidget {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 24.0.h,
-                  crossAxisSpacing: 12.0.w,
-                  childAspectRatio: 0.65,
+                  crossAxisCount: 1,
+                  mainAxisSpacing: 16.0.h,
+                  childAspectRatio: 6,
                 ),
-                itemCount: _collections.length,
+                itemCount: _users.length,
                 itemBuilder: (context, index) {
-                  final CollectionModel _collection = _collections![index];
-                  return Collection(
-                    routName: '/',
-                    collectionDetail: _collection,
+                  final UserInfoModel _user = _users![index];
+                  return SearchUser(
+                    userInfoDetail: _user,
                   );
                 },
               )
             : Center(
                 child: Text(
-                  '랭킹 컬렉션이 없습니다.\n좋아요를 많이 받아 랭킹 컬렉션에 도전해보세요!',
+                  'collec_er 의 첫번째 유저가 되어보세요!',
                   style: TextStyle(
                     color: Color(0xFF868e96),
                     fontSize: 14.sp,
                     fontFamily: 'Pretendard',
                     fontWeight: FontWeight.w500,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               );
       } else {
