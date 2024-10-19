@@ -25,7 +25,7 @@ class RankingSelectionWidget extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return _selections != null
+        return (_selections != null && _selections.isNotEmpty)
             ? GridView.builder(
                 padding: EdgeInsets.symmetric(
                   vertical: 22.0.h,
@@ -59,13 +59,14 @@ class RankingSelectionWidget extends StatelessWidget {
               )
             : Center(
                 child: Text(
-                  '랭킹 셀렉션이 없습니다. 셀렉팅을 많이 받아보세요!',
+                  '랭킹 셀렉션이 없습니다.\n셀렉팅을 많이 받아보세요!',
                   style: TextStyle(
                     color: Color(0xFF868e96),
                     fontSize: 14.sp,
                     fontFamily: 'Pretendard',
                     fontWeight: FontWeight.w500,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               );
       } else {

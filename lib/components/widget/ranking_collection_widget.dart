@@ -18,12 +18,13 @@ class RankingCollectionWidget extends StatelessWidget {
       final List<CollectionModel>? _collections;
 
       _collections = provider.rankingCollections;
+      print(_collections);
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return _collections != null
+        return (_collections != null && _collections.isNotEmpty)
             ? GridView.builder(
                 padding: EdgeInsets.symmetric(
                   vertical: 22.0.h,
@@ -47,13 +48,14 @@ class RankingCollectionWidget extends StatelessWidget {
               )
             : Center(
                 child: Text(
-                  '랭킹 컬렉션이 없습니다.\n 좋아요를 많이 받아 랭킹 컬렉션에 도전해보세요!',
+                  '랭킹 컬렉션이 없습니다.\n좋아요를 많이 받아 랭킹 컬렉션에 도전해보세요!',
                   style: TextStyle(
                     color: Color(0xFF868e96),
                     fontSize: 14.sp,
                     fontFamily: 'Pretendard',
                     fontWeight: FontWeight.w500,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               );
       } else {

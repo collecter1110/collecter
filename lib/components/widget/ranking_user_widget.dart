@@ -23,7 +23,7 @@ class RankingUserWidget extends StatelessWidget {
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return _users != null
+        return (_users != null && _users.isNotEmpty)
             ? GridView.builder(
                 padding: EdgeInsets.symmetric(
                   vertical: 22.0.h,
@@ -45,7 +45,7 @@ class RankingUserWidget extends StatelessWidget {
               )
             : Center(
                 child: Text(
-                  '',
+                  'collec_er 의 첫번째 유저가 되어보세요!',
                   style: TextStyle(
                     color: Color(0xFF868e96),
                     fontSize: 14.sp,
