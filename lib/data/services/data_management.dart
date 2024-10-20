@@ -4,8 +4,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/collection_provider.dart';
+import '../provider/ranking_provider.dart';
 import '../provider/search_provider.dart';
 import '../provider/selection_provider.dart';
+import 'locator.dart';
 
 class DataManagement {
   static Future<void> reloadLocalData(BuildContext context, int collectionId,
@@ -93,5 +95,16 @@ class DataManagement {
 
     // 전체 URL 생성 (버킷 이름과 폴더 경로 포함)
     return '$supabaseUrl/storage/v1/object/public/images/$storageFolderName/$imageFilePath';
+  }
+
+  static Future<void> loadInitialData() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final rankingProvider = locator<RankingProvider>();
+      final collectionProvider = locator<CollectionProvider>();
+      await rankingProvider.getInitialRankingCollectionData();
+      await rankingProvider.getInitialRankingSelectionData();
+      await rankingProvider.getInitialRankingUserData();
+      await collectionProvider.getInitialMyCollectionData();
+    });
   }
 }
