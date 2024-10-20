@@ -1,6 +1,7 @@
 import 'package:collect_er/components/pop_up/collection_title_dialog.dart';
 import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:collect_er/data/model/selection_model.dart';
+import 'package:collect_er/data/provider/selecting_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -119,14 +120,22 @@ class EditSelectionDialog extends StatelessWidget {
                               await ApiService.deleteSelection(
                                   selectionDetail.collectionId,
                                   selectionDetail.selectionId,
-                                  selectionDetail.ownerId!,
+                                  selectionDetail.ownerId,
                                   selectionDetail.userId!);
-                              final collectionProvider =
-                                  context.read<CollectionProvider>();
-                              final selectionProvider =
-                                  context.read<SelectionProvider>();
-                              await collectionProvider.fetchCollectionDetail();
-                              await selectionProvider.fetchSelectionData();
+
+                              if (routeName == '/user') {
+                                final selectingProvider =
+                                    context.read<SelectingProvider>();
+                                await selectingProvider.fetchSelectingData();
+                              } else {
+                                final collectionProvider =
+                                    context.read<CollectionProvider>();
+                                final selectionProvider =
+                                    context.read<SelectionProvider>();
+                                await collectionProvider
+                                    .fetchCollectionDetail();
+                                await selectionProvider.fetchSelectionData();
+                              }
                             },
                             () async {
                               _closeDialog();

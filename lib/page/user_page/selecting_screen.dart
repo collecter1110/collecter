@@ -48,7 +48,6 @@ class _UsersSelectScreenState extends State<SelectingScreen>
 
   void _onTap(int index) {
     _tabController!.animateTo(index);
-    print('onTap');
     final provider = context.read<SelectingProvider>();
     provider.setPageChanged = index;
   }
@@ -104,8 +103,12 @@ class _UsersSelectScreenState extends State<SelectingScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                SelectingWidget(),
-                SelectingWidget(),
+                SelectingWidget(
+                  isSelected: false,
+                ),
+                SelectingWidget(
+                  isSelected: true,
+                ),
               ],
             ),
           ),

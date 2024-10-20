@@ -8,14 +8,20 @@ import '../card/selection.dart';
 import '../ui_kit/status_tag.dart';
 
 class SelectingWidget extends StatelessWidget {
+  final bool isSelected;
+
   const SelectingWidget({
     super.key,
+    required this.isSelected,
   });
 
   @override
   Widget build(BuildContext context) {
     return Consumer<SelectingProvider>(builder: (context, provider, child) {
-      List<String> _createdDates = provider.createdDates;
+      List<String> _createdDates = isSelected
+          ? provider.selectedCreatedDates
+          : provider.selectingCreatedDates;
+
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),
@@ -30,8 +36,9 @@ class SelectingWidget extends StatelessWidget {
                   shrinkWrap: true,
                   itemCount: _createdDates.length,
                   itemBuilder: (context, index) {
-                    List<SelectingData> selectDatas =
-                        provider.getSelectDatas(index);
+                    List<SelectingData> selectDatas = isSelected
+                        ? provider.selectedMap[_createdDates[index]] ?? []
+                        : provider.selectingMap[_createdDates[index]] ?? [];
 
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -109,7 +116,7 @@ class SelectingWidget extends StatelessWidget {
               )
             : Center(
                 child: Text(
-                  '셀렉팅 내역이 없습니다.',
+                  isSelected ? '셀렉팅 된 내역이 없습니다.' : '셀렉팅 한 내역이 없습니다.',
                   style: TextStyle(
                     color: Color(0xFF868e96),
                     fontSize: 14.sp,
