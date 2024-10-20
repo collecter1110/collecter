@@ -28,9 +28,12 @@ class _SelectionWidgetState extends State<SelectionWidget> {
   }
 
   void initializeData() async {
-    final provider = context.read<SelectionProvider>();
-    provider.getCollectionId = widget.collectionId;
-    await provider.getSelectionData();
+    print('ddd  ${widget.collectionId}');
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = context.read<SelectionProvider>();
+      provider.getCollectionId = widget.collectionId;
+      await provider.getSelectionData();
+    });
   }
 
   @override

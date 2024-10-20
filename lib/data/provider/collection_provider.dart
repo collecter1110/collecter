@@ -56,14 +56,33 @@ class CollectionProvider with ChangeNotifier {
     _collectionTitle = null;
   }
 
-  Future<void> getCollectionData() async {
+  set updateCollections(List<CollectionModel> updateCollections) {
+    _myCollections = updateCollections;
+
+    notifyListeners();
+  }
+
+  Future<void> getInitialMyCollectionData() async {
     try {
-      if (_currentPageNum == 0 && _myCollections == null) {
-        _state = ConnectionState.waiting;
-        await Future.delayed(Duration(milliseconds: 300));
-        await fetchCollections();
-        await fetchLikeCollections();
+      if (_myCollections != null) {
+        return;
       }
+      _state = ConnectionState.waiting;
+      await Future.delayed(Duration(milliseconds: 300));
+      await fetchCollections();
+    } catch (e) {
+      _state = ConnectionState.none;
+    }
+  }
+
+  Future<void> getLikeCollectionData() async {
+    try {
+      if (_likeCollections != null) {
+        return;
+      }
+      _state = ConnectionState.waiting;
+      await Future.delayed(Duration(milliseconds: 300));
+      await fetchLikeCollections();
     } catch (e) {
       _state = ConnectionState.none;
     }
@@ -105,7 +124,6 @@ class CollectionProvider with ChangeNotifier {
       print('Failed to fetch collections: $e');
     } finally {
       _state = ConnectionState.done;
-      notifyListeners();
     }
   }
 
@@ -113,8 +131,10 @@ class CollectionProvider with ChangeNotifier {
     try {
       _likeCollections = await ApiService.getLikeCollections();
     } catch (e) {
+      _state = ConnectionState.none;
       print('Failed to fetch like collections: $e');
     } finally {
+      _state = ConnectionState.done;
       notifyListeners();
     }
   }

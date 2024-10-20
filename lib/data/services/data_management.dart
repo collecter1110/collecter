@@ -14,7 +14,6 @@ class DataManagement {
     final searchProvider = context.read<SearchProvider>();
     final selectionProvider = context.read<SelectionProvider>();
     String? searchText = searchProvider.searchText;
-    await collectionProvider.fetchCollections();
 
     if (searchText != null) {
       bool existsKeywordCollections = collectionProvider

@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../data/provider/collection_provider.dart';
+import '../../data/provider/ranking_provider.dart';
+import '../../data/services/locator.dart';
 import '../../page_navigator.dart';
 import '../login/enter_login_screen.dart';
 
@@ -21,14 +24,26 @@ class _SplashScreenState extends State<SplashScreen> {
     _getAccessToken(context);
   }
 
+  Future<void> loadInitialData() async {
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    final rankingProvider = locator<RankingProvider>();
+    final collectionProvider = locator<CollectionProvider>();
+    await rankingProvider.getInitialRankingCollectionData();
+    await rankingProvider.getInitialRankingSelectionData();
+    await rankingProvider.getInitialRankingUserData();
+    await collectionProvider.getInitialMyCollectionData();
+    //  });
+  }
+
   Future<void> _getAccessToken(BuildContext context) async {
-    await Future.delayed(Duration(seconds: 2));
+    // await Future.delayed(Duration(seconds: 2));
     final storage = FlutterSecureStorage();
     String? userIdString = await storage.read(key: 'USER_ID');
     bool _isAccessToken = await ApiService.checkAccessToken();
 
     if (_isAccessToken) {
       if (userIdString != null) {
+        await loadInitialData();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PageNavigator()),

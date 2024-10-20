@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:collect_er/data/provider/collection_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -371,6 +371,7 @@ class ApiService {
       final _initialRankingCollections = await _supabase
           .from('collections')
           .select()
+          .eq('is_private', true)
           .order('like_num')
           .limit(10);
 
@@ -385,7 +386,7 @@ class ApiService {
           .inFilter('id', _initialRankingCollectionIds)
           .order('like_num')
           .listen((snapshot) {
-            print('callback');
+            print('랭킹 컬렉션 callback');
             _updatedCollections = snapshot.map((item) {
               return CollectionModel.fromJson(item);
             }).toList();
@@ -491,25 +492,30 @@ class ApiService {
 
   static Future<List<CollectionModel>> getCollections() async {
     try {
+      final _completer = Completer<List<CollectionModel>>();
+      List<CollectionModel>? _updatedCollections;
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
 
-      final responseData = await _supabase.from('collections').select('''
-        id, 
-        title, 
-        image_file_path, 
-        user_id,
-        user_name, 
-        primary_keywords, 
-        selection_num,
-        is_private
-        ''').eq('user_id', userId);
+      _supabase
+          .from('collections')
+          .stream(primaryKey: ['id'])
+          .eq('user_id', userId)
+          .listen((snapshot) {
+            print('내 콜렉션 callback');
+            _updatedCollections = snapshot.map((item) {
+              return CollectionModel.fromJson(item);
+            }).toList();
 
-      List<CollectionModel> collections = responseData.map((item) {
-        return CollectionModel.fromJson(item);
-      }).toList();
+            locator<CollectionProvider>().updateCollections =
+                _updatedCollections!;
 
-      return collections;
+            if (!_completer.isCompleted) {
+              _completer.complete(_updatedCollections!);
+            }
+          });
+
+      return _completer.future;
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {

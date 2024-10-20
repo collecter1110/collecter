@@ -40,9 +40,7 @@ class SelectingDialog extends StatelessWidget {
 
     Future<void> _getCollectionTitle() async {
       final provider = context.read<CollectionProvider>();
-      if (provider.myCollections == null) {
-        await provider.fetchCollections();
-      }
+
       provider.saveCollectionId = selectionDetail.collectionId;
     }
 

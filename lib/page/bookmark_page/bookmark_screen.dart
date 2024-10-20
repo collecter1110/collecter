@@ -34,13 +34,15 @@ class _BookmarkScreenState extends State<BookmarkScreen>
   void initializeData() async {
     final provider = context.read<CollectionProvider>();
     provider.setPageChanged = 0;
-    await provider.getCollectionData();
   }
 
-  void _onTap(int index) {
+  Future<void> _onTap(int index) async {
     _tabController!.animateTo(index);
     final provider = context.read<CollectionProvider>();
     provider.setPageChanged = index;
+    if (index == 1) {
+      await provider.getLikeCollectionData();
+    }
   }
 
   @override
@@ -85,8 +87,8 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                           isScrollable: true,
                           labelPadding: EdgeInsets.only(left: 0, right: 10.w),
                           tabAlignment: TabAlignment.start,
-                          onTap: (value) {
-                            _onTap(value);
+                          onTap: (value) async {
+                            await _onTap(value);
                           },
                           tabs: [
                             Tab(

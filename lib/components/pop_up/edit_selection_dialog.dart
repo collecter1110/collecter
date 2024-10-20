@@ -48,17 +48,14 @@ class EditSelectionDialog extends StatelessWidget {
       Navigator.pop(context);
     }
 
-    Future<void> _getCollectionTitle() async {
+    Future<void> _saveCollectionTitle() async {
       final provider = context.read<CollectionProvider>();
-      if (provider.myCollections == null) {
-        await provider.fetchCollections();
-      }
       provider.saveCollectionId = selectionDetail.collectionId;
     }
 
     Future<void> _showGroupDialog() async {
       final provider = context.read<CollectionProvider>();
-      await _getCollectionTitle();
+      await _saveCollectionTitle();
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,

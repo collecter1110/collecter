@@ -102,6 +102,7 @@ class CollectionTitleDialog extends StatelessWidget {
                       provider.saveCollectionId = selectedCollectionId;
                       provider.saveCollectionTitle();
                       Navigator.pop(context);
+                      print(selectedCollectionId);
                       await voidCallback?.call();
                     },
                     text: '선택',

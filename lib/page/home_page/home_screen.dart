@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 
 import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/ranking_collection_widget.dart';
 import '../../components/widget/ranking_selection_widget.dart';
 import '../../components/widget/ranking_user_widget.dart';
-import '../../data/provider/ranking_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,16 +29,6 @@ class _HomeScreenState extends State<HomeScreen>
       setState(() {
         // _currentTabIndex = _tabController?.index ?? 0;
       });
-    });
-    initializeRankingData();
-  }
-
-  void initializeRankingData() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final provider = context.read<RankingProvider>();
-      await provider.getRankingCollectionData();
-      await provider.getRankingSelectionData();
-      await provider.getRankingUserData();
     });
   }
 
