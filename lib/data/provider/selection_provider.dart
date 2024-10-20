@@ -68,7 +68,6 @@ class SelectionProvider with ChangeNotifier {
 
   Future<void> fetchSelectionData() async {
     try {
-      print('콜렉션 아이디 인 셀렉션 프로바이더$_collectionId');
       _selections = await ApiService.getSelections(_collectionId!);
       print(_selections);
     } catch (e) {
