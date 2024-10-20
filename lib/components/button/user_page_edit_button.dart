@@ -19,11 +19,11 @@ class UserPageEditButton extends StatelessWidget {
         },
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6.0),
+            borderRadius: BorderRadius.circular(6.0.r),
           ),
           minimumSize: Size.zero,
           padding: EdgeInsets.symmetric(
-            vertical: 6.0.h,
+            vertical: 8.0.h,
           ),
           backgroundColor: Color(0xFFdee2e6),
           elevation: 0,

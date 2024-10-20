@@ -13,14 +13,13 @@ class UserInfoProvider with ChangeNotifier {
   int? _collectionNum;
   int? _selectingNum;
   int? _selectedNum;
-  List<int>? _userLabelIds;
+
   List<UserInfoModel>? _searchUsers;
   String? _currentSearchText;
 
   ConnectionState get state => _state;
   UserInfoModel? get userInfo => _userInfo;
   UserInfoModel? get otherUserInfo => _otherUserInfo;
-  List<int>? get userLabelIds => _userLabelIds;
   int? get collectionNum => _collectionNum;
   int? get selectingNum => _selectingNum;
   int? get selectedNum => _selectedNum;
@@ -57,7 +56,6 @@ class UserInfoProvider with ChangeNotifier {
     _collectionNum = _userOverview!.collectionNum;
     _selectingNum = _userOverview!.selectingNum;
     _selectedNum = _userOverview!.selectedNum;
-    _userLabelIds = _userOverview!.labels;
     notifyListeners();
   }
 
