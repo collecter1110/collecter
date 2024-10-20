@@ -35,7 +35,7 @@ class RankingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getRankingCollectionData() async {
+  Future<void> getInitialRankingCollectionData() async {
     try {
       _state = ConnectionState.waiting;
       await Future.delayed(Duration(milliseconds: 300));
@@ -45,7 +45,7 @@ class RankingProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getRankingSelectionData() async {
+  Future<void> getInitialRankingSelectionData() async {
     _state = ConnectionState.waiting;
     await Future.delayed(Duration(milliseconds: 300));
     try {
@@ -55,7 +55,7 @@ class RankingProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getRankingUserData() async {
+  Future<void> getInitialRankingUserData() async {
     _state = ConnectionState.waiting;
     await Future.delayed(Duration(milliseconds: 300));
     try {

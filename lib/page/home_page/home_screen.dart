@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 
 import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/ranking_collection_widget.dart';
 import '../../components/widget/ranking_selection_widget.dart';
 import '../../components/widget/ranking_user_widget.dart';
-import '../../data/provider/ranking_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,16 +29,6 @@ class _HomeScreenState extends State<HomeScreen>
       setState(() {
         // _currentTabIndex = _tabController?.index ?? 0;
       });
-    });
-    initializeRankingData();
-  }
-
-  void initializeRankingData() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final provider = context.read<RankingProvider>();
-      await provider.getRankingCollectionData();
-      await provider.getRankingSelectionData();
-      await provider.getRankingUserData();
     });
   }
 
@@ -157,40 +145,6 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ];
         },
-        // SliverPadding(
-        //   padding: EdgeInsets.symmetric(horizontal: 18.0.w),
-        //   sliver: SliverToBoxAdapter(
-        //     child: Column(
-        //       children: [
-        //         SizedBox(
-        //           height: 34.0.h,
-        //         ),
-        //         Row(
-        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //           children: [
-        //             Text(
-        //               '화제의 컬렉션 랭킹',
-        //               style: TextStyle(
-        //                 color: Colors.black,
-        //                 fontWeight: FontWeight.w700,
-        //                 fontSize: 18.0.sp,
-        //               ),
-        //             ),
-        //           ],
-        //         ),
-        //         Padding(
-        //           padding: EdgeInsets.only(top: 12.0.h, bottom: 4.0.h),
-        //           child: Divider(
-        //             color: Colors.black,
-        //             thickness: 2.0.h,
-        //             height: 0,
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
-
         body: TabBarView(
           controller: _tabController,
           children: [

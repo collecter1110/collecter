@@ -16,9 +16,7 @@ class RankingCollectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RankingProvider>(builder: (context, provider, child) {
       final List<CollectionModel>? _collections;
-
       _collections = provider.rankingCollections;
-      print(_collections);
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),
@@ -48,7 +46,7 @@ class RankingCollectionWidget extends StatelessWidget {
               )
             : Center(
                 child: Text(
-                  '랭킹 컬렉션이 없습니다.\n좋아요를 많이 받아 랭킹 컬렉션에 도전해보세요!',
+                  '랭킹 컬렉션이 없습니다.\n좋아요를 많이 받아보세요!',
                   style: TextStyle(
                     color: Color(0xFF868e96),
                     fontSize: 14.sp,

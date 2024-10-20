@@ -17,9 +17,7 @@ class RankingSelectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RankingProvider>(builder: (context, provider, child) {
       final List<SelectionModel>? _selections;
-
       _selections = provider.rankingSelections;
-
       if (provider.state == ConnectionState.waiting) {
         return Center(
           child: CircularProgressIndicator(),

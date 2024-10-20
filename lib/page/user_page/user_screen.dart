@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../../components/button/user_page_edit_button.dart';
 import '../../components/button/users_archive_button.dart';
 import '../../components/constants/screen_size.dart';
-import '../../components/ui_kit/label.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../data/provider/user_info_provider.dart';
 import '../../data/services/data_management.dart';
@@ -86,7 +85,6 @@ class _UserScreenState extends State<UserScreen> {
                       final String? _imageFilePath =
                           provider.userInfo?.imageFilePath;
 
-                      final List<int>? _usersLabelIds = provider.userLabelIds;
                       final int? collectionNum = provider.collectionNum;
                       final int? selectingNum = provider.selectingNum;
                       final int? selectedNum = provider.selectedNum;
@@ -97,7 +95,7 @@ class _UserScreenState extends State<UserScreen> {
                         children: [
                           Padding(
                             padding:
-                                EdgeInsets.only(top: 36.0.h, bottom: 24.0.h),
+                                EdgeInsets.only(top: 36.0.h, bottom: 20.0.h),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -180,23 +178,6 @@ class _UserScreenState extends State<UserScreen> {
                               ],
                             ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: _usersLabelIds != null
-                                    ? Wrap(
-                                        alignment: WrapAlignment.start,
-                                        runSpacing: 8.0.h,
-                                        spacing: 10.0.w,
-                                        children: _usersLabelIds.map((index) {
-                                          return Label.getLabel(index);
-                                        }).toList(),
-                                      )
-                                    : SizedBox.shrink(),
-                              ),
-                            ],
-                          ),
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 50.0.w, vertical: 20.0.h),
@@ -269,10 +250,6 @@ class _UserScreenState extends State<UserScreen> {
                                         ),
                                       );
                                     }),
-                                SizedBox(
-                                  width: 6.0.w,
-                                ),
-                                UserPageEditButton(name: '태그 보기', onTap: () {})
                               ],
                             ),
                           ),

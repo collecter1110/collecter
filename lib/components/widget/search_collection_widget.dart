@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/collection_model.dart';
-import '../../data/provider/collection_provider.dart';
+import '../../data/provider/search_provider.dart';
 import '../card/search_collection.dart';
 
 class SearchCollectionWidget extends StatelessWidget {
@@ -12,12 +12,12 @@ class SearchCollectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CollectionProvider>(builder: (context, provider, child) {
+    return Consumer<SearchProvider>(builder: (context, provider, child) {
       final List<CollectionModel>? _collections = isKeyword
           ? provider.searchKeywordCollections
           : provider.searchTagCollections;
 
-      return _collections != null
+      return _collections != null && _collections.isNotEmpty
           ? GridView.builder(
               padding:
                   EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),

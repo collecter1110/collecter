@@ -5,33 +5,21 @@ import 'package:flutter/material.dart';
 class CollectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
 
-  List<CollectionModel>? _searchKeywordCollections;
-  List<CollectionModel>? _searchTagCollections;
   List<CollectionModel>? _searchUsersCollections;
   List<CollectionModel>? _myCollections;
   List<CollectionModel>? _likeCollections;
   CollectionModel? _collectionDetail;
   int? _collectionId;
   String? _collectionTitle;
-  int? _currentPageNum;
-  String? _keywordCurrentSearchText;
-  String? _tagCurrentSearchText;
 
   ConnectionState get state => _state;
-  List<CollectionModel>? get searchKeywordCollections =>
-      _searchKeywordCollections;
 
-  List<CollectionModel>? get searchTagCollections => _searchTagCollections;
   List<CollectionModel>? get searchUsersCollections => _searchUsersCollections;
   List<CollectionModel>? get myCollections => _myCollections;
   List<CollectionModel>? get likeCollections => _likeCollections;
   CollectionModel? get collectionDetail => _collectionDetail;
   int? get collectionId => _collectionId;
   String? get collectionTitle => _collectionTitle;
-
-  set setPageChanged(int currentPageNum) {
-    _currentPageNum = currentPageNum;
-  }
 
   set saveCollectionId(int? collectionId) {
     _collectionId = collectionId;
@@ -56,37 +44,36 @@ class CollectionProvider with ChangeNotifier {
     _collectionTitle = null;
   }
 
-  Future<void> getCollectionData() async {
+  set updateCollections(List<CollectionModel> updateCollections) {
+    _myCollections = updateCollections;
+
+    notifyListeners();
+  }
+
+  Future<void> getInitialMyCollectionData() async {
     try {
-      if (_currentPageNum == 0 && _myCollections == null) {
-        _state = ConnectionState.waiting;
-        await Future.delayed(Duration(milliseconds: 300));
-        await fetchCollections();
-        await fetchLikeCollections();
+      if (_myCollections != null) {
+        return;
       }
+      _state = ConnectionState.waiting;
+      await Future.delayed(Duration(milliseconds: 300));
+      await fetchCollections();
     } catch (e) {
       _state = ConnectionState.none;
     }
   }
 
-  Future<void> getKeywordCollectionData(String searchText) async {
+  Future<void> getLikeCollectionData() async {
     try {
-      if (_keywordCurrentSearchText != searchText) {
-        await fetchKeywordCollections(searchText);
+      if (_likeCollections != null) {
+        return;
       }
-      _keywordCurrentSearchText = searchText;
+      _state = ConnectionState.waiting;
+      await Future.delayed(Duration(milliseconds: 300));
+      await fetchLikeCollections();
     } catch (e) {
-    } finally {}
-  }
-
-  Future<void> getTagCollectionData(String searchText) async {
-    try {
-      if (_tagCurrentSearchText != searchText) {
-        await fetchTagCollections(searchText);
-      }
-      _tagCurrentSearchText = searchText;
-    } catch (e) {
-    } finally {}
+      _state = ConnectionState.none;
+    }
   }
 
   Future<void> getSearchUsersCollectionData(int userId) async {
@@ -105,7 +92,6 @@ class CollectionProvider with ChangeNotifier {
       print('Failed to fetch collections: $e');
     } finally {
       _state = ConnectionState.done;
-      notifyListeners();
     }
   }
 
@@ -113,8 +99,10 @@ class CollectionProvider with ChangeNotifier {
     try {
       _likeCollections = await ApiService.getLikeCollections();
     } catch (e) {
+      _state = ConnectionState.none;
       print('Failed to fetch like collections: $e');
     } finally {
+      _state = ConnectionState.done;
       notifyListeners();
     }
   }
@@ -127,26 +115,6 @@ class CollectionProvider with ChangeNotifier {
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {
-      notifyListeners();
-    }
-  }
-
-  Future<void> fetchKeywordCollections(String searchText) async {
-    try {
-      _searchKeywordCollections =
-          await ApiService.searchCollectionsByKeyword(searchText);
-    } catch (e) {
-    } finally {
-      notifyListeners();
-    }
-  }
-
-  Future<void> fetchTagCollections(String searchText) async {
-    try {
-      _searchTagCollections =
-          await ApiService.searchCollectionsByTag(searchText);
-    } catch (e) {
     } finally {
       notifyListeners();
     }

@@ -1,5 +1,4 @@
 import 'package:collect_er/components/card/collection.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -54,7 +53,9 @@ class CollectionWidget extends StatelessWidget {
                 child: Text(
                   isLiked == true
                       ? '좋아요를 눌러 마음에 드는 컬렉션을 저장해보세요!'
-                      : '새로운 컬렉션을 추가해보세요!',
+                      : isLiked == false
+                          ? '새로운 컬렉션을 추가해보세요!'
+                          : '컬렉션이 없습니다.',
                   style: TextStyle(
                     color: Color(0xFF868e96),
                     fontSize: 14.sp,

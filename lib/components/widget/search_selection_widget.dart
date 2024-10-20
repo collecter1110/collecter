@@ -17,7 +17,7 @@ class SearchSelectionWidget extends StatelessWidget {
     return Consumer<SelectionProvider>(builder: (context, provider, child) {
       final List<SelectionModel>? _selections = provider.searchSelections;
 
-      return _selections!.isNotEmpty
+      return _selections != null && _selections.isNotEmpty
           ? GridView.builder(
               padding:
                   EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),

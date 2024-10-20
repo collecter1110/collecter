@@ -46,8 +46,8 @@ void main() async {
         ChangeNotifierProvider<SelectingProvider>(
           create: (context) => SelectingProvider(),
         ),
-        ChangeNotifierProvider(
-          create: (_) => CollectionProvider(),
+        ChangeNotifierProvider<CollectionProvider>(
+          create: (context) => locator<CollectionProvider>(),
         ),
         ChangeNotifierProvider<SelectionProvider>(
           create: (context) => SelectionProvider(),

@@ -1,7 +1,6 @@
 import 'package:collect_er/components/button/like_button.dart';
 import 'package:collect_er/components/pop_up/user_info_dialog.dart';
 import 'package:collect_er/components/widget/selection_widget.dart';
-import 'package:collect_er/data/services/data_management.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -215,8 +214,8 @@ class CollectionDetailScreen extends StatelessWidget {
                                 horizontal: 18.0.w,
                               ),
                               child: SelectionWidget(
-                                  routeName: _routeName!,
-                                  collectionId: _collectionDetail.id),
+                                routeName: _routeName!,
+                              ),
                             )
                           : Center(
                               child: Padding(

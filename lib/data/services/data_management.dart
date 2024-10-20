@@ -4,8 +4,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/collection_provider.dart';
+import '../provider/ranking_provider.dart';
 import '../provider/search_provider.dart';
 import '../provider/selection_provider.dart';
+import 'locator.dart';
 
 class DataManagement {
   static Future<void> reloadLocalData(BuildContext context, int collectionId,
@@ -14,24 +16,22 @@ class DataManagement {
     final searchProvider = context.read<SearchProvider>();
     final selectionProvider = context.read<SelectionProvider>();
     String? searchText = searchProvider.searchText;
-    await collectionProvider.fetchCollections();
 
     if (searchText != null) {
-      bool existsKeywordCollections = collectionProvider
-              .searchKeywordCollections
+      bool existsKeywordCollections = searchProvider.searchKeywordCollections
               ?.any((collection) => collection.id == collectionId) ??
           false;
 
       if (existsKeywordCollections) {
-        await collectionProvider.fetchKeywordCollections(searchText);
+        await searchProvider.fetchKeywordCollections(searchText);
       }
 
-      bool existsTagCollections = collectionProvider.searchTagCollections
+      bool existsTagCollections = searchProvider.searchTagCollections
               ?.any((collection) => collection.id == collectionId) ??
           false;
 
       if (existsTagCollections) {
-        await collectionProvider.fetchTagCollections(searchText);
+        await searchProvider.fetchTagCollections(searchText);
       }
 
       bool existsUsersCollections = collectionProvider.searchUsersCollections
@@ -49,7 +49,6 @@ class DataManagement {
           false;
 
       if (existsSelections) {
-        print('dd');
         await selectionProvider.fetchSearchSelections(searchText);
       }
     }
@@ -96,5 +95,16 @@ class DataManagement {
 
     // 전체 URL 생성 (버킷 이름과 폴더 경로 포함)
     return '$supabaseUrl/storage/v1/object/public/images/$storageFolderName/$imageFilePath';
+  }
+
+  static Future<void> loadInitialData() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final rankingProvider = locator<RankingProvider>();
+      final collectionProvider = locator<CollectionProvider>();
+      await rankingProvider.getInitialRankingCollectionData();
+      await rankingProvider.getInitialRankingSelectionData();
+      await rankingProvider.getInitialRankingUserData();
+      await collectionProvider.getInitialMyCollectionData();
+    });
   }
 }

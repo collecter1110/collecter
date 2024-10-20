@@ -85,7 +85,6 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
       }
       await ApiService.addSelections(_collectionId!, _title!, _description,
           _imageFilePaths, _keywords!, _link, _items, _isOrder, _isPrivate);
-      await context.read<CollectionProvider>().fetchCollections();
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -120,7 +119,6 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   }
 
   Future<void> _showGroupDialog() async {
-    await fetchCollections();
     showModalBottomSheet(
       context: context,
       constraints: BoxConstraints(
@@ -131,13 +129,6 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
         return CollectionTitleDialog();
       },
     );
-  }
-
-  Future<void> fetchCollections() async {
-    final provider = context.read<CollectionProvider>();
-    if (provider.myCollections == null) {
-      await provider.fetchCollections();
-    }
   }
 
   @override

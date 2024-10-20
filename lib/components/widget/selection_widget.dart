@@ -1,4 +1,5 @@
 import 'package:collect_er/data/model/selecting_model.dart';
+import 'package:collect_er/data/provider/collection_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -9,11 +10,10 @@ import '../card/selection.dart';
 
 class SelectionWidget extends StatefulWidget {
   final String routeName;
-  final int collectionId;
+
   const SelectionWidget({
     super.key,
     required this.routeName,
-    required this.collectionId,
   });
 
   @override
@@ -28,9 +28,10 @@ class _SelectionWidgetState extends State<SelectionWidget> {
   }
 
   void initializeData() async {
-    final provider = context.read<SelectionProvider>();
-    provider.getCollectionId = widget.collectionId;
-    await provider.getSelectionData();
+    final collectionProvider = context.read<CollectionProvider>();
+    final selctionProvider = context.read<SelectionProvider>();
+    selctionProvider.getCollectionId = collectionProvider.collectionId!;
+    await selctionProvider.getSelectionData();
   }
 
   @override

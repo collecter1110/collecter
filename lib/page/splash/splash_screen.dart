@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../data/services/data_management.dart';
 import '../../page_navigator.dart';
 import '../login/enter_login_screen.dart';
 
@@ -22,13 +23,14 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _getAccessToken(BuildContext context) async {
-    await Future.delayed(Duration(seconds: 2));
+    // await Future.delayed(Duration(seconds: 2));
     final storage = FlutterSecureStorage();
     String? userIdString = await storage.read(key: 'USER_ID');
     bool _isAccessToken = await ApiService.checkAccessToken();
 
     if (_isAccessToken) {
       if (userIdString != null) {
+        await DataManagement.loadInitialData();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PageNavigator()),

@@ -11,7 +11,6 @@ import '../../components/constants/screen_size.dart';
 import '../../components/widget/search_category_widget.dart';
 import '../../components/widget/search_selection_widget.dart';
 import '../../components/widget/search_user_widget.dart';
-import '../../data/provider/collection_provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -31,9 +30,9 @@ class _SearchScreenState extends State<SearchScreen> {
     int categoryIndex,
     String? searchText,
   ) async {
-    final _collectionProvider = context.read<CollectionProvider>();
     final _selectionProvider = context.read<SelectionProvider>();
     final _userProvider = context.read<UserInfoProvider>();
+    final _searchProvider = context.read<SearchProvider>();
 
     print('do search $categoryIndex');
 
@@ -42,8 +41,8 @@ class _SearchScreenState extends State<SearchScreen> {
     switch (categoryIndex) {
       case 0:
         isKeyword
-            ? await _collectionProvider.getKeywordCollectionData(searchText)
-            : await _collectionProvider.getTagCollectionData(searchText);
+            ? await _searchProvider.getKeywordCollectionData(searchText)
+            : await _searchProvider.getTagCollectionData(searchText);
         break;
 
       case 1:

@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/authentication_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
+import '../../data/services/data_management.dart';
 
 class EmailLoginScreen extends StatefulWidget {
   const EmailLoginScreen({Key? key}) : super(key: key);
@@ -252,6 +253,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                     if (!_emailAuthState) {
                       _handleEmailAuthValid();
                     } else {
+                      await DataManagement.loadInitialData();
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
