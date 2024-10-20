@@ -16,21 +16,20 @@ class DataManagement {
     String? searchText = searchProvider.searchText;
 
     if (searchText != null) {
-      bool existsKeywordCollections = collectionProvider
-              .searchKeywordCollections
+      bool existsKeywordCollections = searchProvider.searchKeywordCollections
               ?.any((collection) => collection.id == collectionId) ??
           false;
 
       if (existsKeywordCollections) {
-        await collectionProvider.fetchKeywordCollections(searchText);
+        await searchProvider.fetchKeywordCollections(searchText);
       }
 
-      bool existsTagCollections = collectionProvider.searchTagCollections
+      bool existsTagCollections = searchProvider.searchTagCollections
               ?.any((collection) => collection.id == collectionId) ??
           false;
 
       if (existsTagCollections) {
-        await collectionProvider.fetchTagCollections(searchText);
+        await searchProvider.fetchTagCollections(searchText);
       }
 
       bool existsUsersCollections = collectionProvider.searchUsersCollections
@@ -48,7 +47,6 @@ class DataManagement {
           false;
 
       if (existsSelections) {
-        print('dd');
         await selectionProvider.fetchSearchSelections(searchText);
       }
     }

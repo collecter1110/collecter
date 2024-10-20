@@ -22,7 +22,6 @@ class _BookmarkScreenState extends State<BookmarkScreen>
   @override
   void initState() {
     super.initState();
-    initializeData();
     _tabController = TabController(length: 2, vsync: this);
     _tabController?.addListener(() {
       setState(() {
@@ -31,15 +30,10 @@ class _BookmarkScreenState extends State<BookmarkScreen>
     });
   }
 
-  void initializeData() async {
-    final provider = context.read<CollectionProvider>();
-    provider.setPageChanged = 0;
-  }
-
   Future<void> _onTap(int index) async {
     _tabController!.animateTo(index);
     final provider = context.read<CollectionProvider>();
-    provider.setPageChanged = index;
+
     if (index == 1) {
       await provider.getLikeCollectionData();
     }
