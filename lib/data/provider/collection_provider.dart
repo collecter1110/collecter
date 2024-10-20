@@ -11,6 +11,7 @@ class CollectionProvider with ChangeNotifier {
   CollectionModel? _collectionDetail;
   int? _collectionId;
   String? _collectionTitle;
+  int _collectionNum = 0;
 
   ConnectionState get state => _state;
 
@@ -20,6 +21,7 @@ class CollectionProvider with ChangeNotifier {
   CollectionModel? get collectionDetail => _collectionDetail;
   int? get collectionId => _collectionId;
   String? get collectionTitle => _collectionTitle;
+  int get collectionNum => _collectionNum;
 
   set saveCollectionId(int? collectionId) {
     _collectionId = collectionId;
@@ -46,7 +48,7 @@ class CollectionProvider with ChangeNotifier {
 
   set updateCollections(List<CollectionModel> updateCollections) {
     _myCollections = updateCollections;
-
+    _collectionNum = _myCollections?.length ?? 0;
     notifyListeners();
   }
 
@@ -86,6 +88,7 @@ class CollectionProvider with ChangeNotifier {
   Future<void> fetchCollections() async {
     try {
       _myCollections = await ApiService.getCollections();
+      _collectionNum = _myCollections?.length ?? 0;
       print('getCollections');
     } catch (e) {
       _state = ConnectionState.none;

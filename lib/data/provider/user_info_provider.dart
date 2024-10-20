@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import '../model/user_info_model.dart';
-import '../model/user_overview_model.dart';
 import '../services/api_service.dart';
 
 class UserInfoProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
   UserInfoModel? _userInfo;
   UserInfoModel? _otherUserInfo;
-  UserOverviewModel? _userOverview;
+
   int? _collectionNum;
   int? _selectingNum;
   int? _selectedNum;
@@ -31,7 +30,6 @@ class UserInfoProvider with ChangeNotifier {
         return;
       }
       await fetchUserInfo();
-      await fetchUserOverview();
     } catch (e) {
       print('Failed to fetch user info: $e');
     }
@@ -49,14 +47,6 @@ class UserInfoProvider with ChangeNotifier {
       _state = ConnectionState.done;
       notifyListeners();
     }
-  }
-
-  Future<void> fetchUserOverview() async {
-    _userOverview = await ApiService.getUserOverview();
-    _collectionNum = _userOverview!.collectionNum;
-    _selectingNum = _userOverview!.selectingNum;
-    _selectedNum = _userOverview!.selectedNum;
-    notifyListeners();
   }
 
   Future<void> fetchOtherUserInfo(int userId) async {

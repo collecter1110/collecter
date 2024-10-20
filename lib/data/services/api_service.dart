@@ -11,7 +11,6 @@ import '../model/collection_model.dart';
 import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
-import '../model/user_overview_model.dart';
 import '../provider/ranking_provider.dart';
 import 'locator.dart';
 
@@ -229,28 +228,6 @@ class ApiService {
       } else {
         throw Exception('Response code error <getUserInfo>');
       }
-    } on AuthException catch (e) {
-      Toast.error();
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      Toast.error();
-      throw Exception('An unexpected error occurred: $e');
-    }
-  }
-
-  static Future<UserOverviewModel> getUserOverview() async {
-    try {
-      final userIdString = await storage.read(key: 'USER_ID');
-      int userId = int.parse(userIdString!);
-      final responseData = await _supabase
-          .from('useroverview')
-          .select('collection_num, selecting_num, selected_num')
-          .eq('user_id', userId)
-          .single();
-
-      UserOverviewModel userOverviewModel =
-          UserOverviewModel.fromJson(responseData);
-      return Future.value(userOverviewModel);
     } on AuthException catch (e) {
       Toast.error();
       throw Exception('Authentication error: ${e.message}');

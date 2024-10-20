@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (_isAccessToken) {
       if (userIdString != null) {
-        await DataManagement.loadInitialData();
+        await DataManagement.loadInitialData(context);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PageNavigator()),

@@ -1,3 +1,4 @@
+import 'package:collect_er/data/provider/selecting_provider.dart';
 import 'package:collect_er/page/bookmark_page/bookmark_screen.dart';
 import 'package:collect_er/page/user_page/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,10 @@ import '../../components/button/user_page_edit_button.dart';
 import '../../components/button/users_archive_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/expandable_text.dart';
+import '../../data/provider/collection_provider.dart';
 import '../../data/provider/user_info_provider.dart';
 import '../../data/services/data_management.dart';
+import '../../data/services/locator.dart';
 import 'selecting_screen.dart';
 
 class UserScreen extends StatefulWidget {
@@ -73,27 +76,21 @@ class _UserScreenState extends State<UserScreen> {
                 padding: EdgeInsets.symmetric(
                   horizontal: 16.0.w,
                 ),
-                child: Consumer<UserInfoProvider>(
-                  builder: (context, provider, child) {
-                    if (provider.state == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (provider.state == ConnectionState.done) {
-                      final int _userId = provider.userInfo!.userId;
-                      final String _name = provider.userInfo!.name;
-                      final String? _description =
-                          provider.userInfo?.description;
-                      final String? _imageFilePath =
-                          provider.userInfo?.imageFilePath;
+                child: Column(
+                  children: [
+                    Consumer<UserInfoProvider>(
+                      builder: (context, provider, child) {
+                        if (provider.state == ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (provider.state == ConnectionState.done) {
+                          final int _userId = provider.userInfo!.userId;
+                          final String _name = provider.userInfo!.name;
+                          final String? _description =
+                              provider.userInfo?.description;
+                          final String? _imageFilePath =
+                              provider.userInfo?.imageFilePath;
 
-                      final int? collectionNum = provider.collectionNum;
-                      final int? selectingNum = provider.selectingNum;
-                      final int? selectedNum = provider.selectedNum;
-
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
+                          return Padding(
                             padding:
                                 EdgeInsets.only(top: 36.0.h, bottom: 20.0.h),
                             child: Row(
@@ -177,90 +174,95 @@ class _UserScreenState extends State<UserScreen> {
                                 ),
                               ],
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 50.0.w, vertical: 20.0.h),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                UsersArchiveButton(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => BookmarkScreen(),
-                                        settings:
-                                            RouteSettings(name: '/bookmark'),
-                                      ),
-                                    );
-                                  },
-                                  number: collectionNum ?? 0,
-                                  name: 'Collection',
-                                ),
-                                UsersArchiveButton(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SelectingScreen(
-                                          initialPageIndex: 0,
-                                        ),
-                                        settings: RouteSettings(name: '/user'),
-                                      ),
-                                    );
-                                  },
-                                  number: selectingNum ?? 0,
-                                  name: 'Selecting',
-                                ),
-                                UsersArchiveButton(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SelectingScreen(
-                                          initialPageIndex: 1,
-                                        ),
-                                        settings: RouteSettings(name: '/user'),
-                                      ),
-                                    );
-                                  },
-                                  number: selectedNum ?? 0,
-                                  name: 'Selected',
-                                ),
-                              ],
+                          );
+                        } else {
+                          return const Center(
+                            child: Text('Error occurred.'),
+                          );
+                        }
+                      },
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 50.0.w, vertical: 20.0.h),
+                      child: Consumer<SelectingProvider>(
+                          builder: (context, provider, child) {
+                        // final int? collectionNum = provider.collectionNum;
+                        final int _selectingNum = provider.selectingNum;
+                        final int _selectedNum = provider.selectedNum;
+
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            UsersArchiveButton(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BookmarkScreen(),
+                                    settings: RouteSettings(name: '/bookmark'),
+                                  ),
+                                );
+                              },
+                              number:
+                                  locator<CollectionProvider>().collectionNum,
+                              name: 'Collection',
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.0.h),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                UserPageEditButton(
-                                    name: '프로필 편집',
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              EditProfileScreen(),
-                                          settings:
-                                              RouteSettings(name: '/user'),
-                                        ),
-                                      );
-                                    }),
-                              ],
+                            UsersArchiveButton(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SelectingScreen(
+                                      initialPageIndex: 0,
+                                    ),
+                                    settings: RouteSettings(name: '/user'),
+                                  ),
+                                );
+                              },
+                              number: _selectingNum,
+                              name: 'Selecting',
                             ),
-                          ),
+                            UsersArchiveButton(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SelectingScreen(
+                                      initialPageIndex: 1,
+                                    ),
+                                    settings: RouteSettings(name: '/user'),
+                                  ),
+                                );
+                              },
+                              number: _selectedNum,
+                              name: 'Selected',
+                            ),
+                          ],
+                        );
+                      }),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20.0.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          UserPageEditButton(
+                              name: '프로필 편집',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditProfileScreen(),
+                                    settings: RouteSettings(name: '/user'),
+                                  ),
+                                );
+                              }),
                         ],
-                      );
-                    } else {
-                      return const Center(
-                        child: Text('Error occurred.'),
-                      );
-                    }
-                  },
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Container(

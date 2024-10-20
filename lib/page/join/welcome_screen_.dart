@@ -57,7 +57,7 @@ class WelcomeScreen extends StatelessWidget {
               secondFieldState: true,
               text: '시작하기',
               onTap: () async {
-                await DataManagement.loadInitialData();
+                await DataManagement.loadInitialData(context);
                 Navigator.of(context).pushAndRemoveUntil(
                     CupertinoPageRoute(builder: (context) => PageNavigator()),
                     (route) => false);

@@ -64,7 +64,6 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     try {
       await ApiService.addCollection(_title!, _description,
           context.read<TagProvider>().tagNames, _isPrivate);
-      await context.read<UserInfoProvider>().fetchUserOverview();
     } catch (e) {
       print('Error: $e');
     } finally {

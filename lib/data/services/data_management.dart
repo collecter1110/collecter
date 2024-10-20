@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../provider/collection_provider.dart';
 import '../provider/ranking_provider.dart';
 import '../provider/search_provider.dart';
+import '../provider/selecting_provider.dart';
 import '../provider/selection_provider.dart';
 import 'locator.dart';
 
@@ -97,14 +98,16 @@ class DataManagement {
     return '$supabaseUrl/storage/v1/object/public/images/$storageFolderName/$imageFilePath';
   }
 
-  static Future<void> loadInitialData() async {
+  static Future<void> loadInitialData(BuildContext context) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final rankingProvider = locator<RankingProvider>();
       final collectionProvider = locator<CollectionProvider>();
+      final selectingProvider = context.read<SelectingProvider>();
       await rankingProvider.getInitialRankingCollectionData();
       await rankingProvider.getInitialRankingSelectionData();
       await rankingProvider.getInitialRankingUserData();
       await collectionProvider.getInitialMyCollectionData();
+      await selectingProvider.getSelectData();
     });
   }
 }

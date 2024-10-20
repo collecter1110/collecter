@@ -66,9 +66,6 @@ class EditCollectionDialog extends StatelessWidget {
                                 collectionDetail.id,
                                 collectionDetail.userId,
                               );
-                              await context
-                                  .read<UserInfoProvider>()
-                                  .fetchUserOverview();
                             },
                             () async {
                               _closeDialog();
