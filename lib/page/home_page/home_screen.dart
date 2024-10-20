@@ -157,40 +157,6 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ];
         },
-        // SliverPadding(
-        //   padding: EdgeInsets.symmetric(horizontal: 18.0.w),
-        //   sliver: SliverToBoxAdapter(
-        //     child: Column(
-        //       children: [
-        //         SizedBox(
-        //           height: 34.0.h,
-        //         ),
-        //         Row(
-        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //           children: [
-        //             Text(
-        //               '화제의 컬렉션 랭킹',
-        //               style: TextStyle(
-        //                 color: Colors.black,
-        //                 fontWeight: FontWeight.w700,
-        //                 fontSize: 18.0.sp,
-        //               ),
-        //             ),
-        //           ],
-        //         ),
-        //         Padding(
-        //           padding: EdgeInsets.only(top: 12.0.h, bottom: 4.0.h),
-        //           child: Divider(
-        //             color: Colors.black,
-        //             thickness: 2.0.h,
-        //             height: 0,
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
-
         body: TabBarView(
           controller: _tabController,
           children: [

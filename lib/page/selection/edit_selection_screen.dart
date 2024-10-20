@@ -384,7 +384,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          '태그',
+                          '키워드',
                           style: TextStyle(
                             fontFamily: 'PretendardRegular',
                             fontSize: 16.sp,
@@ -404,7 +404,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                 key: _keywordFormKey,
                                 child: AddTextFormField(
                                   keyboardType: TextInputType.name,
-                                  hintText: '태그 추가',
+                                  hintText: '키워드 추가',
                                   formatter: FilteringTextInputFormatter.deny(
                                       RegExp(r'\s')),
                                   isMultipleLine: false,
