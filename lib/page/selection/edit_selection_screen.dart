@@ -40,7 +40,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   String? _changedDescription;
   String? _changedLink;
   bool? _changedIsOrder;
-  bool? _changedIsPrivate;
+  bool? _changedIsSelectable;
   List<Map<String, dynamic>>? _changedKeywords;
   int _itemNum = 0;
   List<Map<String, dynamic>>? _changedItems;
@@ -70,7 +70,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
     _changedTitle = widget.selectionDetail.title;
     _changedDescription = widget.selectionDetail.description;
     _changedLink = widget.selectionDetail.link;
-    _changedIsPrivate = widget.selectionDetail.isSelectable;
+    _changedIsSelectable = widget.selectionDetail.isSelectable;
     _changedIsOrder = widget.selectionDetail.isOrdered;
     _initialImagePaths = widget.selectionDetail.imageFilePaths != null
         ? List<dynamic>.from(widget.selectionDetail.imageFilePaths!)
@@ -159,7 +159,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
         _changedLink,
         _changedItems,
         _changedIsOrder!,
-        _changedIsPrivate!,
+        _changedIsSelectable!,
       );
     } catch (e) {
       print('Error: $e');
@@ -609,7 +609,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            _changedIsPrivate! ? '공유 가능' : '공유 불가능',
+                            _changedIsSelectable! ? '공유 가능' : '공유 불가능',
                             style: TextStyle(
                               fontFamily: 'PretendardRegular',
                               fontSize: 16.sp,
@@ -622,10 +622,10 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                           Transform.scale(
                             scale: 0.8,
                             child: Switch(
-                              value: _changedIsPrivate!,
+                              value: _changedIsSelectable!,
                               onChanged: (value) {
                                 setState(() {
-                                  _changedIsPrivate = value;
+                                  _changedIsSelectable = value;
                                 });
                               },
                               inactiveThumbColor: Colors.white,

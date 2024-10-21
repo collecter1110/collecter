@@ -348,7 +348,7 @@ class ApiService {
       final _initialRankingCollections = await _supabase
           .from('collections')
           .select()
-          .eq('is_private', true)
+          .eq('is_public', true)
           .order('like_num')
           .limit(10);
 
@@ -527,7 +527,7 @@ class ApiService {
         selection_num, 
         like_num, 
         likes(user_id),
-        is_private
+        is_public
         ''').eq('id', collectionId).single();
 
       bool hasLiked = (responseData['likes'] as List<dynamic>)
@@ -586,7 +586,7 @@ class ApiService {
   }
 
   static Future<void> addCollection(String title, String? description,
-      List<String>? tags, bool isPrivate) async {
+      List<String>? tags, bool isPublic) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
@@ -596,7 +596,7 @@ class ApiService {
         'title': title,
         'description': description,
         'tags': tags,
-        'is_private': isPrivate,
+        'is_public': isPublic,
       });
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
@@ -615,7 +615,7 @@ class ApiService {
       String? link,
       List<Map<String, dynamic>>? items,
       bool isOrder,
-      bool isPrivate) async {
+      bool isSelectable) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
@@ -632,7 +632,7 @@ class ApiService {
         'link': link,
         'items': items,
         'is_ordered': isOrder,
-        'is_selectable': isPrivate,
+        'is_selectable': isSelectable,
       });
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
@@ -684,14 +684,14 @@ class ApiService {
       String? description,
       String? imageFilePath,
       List<String>? tags,
-      bool isPrivate) async {
+      bool isPublic) async {
     try {
       await _supabase.from('collections').update({
         'title': title,
         'description': description,
         'image_file_path': imageFilePath,
         'tags': tags,
-        'is_private': isPrivate,
+        'is_public': isPublic,
       }).eq('id', collectionId);
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
@@ -711,7 +711,7 @@ class ApiService {
     String? link,
     List<Map<String, dynamic>>? items,
     bool isOrder,
-    bool isPrivate,
+    bool isSelectable,
   ) async {
     try {
       await _supabase
@@ -724,7 +724,7 @@ class ApiService {
             'link': link,
             'items': items,
             'is_ordered': isOrder,
-            'is_selectable': isPrivate,
+            'is_selectable': isSelectable,
           })
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId);
@@ -897,7 +897,7 @@ class ApiService {
         user_name, 
         primary_keywords, 
         selection_num, 
-        is_private
+        is_public
         ''').eq('user_id', userId);
 
       List<CollectionModel> collections = responseData.map((item) {
@@ -937,7 +937,9 @@ class ApiService {
             imageFilePaths.addAll(List<String>.from(item['image_file_paths']));
           }
         }
-        await deleteStorageImages('selections', imageFilePaths);
+        if (imageFilePaths.isNotEmpty) {
+          await deleteStorageImages('selections', imageFilePaths);
+        }
       }
       await _supabase.from('collections').delete().eq('id', collectionId);
     } catch (e) {

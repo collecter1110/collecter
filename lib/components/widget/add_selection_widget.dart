@@ -33,7 +33,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   List<String>? _imageFilePaths;
   String? _link;
   List<Map<String, dynamic>>? _items;
-  bool _isPrivate = false;
+  bool _isSelectable = false;
   String _inputKeywordValue = '';
 
   bool _isOrder = false;
@@ -84,7 +84,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
             _picekdImages!, 'selections');
       }
       await ApiService.addSelections(_collectionId!, _title!, _description,
-          _imageFilePaths, _keywords!, _link, _items, _isOrder, _isPrivate);
+          _imageFilePaths, _keywords!, _link, _items, _isOrder, _isSelectable);
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -572,7 +572,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _isPrivate ? '공유 가능' : '공유 불가능',
+                          _isSelectable ? '공유 가능' : '공유 불가능',
                           style: TextStyle(
                             fontFamily: 'PretendardRegular',
                             fontSize: 16.sp,
@@ -585,11 +585,11 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         Transform.scale(
                           scale: 0.8,
                           child: Switch(
-                            value: _isPrivate,
+                            value: _isSelectable,
                             onChanged: (value) {
                               setState(() {
                                 FocusScope.of(context).unfocus();
-                                _isPrivate = value;
+                                _isSelectable = value;
                               });
                             },
                             inactiveThumbColor: Colors.white,

@@ -37,7 +37,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
   String? _changedTitle;
   String? _changedDescription;
   String? _changedImageFilePath;
-  bool? _changedIsPrivate;
+  bool? _changedIsPublic;
 
   String _inputTagValue = '';
 
@@ -58,7 +58,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
     _changedTitle = widget.collectionDetail.title;
     _changedDescription = widget.collectionDetail.description;
     _changedImageFilePath = widget.collectionDetail.imageFilePath;
-    _changedIsPrivate = widget.collectionDetail.isPrivate;
+    _changedIsPublic = widget.collectionDetail.isPublic;
   }
 
   @override
@@ -131,7 +131,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
           _changedDescription,
           _changedImageFilePath,
           context.read<TagProvider>().tagNames,
-          _changedIsPrivate!);
+          _changedIsPublic!);
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -391,7 +391,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _changedIsPrivate! ? '공개' : '비공개',
+                          _changedIsPublic! ? '공개' : '비공개',
                           style: TextStyle(
                             fontFamily: 'PretendardRegular',
                             fontSize: 16.sp,
@@ -404,10 +404,10 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                         Transform.scale(
                           scale: 0.8,
                           child: Switch(
-                            value: _changedIsPrivate!,
+                            value: _changedIsPublic!,
                             onChanged: (value) {
                               setState(() {
-                                _changedIsPrivate = value;
+                                _changedIsPublic = value;
                               });
                             },
                             inactiveThumbColor: Colors.white,

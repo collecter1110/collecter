@@ -12,7 +12,7 @@ class CollectionModel {
   final List<KeywordData>? primaryKeywords;
   final int? selectionNum;
   final int? likeNum;
-  final bool isPrivate;
+  final bool isPublic;
   final bool? isLiked;
 
   CollectionModel({
@@ -27,7 +27,7 @@ class CollectionModel {
     this.primaryKeywords,
     this.selectionNum,
     this.likeNum,
-    required this.isPrivate,
+    required this.isPublic,
     this.isLiked,
   });
 
@@ -48,7 +48,7 @@ class CollectionModel {
           .toList(),
       selectionNum: json['selection_num'] as int?,
       likeNum: json['like_num'] as int?,
-      isPrivate: json['is_private'],
+      isPublic: json['is_public'],
       isLiked: hasLiked as bool?,
     );
   }
