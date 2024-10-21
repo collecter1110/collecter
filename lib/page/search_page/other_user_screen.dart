@@ -8,6 +8,7 @@ import '../../components/ui_kit/expandable_text.dart';
 import '../../data/model/user_info_model.dart';
 import '../../data/provider/user_info_provider.dart';
 import '../../data/services/data_management.dart';
+import '../../data/services/storage_service.dart';
 
 class OtherUserScreen extends StatelessWidget {
   final UserInfoModel userInfoDetail;
@@ -63,7 +64,7 @@ class OtherUserScreen extends StatelessWidget {
                               ),
                               image: DecorationImage(
                                 image: NetworkImage(
-                                  DataManagement.getFullImageUrl(
+                                  StorageService.getFullImageUrl(
                                       '${userInfoDetail.userId}/userinfo',
                                       _imageFilePath),
                                 ),

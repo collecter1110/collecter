@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/provider/selection_provider.dart';
 import '../../data/services/data_management.dart';
+import '../../data/services/storage_service.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 
@@ -74,7 +75,7 @@ class Selection extends StatelessWidget {
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: NetworkImage(
-                                  DataManagement.getFullImageUrl(
+                                  StorageService.getFullImageUrl(
                                       '$ownerId/selections', thumbFilePath!),
                                 ),
                                 fit: BoxFit.cover,

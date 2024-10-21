@@ -13,6 +13,7 @@ import '../../data/provider/collection_provider.dart';
 import '../../data/provider/user_info_provider.dart';
 import '../../data/services/data_management.dart';
 import '../../data/services/locator.dart';
+import '../../data/services/storage_service.dart';
 import 'selecting_screen.dart';
 
 class UserScreen extends StatefulWidget {
@@ -122,7 +123,7 @@ class _UserScreenState extends State<UserScreen> {
                                           ),
                                           image: DecorationImage(
                                             image: NetworkImage(
-                                              DataManagement.getFullImageUrl(
+                                              StorageService.getFullImageUrl(
                                                   '${_userId}/userinfo',
                                                   _imageFilePath),
                                             ),

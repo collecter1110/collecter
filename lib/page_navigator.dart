@@ -1,8 +1,10 @@
 import 'package:collect_er/components/button/nav_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'data/provider/page_route_provider.dart';
+import 'data/services/storage_service.dart';
 import 'page/add_page/add_screen.dart';
 import 'page/bookmark_page/bookmark_screen.dart';
 import 'page/home_page/home_screen.dart';
@@ -50,6 +52,19 @@ class _PageNavigatorState extends State<PageNavigator> {
   @override
   void initState() {
     super.initState();
+
+    getPermission();
+  }
+
+  Future<void> getPermission() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      bool isPermissionGranted = await StorageService.requestPhotoPermission();
+
+      if (isPermissionGranted) {
+      } else {
+        openAppSettings();
+      }
+    });
   }
 
   @override

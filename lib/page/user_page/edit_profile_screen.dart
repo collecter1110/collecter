@@ -13,6 +13,7 @@ import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/services/api_service.dart';
 import '../../data/services/data_management.dart';
+import '../../data/services/storage_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({
@@ -83,7 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: NetworkImage(
-              DataManagement.getFullImageUrl(
+              StorageService.getFullImageUrl(
                   '${_userId}/userinfo', _changedImageFilePath!),
             ),
             fit: BoxFit.cover,
@@ -149,18 +150,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future _pickImages(ImageSource imageSource) async {
-    PermissionStatus status = await Permission.photos.request();
+    _pickedImage = await _picker.pickImage(source: imageSource);
 
-    if (status.isGranted || status.isLimited) {
-      _pickedImage = await _picker.pickImage(source: imageSource);
-
-      if (_pickedImage != null) {
-        setState(() {
-          _pickedImage = XFile(_pickedImage!.path);
-        });
-      }
-    } else {
-      await Toast.handlePhotoPermission(status);
+    if (_pickedImage != null) {
+      setState(() {
+        _pickedImage = XFile(_pickedImage!.path);
+      });
     }
   }
 

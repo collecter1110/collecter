@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/services/data_management.dart';
+import '../../data/services/storage_service.dart';
 
 class CoverImage extends StatelessWidget {
   final int coverIndex;
@@ -42,7 +43,7 @@ class CoverImage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.r),
                 image: DecorationImage(
                   image: NetworkImage(
-                    DataManagement.getFullImageUrl(
+                    StorageService.getFullImageUrl(
                         '$ownerId/selections', thumbFilePath),
                   ),
                   fit: BoxFit.cover,

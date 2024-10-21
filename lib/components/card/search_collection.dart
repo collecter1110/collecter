@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
 import '../../data/services/data_management.dart';
+import '../../data/services/storage_service.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 import '../ui_kit/tag_text.dart';
@@ -54,7 +55,7 @@ class SearchCollection extends StatelessWidget {
                         Radius.circular(8),
                       ),
                       child: Image.network(
-                        DataManagement.getFullImageUrl(
+                        StorageService.getFullImageUrl(
                             '${collectionDetail.userId}/selections',
                             collectionDetail.imageFilePath!),
                         fit: BoxFit.cover,

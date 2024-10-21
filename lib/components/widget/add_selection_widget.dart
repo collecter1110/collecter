@@ -106,16 +106,10 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   }
 
   Future _pickImages() async {
-    PermissionStatus status = await Permission.photos.request();
-
-    if (status.isGranted || status.isLimited) {
-      final List<XFile> pickedFileList = await _picker.pickMultiImage(limit: 5);
-      setState(() {
-        _picekdImages = pickedFileList;
-      });
-    } else {
-      await Toast.handlePhotoPermission(status);
-    }
+    final List<XFile> pickedFileList = await _picker.pickMultiImage(limit: 5);
+    setState(() {
+      _picekdImages = pickedFileList;
+    });
   }
 
   Future<void> _showGroupDialog() async {

@@ -66,8 +66,8 @@
     <string>Calendars</string> -->
 
     <!-- Permission options for the `camera` group -->
-    <key>NSCameraUsageDescription</key>
-    <string>This app accesses your camera to take pictures.</string>
+    <!-- <key>NSCameraUsageDescription</key>
+    <string>This app accesses your camera to take pictures.</string> -->
 
     <!-- Permission options for the `contacts` group -->
     <!-- <key>NSContactsUsageDescription</key>

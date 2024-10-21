@@ -19,6 +19,7 @@ import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/model/selection_model.dart';
 import '../../data/provider/item_provider.dart';
 import '../../data/services/data_management.dart';
+import '../../data/services/storage_service.dart';
 
 class EditSelectionScreen extends StatefulWidget {
   final SelectionModel selectionDetail;
@@ -180,21 +181,15 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   }
 
   Future _pickImages(ImageSource imageSource) async {
-    PermissionStatus status = await Permission.photos.request();
+    _pickedImage = await _picker.pickImage(source: imageSource);
 
-    if (status.isGranted || status.isLimited) {
-      _pickedImage = await _picker.pickImage(source: imageSource);
+    if (_pickedImage != null) {
+      setState(() {
+        _changedImagePaths.insert(
+            _changedImagePaths.length, _pickedImage!.path);
 
-      if (_pickedImage != null) {
-        setState(() {
-          _changedImagePaths.insert(
-              _changedImagePaths.length, _pickedImage!.path);
-
-          _imageNum = _changedImagePaths.length;
-        });
-      }
-    } else {
-      await Toast.handlePhotoPermission(status);
+        _imageNum = _changedImagePaths.length;
+      });
     }
   }
 
@@ -270,7 +265,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
                                                   image: NetworkImage(
-                                                    DataManagement.getFullImageUrl(
+                                                    StorageService.getFullImageUrl(
                                                         '${widget.selectionDetail.ownerId}/selections',
                                                         _changedImagePaths[
                                                             index]),

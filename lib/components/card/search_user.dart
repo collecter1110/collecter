@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../data/model/user_info_model.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/services/data_management.dart';
+import '../../data/services/storage_service.dart';
 import '../../page/search_page/other_user_screen.dart';
 
 class SearchUser extends StatelessWidget {
@@ -62,7 +63,7 @@ class SearchUser extends StatelessWidget {
                       ),
                       image: DecorationImage(
                         image: NetworkImage(
-                          DataManagement.getFullImageUrl(
+                          StorageService.getFullImageUrl(
                               '${userInfoDetail.userId}/userinfo',
                               userInfoDetail.imageFilePath!),
                         ),

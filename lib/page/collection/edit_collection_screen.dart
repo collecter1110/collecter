@@ -15,6 +15,7 @@ import '../../data/provider/selection_provider.dart';
 import '../../data/provider/tag_provider.dart';
 import '../../data/services/api_service.dart';
 import '../../data/services/data_management.dart';
+import '../../data/services/storage_service.dart';
 
 class EditCollectionScreen extends StatefulWidget {
   final CollectionModel collectionDetail;
@@ -86,7 +87,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: NetworkImage(
-              DataManagement.getFullImageUrl(
+              StorageService.getFullImageUrl(
                   '$_userId/selections', _changedImageFilePath!),
             ),
             fit: BoxFit.cover,
