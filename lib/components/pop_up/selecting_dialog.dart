@@ -97,7 +97,9 @@ class SelectingDialog extends StatelessWidget {
                   text: '셀렉팅',
                   textColor: Colors.black,
                   onTap: () async {
-                    await _showGroupDialog();
+                    (selectionDetail.isSelectable == false)
+                        ? Toast.completeToast('셀렉팅이 제한된 셀렉션입니다.')
+                        : await _showGroupDialog();
                   },
                 ),
               ),

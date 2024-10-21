@@ -70,7 +70,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
     _changedTitle = widget.selectionDetail.title;
     _changedDescription = widget.selectionDetail.description;
     _changedLink = widget.selectionDetail.link;
-    _changedIsPrivate = widget.selectionDetail.isSelect;
+    _changedIsPrivate = widget.selectionDetail.isSelectable;
     _changedIsOrder = widget.selectionDetail.isOrdered;
     _initialImagePaths = widget.selectionDetail.imageFilePaths != null
         ? List<dynamic>.from(widget.selectionDetail.imageFilePaths!)

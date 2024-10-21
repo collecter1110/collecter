@@ -13,7 +13,7 @@ class SelectionModel {
   final String? link;
   final List<ItemData>? items;
   final bool? isOrdered;
-  final bool? isSelect;
+  final bool? isSelectable;
   final String? createdAt;
   final String ownerName;
   final bool? isSelecting;
@@ -31,7 +31,7 @@ class SelectionModel {
     this.link,
     this.items,
     this.isOrdered,
-    this.isSelect,
+    this.isSelectable,
     this.createdAt,
     required this.ownerName,
     this.isSelecting,
@@ -59,7 +59,7 @@ class SelectionModel {
               .map((item) => ItemData.fromJson(item))
               .toList()
           : null,
-      isSelect: json['is_select'] as bool?,
+      isSelectable: json['is_selectable'] as bool?,
       isOrdered: json['is_ordered'] as bool?,
       createdAt: json['created_at'] as String?,
       ownerName: json['owner_name'],

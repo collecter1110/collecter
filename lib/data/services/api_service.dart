@@ -303,7 +303,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_select, is_selecting')
+              'collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_selectable, is_selecting')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -632,7 +632,7 @@ class ApiService {
         'link': link,
         'items': items,
         'is_ordered': isOrder,
-        'is_select': isPrivate,
+        'is_selectable': isPrivate,
       });
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
@@ -724,7 +724,7 @@ class ApiService {
             'link': link,
             'items': items,
             'is_ordered': isOrder,
-            'is_select': isPrivate,
+            'is_selectable': isPrivate,
           })
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId);
@@ -1059,7 +1059,7 @@ class ApiService {
             'link': selectedSelectionData['link'],
             'items': selectedSelectionData['items'],
             'is_ordered': selectedSelectionData['is_ordered'],
-            'is_select': selectedSelectionData['is_select'],
+            'is_selectable': selectedSelectionData['is_selectable'],
             'is_selecting': true,
           })
           .select()
