@@ -254,6 +254,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                       _handleEmailAuthValid();
                     } else {
                       await DataManagement.loadInitialData(context);
+                      await ApiService.saveUserIdInStorage();
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

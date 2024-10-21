@@ -13,56 +13,73 @@ import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
 import '../provider/ranking_provider.dart';
 import 'locator.dart';
+import 'token_service.dart';
 
 class ApiService {
   static final storage = FlutterSecureStorage();
   static final SupabaseClient _supabase = Supabase.instance.client;
   static final authUser = _supabase.auth.currentUser;
 
-// final authSubscription = _supabase.auth.onAuthStateChange.listen((data) {
-//   final AuthChangeEvent event = data.event;
-//   final Session? session = data.session;
+  static Future<void> authListener() async {
+    final authSubscription =
+        _supabase.auth.onAuthStateChange.listen((data) async {
+      final AuthChangeEvent event = data.event;
+      final Session? session = data.session;
 
-//   print('event: $event, session: $session');
+      print('Auth event: $event');
 
-//   switch (event) {
-//     case AuthChangeEvent.initialSession:
-//     // handle initial session
-//     case AuthChangeEvent.signedIn:
-//     // handle signed in
-//     case AuthChangeEvent.signedOut:
-//     // handle signed out
-//     case AuthChangeEvent.passwordRecovery:
-//     // handle password recovery
-//     case AuthChangeEvent.tokenRefreshed:
-//     // handle token refreshed
-//     case AuthChangeEvent.userUpdated:
-//     // handle user updated
-//     case AuthChangeEvent.userDeleted:
-//     // handle user deleted
-//     case AuthChangeEvent.mfaChallengeVerified:
-//     // handle mfa challenge verified
-//   }
-// });
+      switch (event) {
+        case AuthChangeEvent.initialSession:
+        case AuthChangeEvent.signedIn:
+          print('Save initial token');
+          if (session != null) {
+            await TokenService.saveTokens(
+              session.accessToken ?? '',
+              session.refreshToken ?? '',
+            );
+          }
+          break;
+        case AuthChangeEvent.tokenRefreshed:
+          if (session != null) {
+            print('get refresh token');
+            await TokenService.saveTokens(
+              session.accessToken,
+              session.refreshToken ?? '',
+            );
+          } else {
+            print('refresh token expired');
+            await TokenService.deleteStorageData();
+          }
+          break;
+        case AuthChangeEvent.signedOut:
+          print('log out');
+          await TokenService.deleteStorageData();
+          break;
 
-  static Future<bool> checkAccessToken() async {
+        case AuthChangeEvent.userDeleted:
+          print('withdraw membership');
+          await TokenService.deleteStorageData();
+        default:
+          break;
+      }
+    });
+  }
+
+  static Future<void> saveUserIdInStorage() async {
     try {
-      final session = Supabase.instance.client.auth.currentSession;
-      if (session == null || session.accessToken.isEmpty) {
-        print('No Token');
-        return false;
-      }
-      final userResponse = await Supabase.instance.client.auth.getUser();
-
-      if (userResponse.user == null) {
-        print('Token expired or invalid');
-        return false;
-      }
-      return true;
+      String email = await ApiService.getEmailFromAuthentication();
+      final response = await _supabase
+          .from('userinfo')
+          .select('user_id')
+          .eq('email', email)
+          .single();
+      int userId = response['user_id'];
+      await storage.write(key: 'USER_ID', value: userId.toString());
+      print(userId);
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
     } catch (e) {
-      print('checkAccessToken: $e');
-      handleError('', 'checkAccessToken error');
-      return false;
+      throw Exception('updateUserInfo exception: ${e}');
     }
   }
 
@@ -167,8 +184,6 @@ class ApiService {
         'name': userName,
         'description': userDescription,
       }).eq('email', email);
-
-      await writeUserIdToStorage(email);
     } on AuthException catch (e) {
       handleError(e.statusCode, e.message);
     } catch (e) {
@@ -191,23 +206,6 @@ class ApiService {
       handleError(e.statusCode, e.message);
     } catch (e) {
       print('sendOtp exception: $e');
-    }
-  }
-
-  static Future<void> writeUserIdToStorage(String email) async {
-    try {
-      final response = await _supabase
-          .from('userinfo')
-          .select('user_id')
-          .eq('email', email)
-          .single();
-      int userId = response['user_id'];
-      await storage.write(key: 'USER_ID', value: userId.toString());
-      print(userId);
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-    } catch (e) {
-      print('writeUserIdToStorage exception: $e');
     }
   }
 

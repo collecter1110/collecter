@@ -23,12 +23,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _getAccessToken(BuildContext context) async {
-    // await Future.delayed(Duration(seconds: 2));
     final storage = FlutterSecureStorage();
     String? userIdString = await storage.read(key: 'USER_ID');
-    bool _isAccessToken = await ApiService.checkAccessToken();
+    String? _accessToken = await storage.read(key: 'ACCESS_TOKEN');
 
-    if (_isAccessToken) {
+    if (_accessToken != null) {
       if (userIdString != null) {
         await DataManagement.loadInitialData(context);
         Navigator.pushReplacement(
