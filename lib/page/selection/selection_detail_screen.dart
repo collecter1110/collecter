@@ -12,7 +12,8 @@ import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
 import '../../components/widget/selection_item_widget.dart';
 import '../../data/provider/selection_provider.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
+import '../../data/services/storage_service.dart';
 
 class SelectionDetailScreen extends StatefulWidget {
   const SelectionDetailScreen({
@@ -59,7 +60,6 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
           builder: (context) {
             return userId == _selectionDetail.userId
                 ? EditSelectionDialog(
-                    isOwner: userId == _selectionDetail.ownerId,
                     routeName: _routeName!,
                     selectionDetail: _selectionDetail,
                   )
@@ -133,7 +133,7 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
                                                   image: NetworkImage(
-                                                    DataManagement.getFullImageUrl(
+                                                    StorageService.getFullImageUrl(
                                                         '${_selectionDetail.ownerId}/selections',
                                                         _selectionDetail
                                                                 .imageFilePaths![

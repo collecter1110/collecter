@@ -7,7 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
-import '../../data/services/data_management.dart';
+import '../../data/provider/selecting_provider.dart';
+import '../../data/services/data_service.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
@@ -38,30 +39,31 @@ class SelectingDialog extends StatelessWidget {
       Navigator.pop(context);
     }
 
-    Future<void> _getCollectionTitle() async {
+    Future<void> _saveCollectionTitle() async {
       final provider = context.read<CollectionProvider>();
-
       provider.saveCollectionId = selectionDetail.collectionId;
     }
 
-    Future<void> _showGroupDialog() async {
-      final provider = context.read<CollectionProvider>();
-      await _getCollectionTitle();
+    Future<void> _showCollectionTitleDialog() async {
+      final collectionProvider = context.read<CollectionProvider>();
+      final selectingProvider = context.read<SelectingProvider>();
+      await _saveCollectionTitle();
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (context) {
           return CollectionTitleDialog(
             voidCallback: () async {
-              await DataManagement.updateDataProcessHandler(
+              await DataService.updateDataProcessHandler(
                 context,
                 selectionDetail.collectionId,
                 selectionDetail.userId!,
                 selectionDetail.selectionId,
                 () async {
                   await ApiService.selecting(
-                      provider.collectionId!, selectionDetail);
-                  await provider.getCollectionDetailData();
+                      collectionProvider.collectionId!, selectionDetail);
+                  await selectingProvider.fetchSelectingData();
+                  await collectionProvider.getCollectionDetailData();
                 },
                 () async {
                   _closeDialog();
@@ -94,7 +96,9 @@ class SelectingDialog extends StatelessWidget {
                   text: '셀렉팅',
                   textColor: Colors.black,
                   onTap: () async {
-                    await _showGroupDialog();
+                    (selectionDetail.isSelectable == false)
+                        ? Toast.completeToast('셀렉팅이 제한된 셀렉션입니다.')
+                        : await _showCollectionTitleDialog();
                   },
                 ),
               ),

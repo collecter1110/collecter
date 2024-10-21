@@ -145,7 +145,7 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
                               ? _userDescriptionController.text
                               : null;
                       await ApiService.setUserInfo(userName, _description);
-
+                      await ApiService.saveUserIdInStorage();
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

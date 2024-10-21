@@ -18,7 +18,8 @@ import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/model/selection_model.dart';
 import '../../data/provider/item_provider.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
+import '../../data/services/storage_service.dart';
 
 class EditSelectionScreen extends StatefulWidget {
   final SelectionModel selectionDetail;
@@ -40,7 +41,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   String? _changedDescription;
   String? _changedLink;
   bool? _changedIsOrder;
-  bool? _changedIsPrivate;
+  bool? _changedIsSelectable;
   List<Map<String, dynamic>>? _changedKeywords;
   int _itemNum = 0;
   List<Map<String, dynamic>>? _changedItems;
@@ -70,7 +71,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
     _changedTitle = widget.selectionDetail.title;
     _changedDescription = widget.selectionDetail.description;
     _changedLink = widget.selectionDetail.link;
-    _changedIsPrivate = widget.selectionDetail.isSelect;
+    _changedIsSelectable = widget.selectionDetail.isSelectable;
     _changedIsOrder = widget.selectionDetail.isOrdered;
     _initialImagePaths = widget.selectionDetail.imageFilePaths != null
         ? List<dynamic>.from(widget.selectionDetail.imageFilePaths!)
@@ -159,7 +160,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
         _changedLink,
         _changedItems,
         _changedIsOrder!,
-        _changedIsPrivate!,
+        _changedIsSelectable!,
       );
     } catch (e) {
       print('Error: $e');
@@ -180,21 +181,15 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   }
 
   Future _pickImages(ImageSource imageSource) async {
-    PermissionStatus status = await Permission.photos.request();
+    _pickedImage = await _picker.pickImage(source: imageSource);
 
-    if (status.isGranted || status.isLimited) {
-      _pickedImage = await _picker.pickImage(source: imageSource);
+    if (_pickedImage != null) {
+      setState(() {
+        _changedImagePaths.insert(
+            _changedImagePaths.length, _pickedImage!.path);
 
-      if (_pickedImage != null) {
-        setState(() {
-          _changedImagePaths.insert(
-              _changedImagePaths.length, _pickedImage!.path);
-
-          _imageNum = _changedImagePaths.length;
-        });
-      }
-    } else {
-      await Toast.handlePhotoPermission(status);
+        _imageNum = _changedImagePaths.length;
+      });
     }
   }
 
@@ -270,7 +265,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
                                                   image: NetworkImage(
-                                                    DataManagement.getFullImageUrl(
+                                                    StorageService.getFullImageUrl(
                                                         '${widget.selectionDetail.ownerId}/selections',
                                                         _changedImagePaths[
                                                             index]),
@@ -609,7 +604,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            _changedIsPrivate! ? '공유 가능' : '공유 불가능',
+                            _changedIsSelectable! ? '공유 가능' : '공유 불가능',
                             style: TextStyle(
                               fontFamily: 'PretendardRegular',
                               fontSize: 16.sp,
@@ -622,10 +617,10 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                           Transform.scale(
                             scale: 0.8,
                             child: Switch(
-                              value: _changedIsPrivate!,
+                              value: _changedIsSelectable!,
                               onChanged: (value) {
                                 setState(() {
-                                  _changedIsPrivate = value;
+                                  _changedIsSelectable = value;
                                 });
                               },
                               inactiveThumbColor: Colors.white,

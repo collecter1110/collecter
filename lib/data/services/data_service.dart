@@ -6,10 +6,11 @@ import 'package:provider/provider.dart';
 import '../provider/collection_provider.dart';
 import '../provider/ranking_provider.dart';
 import '../provider/search_provider.dart';
+import '../provider/selecting_provider.dart';
 import '../provider/selection_provider.dart';
 import 'locator.dart';
 
-class DataManagement {
+class DataService {
   static Future<void> reloadLocalData(BuildContext context, int collectionId,
       int userId, int? selectionId) async {
     final collectionProvider = context.read<CollectionProvider>();
@@ -76,35 +77,28 @@ class DataManagement {
     );
 
     try {
-      await updateData();
       await reloadLocalData(context, collectionId, userId, selectionId);
+      await nextNavigate();
+      await updateData();
     } catch (e) {
       print('Error: $e');
     } finally {
       if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
         Navigator.of(dialogContext!).pop();
       }
-      await nextNavigate();
     }
   }
 
-  static String getFullImageUrl(
-      String storageFolderName, String imageFilePath) {
-    // 환경 변수에서 Supabase URL 가져오기
-    final String supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
-
-    // 전체 URL 생성 (버킷 이름과 폴더 경로 포함)
-    return '$supabaseUrl/storage/v1/object/public/images/$storageFolderName/$imageFilePath';
-  }
-
-  static Future<void> loadInitialData() async {
+  static Future<void> loadInitialData(BuildContext context) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final rankingProvider = locator<RankingProvider>();
       final collectionProvider = locator<CollectionProvider>();
+      final selectingProvider = context.read<SelectingProvider>();
       await rankingProvider.getInitialRankingCollectionData();
       await rankingProvider.getInitialRankingSelectionData();
       await rankingProvider.getInitialRankingUserData();
       await collectionProvider.getInitialMyCollectionData();
+      await selectingProvider.getSelectData();
     });
   }
 }

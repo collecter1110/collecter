@@ -11,59 +11,75 @@ import '../model/collection_model.dart';
 import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
-import '../model/user_overview_model.dart';
 import '../provider/ranking_provider.dart';
 import 'locator.dart';
+import 'token_service.dart';
 
 class ApiService {
   static final storage = FlutterSecureStorage();
   static final SupabaseClient _supabase = Supabase.instance.client;
   static final authUser = _supabase.auth.currentUser;
 
-// final authSubscription = _supabase.auth.onAuthStateChange.listen((data) {
-//   final AuthChangeEvent event = data.event;
-//   final Session? session = data.session;
+  static Future<void> authListener() async {
+    final authSubscription =
+        _supabase.auth.onAuthStateChange.listen((data) async {
+      final AuthChangeEvent event = data.event;
+      final Session? session = data.session;
 
-//   print('event: $event, session: $session');
+      print('Auth event: $event');
 
-//   switch (event) {
-//     case AuthChangeEvent.initialSession:
-//     // handle initial session
-//     case AuthChangeEvent.signedIn:
-//     // handle signed in
-//     case AuthChangeEvent.signedOut:
-//     // handle signed out
-//     case AuthChangeEvent.passwordRecovery:
-//     // handle password recovery
-//     case AuthChangeEvent.tokenRefreshed:
-//     // handle token refreshed
-//     case AuthChangeEvent.userUpdated:
-//     // handle user updated
-//     case AuthChangeEvent.userDeleted:
-//     // handle user deleted
-//     case AuthChangeEvent.mfaChallengeVerified:
-//     // handle mfa challenge verified
-//   }
-// });
+      switch (event) {
+        case AuthChangeEvent.initialSession:
+        case AuthChangeEvent.signedIn:
+          print('Save initial token');
+          if (session != null) {
+            await TokenService.saveTokens(
+              session.accessToken ?? '',
+              session.refreshToken ?? '',
+            );
+          }
+          break;
+        case AuthChangeEvent.tokenRefreshed:
+          if (session != null) {
+            print('get refresh token');
+            await TokenService.saveTokens(
+              session.accessToken,
+              session.refreshToken ?? '',
+            );
+          } else {
+            print('refresh token expired');
+            await TokenService.deleteStorageData();
+          }
+          break;
+        case AuthChangeEvent.signedOut:
+          print('log out');
+          await TokenService.deleteStorageData();
+          break;
 
-  static Future<bool> checkAccessToken() async {
+        case AuthChangeEvent.userDeleted:
+          print('withdraw membership');
+          await TokenService.deleteStorageData();
+        default:
+          break;
+      }
+    });
+  }
+
+  static Future<void> saveUserIdInStorage() async {
     try {
-      final session = Supabase.instance.client.auth.currentSession;
-      if (session == null || session.accessToken.isEmpty) {
-        print('No Token');
-        return false;
-      }
-      final userResponse = await Supabase.instance.client.auth.getUser();
-
-      if (userResponse.user == null) {
-        print('Token expired or invalid');
-        return false;
-      }
-      return true;
+      String email = await ApiService.getEmailFromAuthentication();
+      final response = await _supabase
+          .from('userinfo')
+          .select('user_id')
+          .eq('email', email)
+          .single();
+      int userId = response['user_id'];
+      await storage.write(key: 'USER_ID', value: userId.toString());
+      print(userId);
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
     } catch (e) {
-      print('checkAccessToken: $e');
-      handleError('', 'checkAccessToken error');
-      return false;
+      throw Exception('updateUserInfo exception: ${e}');
     }
   }
 
@@ -168,8 +184,6 @@ class ApiService {
         'name': userName,
         'description': userDescription,
       }).eq('email', email);
-
-      await writeUserIdToStorage(email);
     } on AuthException catch (e) {
       handleError(e.statusCode, e.message);
     } catch (e) {
@@ -195,23 +209,6 @@ class ApiService {
     }
   }
 
-  static Future<void> writeUserIdToStorage(String email) async {
-    try {
-      final response = await _supabase
-          .from('userinfo')
-          .select('user_id')
-          .eq('email', email)
-          .single();
-      int userId = response['user_id'];
-      await storage.write(key: 'USER_ID', value: userId.toString());
-      print(userId);
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-    } catch (e) {
-      print('writeUserIdToStorage exception: $e');
-    }
-  }
-
   static Future<UserInfoModel> getUserInfo() async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
@@ -229,28 +226,6 @@ class ApiService {
       } else {
         throw Exception('Response code error <getUserInfo>');
       }
-    } on AuthException catch (e) {
-      Toast.error();
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      Toast.error();
-      throw Exception('An unexpected error occurred: $e');
-    }
-  }
-
-  static Future<UserOverviewModel> getUserOverview() async {
-    try {
-      final userIdString = await storage.read(key: 'USER_ID');
-      int userId = int.parse(userIdString!);
-      final responseData = await _supabase
-          .from('useroverview')
-          .select('collection_num, selecting_num, selected_num')
-          .eq('user_id', userId)
-          .single();
-
-      UserOverviewModel userOverviewModel =
-          UserOverviewModel.fromJson(responseData);
-      return Future.value(userOverviewModel);
     } on AuthException catch (e) {
       Toast.error();
       throw Exception('Authentication error: ${e.message}');
@@ -326,7 +301,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_select')
+              'collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_selectable, is_selecting')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -371,7 +346,7 @@ class ApiService {
       final _initialRankingCollections = await _supabase
           .from('collections')
           .select()
-          .eq('is_private', true)
+          .eq('is_public', true)
           .order('like_num')
           .limit(10);
 
@@ -385,6 +360,7 @@ class ApiService {
           .stream(primaryKey: ['id'])
           .inFilter('id', _initialRankingCollectionIds)
           .order('like_num')
+          .limit(20)
           .listen((snapshot) {
             print('랭킹 컬렉션 callback');
             _updatedCollections = snapshot.map((item) {
@@ -416,7 +392,6 @@ class ApiService {
       _supabase
           .from('selections')
           .stream(primaryKey: ['collection_id', 'selection_id'])
-          .eq('is_selecting', false)
           .order('select_num')
           .limit(20)
           .listen((snapshot) {
@@ -430,13 +405,6 @@ class ApiService {
                   imageFilePaths != null && imageFilePaths.isNotEmpty
                       ? imageFilePaths.first as String
                       : null;
-
-              // updatedSelections = snapshot.map((item) {
-              //   List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
-              //   String? firstImagePath =
-              //       imageFilePaths != null && imageFilePaths.isNotEmpty
-              //           ? imageFilePaths.first as String
-              //           : null;
 
               return SelectionModel.fromJson({
                 ...item,
@@ -557,7 +525,7 @@ class ApiService {
         selection_num, 
         like_num, 
         likes(user_id),
-        is_private
+        is_public
         ''').eq('id', collectionId).single();
 
       bool hasLiked = (responseData['likes'] as List<dynamic>)
@@ -616,7 +584,7 @@ class ApiService {
   }
 
   static Future<void> addCollection(String title, String? description,
-      List<String>? tags, bool isPrivate) async {
+      List<String>? tags, bool isPublic) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
@@ -626,7 +594,7 @@ class ApiService {
         'title': title,
         'description': description,
         'tags': tags,
-        'is_private': isPrivate,
+        'is_public': isPublic,
       });
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
@@ -645,7 +613,7 @@ class ApiService {
       String? link,
       List<Map<String, dynamic>>? items,
       bool isOrder,
-      bool isPrivate) async {
+      bool isSelectable) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
@@ -662,7 +630,7 @@ class ApiService {
         'link': link,
         'items': items,
         'is_ordered': isOrder,
-        'is_select': isPrivate,
+        'is_selectable': isSelectable,
       });
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
@@ -714,14 +682,14 @@ class ApiService {
       String? description,
       String? imageFilePath,
       List<String>? tags,
-      bool isPrivate) async {
+      bool isPublic) async {
     try {
       await _supabase.from('collections').update({
         'title': title,
         'description': description,
         'image_file_path': imageFilePath,
         'tags': tags,
-        'is_private': isPrivate,
+        'is_public': isPublic,
       }).eq('id', collectionId);
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
@@ -741,7 +709,7 @@ class ApiService {
     String? link,
     List<Map<String, dynamic>>? items,
     bool isOrder,
-    bool isPrivate,
+    bool isSelectable,
   ) async {
     try {
       await _supabase
@@ -754,7 +722,7 @@ class ApiService {
             'link': link,
             'items': items,
             'is_ordered': isOrder,
-            'is_select': isPrivate,
+            'is_selectable': isSelectable,
           })
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId);
@@ -927,7 +895,7 @@ class ApiService {
         user_name, 
         primary_keywords, 
         selection_num, 
-        is_private
+        is_public
         ''').eq('user_id', userId);
 
       List<CollectionModel> collections = responseData.map((item) {
@@ -967,7 +935,9 @@ class ApiService {
             imageFilePaths.addAll(List<String>.from(item['image_file_paths']));
           }
         }
-        await deleteStorageImages('selections', imageFilePaths);
+        if (imageFilePaths.isNotEmpty) {
+          await deleteStorageImages('selections', imageFilePaths);
+        }
       }
       await _supabase.from('collections').delete().eq('id', collectionId);
     } catch (e) {
@@ -1089,7 +1059,7 @@ class ApiService {
             'link': selectedSelectionData['link'],
             'items': selectedSelectionData['items'],
             'is_ordered': selectedSelectionData['is_ordered'],
-            'is_select': selectedSelectionData['is_select'],
+            'is_selectable': selectedSelectionData['is_selectable'],
             'is_selecting': true,
           })
           .select()

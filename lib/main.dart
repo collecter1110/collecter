@@ -2,6 +2,7 @@ import 'package:collect_er/data/provider/collection_provider.dart';
 import 'package:collect_er/data/provider/item_provider.dart';
 import 'package:collect_er/data/provider/ranking_provider.dart';
 import 'package:collect_er/data/provider/user_info_provider.dart';
+import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,6 +26,7 @@ void main() async {
     anonKey: dotenv.env['SUPABASE_API_KEY'] ?? '',
   );
   setupLocator();
+  await ApiService.authListener();
   runApp(
     MultiProvider(
       providers: [

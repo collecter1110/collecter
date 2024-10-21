@@ -1,6 +1,7 @@
 import 'package:collect_er/components/pop_up/collection_title_dialog.dart';
 import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:collect_er/data/model/selection_model.dart';
+import 'package:collect_er/data/provider/selecting_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -8,20 +9,18 @@ import 'package:provider/provider.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/selection_provider.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../../page/selection/edit_selection_screen.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
 
 class EditSelectionDialog extends StatelessWidget {
-  final bool isOwner;
   final String routeName;
   final SelectionModel selectionDetail;
 
   EditSelectionDialog({
     super.key,
-    required this.isOwner,
     required this.routeName,
     required this.selectionDetail,
   });
@@ -53,7 +52,7 @@ class EditSelectionDialog extends StatelessWidget {
       provider.saveCollectionId = selectionDetail.collectionId;
     }
 
-    Future<void> _showGroupDialog() async {
+    Future<void> _showCollectionTitleDialog() async {
       final provider = context.read<CollectionProvider>();
       await _saveCollectionTitle();
       showModalBottomSheet(
@@ -62,7 +61,7 @@ class EditSelectionDialog extends StatelessWidget {
         builder: (context) {
           return CollectionTitleDialog(
             voidCallback: () async {
-              await DataManagement.updateDataProcessHandler(
+              await DataService.updateDataProcessHandler(
                 context,
                 selectionDetail.collectionId,
                 selectionDetail.userId!,
@@ -70,7 +69,7 @@ class EditSelectionDialog extends StatelessWidget {
                 () async {
                   await ApiService.moveSelection(selectionDetail.collectionId,
                       selectionDetail.selectionId, provider.collectionId!);
-                  provider.getCollectionDetailData();
+                  await provider.getCollectionDetailData();
                 },
                 () async {
                   _closeDialog();
@@ -110,7 +109,7 @@ class EditSelectionDialog extends StatelessWidget {
                             await Toast.deleteSelectionWarning(context);
 
                         if (isDelete == true) {
-                          await DataManagement.updateDataProcessHandler(
+                          await DataService.updateDataProcessHandler(
                             context,
                             selectionDetail.collectionId,
                             selectionDetail.userId!,
@@ -119,14 +118,25 @@ class EditSelectionDialog extends StatelessWidget {
                               await ApiService.deleteSelection(
                                   selectionDetail.collectionId,
                                   selectionDetail.selectionId,
-                                  selectionDetail.ownerId!,
+                                  selectionDetail.ownerId,
                                   selectionDetail.userId!);
+                              final selectingProvider =
+                                  context.read<SelectingProvider>();
                               final collectionProvider =
                                   context.read<CollectionProvider>();
                               final selectionProvider =
                                   context.read<SelectionProvider>();
-                              await collectionProvider.fetchCollectionDetail();
-                              await selectionProvider.fetchSelectionData();
+
+                              if (selectionDetail.isSelecting == true) {
+                                await selectingProvider.fetchSelectingData();
+                              } else if (selectionDetail.isSelecting == false) {
+                                await selectingProvider.fetchSelectedData();
+                              }
+                              if (routeName != '/user') {
+                                await collectionProvider
+                                    .fetchCollectionDetail();
+                                await selectionProvider.fetchSelectionData();
+                              }
                             },
                             () async {
                               _closeDialog();
@@ -142,14 +152,15 @@ class EditSelectionDialog extends StatelessWidget {
                       text: '셀렉션 수정',
                       textColor: Colors.black,
                       onTap: () async {
-                        if (isOwner) {
+                        if (selectionDetail.isSelecting == true) {
+                          Toast.notify('셀렉팅한 셀렉션은 수정할 수 없습니다.');
+                        } else {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => EditSelectionScreen(
                                   callback: () async {
-                                    await DataManagement
-                                        .updateDataProcessHandler(
+                                    await DataService.updateDataProcessHandler(
                                       context,
                                       selectionDetail.collectionId,
                                       selectionDetail.userId!,
@@ -175,8 +186,6 @@ class EditSelectionDialog extends StatelessWidget {
                               settings: RouteSettings(name: routeName),
                             ),
                           );
-                        } else {
-                          Toast.notify('셀렉팅한 셀렉션은 수정할 수 없습니다.');
                         }
                       },
                     ),
@@ -185,7 +194,7 @@ class EditSelectionDialog extends StatelessWidget {
                       text: '컬렉션 이동',
                       textColor: Colors.black,
                       onTap: () async {
-                        await _showGroupDialog();
+                        await _showCollectionTitleDialog();
                       },
                     ),
                   ],

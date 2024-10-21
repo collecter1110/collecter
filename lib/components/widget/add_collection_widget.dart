@@ -30,7 +30,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   String? _title;
   String? _description;
 
-  bool _isPrivate = false;
+  bool _isPublic = false;
   String _inputTagValue = '';
 
   @override
@@ -63,8 +63,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     );
     try {
       await ApiService.addCollection(_title!, _description,
-          context.read<TagProvider>().tagNames, _isPrivate);
-      await context.read<UserInfoProvider>().fetchUserOverview();
+          context.read<TagProvider>().tagNames, _isPublic);
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -254,7 +253,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        _isPrivate ? '공개' : '비공개',
+                        _isPublic ? '공개' : '비공개',
                         style: TextStyle(
                           fontFamily: 'PretendardRegular',
                           fontSize: 16.sp,
@@ -267,10 +266,10 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                       Transform.scale(
                         scale: 0.8,
                         child: Switch(
-                          value: _isPrivate,
+                          value: _isPublic,
                           onChanged: (value) {
                             setState(() {
-                              _isPrivate = value;
+                              _isPublic = value;
                             });
                           },
                           inactiveThumbColor: Colors.white,
