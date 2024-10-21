@@ -16,13 +16,11 @@ import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
 
 class EditSelectionDialog extends StatelessWidget {
-  final bool isOwner;
   final String routeName;
   final SelectionModel selectionDetail;
 
   EditSelectionDialog({
     super.key,
-    required this.isOwner,
     required this.routeName,
     required this.selectionDetail,
   });
@@ -54,7 +52,7 @@ class EditSelectionDialog extends StatelessWidget {
       provider.saveCollectionId = selectionDetail.collectionId;
     }
 
-    Future<void> _showGroupDialog() async {
+    Future<void> _showCollectionTitleDialog() async {
       final provider = context.read<CollectionProvider>();
       await _saveCollectionTitle();
       showModalBottomSheet(
@@ -122,16 +120,19 @@ class EditSelectionDialog extends StatelessWidget {
                                   selectionDetail.selectionId,
                                   selectionDetail.ownerId,
                                   selectionDetail.userId!);
+                              final selectingProvider =
+                                  context.read<SelectingProvider>();
+                              final collectionProvider =
+                                  context.read<CollectionProvider>();
+                              final selectionProvider =
+                                  context.read<SelectionProvider>();
 
-                              if (routeName == '/user') {
-                                final selectingProvider =
-                                    context.read<SelectingProvider>();
+                              if (selectionDetail.isSelecting == true) {
                                 await selectingProvider.fetchSelectingData();
-                              } else {
-                                final collectionProvider =
-                                    context.read<CollectionProvider>();
-                                final selectionProvider =
-                                    context.read<SelectionProvider>();
+                              } else if (selectionDetail.isSelecting == false) {
+                                await selectingProvider.fetchSelectedData();
+                              }
+                              if (routeName != '/user') {
                                 await collectionProvider
                                     .fetchCollectionDetail();
                                 await selectionProvider.fetchSelectionData();
@@ -151,7 +152,9 @@ class EditSelectionDialog extends StatelessWidget {
                       text: '셀렉션 수정',
                       textColor: Colors.black,
                       onTap: () async {
-                        if (isOwner) {
+                        if (selectionDetail.isSelecting == true) {
+                          Toast.notify('셀렉팅한 셀렉션은 수정할 수 없습니다.');
+                        } else {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -184,8 +187,6 @@ class EditSelectionDialog extends StatelessWidget {
                               settings: RouteSettings(name: routeName),
                             ),
                           );
-                        } else {
-                          Toast.notify('셀렉팅한 셀렉션은 수정할 수 없습니다.');
                         }
                       },
                     ),
@@ -194,7 +195,7 @@ class EditSelectionDialog extends StatelessWidget {
                       text: '컬렉션 이동',
                       textColor: Colors.black,
                       onTap: () async {
-                        await _showGroupDialog();
+                        await _showCollectionTitleDialog();
                       },
                     ),
                   ],

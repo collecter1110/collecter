@@ -59,7 +59,6 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
           builder: (context) {
             return userId == _selectionDetail.userId
                 ? EditSelectionDialog(
-                    isOwner: userId == _selectionDetail.ownerId,
                     routeName: _routeName!,
                     selectionDetail: _selectionDetail,
                   )

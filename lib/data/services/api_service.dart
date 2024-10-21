@@ -303,7 +303,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_select')
+              'collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_select, is_selecting')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -362,6 +362,7 @@ class ApiService {
           .stream(primaryKey: ['id'])
           .inFilter('id', _initialRankingCollectionIds)
           .order('like_num')
+          .limit(20)
           .listen((snapshot) {
             print('랭킹 컬렉션 callback');
             _updatedCollections = snapshot.map((item) {
@@ -393,7 +394,6 @@ class ApiService {
       _supabase
           .from('selections')
           .stream(primaryKey: ['collection_id', 'selection_id'])
-          .eq('is_selecting', false)
           .order('select_num')
           .limit(20)
           .listen((snapshot) {
@@ -407,13 +407,6 @@ class ApiService {
                   imageFilePaths != null && imageFilePaths.isNotEmpty
                       ? imageFilePaths.first as String
                       : null;
-
-              // updatedSelections = snapshot.map((item) {
-              //   List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
-              //   String? firstImagePath =
-              //       imageFilePaths != null && imageFilePaths.isNotEmpty
-              //           ? imageFilePaths.first as String
-              //           : null;
 
               return SelectionModel.fromJson({
                 ...item,
