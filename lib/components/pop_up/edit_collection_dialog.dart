@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
-import '../../data/provider/user_info_provider.dart';
+import '../../data/provider/selecting_provider.dart';
 import '../../data/services/data_management.dart';
 import '../../page/add_page/add_screen.dart';
 import '../../page/collection/edit_collection_screen.dart';
@@ -31,6 +31,7 @@ class EditCollectionDialog extends StatelessWidget {
 
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
+        final selectingProvider = context.read<SelectingProvider>();
         return Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -66,6 +67,10 @@ class EditCollectionDialog extends StatelessWidget {
                                 collectionDetail.id,
                                 collectionDetail.userId,
                               );
+                              if (collectionDetail.selectionNum != 0) {
+                                await selectingProvider.fetchSelectingData();
+                                await selectingProvider.fetchSelectedData();
+                              }
                             },
                             () async {
                               _closeDialog();

@@ -69,7 +69,7 @@ class EditSelectionDialog extends StatelessWidget {
                 () async {
                   await ApiService.moveSelection(selectionDetail.collectionId,
                       selectionDetail.selectionId, provider.collectionId!);
-                  provider.getCollectionDetailData();
+                  await provider.getCollectionDetailData();
                 },
                 () async {
                   _closeDialog();

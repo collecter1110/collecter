@@ -39,16 +39,15 @@ class SelectingDialog extends StatelessWidget {
       Navigator.pop(context);
     }
 
-    Future<void> _getCollectionTitle() async {
+    Future<void> _saveCollectionTitle() async {
       final provider = context.read<CollectionProvider>();
-
       provider.saveCollectionId = selectionDetail.collectionId;
     }
 
-    Future<void> _showGroupDialog() async {
+    Future<void> _showCollectionTitleDialog() async {
       final collectionProvider = context.read<CollectionProvider>();
       final selectingProvider = context.read<SelectingProvider>();
-      await _getCollectionTitle();
+      await _saveCollectionTitle();
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -63,8 +62,8 @@ class SelectingDialog extends StatelessWidget {
                 () async {
                   await ApiService.selecting(
                       collectionProvider.collectionId!, selectionDetail);
-                  await collectionProvider.getCollectionDetailData();
                   await selectingProvider.fetchSelectingData();
+                  await collectionProvider.getCollectionDetailData();
                 },
                 () async {
                   _closeDialog();
@@ -99,7 +98,7 @@ class SelectingDialog extends StatelessWidget {
                   onTap: () async {
                     (selectionDetail.isSelectable == false)
                         ? Toast.completeToast('셀렉팅이 제한된 셀렉션입니다.')
-                        : await _showGroupDialog();
+                        : await _showCollectionTitleDialog();
                   },
                 ),
               ),

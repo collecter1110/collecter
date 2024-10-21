@@ -77,15 +77,15 @@ class DataManagement {
     );
 
     try {
-      await updateData();
       await reloadLocalData(context, collectionId, userId, selectionId);
+      await nextNavigate();
+      await updateData();
     } catch (e) {
       print('Error: $e');
     } finally {
       if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
         Navigator.of(dialogContext!).pop();
       }
-      await nextNavigate();
     }
   }
 
