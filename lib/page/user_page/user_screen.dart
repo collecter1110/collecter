@@ -11,7 +11,7 @@ import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/user_info_provider.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../data/services/locator.dart';
 import '../../data/services/storage_service.dart';
 import 'selecting_screen.dart';

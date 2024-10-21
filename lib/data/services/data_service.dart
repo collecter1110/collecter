@@ -10,7 +10,7 @@ import '../provider/selecting_provider.dart';
 import '../provider/selection_provider.dart';
 import 'locator.dart';
 
-class DataManagement {
+class DataService {
   static Future<void> reloadLocalData(BuildContext context, int collectionId,
       int userId, int? selectionId) async {
     final collectionProvider = context.read<CollectionProvider>();

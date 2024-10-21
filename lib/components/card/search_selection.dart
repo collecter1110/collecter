@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/model/selecting_model.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../data/services/storage_service.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../button/go_collection_button.dart';

@@ -14,7 +14,7 @@ import '../../data/model/collection_model.dart';
 import '../../data/provider/selection_provider.dart';
 import '../../data/provider/tag_provider.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../data/services/storage_service.dart';
 
 class EditCollectionScreen extends StatefulWidget {

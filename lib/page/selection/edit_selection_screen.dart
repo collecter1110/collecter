@@ -18,7 +18,7 @@ import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/model/selection_model.dart';
 import '../../data/provider/item_provider.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../data/services/storage_service.dart';
 
 class EditSelectionScreen extends StatefulWidget {

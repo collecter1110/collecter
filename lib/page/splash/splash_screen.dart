@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../page_navigator.dart';
 import '../login/enter_login_screen.dart';
 
@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (_accessToken != null) {
       if (userIdString != null) {
-        await DataManagement.loadInitialData(context);
+        await DataService.loadInitialData(context);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PageNavigator()),

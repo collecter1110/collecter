@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/selecting_provider.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
@@ -54,7 +54,7 @@ class SelectingDialog extends StatelessWidget {
         builder: (context) {
           return CollectionTitleDialog(
             voidCallback: () async {
-              await DataManagement.updateDataProcessHandler(
+              await DataService.updateDataProcessHandler(
                 context,
                 selectionDetail.collectionId,
                 selectionDetail.userId!,

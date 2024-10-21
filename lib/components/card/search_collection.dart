@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../data/services/storage_service.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../ui_kit/keyword.dart';

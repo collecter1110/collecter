@@ -12,7 +12,7 @@ import '../../components/pop_up/toast.dart';
 import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../data/services/storage_service.dart';
 
 class EditProfileScreen extends StatefulWidget {

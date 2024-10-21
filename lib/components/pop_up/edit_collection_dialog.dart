@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/selecting_provider.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../page/add_page/add_screen.dart';
 import '../../page/collection/edit_collection_screen.dart';
 import '../button/cancel_button.dart';
@@ -57,7 +57,7 @@ class EditCollectionDialog extends StatelessWidget {
                         bool? isDelete =
                             await Toast.deleteCollectionWarning(context);
                         if (isDelete!) {
-                          await DataManagement.updateDataProcessHandler(
+                          await DataService.updateDataProcessHandler(
                             context,
                             collectionDetail.id,
                             collectionDetail.userId,
@@ -91,7 +91,7 @@ class EditCollectionDialog extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => EditCollectionScreen(
                                 callback: () async {
-                                  await DataManagement.updateDataProcessHandler(
+                                  await DataService.updateDataProcessHandler(
                                     context,
                                     collectionDetail.id,
                                     collectionDetail.userId,

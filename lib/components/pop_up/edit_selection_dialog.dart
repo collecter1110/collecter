@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/selection_provider.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/data_management.dart';
+import '../../data/services/data_service.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../../page/selection/edit_selection_screen.dart';
 import '../button/cancel_button.dart';
@@ -61,7 +61,7 @@ class EditSelectionDialog extends StatelessWidget {
         builder: (context) {
           return CollectionTitleDialog(
             voidCallback: () async {
-              await DataManagement.updateDataProcessHandler(
+              await DataService.updateDataProcessHandler(
                 context,
                 selectionDetail.collectionId,
                 selectionDetail.userId!,
@@ -109,7 +109,7 @@ class EditSelectionDialog extends StatelessWidget {
                             await Toast.deleteSelectionWarning(context);
 
                         if (isDelete == true) {
-                          await DataManagement.updateDataProcessHandler(
+                          await DataService.updateDataProcessHandler(
                             context,
                             selectionDetail.collectionId,
                             selectionDetail.userId!,
@@ -160,8 +160,7 @@ class EditSelectionDialog extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => EditSelectionScreen(
                                   callback: () async {
-                                    await DataManagement
-                                        .updateDataProcessHandler(
+                                    await DataService.updateDataProcessHandler(
                                       context,
                                       selectionDetail.collectionId,
                                       selectionDetail.userId!,
