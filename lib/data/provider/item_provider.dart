@@ -5,9 +5,11 @@ class ItemProvider extends ChangeNotifier {
   List<ItemData> _items = [];
   List<ItemData>? _sortedItems;
   List<int> _itemOrder = [];
+  ValueNotifier<int> countNotifier = ValueNotifier<int>(0);
 
   List<int> get itemOrder => _itemOrder;
   List<ItemData>? get sortedItems => _sortedItems;
+  int get itemNum => countNotifier.value;
 
   set saveInitialItem(List<ItemData> item) {
     _items = item
@@ -45,6 +47,7 @@ class ItemProvider extends ChangeNotifier {
 
   set saveItemOrder(List<int> itemIndexOrder) {
     _itemOrder = itemIndexOrder;
+    countNotifier.value = _itemOrder.length;
   }
 
   bool hasNullItemTitle() {
@@ -84,5 +87,6 @@ class ItemProvider extends ChangeNotifier {
     _items = [];
     _sortedItems = null;
     _itemOrder = [];
+    countNotifier.value = 0;
   }
 }

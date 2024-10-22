@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:collect_er/components/button/add_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -39,7 +40,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   bool _isOrder = false;
   bool _itemState = false;
 
-  int _itemNum = 0;
+  int _itemIndex = 0;
 
   final ImagePicker _picker = ImagePicker();
   List<XFile>? _picekdImages;
@@ -250,6 +251,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               ? _title = null
                               : _title = value;
                         },
+                        formatter: LengthLimitingTextInputFormatter(30),
                       ),
                     ),
                     SizedBox(
@@ -365,6 +367,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                                 ? _description = null
                                 : _description = value;
                           },
+                          formatter: LengthLimitingTextInputFormatter(300),
                         ),
                       ),
                     ),
@@ -514,15 +517,27 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              AddButton(
-                                onPressed: () {
-                                  setState(() {
-                                    FocusScope.of(context).unfocus();
-                                    _itemState = true;
-                                    _itemNum++;
-                                  });
-                                },
-                              ),
+                              ValueListenableBuilder<int>(
+                                  valueListenable: context
+                                      .watch<ItemProvider>()
+                                      .countNotifier,
+                                  builder: (context, itemNum, child) {
+                                    return AddButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          FocusScope.of(context).unfocus();
+                                          if (itemNum >= 9) {
+                                            Toast.notify(
+                                                '아이템은 최대 9개까지 추가가 가능합니다.');
+                                            return;
+                                          } else {
+                                            _itemIndex++;
+                                            _itemState = true;
+                                          }
+                                        });
+                                      },
+                                    );
+                                  }),
                               Transform.scale(
                                 scale: 0.8,
                                 child: Switch(
@@ -552,7 +567,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                             ? Padding(
                                 padding: EdgeInsets.symmetric(vertical: 8.0.h),
                                 child: ItemTextField(
-                                  itemNum: _itemNum,
+                                  itemNum: _itemIndex,
                                   orderState: _isOrder,
                                 ),
                               )
