@@ -85,6 +85,9 @@ class EditSelectionDialog extends StatelessWidget {
 
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
+        final collectionProvider = context.read<CollectionProvider>();
+        final selectionProvider = context.read<SelectionProvider>();
+        final selectingProvider = context.read<SelectingProvider>();
         return Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -120,12 +123,6 @@ class EditSelectionDialog extends StatelessWidget {
                                   selectionDetail.selectionId,
                                   selectionDetail.ownerId,
                                   selectionDetail.userId!);
-                              final selectingProvider =
-                                  context.read<SelectingProvider>();
-                              final collectionProvider =
-                                  context.read<CollectionProvider>();
-                              final selectionProvider =
-                                  context.read<SelectionProvider>();
 
                               if (selectionDetail.isSelecting == true) {
                                 await selectingProvider.fetchSelectingData();
@@ -166,14 +163,11 @@ class EditSelectionDialog extends StatelessWidget {
                                       selectionDetail.userId!,
                                       selectionDetail.selectionId,
                                       () async {
-                                        await context
-                                            .read<CollectionProvider>()
+                                        await collectionProvider
                                             .fetchCollectionDetail();
-                                        await context
-                                            .read<SelectionProvider>()
+                                        await selectionProvider
                                             .fetchSelectionData();
-                                        await context
-                                            .read<SelectionProvider>()
+                                        await selectionProvider
                                             .getSelectionDetailData();
                                       },
                                       () async {

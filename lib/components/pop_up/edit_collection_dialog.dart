@@ -32,6 +32,7 @@ class EditCollectionDialog extends StatelessWidget {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
         final selectingProvider = context.read<SelectingProvider>();
+        final collectionProvider = context.read<CollectionProvider>();
         return Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -97,8 +98,7 @@ class EditCollectionDialog extends StatelessWidget {
                                     collectionDetail.userId,
                                     null,
                                     () async {
-                                      await context
-                                          .read<CollectionProvider>()
+                                      await collectionProvider
                                           .fetchCollectionDetail();
                                     },
                                     () async {
