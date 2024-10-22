@@ -274,6 +274,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                               ? _changedTitle = null
                               : _changedTitle = value;
                         },
+                        formatter: LengthLimitingTextInputFormatter(30),
                       ),
                     ),
                     SizedBox(
@@ -382,6 +383,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                                 ? _changedDescription = null
                                 : _changedDescription = value;
                           },
+                          formatter: LengthLimitingTextInputFormatter(100),
                         ),
                       ),
                     ),
