@@ -88,7 +88,7 @@ class SearchCollection extends StatelessWidget {
                       height: 1.5,
                     ),
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                    maxLines: 2,
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 10.0.h),
@@ -113,7 +113,7 @@ class SearchCollection extends StatelessWidget {
                               TagText(
                                 tags: collectionDetail.tags!,
                                 color: Color(0xFF868E96),
-                                maxLine: 2,
+                                maxLine: 1,
                               ),
                             ],
                           )

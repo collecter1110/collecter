@@ -83,23 +83,29 @@ class CollectionDetailScreen extends StatelessWidget {
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              _collectionDetail.title,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 22.sp,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w700,
-                                height: 1.4,
+                            Flexible(
+                              child: Text(
+                                _collectionDetail.title,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 22.sp,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.4,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
                             ),
-                            likedButton(
-                              collectionId: _collectionDetail.id,
-                              isLiked: _collectionDetail.isLiked!,
-                              likedNum: _collectionDetail.likeNum!,
+                            Padding(
+                              padding: EdgeInsets.only(left: 16.0.w),
+                              child: likedButton(
+                                collectionId: _collectionDetail.id,
+                                isLiked: _collectionDetail.isLiked!,
+                                likedNum: _collectionDetail.likeNum!,
+                              ),
                             ),
                           ],
                         ),

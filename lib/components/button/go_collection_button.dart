@@ -38,14 +38,18 @@ class GoCollectionButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            collectionName,
-            style: TextStyle(
-              color: Color(0xFF868e96),
-              fontSize: 10.0.sp,
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w700,
-              height: 1.4,
+          Flexible(
+            child: Text(
+              collectionName,
+              style: TextStyle(
+                color: Color(0xFF868e96),
+                fontSize: 10.0.sp,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w700,
+                height: 1.4,
+                overflow: TextOverflow.ellipsis,
+              ),
+              maxLines: 1,
             ),
           ),
           SizedBox(
