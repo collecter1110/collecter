@@ -117,7 +117,7 @@ class SearchSelection extends StatelessWidget {
                                 height: 1.5,
                               ),
                               overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                              maxLines: 2,
                             ),
                           ),
                           selectionDetail.keywords != null

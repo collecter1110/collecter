@@ -101,20 +101,23 @@ class Selection extends StatelessWidget {
                         height: 1.33,
                       ),
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
+                      maxLines: 1,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 4.0.h),
                       child: keywords != null
-                          ? Wrap(
-                              direction: Axis.horizontal,
-                              alignment: WrapAlignment.start,
-                              spacing: 5.0.w,
-                              runSpacing: 8.0.h,
-                              children: keywords!.map((keyword) {
-                                return Keyword(
-                                    keywordName: keyword.keywordName);
-                              }).toList(),
+                          ? SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: keywords!.map((keyword) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                        right: 5.0.w), // 각 키워드 간 간격
+                                    child: Keyword(
+                                        keywordName: keyword.keywordName),
+                                  );
+                                }).toList(),
+                              ),
                             )
                           : SizedBox.shrink(),
                     ),
