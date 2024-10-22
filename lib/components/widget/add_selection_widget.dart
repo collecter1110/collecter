@@ -402,7 +402,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                                 itemCount: _picekdImages!.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return AspectRatio(
-                                    aspectRatio: 0.9,
+                                    aspectRatio: 1,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(6.0),
                                       child: Image.file(

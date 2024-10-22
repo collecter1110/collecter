@@ -39,7 +39,7 @@ class Collection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
-            aspectRatio: 1 / 1,
+            aspectRatio: 0.9,
             child: collectionDetail.imageFilePath != null
                 ? Container(
                     decoration: BoxDecoration(
@@ -77,7 +77,7 @@ class Collection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 6.0.h,
+                    height: 12.0.h,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -88,13 +88,13 @@ class Collection extends StatelessWidget {
                           collectionDetail.title,
                           style: TextStyle(
                             color: Color(0xFF343A40),
-                            fontSize: 15.sp,
+                            fontSize: 14.sp,
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w600,
-                            height: 1.33,
+                            height: 1.43,
                           ),
                           overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+                          maxLines: 1,
                         ),
                       ),
                       Padding(

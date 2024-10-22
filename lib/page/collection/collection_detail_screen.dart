@@ -152,22 +152,21 @@ class CollectionDetailScreen extends StatelessWidget {
                         ),
                         _collectionDetail.description != null
                             ? ExpandableText(
-                                maxLine: 3,
+                                maxLine: 1,
                                 textStyle: TextStyle(
                                   color: Color(0xFF343a40),
-                                  fontSize: 14.sp,
+                                  fontSize: 15.sp,
                                   fontFamily: 'Pretendard',
                                   fontWeight: FontWeight.w500,
-                                  height: 1.43,
+                                  height: 1.33,
                                 ),
                                 text: _collectionDetail.description!)
                             : SizedBox.shrink(),
                         _collectionDetail.tags != null
                             ? Padding(
-                                padding: EdgeInsets.only(top: 14.0.h),
+                                padding: EdgeInsets.only(top: 24.0.h),
                                 child: TagText(
                                   tags: _collectionDetail.tags!,
-                                  color: Color(0xFF868E96),
                                   maxLine: 3,
                                 ),
                               )

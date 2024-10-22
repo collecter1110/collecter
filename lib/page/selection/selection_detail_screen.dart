@@ -255,10 +255,10 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                                         maxLine: 3,
                                         textStyle: TextStyle(
                                           color: Color(0xFF343a40),
-                                          fontSize: 14.sp,
+                                          fontSize: 15.sp,
                                           fontFamily: 'Pretendard',
                                           fontWeight: FontWeight.w500,
-                                          height: 1.43,
+                                          height: 1.33,
                                         ),
                                         text: _selectionDetail.description!),
                                   )

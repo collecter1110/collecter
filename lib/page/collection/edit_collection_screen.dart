@@ -220,9 +220,9 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                                   Radius.circular(10.r),
                                 ),
                               ),
-                              width: 140.w,
+                              width: 130.w,
                               child: AspectRatio(
-                                aspectRatio: 1 / 1,
+                                aspectRatio: 0.9,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10.r),
