@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../components/pop_up/toast.dart';
 
 class SettingService {
-  static Future<Map<String, dynamic>> _getAppInfo() async {
+  static Future<Map<String, dynamic>> getAppInfo() async {
     PackageInfo info = await PackageInfo.fromPlatform();
     return {"앱 버전": info.version};
   }
@@ -135,7 +135,7 @@ class SettingService {
   static void sendEmail(BuildContext context) async {
     try {
       Map<String, dynamic> userInfo = await _getUserInfo();
-      Map<String, dynamic> appInfo = await _getAppInfo();
+      Map<String, dynamic> appInfo = await getAppInfo();
       Map<String, dynamic> deviceInfo = await _getDeviceInfo(context);
 
       // 이메일 본문 생성

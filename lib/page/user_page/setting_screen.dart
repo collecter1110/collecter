@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/button/setting_button.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import 'setting/contact_screen.dart';
+import 'setting/app_version_screen.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
@@ -42,7 +43,15 @@ class SettingScreen extends StatelessWidget {
                   text: '이용 약관',
                 ),
                 SettingButton(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AppVersionScreen(),
+                        settings: RouteSettings(name: '/user'),
+                      ),
+                    );
+                  },
                   text: '버전 정보',
                 ),
                 SettingButton(onTap: () {}, text: '로그아웃'),
