@@ -28,7 +28,7 @@ class CoverImage extends StatelessWidget {
         onTap(coverIndex);
       },
       child: AspectRatio(
-        aspectRatio: 1,
+        aspectRatio: 0.9,
         child: Stack(
           children: [
             Container(

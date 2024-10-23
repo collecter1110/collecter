@@ -125,6 +125,10 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       //   await ApiService.deleteStorageImages('collections', imageFilePaths);
       //   print('삭제');
       // }
+      if (_changedImageFilePath != null) {
+        await ApiService.copyImageFilePath(
+            'selections', 'collections', _changedImageFilePath!);
+      }
       print(_changedImageFilePath);
       await ApiService.editCollection(
           widget.collectionDetail.id,
@@ -220,9 +224,9 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                                   Radius.circular(10.r),
                                 ),
                               ),
-                              width: 140.w,
+                              width: 130.w,
                               child: AspectRatio(
-                                aspectRatio: 1 / 1,
+                                aspectRatio: 0.9,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10.r),
@@ -274,6 +278,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                               ? _changedTitle = null
                               : _changedTitle = value;
                         },
+                        formatter: LengthLimitingTextInputFormatter(30),
                       ),
                     ),
                     SizedBox(
@@ -382,6 +387,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                                 ? _changedDescription = null
                                 : _changedDescription = value;
                           },
+                          formatter: LengthLimitingTextInputFormatter(100),
                         ),
                       ),
                     ),

@@ -69,16 +69,13 @@ class _CollectionCoverDialogState extends State<CollectionCoverDialog> {
                 ],
               ),
               Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 30.0.h),
-                  child: CollectionCoverImageWidget(
-                    collectionId: widget.collectionId,
-                    isSelected: (value) {
-                      setState(() {
-                        isSelected = value;
-                      });
-                    },
-                  ),
+                child: CollectionCoverImageWidget(
+                  collectionId: widget.collectionId,
+                  isSelected: (value) {
+                    setState(() {
+                      isSelected = value;
+                    });
+                  },
                 ),
               ),
               CompleteButton(

@@ -35,38 +35,41 @@ class SearchCollection extends StatelessWidget {
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AspectRatio(
-            aspectRatio: 0.9,
-            child: collectionDetail.imageFilePath != null
-                ? Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color(0xFFdee2e6),
-                        width: 0.5.w,
+          Container(
+            width: 100.0.w,
+            child: AspectRatio(
+              aspectRatio: 0.9,
+              child: collectionDetail.imageFilePath != null
+                  ? Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Color(0xFFdee2e6),
+                          width: 0.5.w,
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8),
+                        ),
                       ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                        child: Image.network(
+                          StorageService.getFullImageUrl(
+                              '${collectionDetail.userId}/selections',
+                              collectionDetail.imageFilePath!),
+                          fit: BoxFit.cover,
+                        ),
                       ),
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
+                          color: Color(0xFFf1f3f5),
+                          borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8),
-                      ),
-                      child: Image.network(
-                        StorageService.getFullImageUrl(
-                            '${collectionDetail.userId}/selections',
-                            collectionDetail.imageFilePath!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  )
-                : Container(
-                    decoration: BoxDecoration(
-                        color: Color(0xFFf1f3f5),
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
+            ),
           ),
           SizedBox(
             width: 16.0.w,
@@ -88,7 +91,7 @@ class SearchCollection extends StatelessWidget {
                       height: 1.5,
                     ),
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                    maxLines: 2,
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 10.0.h),
@@ -112,8 +115,7 @@ class SearchCollection extends StatelessWidget {
                             children: [
                               TagText(
                                 tags: collectionDetail.tags!,
-                                color: Color(0xFF868E96),
-                                maxLine: 2,
+                                maxLine: 1,
                               ),
                             ],
                           )

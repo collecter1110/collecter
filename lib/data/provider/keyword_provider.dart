@@ -1,6 +1,8 @@
 import 'package:collect_er/data/model/keyword_model.dart';
 import 'package:flutter/material.dart';
 
+import '../../components/pop_up/toast.dart';
+
 class KeywordProvider extends ChangeNotifier {
   List<String>? _keywordNames;
   bool _keywordState = false;
@@ -14,6 +16,11 @@ class KeywordProvider extends ChangeNotifier {
 
   set addKeyword(String keywordName) {
     if (keywordName == '') {
+      return;
+    }
+
+    if (_keywordNames != null && _keywordNames!.length >= 3) {
+      Toast.notify('키워드는 최대 3개까지 추가가 가능합니다.');
       return;
     }
     _keywordNames ??= []; // null이면 빈 리스트로 초기화

@@ -185,17 +185,19 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(
-                                  _selectionDetail.title,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 22.sp,
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.45,
+                                Flexible(
+                                  child: Text(
+                                    _selectionDetail.title,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 22.sp,
+                                      fontFamily: 'Pretendard',
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.45,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
                                 ),
                                 _selectionDetail.link != null
                                     ? LinkButton(
@@ -253,10 +255,10 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                                         maxLine: 3,
                                         textStyle: TextStyle(
                                           color: Color(0xFF343a40),
-                                          fontSize: 14.sp,
+                                          fontSize: 15.sp,
                                           fontFamily: 'Pretendard',
                                           fontWeight: FontWeight.w500,
-                                          height: 1.43,
+                                          height: 1.33,
                                         ),
                                         text: _selectionDetail.description!),
                                   )

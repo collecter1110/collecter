@@ -58,37 +58,40 @@ class SearchSelection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AspectRatio(
-                    aspectRatio: 0.9,
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          color: Color(0xFFf1f3f5),
-                          borderRadius: BorderRadius.circular(8)),
-                      child: selectionDetail.thumbFilePath != null
-                          ? Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Color(0xFFdee2e6),
-                                  width: 0.5.w,
+                  Container(
+                    width: 100.0.w,
+                    child: AspectRatio(
+                      aspectRatio: 0.9,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            color: Color(0xFFf1f3f5),
+                            borderRadius: BorderRadius.circular(8)),
+                        child: selectionDetail.thumbFilePath != null
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Color(0xFFdee2e6),
+                                    width: 0.5.w,
+                                  ),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(8),
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(8),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(8),
+                                  ),
+                                  child: Image.network(
+                                    StorageService.getFullImageUrl(
+                                        '${selectionDetail.ownerId}/selections',
+                                        selectionDetail.thumbFilePath!),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(8),
-                                ),
-                                child: Image.network(
-                                  StorageService.getFullImageUrl(
-                                      '${selectionDetail.ownerId}/selections',
-                                      selectionDetail.thumbFilePath!),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            )
-                          : SizedBox.shrink(),
+                              )
+                            : SizedBox.shrink(),
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -117,7 +120,7 @@ class SearchSelection extends StatelessWidget {
                                 height: 1.5,
                               ),
                               overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                              maxLines: 2,
                             ),
                           ),
                           selectionDetail.keywords != null

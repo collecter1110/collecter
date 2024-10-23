@@ -268,7 +268,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, title, image_file_paths, keywords, owner_name, owner_id')
+              'collection_id, selection_id, title, image_file_paths, keywords, owner_name, owner_id, is_selecting')
           .eq('collection_id', collectionId);
 
       List<SelectionModel> selections = responseData.map((item) {
@@ -558,6 +558,24 @@ class ApiService {
       return _fileName;
     } catch (e) {
       handleError('', 'upload image error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<void> copyImageFilePath(
+    String sourceFolderPath,
+    String destinationFolderPath,
+    String fileName,
+  ) async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+    try {
+      final String sourcePath = '$userId/$sourceFolderPath/$fileName';
+      final String destinationPath = '$userId/$destinationFolderPath/$fileName';
+
+      await _supabase.storage.from('images').copy(sourcePath, destinationPath);
+    } catch (e) {
+      handleError('', 'copy image error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -911,22 +929,19 @@ class ApiService {
     }
   }
 
-  static Future<void> deleteCollection(int collectionId, int userId) async {
+  static Future<void> deleteCollection(CollectionModel collection) async {
     try {
-      final collectionData = await _supabase
-          .from('collections')
-          .select('selection_num')
-          .eq('id', collectionId)
-          .single();
-
-      int selectionNum = collectionData['selection_num'];
-
+      int selectionNum = collection.selectionNum!;
+      if (collection.imageFilePath != null) {
+        List<String> imageFilePaths = [collection.imageFilePath!];
+        await deleteStorageImages('collections', imageFilePaths);
+      }
       if (selectionNum != 0) {
         final selectionImageFilePaths = await _supabase
             .from('selections')
             .select('image_file_paths')
-            .eq('collection_id', collectionId)
-            .eq('owner_id', userId);
+            .eq('collection_id', collection.id)
+            .eq('owner_id', collection.userId);
 
         List<String> imageFilePaths = [];
 
@@ -939,36 +954,26 @@ class ApiService {
           await deleteStorageImages('selections', imageFilePaths);
         }
       }
-      await _supabase.from('collections').delete().eq('id', collectionId);
+      await _supabase.from('collections').delete().eq('id', collection.id);
     } catch (e) {
       handleError('', 'deleteCollection error');
       print('Failed to delete data: $e');
     }
   }
 
-  static Future<void> deleteSelection(
-      int collectionId, int selectionId, int ownerId, int userId) async {
+  static Future<void> deleteSelection(SelectionModel selection) async {
     try {
-      if (ownerId == userId) {
-        final selectionImageFilePaths = await _supabase
-            .from('selections')
-            .select('image_file_paths')
-            .eq('collection_id', collectionId)
-            .eq('selection_id', selectionId)
-            .single();
-
-        if (selectionImageFilePaths['image_file_paths'] != null) {
-          List<String> imageFilePaths = [];
-          imageFilePaths =
-              List<String>.from(selectionImageFilePaths['image_file_paths']);
-          await deleteStorageImages('selections', imageFilePaths);
-        }
+      if (selection.isSelecting != true && selection.imageFilePaths != null) {
+        List<String> imageFilePaths = [];
+        imageFilePaths = List<String>.from(selection.imageFilePaths!);
+        await deleteStorageImages('selections', imageFilePaths);
       }
+
       await _supabase
           .from('selections')
           .delete()
-          .eq('collection_id', collectionId)
-          .eq('selection_id', selectionId);
+          .eq('collection_id', selection.collectionId)
+          .eq('selection_id', selection.selectionId);
     } catch (e) {
       handleError('', 'deleteSelection error');
       print('Failed to delete selection data: $e');

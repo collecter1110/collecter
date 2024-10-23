@@ -39,7 +39,7 @@ class Collection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AspectRatio(
-            aspectRatio: 1 / 1,
+            aspectRatio: 0.9,
             child: collectionDetail.imageFilePath != null
                 ? Container(
                     decoration: BoxDecoration(
@@ -77,42 +77,56 @@ class Collection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 6.0.h,
+                    height: 12.0.h,
                   ),
-                  Text(
-                    collectionDetail.title,
-                    style: TextStyle(
-                      color: Color(0xFF343A40),
-                      fontSize: 15.sp,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w600,
-                      height: 1.33,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  Text(
-                    '${collectionDetail.selectionNum}',
-                    style: TextStyle(
-                      color: Color(0xFF868e96),
-                      fontSize: 14.sp,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w400,
-                      height: 1.43,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          collectionDetail.title,
+                          style: TextStyle(
+                            color: Color(0xFF343A40),
+                            fontSize: 14.sp,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w600,
+                            height: 1.43,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.0.w, right: 4.0.w),
+                        child: Text(
+                          '${collectionDetail.selectionNum}',
+                          style: TextStyle(
+                            color: Color(0xFFadb5bd),
+                            fontSize: 14.sp,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w400,
+                            height: 1.43,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 10.0.h),
                     child: collectionDetail.primaryKeywords != null
-                        ? Wrap(
-                            direction: Axis.horizontal,
-                            alignment: WrapAlignment.start,
-                            spacing: 5.0.w,
-                            runSpacing: 8.0.h,
-                            children: collectionDetail.primaryKeywords!
-                                .map((keyword) {
-                              return Keyword(keywordName: keyword.keywordName);
-                            }).toList(),
+                        ? SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: collectionDetail.primaryKeywords!
+                                  .map((keyword) {
+                                return Padding(
+                                  padding: EdgeInsets.only(right: 5.0.w),
+                                  child:
+                                      Keyword(keywordName: keyword.keywordName),
+                                );
+                              }).toList(),
+                            ),
                           )
                         : SizedBox.shrink(),
                   )

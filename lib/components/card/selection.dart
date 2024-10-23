@@ -67,8 +67,8 @@ class Selection extends StatelessWidget {
                   ? Expanded(
                       child: ClipRRect(
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(6),
-                            topRight: Radius.circular(6),
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
                           ),
                           child: Container(
                             width: double.infinity,
@@ -86,7 +86,7 @@ class Selection extends StatelessWidget {
                   : SizedBox.shrink(),
               Padding(
                 padding:
-                    EdgeInsets.symmetric(horizontal: 12.0.w, vertical: 16.0.h),
+                    EdgeInsets.symmetric(horizontal: 12.0.w, vertical: 12.0.h),
                 child: Column(
                   //mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,25 +101,24 @@ class Selection extends StatelessWidget {
                         height: 1.33,
                       ),
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
+                      maxLines: 1,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 4.0.h),
                       child: keywords != null
-                          ? Wrap(
-                              direction: Axis.horizontal,
-                              alignment: WrapAlignment.start,
-                              spacing: 5.0.w,
-                              runSpacing: 8.0.h,
-                              children: keywords!.map((keyword) {
-                                return Keyword(
-                                    keywordName: keyword.keywordName);
-                              }).toList(),
+                          ? SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: keywords!.map((keyword) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(right: 5.0.w),
+                                    child: Keyword(
+                                        keywordName: keyword.keywordName),
+                                  );
+                                }).toList(),
+                              ),
                             )
                           : SizedBox.shrink(),
-                    ),
-                    SizedBox(
-                      height: 4.0.h,
                     ),
                     Text(
                       ownerName,

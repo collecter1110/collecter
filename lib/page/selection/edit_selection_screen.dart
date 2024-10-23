@@ -43,7 +43,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   bool? _changedIsOrder;
   bool? _changedIsSelectable;
   List<Map<String, dynamic>>? _changedKeywords;
-  int _itemNum = 0;
+  int _itemIndex = 0;
   List<Map<String, dynamic>>? _changedItems;
 
   List<String> _initialImagePaths = [];
@@ -88,7 +88,8 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
 
     final itemProvider = context.read<ItemProvider>();
     itemProvider.clearItems();
-    _itemNum = widget.selectionDetail.items != null
+
+    _itemIndex = widget.selectionDetail.items != null
         ? widget.selectionDetail.items!.length
         : 0;
     _initialItemData = widget.selectionDetail.items;
@@ -371,6 +372,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                 ? _changedTitle = null
                                 : _changedTitle = value;
                           },
+                          formatter: LengthLimitingTextInputFormatter(30),
                         ),
                       ),
                       SizedBox(
@@ -479,6 +481,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                   ? _changedDescription = null
                                   : _changedDescription = value;
                             },
+                            formatter: LengthLimitingTextInputFormatter(300),
                           ),
                         ),
                       ),
@@ -553,14 +556,26 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                AddButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      FocusScope.of(context).unfocus();
-                                      _itemNum++;
-                                    });
-                                  },
-                                ),
+                                ValueListenableBuilder<int>(
+                                    valueListenable: context
+                                        .watch<ItemProvider>()
+                                        .countNotifier,
+                                    builder: (context, itemNum, child) {
+                                      return AddButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            FocusScope.of(context).unfocus();
+                                            if (itemNum >= 9) {
+                                              Toast.notify(
+                                                  '아이템은 최대 9개까지 추가가 가능합니다.');
+                                              return;
+                                            } else {
+                                              _itemIndex++;
+                                            }
+                                          });
+                                        },
+                                      );
+                                    }),
                                 Transform.scale(
                                   scale: 0.8,
                                   child: Switch(
@@ -591,7 +606,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                             padding: EdgeInsets.symmetric(vertical: 8.0.h),
                             child: ItemTextField(
                               initialItemValue: _initialItemData,
-                              itemNum: _itemNum,
+                              itemNum: _itemIndex,
                               orderState: _changedIsOrder!,
                             ),
                           )

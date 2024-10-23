@@ -41,7 +41,9 @@ class _CollectionCoverImageWidgetState
   Widget build(BuildContext context) {
     return Consumer<SelectionProvider>(builder: (context, provider, child) {
       final List<SelectionModel> _selections = provider.selections
-              ?.where((selection) => selection.thumbFilePath != null)
+              ?.where((selection) =>
+                  selection.thumbFilePath != null &&
+                  selection.isSelecting != true)
               .toList() ??
           [];
 
@@ -55,7 +57,7 @@ class _CollectionCoverImageWidgetState
           child: ListView.separated(
             primary: false,
             scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(vertical: 22.0.h),
+            padding: EdgeInsets.symmetric(vertical: 36.0.h),
             shrinkWrap: true,
             itemCount: _selections.length,
             itemBuilder: (context, index) {

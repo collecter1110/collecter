@@ -126,6 +126,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                             ? _title = null
                             : _title = value;
                       },
+                      formatter: LengthLimitingTextInputFormatter(30),
                     ),
                   ),
                   SizedBox(
@@ -243,6 +244,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                               ? _description = null
                               : _description = value;
                         },
+                        formatter: LengthLimitingTextInputFormatter(100),
                       ),
                     ),
                   ),
