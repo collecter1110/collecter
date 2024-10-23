@@ -961,29 +961,19 @@ class ApiService {
     }
   }
 
-  static Future<void> deleteSelection(
-      int collectionId, int selectionId, int ownerId, int userId) async {
+  static Future<void> deleteSelection(SelectionModel selection) async {
     try {
-      if (ownerId == userId) {
-        final selectionImageFilePaths = await _supabase
-            .from('selections')
-            .select('image_file_paths')
-            .eq('collection_id', collectionId)
-            .eq('selection_id', selectionId)
-            .single();
-
-        if (selectionImageFilePaths['image_file_paths'] != null) {
-          List<String> imageFilePaths = [];
-          imageFilePaths =
-              List<String>.from(selectionImageFilePaths['image_file_paths']);
-          await deleteStorageImages('selections', imageFilePaths);
-        }
+      if (selection.isSelecting != true && selection.imageFilePaths != null) {
+        List<String> imageFilePaths = [];
+        imageFilePaths = List<String>.from(selection.imageFilePaths!);
+        await deleteStorageImages('selections', imageFilePaths);
       }
+
       await _supabase
           .from('selections')
           .delete()
-          .eq('collection_id', collectionId)
-          .eq('selection_id', selectionId);
+          .eq('collection_id', selection.collectionId)
+          .eq('selection_id', selection.selectionId);
     } catch (e) {
       handleError('', 'deleteSelection error');
       print('Failed to delete selection data: $e');

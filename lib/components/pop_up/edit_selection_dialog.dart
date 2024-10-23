@@ -118,11 +118,7 @@ class EditSelectionDialog extends StatelessWidget {
                             selectionDetail.userId!,
                             selectionDetail.selectionId,
                             () async {
-                              await ApiService.deleteSelection(
-                                  selectionDetail.collectionId,
-                                  selectionDetail.selectionId,
-                                  selectionDetail.ownerId,
-                                  selectionDetail.userId!);
+                              await ApiService.deleteSelection(selectionDetail);
 
                               if (selectionDetail.isSelecting == true) {
                                 await selectingProvider.fetchSelectingData();
