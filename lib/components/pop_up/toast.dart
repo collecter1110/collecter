@@ -78,19 +78,19 @@ class Toast {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextButton(
-                child: Text("기본 이미지로 변경", style: contentTextStyle),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-              ),
-              Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
-              TextButton(
                 child: Text(
-                  "커버 선택",
+                  "앨범 이미지 선택",
                   style: contentTextStyle,
                 ),
                 onPressed: () {
                   Navigator.of(context).pop(false);
+                },
+              ),
+              Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
+              TextButton(
+                child: Text("기본 이미지로 변경", style: contentTextStyle),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
                 },
               ),
             ],
