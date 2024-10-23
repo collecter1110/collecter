@@ -1,7 +1,10 @@
+import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:restart_app/restart_app.dart';
 
 import '../../components/button/setting_button.dart';
+import '../../components/pop_up/toast.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import 'setting/contact_screen.dart';
 import 'setting/app_version_screen.dart';
@@ -54,7 +57,17 @@ class SettingScreen extends StatelessWidget {
                   },
                   text: '버전 정보',
                 ),
-                SettingButton(onTap: () {}, text: '로그아웃'),
+                SettingButton(
+                    onTap: () async {
+                      bool? isDelete = await Toast.showConfirmationDialog(
+                          context, '로그아웃 하시겠습니까?');
+
+                      if (isDelete == true) {
+                        await ApiService.logout();
+                        Restart.restartApp();
+                      }
+                    },
+                    text: '로그아웃'),
                 SizedBox(
                   height: 10.0.h,
                 ),

@@ -108,8 +108,8 @@ class EditSelectionDialog extends StatelessWidget {
                       text: '셀렉션 삭제',
                       textColor: Colors.red,
                       onTap: () async {
-                        bool? isDelete =
-                            await Toast.deleteSelectionWarning(context);
+                        bool? isDelete = await Toast.showConfirmationDialog(
+                            context, '셀렉션을 삭제하시겠습니까?');
 
                         if (isDelete == true) {
                           await DataService.updateDataProcessHandler(

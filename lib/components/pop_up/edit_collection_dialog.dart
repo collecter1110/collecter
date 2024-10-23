@@ -55,8 +55,8 @@ class EditCollectionDialog extends StatelessWidget {
                       text: '컬렉션 삭제',
                       textColor: Colors.red,
                       onTap: () async {
-                        bool? isDelete =
-                            await Toast.deleteCollectionWarning(context);
+                        bool? isDelete = await Toast.showConfirmationDialog(
+                            context, '컬렉션과 관련된 셀렉션도 함께 삭제됩니다.\n삭제하시겠습니까?');
                         if (isDelete!) {
                           await DataService.updateDataProcessHandler(
                             context,

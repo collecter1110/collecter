@@ -34,50 +34,40 @@ class Toast {
     );
   }
 
-  static Future<bool?> deleteCollectionWarning(BuildContext context) async {
+  static Future<bool?> showConfirmationDialog(
+      BuildContext context, String contents) async {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: Text("오류 발생"),
-          content: Text("컬렉션과 관련된 셀렉션도 함께 삭제됩니다.\n삭제하시겠습니까?"),
+          title: Text("알림"),
+          content: Text(contents),
           actions: <Widget>[
             TextButton(
-              child: Text("확인"),
+              child: Text(
+                '확인',
+                style: TextStyle(
+                  fontFamily: 'PretendardRegular',
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.blue,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             TextButton(
-              child: Text("취소"),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  static Future<bool?> deleteSelectionWarning(BuildContext context) async {
-    return showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: Text("오류 발생"),
-          content: Text("셀렉션을 삭제하시겠습니까?"),
-          actions: <Widget>[
-            TextButton(
-              child: Text("확인"),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-            TextButton(
-              child: Text("취소"),
+              child: Text(
+                '취소',
+                style: TextStyle(
+                  fontFamily: 'PretendardRegular',
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.red,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },

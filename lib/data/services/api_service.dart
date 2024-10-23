@@ -209,6 +209,16 @@ class ApiService {
     }
   }
 
+  static Future<void> logout() async {
+    try {
+      await _supabase.auth.signOut();
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+    } catch (e) {
+      print('sendOtp exception: $e');
+    }
+  }
+
   static Future<UserInfoModel> getUserInfo() async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');

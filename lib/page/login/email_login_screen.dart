@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:collect_er/components/button/complete_button.dart';
 import 'package:collect_er/data/services/api_service.dart';
 import 'package:collect_er/page_navigator.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -255,11 +256,10 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                     } else {
                       await DataService.loadInitialData(context);
                       await ApiService.saveUserIdInStorage();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PageNavigator(),
-                        ),
+                      Navigator.of(context).pushAndRemoveUntil(
+                        CupertinoPageRoute(
+                            builder: (context) => PageNavigator()),
+                        (route) => false,
                       );
                     }
                   },
