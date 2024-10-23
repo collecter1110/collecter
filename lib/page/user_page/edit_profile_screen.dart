@@ -130,8 +130,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _initialImageFilePath != null) {
         List<String> imageFilePaths = [];
         imageFilePaths.add(_initialImageFilePath!);
-        await ApiService.deleteStorageImages('user', imageFilePaths);
-        print('삭제');
+        await ApiService.deleteStorageImages('userinfo', imageFilePaths);
       }
       await ApiService.editUserInfo(
           _changedName!, _changedDescription, _changedImageFilePath);

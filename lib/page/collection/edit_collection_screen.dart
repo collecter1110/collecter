@@ -125,6 +125,10 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       //   await ApiService.deleteStorageImages('collections', imageFilePaths);
       //   print('삭제');
       // }
+      if (_changedImageFilePath != null) {
+        await ApiService.copyImageFilePath(
+            'selections', 'collections', _changedImageFilePath!);
+      }
       print(_changedImageFilePath);
       await ApiService.editCollection(
           widget.collectionDetail.id,
