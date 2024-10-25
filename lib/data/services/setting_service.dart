@@ -1,0 +1,177 @@
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../components/pop_up/toast.dart';
+
+class SettingService {
+  static Future<Map<String, dynamic>> getAppInfo() async {
+    PackageInfo info = await PackageInfo.fromPlatform();
+    return {"앱 버전": info.version};
+  }
+
+  static String _mapIosDevice(String machine) {
+    switch (machine) {
+      // iPhone Models
+      case 'iPhone13,1':
+        return 'iPhone 12 mini';
+      case 'iPhone13,2':
+        return 'iPhone 12';
+      case 'iPhone13,3':
+        return 'iPhone 12 Pro';
+      case 'iPhone13,4':
+        return 'iPhone 12 Pro Max';
+      case 'iPhone14,4':
+        return 'iPhone 13 mini';
+      case 'iPhone14,5':
+        return 'iPhone 13';
+      case 'iPhone14,2':
+        return 'iPhone 13 Pro';
+      case 'iPhone14,3':
+        return 'iPhone 13 Pro Max';
+      case 'iPhone14,6':
+        return 'iPhone SE (3rd generation)';
+      case 'iPhone15,2':
+        return 'iPhone 14';
+      case 'iPhone15,3':
+        return 'iPhone 14 Plus';
+      case 'iPhone15,4':
+        return 'iPhone 14 Pro';
+      case 'iPhone15,5':
+        return 'iPhone 14 Pro Max';
+      case 'iPhone16,1':
+        return 'iPhone 15';
+      case 'iPhone16,2':
+        return 'iPhone 15 Plus';
+      case 'iPhone16,3':
+        return 'iPhone 15 Pro';
+      case 'iPhone16,4':
+        return 'iPhone 15 Pro Max';
+
+      // iPad Models
+      case 'iPad11,1':
+      case 'iPad11,2':
+        return 'iPad mini (5th generation)';
+      case 'iPad11,3':
+      case 'iPad11,4':
+        return 'iPad Air (3rd generation)';
+      case 'iPad13,1':
+      case 'iPad13,2':
+        return 'iPad Air (4th generation)';
+      case 'iPad14,1':
+      case 'iPad14,2':
+        return 'iPad mini (6th generation)';
+      case 'iPad13,4':
+      case 'iPad13,5':
+      case 'iPad13,6':
+      case 'iPad13,7':
+        return 'iPad Pro 11-inch (3rd generation)';
+      case 'iPad13,8':
+      case 'iPad13,9':
+      case 'iPad13,10':
+      case 'iPad13,11':
+        return 'iPad Pro 12.9-inch (5th generation)';
+      case 'iPad13,16':
+      case 'iPad13,17':
+        return 'iPad Air (5th generation)';
+      case 'iPad14,3':
+      case 'iPad14,4':
+        return 'iPad Pro 11-inch (4th generation)';
+      case 'iPad14,5':
+      case 'iPad14,6':
+        return 'iPad Pro 12.9-inch (6th generation)';
+
+      // iPod Models
+      case 'iPod9,1':
+        return 'iPod touch (7th generation)';
+
+      // Default case for unknown models
+      default:
+        return machine;
+    }
+  }
+
+  static Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo info) {
+    var systemName = info.systemName;
+    var version = info.systemVersion;
+    var machine = _mapIosDevice(info.utsname.machine);
+
+    return {"OS 버전": "$systemName $version", "기기": machine};
+  }
+
+  static Map<String, dynamic> _readAndroidDeviceInfo(AndroidDeviceInfo info) {
+    var release = info.version.release;
+    var sdkInt = info.version.sdkInt;
+    var manufacturer = info.manufacturer;
+    var model = info.model;
+
+    return {
+      "OS 버전": "Android $release (SDK $sdkInt)",
+      "기기": "$manufacturer $model"
+    };
+  }
+
+  static Future<Map<String, dynamic>> _getDeviceInfo(
+      BuildContext context) async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      return _readIosDeviceInfo(iosInfo);
+    } else {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return _readAndroidDeviceInfo(androidInfo);
+    }
+  }
+
+  static Future<Map<String, dynamic>> _getUserInfo() async {
+    final storage = FlutterSecureStorage();
+    final userId = await storage.read(key: 'USER_ID');
+
+    return {"유저 아이디": "$userId"};
+  }
+
+  static void sendEmail(BuildContext context) async {
+    try {
+      Map<String, dynamic> userInfo = await _getUserInfo();
+      Map<String, dynamic> appInfo = await getAppInfo();
+      Map<String, dynamic> deviceInfo = await _getDeviceInfo(context);
+
+      // 이메일 본문 생성
+      String emailBody = "아래 내용을 함께 보내주세요\n";
+      emailBody += "==================\n";
+
+      userInfo.forEach((key, value) {
+        emailBody += "$key: $value\n";
+      });
+
+      appInfo.forEach((key, value) {
+        emailBody += "$key: $value\n";
+      });
+
+      deviceInfo.forEach((key, value) {
+        emailBody += "$key: $value\n";
+      });
+
+      emailBody += "==================\n";
+
+      final Uri emailLaunchUri = Uri(
+        scheme: 'mailto',
+        path: 'contact.collecter@gmail.com',
+        queryParameters: {
+          'subject': '[collect_er 문의]',
+          'body': emailBody,
+        },
+      );
+
+      if (await canLaunchUrl(emailLaunchUri)) {
+        await launchUrl(emailLaunchUri);
+      } else {
+        Toast.showNoticeDialog(context);
+      }
+    } catch (e) {
+      Toast.showNoticeDialog(context);
+    }
+  }
+}

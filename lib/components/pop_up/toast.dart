@@ -4,24 +4,28 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Toast {
-  static Future<bool?> deleteCollectionWarning(BuildContext context) async {
-    return showDialog<bool>(
+  static Future<void> showNoticeDialog(BuildContext context) async {
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("오류 발생"),
-          content: Text("컬렉션과 관련된 셀렉션도 함께 삭제됩니다.\n삭제하시겠습니까?"),
+          backgroundColor: Colors.white,
+          title: Text("알림"),
+          content: Text(
+              "죄송합니다.\n기본 메일 앱 사용이 불가능하여 앱에서 바로 메일을 전송할 수 없습니다.\n아래 명시된 이메일로 연락 주시면 친절하고 빠르게 답변해드리겠습니다.\n\n감사합니다:)\n\n\n contact.collecter@gmail.com"),
           actions: <Widget>[
             TextButton(
-              child: Text("확인"),
+              child: Text(
+                '확인',
+                style: TextStyle(
+                  fontFamily: 'PretendardRegular',
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.blue,
+                ),
+              ),
               onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-            TextButton(
-              child: Text("취소"),
-              onPressed: () {
-                Navigator.of(context).pop(false);
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -30,22 +34,40 @@ class Toast {
     );
   }
 
-  static Future<bool?> deleteSelectionWarning(BuildContext context) async {
+  static Future<bool?> showConfirmationDialog(
+      BuildContext context, String contents) async {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("오류 발생"),
-          content: Text("셀렉션을 삭제하시겠습니까?"),
+          backgroundColor: Colors.white,
+          title: Text("알림"),
+          content: Text(contents),
           actions: <Widget>[
             TextButton(
-              child: Text("확인"),
+              child: Text(
+                '확인',
+                style: TextStyle(
+                  fontFamily: 'PretendardRegular',
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.blue,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             TextButton(
-              child: Text("취소"),
+              child: Text(
+                '취소',
+                style: TextStyle(
+                  fontFamily: 'PretendardRegular',
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.red,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -67,6 +89,7 @@ class Toast {
           color: Colors.black,
         );
         return AlertDialog(
+          backgroundColor: Colors.white,
           contentPadding:
               EdgeInsets.symmetric(vertical: 0.0.h, horizontal: 0.0.h),
           actions: null,

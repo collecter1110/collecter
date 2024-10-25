@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:collect_er/data/provider/collection_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:path/path.dart' as path;
+import 'package:http/http.dart' as http;
 
 import '../../components/pop_up/toast.dart';
 import '../model/collection_model.dart';
@@ -30,6 +32,7 @@ class ApiService {
 
       switch (event) {
         case AuthChangeEvent.initialSession:
+          break;
         case AuthChangeEvent.signedIn:
           print('Save initial token');
           if (session != null) {
@@ -56,9 +59,6 @@ class ApiService {
           await TokenService.deleteStorageData();
           break;
 
-        case AuthChangeEvent.userDeleted:
-          print('withdraw membership');
-          await TokenService.deleteStorageData();
         default:
           break;
       }
@@ -206,6 +206,82 @@ class ApiService {
       handleError(e.statusCode, e.message);
     } catch (e) {
       print('sendOtp exception: $e');
+    }
+  }
+
+  static Future<void> logout() async {
+    try {
+      await _supabase.auth.signOut();
+    } on AuthException catch (e) {
+      handleError(e.statusCode, e.message);
+    } catch (e) {
+      print('sendOtp exception: $e');
+    }
+  }
+
+  static Future<void> deleteAuthUser() async {
+    final userId = _supabase.auth.currentUser?.id;
+
+    if (userId == null) {
+      print('사용자가 로그인되어 있지 않습니다.');
+      return;
+    }
+    await _supabase.rpc('delete_user_by_owner', params: {'user_uuid': userId});
+  }
+
+  static Future<void> cancelMembership() async {
+    final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
+    final accessToken = await storage.read(key: 'ACCESS_TOKEN');
+    final url = Uri.parse('$supabaseUrl/functions/v1/delete-user');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    };
+    try {
+      final response = await http.post(url, headers: headers);
+      if (response.statusCode == 200) {
+        print('User deleted successfully.');
+      } else {
+        print('Failed to delete user: ${response.body}');
+      }
+    } catch (error) {
+      Toast.error();
+      throw Exception('An unexpected error occurred: $error');
+    }
+  }
+
+  static Future<void> deleteAllStorageImages() async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      String userId = userIdString!.toString();
+
+      final response = await _supabase.rpc('get_storage_files', params: {
+        'user_id': userId,
+      });
+
+      if (response == null || response is! List) {
+        print('파일 목록 가져오기 실패 또는 데이터가 비어 있습니다.');
+        return;
+      }
+
+      final List<String> filesToRemove =
+          List<String>.from(response.map((item) => item['file_name']));
+      if (filesToRemove.isNotEmpty) {
+        final deleteResponse =
+            await _supabase.storage.from('images').remove(filesToRemove);
+
+        if (deleteResponse == null) {
+          print('파일 삭제 실패: ${deleteResponse}');
+        } else {
+          print('폴더 내 모든 파일 삭제 성공');
+        }
+      } else {
+        print('삭제할 파일이 없습니다.');
+      }
+    } catch (e) {
+      Toast.error();
+      throw Exception('delete all storage images exception: $e');
     }
   }
 
