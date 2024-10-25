@@ -12,7 +12,7 @@ class LinkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> _launchInBrowser(String link) async {
+    Future<void> _launchInBrowser() async {
       Uri url = Uri.parse(linkUrl);
       if (!await launchUrl(
         url,
@@ -26,7 +26,7 @@ class LinkButton extends StatelessWidget {
       alignment: Alignment.center,
       child: TextButton(
         onPressed: () async {
-          await _launchInBrowser(linkUrl);
+          await _launchInBrowser();
         },
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(

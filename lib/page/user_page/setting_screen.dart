@@ -2,6 +2,7 @@ import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restart_app/restart_app.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../components/button/setting_button.dart';
 import '../../components/pop_up/toast.dart';
@@ -52,7 +53,14 @@ class SettingScreen extends StatelessWidget {
                   text: '문의하기',
                 ),
                 SettingButton(
-                  onTap: () {},
+                  onTap: () async {
+                    Uri url = Uri.parse(
+                        'https://military-vein-07e.notion.site/12ace8f285118036be2ad800312d62b8');
+                    if (!await launchUrl(
+                      url,
+                      mode: LaunchMode.inAppWebView,
+                    )) ;
+                  },
                   text: '이용 약관',
                 ),
                 SettingButton(
