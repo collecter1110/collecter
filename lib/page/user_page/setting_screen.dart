@@ -6,6 +6,7 @@ import 'package:restart_app/restart_app.dart';
 import '../../components/button/setting_button.dart';
 import '../../components/pop_up/toast.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
+import 'setting/announcement_screen.dart';
 import 'setting/contact_screen.dart';
 import 'setting/app_version_screen.dart';
 import 'setting/delete_user_screen.dart';
@@ -27,7 +28,15 @@ class SettingScreen extends StatelessWidget {
             child: Column(
               children: [
                 SettingButton(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AnnouncementScreen(),
+                        settings: RouteSettings(name: '/user'),
+                      ),
+                    );
+                  },
                   text: '공지사항',
                 ),
                 SettingButton(
