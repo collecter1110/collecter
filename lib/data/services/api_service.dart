@@ -220,13 +220,14 @@ class ApiService {
   }
 
   static Future<void> deleteAuthUser() async {
-    final userId = _supabase.auth.currentUser?.id;
+    final userUuid = authUser?.id;
 
-    if (userId == null) {
+    if (userUuid == null) {
       print('사용자가 로그인되어 있지 않습니다.');
       return;
     }
-    await _supabase.rpc('delete_user_by_owner', params: {'user_uuid': userId});
+    await _supabase
+        .rpc('delete_user_by_owner', params: {'user_uuid': userUuid});
   }
 
   static Future<void> cancelMembership() async {
@@ -571,7 +572,7 @@ class ApiService {
   static Future<List<CollectionModel>> getLikeCollections() async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
-    final response = await Supabase.instance.client
+    final response = await _supabase
         .from('likes')
         .select('collections(*)')
         .eq('user_id', userId);
@@ -683,7 +684,7 @@ class ApiService {
     int userId = int.parse(userIdString!);
 
     try {
-      await Supabase.instance.client.from('collections').insert({
+      await _supabase.from('collections').insert({
         'user_id': userId,
         'title': title,
         'description': description,
@@ -712,7 +713,7 @@ class ApiService {
     int userId = int.parse(userIdString!);
 
     try {
-      await Supabase.instance.client.from('selections').insert({
+      await _supabase.from('selections').insert({
         'owner_id': userId,
         'user_id': userId,
         'collection_id': collectionId,
@@ -741,13 +742,13 @@ class ApiService {
       List<Map<String, dynamic>> newKeywordEntries =
           keywords.map((keyword) => {'keyword_name': keyword}).toList();
 
-      await Supabase.instance.client
+      await _supabase
           .from('keywordinfo')
           .upsert(newKeywordEntries,
               onConflict: 'keyword_name', ignoreDuplicates: true)
           .select();
 
-      final response = await Supabase.instance.client
+      final response = await _supabase
           .from('keywordinfo')
           .select()
           .filter('keyword_name', 'in', keywords);
@@ -764,7 +765,7 @@ class ApiService {
   Future<void> actionLike(int collectionId) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
-    await Supabase.instance.client.from('likes').insert({
+    await _supabase.from('likes').insert({
       'user_id': userId,
       'collection_id': collectionId,
     });
@@ -852,7 +853,7 @@ class ApiService {
   Future<void> actionUnlike(int collectionId) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
-    await Supabase.instance.client
+    await _supabase
         .from('likes')
         .delete()
         .eq('user_id', userId)
