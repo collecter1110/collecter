@@ -8,6 +8,7 @@ import '../../components/pop_up/toast.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import 'setting/contact_screen.dart';
 import 'setting/app_version_screen.dart';
+import 'setting/delete_user_screen.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
@@ -74,7 +75,15 @@ class SettingScreen extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DeleteUserScreen(),
+                          settings: RouteSettings(name: '/user'),
+                        ),
+                      );
+                    },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.end,
