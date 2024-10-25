@@ -1,5 +1,3 @@
-import 'package:collect_er/components/pop_up/toast.dart';
-import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -7,11 +5,13 @@ import 'package:provider/provider.dart';
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/selecting_provider.dart';
+import '../../data/services/api_service.dart';
 import '../../data/services/data_service.dart';
 import '../../page/add_page/add_screen.dart';
 import '../../page/collection/edit_collection_screen.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
+import 'toast.dart';
 
 class EditCollectionDialog extends StatelessWidget {
   final String routeName;

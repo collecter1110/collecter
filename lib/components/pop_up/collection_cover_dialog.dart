@@ -1,10 +1,8 @@
-import 'package:collect_er/components/widget/collection_cover_image_widget.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../button/complete_button.dart';
+import '../widget/collection_cover_image_widget.dart';
 
 class CollectionCoverDialog extends StatefulWidget {
   final int collectionId;

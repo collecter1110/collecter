@@ -1,22 +1,20 @@
-import 'package:collect_er/data/provider/selecting_provider.dart';
-import 'package:collect_er/page/bookmark_page/bookmark_screen.dart';
-import 'package:collect_er/page/user_page/edit_profile_screen.dart';
-import 'package:collect_er/page/user_page/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../components/button/setting_button.dart';
 import '../../components/button/user_page_edit_button.dart';
 import '../../components/button/users_archive_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../data/provider/collection_provider.dart';
+import '../../data/provider/selecting_provider.dart';
 import '../../data/provider/user_info_provider.dart';
-import '../../data/services/data_service.dart';
 import '../../data/services/locator.dart';
 import '../../data/services/storage_service.dart';
+import '../bookmark_page/bookmark_screen.dart';
+import 'edit_profile_screen.dart';
 import 'selecting_screen.dart';
+import 'setting_screen.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});

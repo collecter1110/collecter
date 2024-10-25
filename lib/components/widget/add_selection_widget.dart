@@ -1,16 +1,15 @@
 import 'dart:io';
-import 'package:collect_er/components/button/add_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/item_provider.dart';
 import '../../data/provider/keyword_provider.dart';
 import '../../data/services/api_service.dart';
+import '../button/add_button.dart';
 import '../button/complete_button.dart';
 import '../button/keyword_button.dart';
 import '../pop_up/collection_title_dialog.dart';

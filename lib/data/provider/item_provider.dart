@@ -1,5 +1,6 @@
-import 'package:collect_er/data/model/item_model.dart';
 import 'package:flutter/material.dart';
+
+import '../model/item_model.dart';
 
 class ItemProvider extends ChangeNotifier {
   List<ItemData> _items = [];

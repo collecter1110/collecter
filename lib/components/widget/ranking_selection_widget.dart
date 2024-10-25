@@ -1,10 +1,9 @@
-import 'package:collect_er/data/model/selection_model.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/selecting_model.dart';
+import '../../data/model/selection_model.dart';
 import '../../data/provider/ranking_provider.dart';
 import '../card/selection.dart';
 

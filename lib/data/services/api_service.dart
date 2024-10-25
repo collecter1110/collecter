@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:collect_er/data/provider/collection_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +12,7 @@ import '../model/collection_model.dart';
 import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
+import '../provider/collection_provider.dart';
 import '../provider/ranking_provider.dart';
 import 'locator.dart';
 import 'token_service.dart';

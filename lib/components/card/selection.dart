@@ -1,11 +1,10 @@
-import 'package:collect_er/data/model/keyword_model.dart';
-import 'package:collect_er/data/model/selecting_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/model/keyword_model.dart';
+import '../../data/model/selecting_model.dart';
 import '../../data/provider/selection_provider.dart';
-import '../../data/services/data_service.dart';
 import '../../data/services/storage_service.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';

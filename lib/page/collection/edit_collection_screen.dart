@@ -1,4 +1,3 @@
-import 'package:collect_er/components/pop_up/collection_cover_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../components/button/add_button.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/button/tag_button.dart';
+import '../../components/pop_up/collection_cover_dialog.dart';
 import '../../components/pop_up/toast.dart';
 import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
@@ -14,7 +14,6 @@ import '../../data/model/collection_model.dart';
 import '../../data/provider/selection_provider.dart';
 import '../../data/provider/tag_provider.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/data_service.dart';
 import '../../data/services/storage_service.dart';
 
 class EditCollectionScreen extends StatefulWidget {

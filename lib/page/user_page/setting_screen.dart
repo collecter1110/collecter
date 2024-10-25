@@ -1,4 +1,3 @@
-import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restart_app/restart_app.dart';
@@ -7,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../components/button/setting_button.dart';
 import '../../components/pop_up/toast.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
+import '../../data/services/api_service.dart';
 import 'setting/announcement_screen.dart';
 import 'setting/contact_screen.dart';
 import 'setting/app_version_screen.dart';

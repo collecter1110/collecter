@@ -1,12 +1,11 @@
 import 'dart:async';
-
-import 'package:collect_er/components/button/complete_button.dart';
-import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/authentication_button.dart';
+import '../../components/button/complete_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
+import '../../data/services/api_service.dart';
 import 'set_user_info_screen.dart';
 
 class EmailAuthenticationScreen extends StatefulWidget {

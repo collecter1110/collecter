@@ -1,4 +1,3 @@
-import 'package:collect_er/data/provider/collection_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/collection_widget.dart';
+import '../../data/provider/collection_provider.dart';
 import '../add_page/add_screen.dart';
 
 class BookmarkScreen extends StatefulWidget {

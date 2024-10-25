@@ -1,7 +1,3 @@
-import 'package:collect_er/components/widget/search_collection_widget.dart';
-import 'package:collect_er/data/provider/search_provider.dart';
-import 'package:collect_er/data/provider/selection_provider.dart';
-import 'package:collect_er/data/provider/user_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -9,8 +5,12 @@ import 'package:provider/provider.dart';
 import '../../components/button/custom_ search_bar.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/search_category_widget.dart';
+import '../../components/widget/search_collection_widget.dart';
 import '../../components/widget/search_selection_widget.dart';
 import '../../components/widget/search_user_widget.dart';
+import '../../data/provider/search_provider.dart';
+import '../../data/provider/selection_provider.dart';
+import '../../data/provider/user_info_provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);

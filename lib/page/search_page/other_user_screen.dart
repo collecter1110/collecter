@@ -1,13 +1,12 @@
-import 'package:collect_er/components/widget/collection_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
+import '../../components/widget/collection_widget.dart';
 import '../../data/model/user_info_model.dart';
 import '../../data/provider/user_info_provider.dart';
-import '../../data/services/data_service.dart';
 import '../../data/services/storage_service.dart';
 
 class OtherUserScreen extends StatelessWidget {

@@ -1,8 +1,8 @@
-import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
+import '../services/api_service.dart';
 
 class SelectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;

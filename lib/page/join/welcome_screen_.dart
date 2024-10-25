@@ -1,10 +1,9 @@
-import 'package:collect_er/components/button/complete_button.dart';
-import 'package:collect_er/page_navigator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../components/button/complete_button.dart';
 import '../../data/services/data_service.dart';
+import '../../page_navigator.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -59,7 +58,7 @@ class WelcomeScreen extends StatelessWidget {
               onTap: () async {
                 await DataService.loadInitialData(context);
                 Navigator.of(context).pushAndRemoveUntil(
-                    CupertinoPageRoute(builder: (context) => PageNavigator()),
+                    MaterialPageRoute(builder: (context) => PageNavigator()),
                     (route) => false);
               },
             ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../data/services/data_service.dart';
 import '../../data/services/storage_service.dart';
 
 class CoverImage extends StatelessWidget {

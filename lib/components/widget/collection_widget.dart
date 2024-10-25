@@ -1,10 +1,10 @@
-import 'package:collect_er/components/card/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
+import '../card/collection.dart';
 
 class CollectionWidget extends StatelessWidget {
   final bool? isLiked;

@@ -1,4 +1,3 @@
-import 'package:collect_er/data/provider/user_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../data/model/collection_model.dart';
 import '../../data/model/user_info_model.dart';
 import '../../data/provider/collection_provider.dart';
+import '../../data/provider/user_info_provider.dart';
 import '../../page/search_page/other_user_screen.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';

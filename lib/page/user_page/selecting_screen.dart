@@ -1,11 +1,9 @@
-import 'package:collect_er/components/widget/selecting_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 
 import '../../components/button/tab_bar_button.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
-import '../../data/provider/selecting_provider.dart';
+import '../../components/widget/selecting_widget.dart';
 
 class SelectingScreen extends StatefulWidget {
   final int initialPageIndex;

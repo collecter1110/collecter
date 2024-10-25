@@ -1,10 +1,10 @@
-import 'package:collect_er/components/ui_kit/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:restart_app/restart_app.dart';
 
 import '../../../components/button/complete_button.dart';
 import '../../../components/pop_up/toast.dart';
+import '../../../components/ui_kit/custom_app_bar.dart';
 import '../../../data/services/api_service.dart';
 
 class DeleteUserScreen extends StatelessWidget {
