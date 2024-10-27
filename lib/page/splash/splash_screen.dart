@@ -1,11 +1,10 @@
-import 'package:collect_er/data/services/api_service.dart';
-import 'package:collect_er/page/join/set_user_info_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../data/services/data_service.dart';
 import '../../page_navigator.dart';
+import '../join/set_user_info_screen.dart';
 import '../login/enter_login_screen.dart';
 
 class SplashScreen extends StatefulWidget {

@@ -102,7 +102,7 @@ class Toast {
             children: <Widget>[
               TextButton(
                 child: Text(
-                  "앨범 이미지 선택",
+                  "이미지 선택",
                   style: contentTextStyle,
                 ),
                 onPressed: () {

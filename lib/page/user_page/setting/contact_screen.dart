@@ -1,8 +1,8 @@
-import 'package:collect_er/components/ui_kit/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../components/button/complete_button.dart';
+import '../../../components/ui_kit/custom_app_bar.dart';
 import '../../../data/services/setting_service.dart';
 
 class ContactScreen extends StatelessWidget {

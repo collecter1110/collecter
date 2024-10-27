@@ -1,20 +1,21 @@
-import 'package:collect_er/data/provider/collection_provider.dart';
-import 'package:collect_er/data/provider/item_provider.dart';
-import 'package:collect_er/data/provider/ranking_provider.dart';
-import 'package:collect_er/data/provider/user_info_provider.dart';
-import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'data/provider/collection_provider.dart';
+import 'data/provider/item_provider.dart';
 import 'data/provider/keyword_provider.dart';
 import 'data/provider/page_route_provider.dart';
+import 'data/provider/ranking_provider.dart';
 import 'data/provider/search_provider.dart';
 import 'data/provider/selecting_provider.dart';
 import 'data/provider/selection_provider.dart';
 import 'data/provider/tag_provider.dart';
+import 'data/provider/user_info_provider.dart';
+import 'data/services/api_service.dart';
 import 'data/services/locator.dart';
 import 'page/splash/splash_screen.dart';
 
@@ -25,6 +26,10 @@ void main() async {
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_API_KEY'] ?? '',
   );
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   setupLocator();
   await ApiService.authListener();
   runApp(

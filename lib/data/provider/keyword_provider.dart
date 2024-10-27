@@ -1,7 +1,7 @@
-import 'package:collect_er/data/model/keyword_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/pop_up/toast.dart';
+import '../model/keyword_model.dart';
 
 class KeywordProvider extends ChangeNotifier {
   List<String>? _keywordNames;

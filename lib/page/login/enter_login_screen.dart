@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/constants/screen_size.dart';
-import '../join/email_authentication_screen.dart';
 import '../join/user_agreement.dart';
 import 'email_login_screen.dart';
 

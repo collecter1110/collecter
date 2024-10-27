@@ -1,17 +1,17 @@
-import 'package:collect_er/components/pop_up/collection_title_dialog.dart';
-import 'package:collect_er/components/pop_up/toast.dart';
-import 'package:collect_er/data/model/selection_model.dart';
-import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/model/selection_model.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/selecting_provider.dart';
+import '../../data/services/api_service.dart';
 import '../../data/services/data_service.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
+import 'collection_title_dialog.dart';
+import 'toast.dart';
 
 class SelectingDialog extends StatelessWidget {
   final SelectionModel selectionDetail;

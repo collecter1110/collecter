@@ -1,5 +1,3 @@
-import 'package:collect_er/components/pop_up/selecting_dialog.dart';
-import 'package:collect_er/data/model/selection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -7,12 +5,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../components/button/link_button.dart';
 import '../../components/pop_up/edit_selection_dialog.dart';
+import '../../components/pop_up/selecting_dialog.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
 import '../../components/widget/selection_item_widget.dart';
+import '../../data/model/selection_model.dart';
 import '../../data/provider/selection_provider.dart';
-import '../../data/services/data_service.dart';
 import '../../data/services/storage_service.dart';
 
 class SelectionDetailScreen extends StatefulWidget {

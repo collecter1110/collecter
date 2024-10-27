@@ -1,20 +1,14 @@
-import 'dart:io';
-
-import 'package:collect_er/components/button/add_button.dart';
-import 'package:collect_er/components/pop_up/toast.dart';
-import 'package:collect_er/data/provider/tag_provider.dart';
-import 'package:collect_er/data/provider/user_info_provider.dart';
-import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/provider/collection_provider.dart';
+import '../../data/provider/tag_provider.dart';
+import '../../data/services/api_service.dart';
+import '../button/add_button.dart';
 import '../button/complete_button.dart';
 import '../button/tag_button.dart';
+import '../pop_up/toast.dart';
 import '../text_field/add_text_form_field.dart';
 
 class AddCollectionWidget extends StatefulWidget {

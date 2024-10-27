@@ -1,7 +1,7 @@
-import 'package:collect_er/components/card/item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../card/item.dart';
 import '../card/order_item.dart';
 
 class SelectionItemWidget extends StatelessWidget {

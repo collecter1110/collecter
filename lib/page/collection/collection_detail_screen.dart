@@ -1,16 +1,16 @@
-import 'package:collect_er/components/button/like_button.dart';
-import 'package:collect_er/components/pop_up/user_info_dialog.dart';
-import 'package:collect_er/components/widget/selection_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/button/like_button.dart';
 import '../../components/pop_up/edit_collection_dialog.dart';
+import '../../components/pop_up/user_info_dialog.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
 import '../../components/ui_kit/tag_text.dart';
+import '../../components/widget/selection_widget.dart';
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
 

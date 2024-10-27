@@ -1,10 +1,8 @@
-import 'package:collect_er/components/widget/collection_cover_image_widget.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../button/complete_button.dart';
+import '../widget/collection_cover_image_widget.dart';
 
 class CollectionCoverDialog extends StatefulWidget {
   final int collectionId;
@@ -34,7 +32,7 @@ class _CollectionCoverDialogState extends State<CollectionCoverDialog> {
           ),
           color: Colors.white,
         ),
-        height: 400.0.h,
+        height: 300.0.h,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 24.0.h),
           child: Column(

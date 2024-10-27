@@ -1,6 +1,7 @@
-import 'package:collect_er/data/model/collection_model.dart';
 import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
+
+import '../model/collection_model.dart';
 
 class CollectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
