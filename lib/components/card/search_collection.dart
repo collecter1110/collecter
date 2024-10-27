@@ -57,7 +57,7 @@ class SearchCollection extends StatelessWidget {
                         ),
                         child: Image.network(
                           StorageService.getFullImageUrl(
-                              '${collectionDetail.userId}/selections',
+                              '${collectionDetail.userId}/collections',
                               collectionDetail.imageFilePath!),
                           fit: BoxFit.cover,
                         ),

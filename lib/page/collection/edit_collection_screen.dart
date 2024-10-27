@@ -36,7 +36,9 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
   int? _collectionId;
   String? _changedTitle;
   String? _changedDescription;
-  String? _changedImageFilePath;
+  String? _initialImageName;
+  String? _changedImageName;
+  String? _finalImageFilePath;
   bool? _changedIsPublic;
 
   String _inputTagValue = '';
@@ -57,7 +59,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
     _collectionId = widget.collectionDetail.id;
     _changedTitle = widget.collectionDetail.title;
     _changedDescription = widget.collectionDetail.description;
-    _changedImageFilePath = widget.collectionDetail.imageFilePath;
+    _initialImageName = widget.collectionDetail.imageFilePath;
     _changedIsPublic = widget.collectionDetail.isPublic;
   }
 
@@ -67,38 +69,52 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
   }
 
   Widget _buildImageWidget() {
-    if (_changedImageFilePath == null) {
-      return Container(
-        color: Color(0xffF8F9FA),
-        child: Center(
-          child: SizedBox(
-            height: 24.0.h,
-            child: Image.asset(
-              'assets/icons/tab_add.png',
-              fit: BoxFit.contain,
-              color: Color(0xFF212529),
-            ),
-          ),
-        ),
-      );
-    } else if (_changedImageFilePath != null) {
-      return Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(
-              StorageService.getFullImageUrl(
-                  '$_userId/selections', _changedImageFilePath!),
-            ),
-            fit: BoxFit.cover,
-          ),
-        ),
-      );
-    } else {
-      return Container(
-        color: Color(0xffF8F9FA),
-        child: Center(child: Text('Error: Invalid state')),
+    if (_changedImageName == 'default') {
+      return _buildDefaultImage();
+    }
+
+    if (_changedImageName != null) {
+      return _buildNetworkImage(
+        StorageService.getFullImageUrl(
+            '$_userId/selections', _changedImageName!),
       );
     }
+
+    if (_initialImageName != null) {
+      return _buildNetworkImage(
+        StorageService.getFullImageUrl(
+            '$_userId/collections', _initialImageName!),
+      );
+    }
+
+    return _buildDefaultImage();
+  }
+
+  Widget _buildNetworkImage(String url) {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(url),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDefaultImage() {
+    return Container(
+      color: const Color(0xffF8F9FA),
+      child: Center(
+        child: SizedBox(
+          height: 24.0.h,
+          child: Image.asset(
+            'assets/icons/tab_add.png',
+            fit: BoxFit.contain,
+            color: const Color(0xFF212529),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _passFieldValidator() async {
@@ -106,36 +122,50 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Center(
+        return const Center(
           child: CircularProgressIndicator(),
         );
       },
     );
     try {
-      // if (_pickedImage != null) {
-      //   _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
-      //       _pickedImage!, 'collections');
-      // }
+      if (!(_initialImageName ?? '').contains(_changedImageName ?? '')) {
+        print('바꾸기');
+        print('처음 $_initialImageName');
+        print('바꾼후 $_changedImageName');
 
-      // if (_changedImageFilePath != _initialImageFilePath &&
-      //     _initialImageFilePath != null) {
-      //   List<String> imageFilePaths = [];
-      //   imageFilePaths.add(_initialImageFilePath!);
-      //   await ApiService.deleteStorageImages('collections', imageFilePaths);
-      //   print('삭제');
-      // }
-      if (_changedImageFilePath != null) {
-        await ApiService.copyImageFilePath(
-            'selections', 'collections', _changedImageFilePath!);
+        if (_initialImageName != null) {
+          print('스토리지 삭제');
+          await ApiService.deleteStorageImages(
+              'collections', [_initialImageName!]);
+        }
+
+        if (_changedImageName != 'default') {
+          print('스토리지 등록');
+          await ApiService.copyImageFilePath(
+            'selections',
+            'collections',
+            _changedImageName!,
+            widget.collectionDetail.id,
+          );
+          _finalImageFilePath =
+              '${widget.collectionDetail.id}_${_changedImageName}';
+        } else {
+          _finalImageFilePath = null;
+        }
+      } else {
+        _finalImageFilePath =
+            '${widget.collectionDetail.id}_${_changedImageName}';
       }
-      print(_changedImageFilePath);
+      print(_finalImageFilePath);
+
       await ApiService.editCollection(
-          widget.collectionDetail.id,
-          _changedTitle!,
-          _changedDescription,
-          _changedImageFilePath,
-          context.read<TagProvider>().tagNames,
-          _changedIsPublic!);
+        widget.collectionDetail.id,
+        _changedTitle!,
+        _changedDescription,
+        _finalImageFilePath,
+        context.read<TagProvider>().tagNames,
+        _changedIsPublic!,
+      );
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -164,8 +194,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
           voidCallback: () async {
             final provider = context.read<SelectionProvider>();
             setState(() {
-              _changedImageFilePath = provider.collectionCoverImage;
-              print(_changedImageFilePath);
+              _changedImageName = provider.collectionCoverImage;
             });
           },
         );
@@ -203,15 +232,13 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                             onTap: () async {
                               bool? isDefaultImage =
                                   await Toast.selectImageDialog(context);
-                              if (isDefaultImage != null) {
-                                if (isDefaultImage) {
-                                  setState(() {
-                                    _changedImageFilePath = null;
-                                  });
-                                } else if (!isDefaultImage) {
-                                  await _showCoverImageDialog();
+                              setState(() {
+                                if (isDefaultImage == true) {
+                                  _changedImageName = 'default';
+                                } else if (isDefaultImage == false) {
+                                  _showCoverImageDialog();
                                 }
-                              }
+                              });
                             },
                             child: Container(
                               decoration: BoxDecoration(

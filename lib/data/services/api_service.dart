@@ -643,12 +643,14 @@ class ApiService {
     String sourceFolderPath,
     String destinationFolderPath,
     String fileName,
+    int collectionId,
   ) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
     try {
       final String sourcePath = '$userId/$sourceFolderPath/$fileName';
-      final String destinationPath = '$userId/$destinationFolderPath/$fileName';
+      final String destinationPath =
+          '$userId/$destinationFolderPath/${collectionId}_$fileName';
 
       await _supabase.storage.from('images').copy(sourcePath, destinationPath);
     } catch (e) {
