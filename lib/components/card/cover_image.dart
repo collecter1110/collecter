@@ -34,10 +34,8 @@ class CoverImage extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: isSelected
-                      ? Theme.of(context).primaryColor
-                      : Color(0xFFdee2e6),
-                  width: isSelected ? 3.0.w : 0.5.w,
+                  color: Color(0xFFdee2e6),
+                  width: 0.5.w,
                 ),
                 borderRadius: BorderRadius.circular(8.r),
                 image: DecorationImage(
@@ -52,18 +50,18 @@ class CoverImage extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
                   color: isSelected
-                      ? Colors.black.withOpacity(0.3)
+                      ? Colors.black.withOpacity(0.5)
                       : Colors.transparent,
                 ),
               ),
             ),
             isSelected
                 ? Positioned(
-                    right: 8.0.w,
-                    top: 8.0.h,
+                    right: 6.0.w,
+                    top: 6.0.h,
                     child: Image.asset(
                       'assets/icons/icon_check.png',
-                      height: 24.0.h,
+                      height: 18.0.h,
                       color: Theme.of(context).primaryColor,
                     ),
                   )

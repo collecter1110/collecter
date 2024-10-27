@@ -32,7 +32,7 @@ class _CollectionCoverDialogState extends State<CollectionCoverDialog> {
           ),
           color: Colors.white,
         ),
-        height: 400.0.h,
+        height: 300.0.h,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 24.0.h),
           child: Column(

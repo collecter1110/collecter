@@ -57,7 +57,7 @@ class _CollectionCoverImageWidgetState
           child: ListView.separated(
             primary: false,
             scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(vertical: 36.0.h),
+            padding: EdgeInsets.symmetric(vertical: 24.0.h),
             shrinkWrap: true,
             itemCount: _selections.length,
             itemBuilder: (context, index) {
