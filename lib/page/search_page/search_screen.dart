@@ -75,7 +75,6 @@ class _SearchScreenState extends State<SearchScreen> {
               future: _doSearch(_isKeyword, _categoryIndex, _searchText),
               builder: (context, snapshot) {
                 return Scaffold(
-                  resizeToAvoidBottomInset: true,
                   body: NestedScrollView(
                     headerSliverBuilder:
                         (BuildContext context, bool innerBoxIsScrolled) {

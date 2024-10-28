@@ -199,159 +199,180 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
       appBar: CustomAppbar(
         titleText: '수정',
       ),
-      body: NotificationListener<ScrollNotification>(
-        onNotification: (notification) {
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
           FocusScope.of(context).unfocus();
-          return false;
         },
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AspectRatio(
-                  aspectRatio: 1 / 1,
-                  child: PageView.builder(
-                      controller: _pageController,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentPage = index;
-                        });
-                      },
-                      scrollDirection: Axis.horizontal,
-                      physics: PageScrollPhysics(),
-                      itemCount: _imageNum + 1,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16.0.w, vertical: 16.0.h),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            child: index == _imageNum
-                                ? InkWell(
-                                    onTap: () async {
-                                      if (index == _imageNum &&
-                                          _imageNum <= 4) {
-                                        await _pickImages(ImageSource.gallery);
-                                      } else {
-                                        Toast.notify('최대 사진 개수를 초과했습니다.');
-                                      }
-                                    },
-                                    child: Container(
-                                      color: Color(0xFFf1f3f5),
-                                      child: Center(
-                                        child: SizedBox(
-                                          height: 26.0.h,
-                                          child: Image.asset(
-                                            'assets/icons/tab_add.png',
-                                            fit: BoxFit.contain,
-                                            color: Color(0xFF343a40),
-                                          ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AspectRatio(
+                aspectRatio: 1 / 1,
+                child: PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentPage = index;
+                      });
+                    },
+                    scrollDirection: Axis.horizontal,
+                    physics: PageScrollPhysics(),
+                    itemCount: _imageNum + 1,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.0.w, vertical: 16.0.h),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          child: index == _imageNum
+                              ? InkWell(
+                                  onTap: () async {
+                                    if (index == _imageNum && _imageNum <= 4) {
+                                      await _pickImages(ImageSource.gallery);
+                                    } else {
+                                      Toast.notify('최대 사진 개수를 초과했습니다.');
+                                    }
+                                  },
+                                  child: Container(
+                                    color: Color(0xFFf1f3f5),
+                                    child: Center(
+                                      child: SizedBox(
+                                        height: 26.0.h,
+                                        child: Image.asset(
+                                          'assets/icons/tab_add.png',
+                                          fit: BoxFit.contain,
+                                          color: Color(0xFF343a40),
                                         ),
                                       ),
                                     ),
-                                  )
-                                : Stack(
-                                    children: [
-                                      _isNetworkImage(_changedImagePaths[index])
-                                          ? Container(
-                                              height: double.infinity,
-                                              width: double.infinity,
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    StorageService.getFullImageUrl(
-                                                        '${widget.selectionDetail.ownerId}/selections',
-                                                        _changedImagePaths[
-                                                            index]),
-                                                  ),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            )
-                                          : Image.file(
-                                              height: double.infinity,
-                                              width: double.infinity,
-                                              File(_changedImagePaths[index]),
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (BuildContext context,
-                                                      Object error,
-                                                      StackTrace? stackTrace) {
-                                                return const Center(
-                                                  child: Text(
-                                                      'This image type is not supported'),
-                                                );
-                                              },
-                                            ),
-                                      Positioned(
-                                        bottom: 14.0.h,
-                                        left: 14.0.w,
-                                        child: InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              _deletedImages.add(
-                                                  _changedImagePaths[index]);
-                                              _changedImagePaths
-                                                  .removeAt(index);
-                                              _imageNum--;
-                                            });
-                                          },
-                                          child: Container(
-                                            child: Padding(
-                                              padding: EdgeInsets.all(7.0.h),
-                                              child: Image.asset(
-                                                'assets/icons/icon_trash.png',
-                                                color: Colors.white,
-                                                fit: BoxFit.contain,
-                                                height: 12.0.h,
-                                              ),
-                                            ),
+                                  ),
+                                )
+                              : Stack(
+                                  children: [
+                                    _isNetworkImage(_changedImagePaths[index])
+                                        ? Container(
+                                            height: double.infinity,
+                                            width: double.infinity,
                                             decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.black
-                                                    .withOpacity(0.5)),
+                                              image: DecorationImage(
+                                                image: NetworkImage(
+                                                  StorageService.getFullImageUrl(
+                                                      '${widget.selectionDetail.ownerId}/selections',
+                                                      _changedImagePaths[
+                                                          index]),
+                                                ),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          )
+                                        : Image.file(
+                                            height: double.infinity,
+                                            width: double.infinity,
+                                            File(_changedImagePaths[index]),
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (BuildContext context,
+                                                Object error,
+                                                StackTrace? stackTrace) {
+                                              return const Center(
+                                                child: Text(
+                                                    'This image type is not supported'),
+                                              );
+                                            },
                                           ),
+                                    Positioned(
+                                      bottom: 14.0.h,
+                                      left: 14.0.w,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _deletedImages
+                                                .add(_changedImagePaths[index]);
+                                            _changedImagePaths.removeAt(index);
+                                            _imageNum--;
+                                          });
+                                        },
+                                        child: Container(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(7.0.h),
+                                            child: Image.asset(
+                                              'assets/icons/icon_trash.png',
+                                              color: Colors.white,
+                                              fit: BoxFit.contain,
+                                              height: 12.0.h,
+                                            ),
+                                          ),
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.black
+                                                  .withOpacity(0.5)),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                          ),
-                        );
-                      }),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    _imageNum + 1,
-                    (index) => Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2.0.w),
-                      child: Container(
-                        width: 7.0.h,
-                        height: 7.0.h,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _currentPage == index
-                              ? Color(0xFF212529)
-                              : Color(0xFFdee2e6),
+                                    ),
+                                  ],
+                                ),
                         ),
+                      );
+                    }),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  _imageNum + 1,
+                  (index) => Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2.0.w),
+                    child: Container(
+                      width: 7.0.h,
+                      height: 7.0.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _currentPage == index
+                            ? Color(0xFF212529)
+                            : Color(0xFFdee2e6),
                       ),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 16.0.w, vertical: 26.0.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '셀렉션 이름',
+              ),
+              Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 26.0.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '셀렉션 이름',
+                      style: TextStyle(
+                        fontFamily: 'PretendardRegular',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff343A40),
+                        height: 1.5,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                      child: AddTextFormField(
+                        keyboardType: TextInputType.name,
+                        initialText: _changedTitle,
+                        isMultipleLine: false,
+                        onSaved: (value) {
+                          value == '' || value == null
+                              ? _changedTitle = null
+                              : _changedTitle = value;
+                        },
+                        formatter: LengthLimitingTextInputFormatter(30),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 26.0.h,
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '키워드',
                         style: TextStyle(
                           fontFamily: 'PretendardRegular',
                           fontSize: 16.sp,
@@ -360,331 +381,300 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                           height: 1.5,
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                        child: AddTextFormField(
-                          keyboardType: TextInputType.name,
-                          initialText: _changedTitle,
-                          isMultipleLine: false,
-                          onSaved: (value) {
-                            value == '' || value == null
-                                ? _changedTitle = null
-                                : _changedTitle = value;
-                          },
-                          formatter: LengthLimitingTextInputFormatter(30),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 26.0.h,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '키워드',
-                          style: TextStyle(
-                            fontFamily: 'PretendardRegular',
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff343A40),
-                            height: 1.5,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Form(
-                                key: _keywordFormKey,
-                                child: AddTextFormField(
-                                  keyboardType: TextInputType.name,
-                                  hintText: '키워드 추가',
-                                  formatter: FilteringTextInputFormatter.deny(
-                                      RegExp(r'\s')),
-                                  isMultipleLine: false,
-                                  onSaved: (value) {
-                                    _inputKeywordValue = value ?? '';
-                                    FocusScope.of(context).unfocus();
-                                    _keywordFormKey.currentState?.reset();
-                                  },
-                                ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Form(
+                              key: _keywordFormKey,
+                              child: AddTextFormField(
+                                keyboardType: TextInputType.name,
+                                hintText: '키워드 추가',
+                                formatter: FilteringTextInputFormatter.deny(
+                                    RegExp(r'\s')),
+                                isMultipleLine: false,
+                                onSaved: (value) {
+                                  _inputKeywordValue = value ?? '';
+                                  FocusScope.of(context).unfocus();
+                                  _keywordFormKey.currentState?.reset();
+                                },
                               ),
                             ),
-                            SizedBox(
-                              width: 16.0.w,
+                          ),
+                          SizedBox(
+                            width: 16.0.w,
+                          ),
+                          AddButton(
+                            onPressed: () {
+                              _saveForm();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 8.0.h),
+                      child: Consumer<KeywordProvider>(
+                        builder: (context, provider, child) {
+                          return provider.keywordNames != null
+                              ? Wrap(
+                                  direction: Axis.horizontal,
+                                  alignment: WrapAlignment.start,
+                                  spacing: 10.0.w,
+                                  runSpacing: 5.0.h,
+                                  children: provider.keywordNames!
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                    int index = entry.key;
+                                    String keywords = entry.value;
+
+                                    return KeywordButton(
+                                      keywordName: keywords,
+                                      index: index,
+                                    );
+                                  }).toList(),
+                                )
+                              : SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 26.0.h,
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '설명',
+                        style: TextStyle(
+                          fontFamily: 'PretendardRegular',
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff343A40),
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                      child: SizedBox(
+                        height: 80.0.h,
+                        child: AddTextFormField(
+                          keyboardType: TextInputType.multiline,
+                          hintText: '설명을 추가해주세요.',
+                          initialText: _changedDescription,
+                          isMultipleLine: true,
+                          onSaved: (value) {
+                            value == '' || value == null
+                                ? _changedDescription = null
+                                : _changedDescription = value;
+                          },
+                          formatter: LengthLimitingTextInputFormatter(300),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 26.0.h,
+                    ),
+                    Text(
+                      '링크 수정',
+                      style: TextStyle(
+                        fontFamily: 'PretendardRegular',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff343A40),
+                        height: 1.5,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                      child: AddTextFormField(
+                        keyboardType: TextInputType.url,
+                        initialText: _changedLink,
+                        hintText: 'url 추가',
+                        isMultipleLine: false,
+                        onSaved: (value) {
+                          value == '' || value == null
+                              ? _changedLink = null
+                              : _changedLink = value;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 26.0.h,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _changedIsOrder! ? '아이템 순서' : '아이템 리스트',
+                              style: TextStyle(
+                                fontFamily: 'PretendardRegular',
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff343A40),
+                                height: 1.5,
+                              ),
                             ),
-                            AddButton(
-                              onPressed: () {
-                                _saveForm();
-                              },
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 2.0.h),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  _changedIsOrder!
+                                      ? '아이템을 꾹 눌러서 순서를 변경해보세요.'
+                                      : '오른쪽 버튼을 눌러 순서를 설정하세요.',
+                                  style: TextStyle(
+                                    fontFamily: 'PretendardRegular',
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xffADB5BD),
+                                    height: 1.5,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 8.0.h),
-                        child: Consumer<KeywordProvider>(
-                          builder: (context, provider, child) {
-                            return provider.keywordNames != null
-                                ? Wrap(
-                                    direction: Axis.horizontal,
-                                    alignment: WrapAlignment.start,
-                                    spacing: 10.0.w,
-                                    runSpacing: 5.0.h,
-                                    children: provider.keywordNames!
-                                        .asMap()
-                                        .entries
-                                        .map((entry) {
-                                      int index = entry.key;
-                                      String keywords = entry.value;
-
-                                      return KeywordButton(
-                                        keywordName: keywords,
-                                        index: index,
-                                      );
-                                    }).toList(),
-                                  )
-                                : SizedBox.shrink();
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        height: 26.0.h,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '설명',
-                          style: TextStyle(
-                            fontFamily: 'PretendardRegular',
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff343A40),
-                            height: 1.5,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                        child: SizedBox(
-                          height: 80.0.h,
-                          child: AddTextFormField(
-                            keyboardType: TextInputType.multiline,
-                            hintText: '설명을 추가해주세요.',
-                            initialText: _changedDescription,
-                            isMultipleLine: true,
-                            onSaved: (value) {
-                              value == '' || value == null
-                                  ? _changedDescription = null
-                                  : _changedDescription = value;
-                            },
-                            formatter: LengthLimitingTextInputFormatter(300),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 26.0.h,
-                      ),
-                      Text(
-                        '링크 수정',
-                        style: TextStyle(
-                          fontFamily: 'PretendardRegular',
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff343A40),
-                          height: 1.5,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                        child: AddTextFormField(
-                          keyboardType: TextInputType.url,
-                          initialText: _changedLink,
-                          hintText: 'url 추가',
-                          isMultipleLine: false,
-                          onSaved: (value) {
-                            value == '' || value == null
-                                ? _changedLink = null
-                                : _changedLink = value;
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        height: 26.0.h,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        SizedBox(
+                          width: 90.0.w,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                _changedIsOrder! ? '아이템 순서' : '아이템 리스트',
-                                style: TextStyle(
-                                  fontFamily: 'PretendardRegular',
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff343A40),
-                                  height: 1.5,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 2.0.h),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    _changedIsOrder!
-                                        ? '아이템을 꾹 눌러서 순서를 변경해보세요.'
-                                        : '오른쪽 버튼을 눌러 순서를 설정하세요.',
-                                    style: TextStyle(
-                                      fontFamily: 'PretendardRegular',
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xffADB5BD),
-                                      height: 1.5,
-                                    ),
-                                  ),
+                              ValueListenableBuilder<int>(
+                                  valueListenable: context
+                                      .watch<ItemProvider>()
+                                      .countNotifier,
+                                  builder: (context, itemNum, child) {
+                                    return AddButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          FocusScope.of(context).unfocus();
+                                          if (itemNum >= 9) {
+                                            Toast.notify(
+                                                '아이템은 최대 9개까지 추가가 가능합니다.');
+                                            return;
+                                          } else {
+                                            _itemIndex++;
+                                          }
+                                        });
+                                      },
+                                    );
+                                  }),
+                              Transform.scale(
+                                scale: 0.8,
+                                child: Switch(
+                                  value: _changedIsOrder!,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      FocusScope.of(context).unfocus();
+                                      _changedIsOrder = value;
+                                    });
+                                  },
+                                  inactiveThumbColor: Colors.white,
+                                  inactiveTrackColor: Color(0xffdee2e6),
+                                  activeTrackColor: Colors.black,
+                                  activeColor: Theme.of(context).primaryColor,
+                                  trackOutlineColor: MaterialStateProperty.all(
+                                      Colors.transparent),
                                 ),
                               ),
                             ],
                           ),
-                          SizedBox(
-                            width: 90.0.w,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ValueListenableBuilder<int>(
-                                    valueListenable: context
-                                        .watch<ItemProvider>()
-                                        .countNotifier,
-                                    builder: (context, itemNum, child) {
-                                      return AddButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            FocusScope.of(context).unfocus();
-                                            if (itemNum >= 9) {
-                                              Toast.notify(
-                                                  '아이템은 최대 9개까지 추가가 가능합니다.');
-                                              return;
-                                            } else {
-                                              _itemIndex++;
-                                            }
-                                          });
-                                        },
-                                      );
-                                    }),
-                                Transform.scale(
-                                  scale: 0.8,
-                                  child: Switch(
-                                    value: _changedIsOrder!,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        FocusScope.of(context).unfocus();
-                                        _changedIsOrder = value;
-                                      });
-                                    },
-                                    inactiveThumbColor: Colors.white,
-                                    inactiveTrackColor: Color(0xffdee2e6),
-                                    activeTrackColor: Colors.black,
-                                    activeColor: Theme.of(context).primaryColor,
-                                    trackOutlineColor:
-                                        MaterialStateProperty.all(
-                                            Colors.transparent),
-                                  ),
-                                ),
-                              ],
-                            ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                          child: ItemTextField(
+                            initialItemValue: _initialItemData,
+                            itemNum: _itemIndex,
+                            orderState: _changedIsOrder!,
                           ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                            child: ItemTextField(
-                              initialItemValue: _initialItemData,
-                              itemNum: _itemIndex,
-                              orderState: _changedIsOrder!,
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 26.0.h,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _changedIsSelectable! ? '공유 가능' : '공유 불가능',
-                            style: TextStyle(
-                              fontFamily: 'PretendardRegular',
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xff343A40),
-                              height: 1.5,
-                            ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 26.0.h,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _changedIsSelectable! ? '공유 가능' : '공유 불가능',
+                          style: TextStyle(
+                            fontFamily: 'PretendardRegular',
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff343A40),
+                            height: 1.5,
                           ),
-                          SizedBox(width: 10),
-                          Transform.scale(
-                            scale: 0.8,
-                            child: Switch(
-                              value: _changedIsSelectable!,
-                              onChanged: (value) {
-                                setState(() {
-                                  _changedIsSelectable = value;
-                                });
-                              },
-                              inactiveThumbColor: Colors.white,
-                              inactiveTrackColor: Color(0xffdee2e6),
-                              activeTrackColor: Colors.black,
-                              activeColor: Theme.of(context).primaryColor,
-                              trackOutlineColor:
-                                  MaterialStateProperty.all(Colors.transparent),
-                            ),
+                        ),
+                        SizedBox(width: 10),
+                        Transform.scale(
+                          scale: 0.8,
+                          child: Switch(
+                            value: _changedIsSelectable!,
+                            onChanged: (value) {
+                              setState(() {
+                                _changedIsSelectable = value;
+                              });
+                            },
+                            inactiveThumbColor: Colors.white,
+                            inactiveTrackColor: Color(0xffdee2e6),
+                            activeTrackColor: Colors.black,
+                            activeColor: Theme.of(context).primaryColor,
+                            trackOutlineColor:
+                                MaterialStateProperty.all(Colors.transparent),
                           ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 26.0.h,
-                      ),
-                      CompleteButton(
-                          firstFieldState: true,
-                          secondFieldState: true,
-                          text: '수정 완료',
-                          onTap: () {
-                            FocusScope.of(context).unfocus();
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 26.0.h,
+                    ),
+                    CompleteButton(
+                        firstFieldState: true,
+                        secondFieldState: true,
+                        text: '수정 완료',
+                        onTap: () {
+                          FocusScope.of(context).unfocus();
 
-                            WidgetsBinding.instance.addPostFrameCallback(
-                              (_) async {
-                                final fieldValidator = FieldValidator({
-                                  '셀렉션 이름을 입력해주세요':
-                                      _changedTitle?.isNotEmpty == true,
-                                  '키워드를 입력해주세요': context
-                                          .read<KeywordProvider>()
-                                          .keywordNames
-                                          ?.isNotEmpty ==
-                                      true,
-                                  '비어있는 아이템이 있습니다.': context
-                                          .read<ItemProvider>()
-                                          .hasNullItemTitle() ==
-                                      false
-                                });
-                                if (!fieldValidator.validateFields()) {
-                                  return;
-                                } else {
-                                  await _passFieldValidator();
-                                }
-                              },
-                            );
-                          }),
-                    ],
-                  ),
+                          WidgetsBinding.instance.addPostFrameCallback(
+                            (_) async {
+                              final fieldValidator = FieldValidator({
+                                '셀렉션 이름을 입력해주세요':
+                                    _changedTitle?.isNotEmpty == true,
+                                '키워드를 입력해주세요': context
+                                        .read<KeywordProvider>()
+                                        .keywordNames
+                                        ?.isNotEmpty ==
+                                    true,
+                                '비어있는 아이템이 있습니다.': context
+                                        .read<ItemProvider>()
+                                        .hasNullItemTitle() ==
+                                    false
+                              });
+                              if (!fieldValidator.validateFields()) {
+                                return;
+                              } else {
+                                await _passFieldValidator();
+                              }
+                            },
+                          );
+                        }),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

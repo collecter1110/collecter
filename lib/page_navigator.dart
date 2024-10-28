@@ -78,7 +78,7 @@ class _PageNavigatorState extends State<PageNavigator> {
       initialIndex: 0,
       length: 5,
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: Navigator(
           key: _navigatorKey,
           initialRoute: _routeNames[0],
