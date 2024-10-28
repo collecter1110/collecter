@@ -1,3 +1,4 @@
+import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,7 +18,7 @@ class LinkButton extends StatelessWidget {
         url,
         mode: LaunchMode.externalApplication,
       )) {
-        throw Exception('Could not launch $url');
+        Toast.notify('유효하지 않은 링크입니다.');
       }
     }
 
