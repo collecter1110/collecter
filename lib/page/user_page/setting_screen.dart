@@ -59,7 +59,9 @@ class SettingScreen extends StatelessWidget {
                     if (!await launchUrl(
                       url,
                       mode: LaunchMode.inAppWebView,
-                    )) ;
+                    )) {
+                      Toast.notify('유효하지 않은 링크입니다.');
+                    }
                   },
                   text: '이용 약관',
                 ),

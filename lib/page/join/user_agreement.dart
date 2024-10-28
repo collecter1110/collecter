@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../components/button/complete_button.dart';
+import '../../components/pop_up/toast.dart';
 import '../../components/ui_kit/custom_check_box.dart';
 import 'email_authentication_screen.dart';
 
@@ -29,7 +30,7 @@ class _UserAgreementState extends State<UserAgreement> {
       url,
       mode: LaunchMode.inAppWebView,
     )) {
-      throw Exception('Could not launch $url');
+      Toast.notify('유효하지 않은 링크입니다.');
     }
   }
 

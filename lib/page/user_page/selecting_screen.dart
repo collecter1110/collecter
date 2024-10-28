@@ -28,13 +28,9 @@ class _UsersSelectScreenState extends State<SelectingScreen>
       vsync: this,
       initialIndex: widget.initialPageIndex,
     );
-    _tabController!.addListener(_handleTabChange);
-  }
-
-  void _handleTabChange() {
-    if (_tabController!.indexIsChanging) {
+    _tabController?.addListener(() {
       setState(() {});
-    }
+    });
   }
 
   void _onTap(int index) {
