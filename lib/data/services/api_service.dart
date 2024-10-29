@@ -150,10 +150,15 @@ class ApiService {
         return false;
       }
     } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
+      print('checkOtp exception: $e');
+      if (e.message == 'User is banned') {
+        Toast.notify(
+            '3회 이상 신고로 계정이\n1주일간 정지되었습니다.\n문의 : contact.collect@gmail.com');
+      }
       return false;
     } catch (e) {
-      print('checkOtp exception: $e');
+      print('checkOtp unexpected exception: $e');
+      Toast.notify('알 수 없는 오류가 발생했습니다.');
       return false;
     }
   }
@@ -1158,6 +1163,26 @@ class ApiService {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
       handleError('', 'moveSelections error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<void> report(int reportType, Map<String, int> reportedPostId,
+      String reportReason) async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int reportedUserId = int.parse(userIdString!);
+
+      await _supabase.from('reports').insert({
+        'report_type': reportType,
+        'report_reason': reportReason,
+        'reporter_user_id': reportedUserId,
+        'reported_post_id': reportedPostId,
+      });
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'report error');
       throw Exception('An unexpected error occurred: $e');
     }
   }

@@ -66,4 +66,11 @@ class PropertiesData {
   PropertiesData.fromJson(Map<String, dynamic> json)
       : collectionId = json['collection_id'],
         selectionId = json['selection_id'];
+
+  Map<String, int> toMap() {
+    return {
+      "collection_id": collectionId,
+      "selection_id": selectionId,
+    };
+  }
 }
