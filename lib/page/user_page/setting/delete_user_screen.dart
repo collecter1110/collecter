@@ -80,8 +80,10 @@ class DeleteUserScreen extends StatelessWidget {
                 onTap: () async {
                   bool? isDelete = await Toast.showConfirmationDialog(
                       context, '회원 탈퇴 하시겠습니까?');
-
-                  if (isDelete == true) {
+                  if (isDelete == null) {
+                    return;
+                  }
+                  if (isDelete) {
                     await deleteUserWithLoadingDialog();
                   }
                 },
