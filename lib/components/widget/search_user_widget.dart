@@ -28,6 +28,7 @@ class SearchUserWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 final UserInfoModel _userInfoDetail = _users[index];
                 return SearchUser(
+                  routeName: '/search',
                   userInfoDetail: _userInfoDetail,
                 );
               },

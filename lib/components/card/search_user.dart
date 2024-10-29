@@ -8,10 +8,12 @@ import '../../data/services/storage_service.dart';
 import '../../page/search_page/other_user_screen.dart';
 
 class SearchUser extends StatelessWidget {
+  final String routeName;
   final UserInfoModel userInfoDetail;
 
   SearchUser({
     super.key,
+    required this.routeName,
     required this.userInfoDetail,
   });
 
@@ -29,7 +31,7 @@ class SearchUser extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) =>
                 OtherUserScreen(userInfoDetail: userInfoDetail),
-            settings: RouteSettings(name: '/search'),
+            settings: RouteSettings(name: routeName),
           ),
         );
       },

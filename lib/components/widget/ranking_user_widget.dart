@@ -39,13 +39,14 @@ class RankingUserWidget extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final UserInfoModel _user = _users![index];
                   return SearchUser(
+                    routeName: '/',
                     userInfoDetail: _user,
                   );
                 },
               )
             : Center(
                 child: Text(
-                  'collec_er 의 첫번째 유저가 되어보세요!',
+                  'collecter 의 첫번째 유저가 되어보세요!',
                   style: TextStyle(
                     color: Color(0xFF868e96),
                     fontSize: 14.sp,

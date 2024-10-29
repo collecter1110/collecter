@@ -8,9 +8,11 @@ import '../card/collection.dart';
 
 class CollectionWidget extends StatelessWidget {
   final bool? isLiked;
+  final String routeName;
   const CollectionWidget({
     super.key,
     this.isLiked,
+    required this.routeName,
   });
 
   @override
@@ -44,7 +46,7 @@ class CollectionWidget extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final CollectionModel _collection = _collections![index];
                   return Collection(
-                    routName: isLiked == null ? '/search' : '/bookmark',
+                    routName: routeName,
                     collectionDetail: _collection,
                   );
                 },
