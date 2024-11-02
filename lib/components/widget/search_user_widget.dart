@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/user_info_model.dart';
-import '../../data/provider/user_info_provider.dart';
+import '../../data/provider/search_provider.dart';
 import '../card/search_user.dart';
 
 class SearchUserWidget extends StatelessWidget {
@@ -11,7 +11,7 @@ class SearchUserWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserInfoProvider>(builder: (context, provider, child) {
+    return Consumer<SearchProvider>(builder: (context, provider, child) {
       List<UserInfoModel>? _users = provider.searchUsers;
       return _users != null && _users.isNotEmpty
           ? GridView.builder(

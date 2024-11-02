@@ -94,7 +94,7 @@ class SelectingDialog extends StatelessWidget {
             ),
             voidCallback: () async {
               _closeDialog();
-              Toast.notify('신고가 완료되었습니다.');
+              Toast.notify('신고가 완료되었습니다.\n24시간 내에 처리될 예정입니다.');
             },
           );
         },

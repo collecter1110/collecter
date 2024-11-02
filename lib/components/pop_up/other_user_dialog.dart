@@ -1,7 +1,9 @@
 import 'package:collect_er/data/model/user_info_model.dart';
+import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../data/services/data_service.dart';
 import '../button/cancel_button.dart';
 import '../ui_kit/dialog_text.dart';
 import 'report_dialog.dart';
@@ -13,6 +15,35 @@ class OtherUserDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _closeDialog() {
+      Navigator.pop(context);
+    }
+
+    Future<void> showLoadingDialog() async {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+      try {
+        await ApiService.block(userInfo.userId);
+        await DataService.reloadSearchData();
+      } catch (e) {
+        print('Error: $e');
+      } finally {
+        if (Navigator.of(context, rootNavigator: true).canPop()) {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
+        _closeDialog();
+        Navigator.pop(context);
+        Toast.notify('유저가 차단되었습니다.');
+      }
+    }
+
     Future<void> _showReportDialog() async {
       showModalBottomSheet(
         context: context,
@@ -23,15 +54,11 @@ class OtherUserDialog extends StatelessWidget {
             reportType: 0,
             userId: userInfo.userId,
             voidCallback: () async {
-              Toast.notify('신고가 완료되었습니다.');
+              Toast.notify('신고가 완료되었습니다.\n24시간 내에 처리될 예정입니다.');
             },
           );
         },
       );
-    }
-
-    void _closeDialog() {
-      Navigator.pop(context);
     }
 
     return StatefulBuilder(
@@ -68,7 +95,9 @@ class OtherUserDialog extends StatelessWidget {
                         if (isDelete == null) {
                           return;
                         }
-                        if (isDelete) {}
+                        if (isDelete) {
+                          showLoadingDialog();
+                        }
                       },
                     ),
                   ],

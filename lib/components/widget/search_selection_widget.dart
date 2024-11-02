@@ -1,10 +1,10 @@
+import 'package:collect_er/data/provider/search_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/selecting_model.dart';
 import '../../data/model/selection_model.dart';
-import '../../data/provider/selection_provider.dart';
 import '../card/search_selection.dart';
 
 class SearchSelectionWidget extends StatelessWidget {
@@ -14,7 +14,7 @@ class SearchSelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SelectionProvider>(builder: (context, provider, child) {
+    return Consumer<SearchProvider>(builder: (context, provider, child) {
       final List<SelectionModel>? _selections = provider.searchSelections;
 
       return _selections != null && _selections.isNotEmpty

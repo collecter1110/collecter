@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:collect_er/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,15 +7,14 @@ import '../provider/collection_provider.dart';
 import '../provider/ranking_provider.dart';
 import '../provider/search_provider.dart';
 import '../provider/selecting_provider.dart';
-import '../provider/selection_provider.dart';
 import 'locator.dart';
 
 class DataService {
-  static Future<void> reloadLocalData(BuildContext context, int collectionId,
-      int userId, int? selectionId) async {
-    final collectionProvider = context.read<CollectionProvider>();
-    final searchProvider = context.read<SearchProvider>();
-    final selectionProvider = context.read<SelectionProvider>();
+  static Future<void> reloadLocalData(
+      int collectionId, int userId, int? selectionId) async {
+    final collectionProvider = locator<CollectionProvider>();
+    final searchProvider = locator<SearchProvider>();
+
     String? searchText = searchProvider.searchText;
 
     if (searchText != null) {
@@ -34,6 +34,24 @@ class DataService {
         await searchProvider.fetchTagCollections(searchText);
       }
 
+      bool existsSelections = searchProvider.searchSelections?.any(
+              (selection) => selectionId != null
+                  ? selection.selectionId == selectionId
+                  : selection.collectionId == collectionId) ??
+          false;
+
+      if (existsSelections) {
+        await searchProvider.fetchSearchSelections(searchText);
+      }
+
+      // bool existsUsers =
+      //     searchProvider.searchUsers?.any((user) => user.userId == userId) ??
+      //         false;
+
+      // if (existsUsers) {
+      //   await searchProvider.fetchSearchUsers(searchText);
+      // }
+
       bool existsUsersCollections = collectionProvider.searchUsersCollections
               ?.any((collection) => collection.id == collectionId) ??
           false;
@@ -41,16 +59,20 @@ class DataService {
       if (existsUsersCollections) {
         await collectionProvider.fetchUsersCollections(userId);
       }
+    }
+  }
 
-      bool existsSelections = selectionProvider.searchSelections?.any(
-              (selection) => selectionId != null
-                  ? selection.selectionId == selectionId
-                  : selection.collectionId == collectionId) ??
-          false;
+  static Future<void> reloadSearchData() async {
+    // final collectionProvider = locator<CollectionProvider>();
+    final searchProvider = locator<SearchProvider>();
+    String? searchText = searchProvider.searchText;
 
-      if (existsSelections) {
-        await selectionProvider.fetchSearchSelections(searchText);
-      }
+    if (searchText != null) {
+      await searchProvider.fetchKeywordCollections(searchText);
+      await searchProvider.fetchTagCollections(searchText);
+      await searchProvider.fetchSearchSelections(searchText);
+      await searchProvider.fetchSearchUsers(searchText);
+      //await collectionProvider.fetchUsersCollections(userId);
     }
   }
 
@@ -76,7 +98,7 @@ class DataService {
     );
 
     try {
-      await reloadLocalData(context, collectionId, userId, selectionId);
+      await reloadLocalData(collectionId, userId, selectionId);
       await nextNavigate();
       await updateData();
     } catch (e) {
@@ -90,6 +112,7 @@ class DataService {
 
   static Future<void> loadInitialData(BuildContext context) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ApiService.initBlockedUsersListener();
       final rankingProvider = locator<RankingProvider>();
       final collectionProvider = locator<CollectionProvider>();
       final selectingProvider = context.read<SelectingProvider>();
