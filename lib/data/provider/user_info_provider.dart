@@ -13,16 +13,12 @@ class UserInfoProvider with ChangeNotifier {
   int? _selectingNum;
   int? _selectedNum;
 
-  List<UserInfoModel>? _searchUsers;
-  String? _currentSearchText;
-
   ConnectionState get state => _state;
   UserInfoModel? get userInfo => _userInfo;
   UserInfoModel? get otherUserInfo => _otherUserInfo;
   int? get collectionNum => _collectionNum;
   int? get selectingNum => _selectingNum;
   int? get selectedNum => _selectedNum;
-  List<UserInfoModel>? get searchUsers => _searchUsers;
 
   Future<void> getUsersData() async {
     try {
@@ -55,24 +51,5 @@ class UserInfoProvider with ChangeNotifier {
     } catch (e) {
       print('Failed to fetch other user info: $e');
     } finally {}
-  }
-
-  Future<void> getSearchUsers(String searchText) async {
-    try {
-      if (_currentSearchText != searchText) {
-        await fetchSearchUsers(searchText);
-      }
-      _currentSearchText = searchText;
-    } catch (e) {
-    } finally {}
-  }
-
-  Future<void> fetchSearchUsers(String searchText) async {
-    try {
-      _searchUsers = await ApiService.searchUsers(searchText);
-    } catch (e) {
-    } finally {
-      notifyListeners();
-    }
   }
 }

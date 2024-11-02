@@ -81,8 +81,10 @@ class SettingScreen extends StatelessWidget {
                     onTap: () async {
                       bool? isDelete = await Toast.showConfirmationDialog(
                           context, '로그아웃 하시겠습니까?');
-
-                      if (isDelete == true) {
+                      if (isDelete == null) {
+                        return;
+                      }
+                      if (isDelete) {
                         await ApiService.logout();
                         Restart.restartApp();
                       }

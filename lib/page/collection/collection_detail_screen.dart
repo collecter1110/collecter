@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../components/button/like_button.dart';
 import '../../components/pop_up/edit_collection_dialog.dart';
-import '../../components/pop_up/user_info_dialog.dart';
+import '../../components/pop_up/other_collection_dialog.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
@@ -34,7 +34,8 @@ class CollectionDetailScreen extends StatelessWidget {
           return userId == _collectionDetail.userId
               ? EditCollectionDialog(
                   routeName: _routeName!, collectionDetail: _collectionDetail)
-              : UserInfoDialog(collectionDetail: _collectionDetail);
+              : OtherCollectionDialog(
+                  routeName: _routeName!, collectionDetail: _collectionDetail);
         },
       );
     }

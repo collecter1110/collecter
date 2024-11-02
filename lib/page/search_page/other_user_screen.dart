@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/pop_up/other_user_dialog.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/widget/collection_widget.dart';
@@ -18,10 +20,36 @@ class OtherUserScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? _routeName = ModalRoute.of(context)?.settings.name;
+    void _closeDialog() {
+      Navigator.pop(context);
+    }
+
+    Future<void> _showDialog() async {
+      final storage = FlutterSecureStorage();
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: false,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return userId == userInfoDetail.userId
+              ? SizedBox.shrink()
+              : OtherUserDialog(
+                  userInfo: userInfoDetail,
+                );
+        },
+      );
+    }
+
     return Scaffold(
       appBar: CustomAppbar(
         titleText: 'User',
-        actionButtonOnTap: () {},
+        actionButtonOnTap: () async {
+          await _showDialog();
+        },
+        actionButton: 'icon_more',
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -114,7 +142,7 @@ class OtherUserScreen extends StatelessWidget {
                 ),
               );
             }),
-            CollectionWidget(),
+            CollectionWidget(routeName: '$_routeName'),
           ],
         ),
       ),

@@ -8,16 +8,13 @@ class SelectionProvider with ChangeNotifier {
   ConnectionState _state = ConnectionState.waiting;
   int? _collectionId;
   List<SelectionModel>? _selections;
-  List<SelectionModel>? _searchSelections;
   SelectionModel? _selectionDetail;
   PropertiesData? _propertiesData;
-  String? _currentSearchText;
   String? _collectionCoverImage;
 
   ConnectionState get state => _state;
   int? get collectionId => _collectionId;
   List<SelectionModel>? get selections => _selections;
-  List<SelectionModel>? get searchSelections => _searchSelections;
   SelectionModel? get selectionDetail => _selectionDetail;
   String? get collectionCoverImage => _collectionCoverImage;
 
@@ -42,25 +39,6 @@ class SelectionProvider with ChangeNotifier {
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {
-      notifyListeners();
-    }
-  }
-
-  Future<void> getSearchSelectionData(String searchText) async {
-    try {
-      if (_currentSearchText != searchText) {
-        await fetchSearchSelections(searchText);
-      }
-      _currentSearchText = searchText;
-    } catch (e) {
-    } finally {}
-  }
-
-  Future<void> fetchSearchSelections(String searchText) async {
-    try {
-      _searchSelections = await ApiService.searchSelections(searchText);
-    } catch (e) {
     } finally {
       notifyListeners();
     }

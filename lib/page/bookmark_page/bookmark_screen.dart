@@ -146,8 +146,14 @@ class _BookmarkScreenState extends State<BookmarkScreen>
         body: TabBarView(
           controller: _tabController,
           children: [
-            CollectionWidget(isLiked: false),
-            CollectionWidget(isLiked: true),
+            CollectionWidget(
+              isLiked: false,
+              routeName: '/bookmark',
+            ),
+            CollectionWidget(
+              isLiked: true,
+              routeName: '/bookmark',
+            ),
           ],
         ),
       ),

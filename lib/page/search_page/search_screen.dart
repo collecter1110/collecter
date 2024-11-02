@@ -30,8 +30,6 @@ class _SearchScreenState extends State<SearchScreen> {
     int categoryIndex,
     String? searchText,
   ) async {
-    final _selectionProvider = context.read<SelectionProvider>();
-    final _userProvider = context.read<UserInfoProvider>();
     final _searchProvider = context.read<SearchProvider>();
 
     print('do search $categoryIndex');
@@ -46,11 +44,11 @@ class _SearchScreenState extends State<SearchScreen> {
         break;
 
       case 1:
-        await _selectionProvider.getSearchSelectionData(searchText);
+        await _searchProvider.getSearchSelectionData(searchText);
         break;
 
       case 2:
-        await _userProvider.getSearchUsers(searchText);
+        await _searchProvider.getSearchUsers(searchText);
         break;
 
       default:

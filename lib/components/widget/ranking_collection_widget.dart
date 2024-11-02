@@ -14,52 +14,48 @@ class RankingCollectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<RankingProvider>(builder: (context, provider, child) {
-      final List<CollectionModel>? _collections;
-      _collections = provider.rankingCollections;
-      if (provider.state == ConnectionState.waiting) {
+      final List<CollectionModel>? _collections = provider.rankingCollections;
+
+      if (_collections == null) {
         return Center(
           child: CircularProgressIndicator(),
         );
-      } else if (provider.state == ConnectionState.done) {
-        return (_collections != null && _collections.isNotEmpty)
-            ? GridView.builder(
-                padding: EdgeInsets.symmetric(
-                  vertical: 22.0.h,
-                ),
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 24.0.h,
-                  crossAxisSpacing: 12.0.w,
-                  childAspectRatio: 0.65,
-                ),
-                itemCount: _collections.length,
-                itemBuilder: (context, index) {
-                  final CollectionModel _collection = _collections![index];
-                  return Collection(
-                    routName: '/',
-                    collectionDetail: _collection,
-                  );
-                },
-              )
-            : Center(
-                child: Text(
-                  '랭킹 컬렉션이 없습니다.\n좋아요를 많이 받아보세요!',
-                  style: TextStyle(
-                    color: Color(0xFF868e96),
-                    fontSize: 14.sp,
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              );
-      } else {
-        return const Center(
-          child: Text('Error occurred.'),
-        );
       }
+
+      return (_collections.isNotEmpty)
+          ? GridView.builder(
+              padding: EdgeInsets.symmetric(
+                vertical: 22.0.h,
+              ),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 24.0.h,
+                crossAxisSpacing: 12.0.w,
+                childAspectRatio: 0.65,
+              ),
+              itemCount: _collections.length,
+              itemBuilder: (context, index) {
+                final CollectionModel _collection = _collections![index];
+                return Collection(
+                  routName: '/',
+                  collectionDetail: _collection,
+                );
+              },
+            )
+          : Center(
+              child: Text(
+                '랭킹 컬렉션이 없습니다.\n좋아요를 많이 받아보세요!',
+                style: TextStyle(
+                  color: Color(0xFF868e96),
+                  fontSize: 14.sp,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            );
     });
   }
 }

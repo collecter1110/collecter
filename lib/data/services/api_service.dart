@@ -21,6 +21,7 @@ class ApiService {
   static final storage = FlutterSecureStorage();
   static final SupabaseClient _supabase = Supabase.instance.client;
   static final authUser = _supabase.auth.currentUser;
+  static List<int> _blockedUserIds = [];
 
   static Future<void> authListener() async {
     final authSubscription =
@@ -150,10 +151,15 @@ class ApiService {
         return false;
       }
     } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
+      print('checkOtp exception: $e');
+      if (e.message == 'User is banned') {
+        Toast.notify(
+            '3회 이상 신고로 계정이\n1주일간 정지되었습니다.\n문의 : contact.collect@gmail.com');
+      }
       return false;
     } catch (e) {
-      print('checkOtp exception: $e');
+      print('checkOtp unexpected exception: $e');
+      Toast.notify('알 수 없는 오류가 발생했습니다.');
       return false;
     }
   }
@@ -429,6 +435,7 @@ class ApiService {
 
       List<int> _initialRankingCollectionIds =
           (_initialRankingCollections as List<dynamic>)
+              .where((item) => !_blockedUserIds.contains(item['user_id']))
               .map((item) => item['id'] as int)
               .toList();
 
@@ -475,7 +482,8 @@ class ApiService {
             print('listen');
 
             updatedSelections = snapshot.where((item) {
-              return item['is_selecting'] == false;
+              return !_blockedUserIds.contains(item['user_id']) &&
+                  item['is_selecting'] == false;
             }).map((item) {
               List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
               String? firstImagePath =
@@ -515,7 +523,10 @@ class ApiService {
           .order('created_at', ascending: false)
           .limit(10)
           .listen((snapshot) {
-            updatedUsers = snapshot.map((item) {
+            updatedUsers = snapshot
+                .where(
+                    (item) => !_blockedUserIds.contains(item['user_id'] as int))
+                .map((item) {
               return UserInfoModel.fromJson(item);
             }).toList();
 
@@ -530,7 +541,7 @@ class ApiService {
     } on AuthException catch (e) {
       throw Exception('Authentication error: ${e.message}');
     } catch (e) {
-      handleError('', 'get ranking collection error');
+      handleError('', 'get ranking users error');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -1160,6 +1171,63 @@ class ApiService {
       handleError('', 'moveSelections error');
       throw Exception('An unexpected error occurred: $e');
     }
+  }
+
+  static Future<void> report(int reportType, Map<String, int> reportedPostId,
+      String reportReason) async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int reportedUserId = int.parse(userIdString!);
+
+      await _supabase.from('reports').insert({
+        'report_type': reportType,
+        'report_reason': reportReason,
+        'reporter_user_id': reportedUserId,
+        'reported_post_id': reportedPostId,
+      });
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'report error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<void> block(int blockedUserId) async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int blockerUserId = int.parse(userIdString!);
+
+      await _supabase.from('block').insert({
+        'blocker_user_id': blockerUserId,
+        'blocked_user_id': blockedUserId,
+      });
+    } on AuthException catch (e) {
+      throw Exception('Authentication error: ${e.message}');
+    } catch (e) {
+      handleError('', 'block error');
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  static Future<void> initBlockedUsersListener() async {
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
+
+    _supabase
+        .from('block')
+        .stream(primaryKey: ['id'])
+        .eq('blocker_user_id', userId)
+        .listen((snapshot) async {
+          print('Blocked users updated');
+
+          _blockedUserIds =
+              snapshot.map((item) => item['blocked_user_id'] as int).toList();
+          print(_blockedUserIds);
+          await getRankingCollections();
+          await getRankingSelections();
+          await getRankingUsers();
+        });
   }
 
   static void handleError(String? statusCode, String? message) {

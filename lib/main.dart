@@ -63,7 +63,7 @@ void main() async {
           create: (context) => ItemProvider(),
         ),
         ChangeNotifierProvider<SearchProvider>(
-          create: (context) => SearchProvider(),
+          create: (context) => locator<SearchProvider>(),
         ),
       ],
       builder: (context, child) {
