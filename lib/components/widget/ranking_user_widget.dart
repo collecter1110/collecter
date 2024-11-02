@@ -14,52 +14,46 @@ class RankingUserWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<RankingProvider>(builder: (context, provider, child) {
-      final List<UserInfoModel>? _users;
+      final List<UserInfoModel>? _users = provider.rankingUsers;
 
-      _users = provider.rankingUsers;
-
-      if (provider.state == ConnectionState.waiting) {
+      if (_users == null) {
         return Center(
           child: CircularProgressIndicator(),
         );
-      } else if (provider.state == ConnectionState.done) {
-        return (_users != null && _users.isNotEmpty)
-            ? GridView.builder(
-                padding: EdgeInsets.symmetric(
-                  vertical: 22.0.h,
-                ),
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  mainAxisSpacing: 16.0.h,
-                  childAspectRatio: 6,
-                ),
-                itemCount: _users.length,
-                itemBuilder: (context, index) {
-                  final UserInfoModel _user = _users![index];
-                  return SearchUser(
-                    routeName: '/',
-                    userInfoDetail: _user,
-                  );
-                },
-              )
-            : Center(
-                child: Text(
-                  'collecter 의 첫번째 유저가 되어보세요!',
-                  style: TextStyle(
-                    color: Color(0xFF868e96),
-                    fontSize: 14.sp,
-                    fontFamily: 'Pretendard',
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              );
-      } else {
-        return const Center(
-          child: Text('Error occurred.'),
-        );
       }
+
+      return (_users.isNotEmpty)
+          ? GridView.builder(
+              padding: EdgeInsets.symmetric(
+                vertical: 22.0.h,
+              ),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                mainAxisSpacing: 16.0.h,
+                childAspectRatio: 6,
+              ),
+              itemCount: _users.length,
+              itemBuilder: (context, index) {
+                final UserInfoModel _user = _users![index];
+                return SearchUser(
+                  routeName: '/',
+                  userInfoDetail: _user,
+                );
+              },
+            )
+          : Center(
+              child: Text(
+                'collecter 의 첫번째 유저가 되어보세요!',
+                style: TextStyle(
+                  color: Color(0xFF868e96),
+                  fontSize: 14.sp,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            );
     });
   }
 }
