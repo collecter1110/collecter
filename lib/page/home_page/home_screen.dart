@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.asset(
-                            'assets/images/image_logo.png',
+                            'assets/images/image_logo_text.png',
                             width: 100,
                           ),
                           InkWell(

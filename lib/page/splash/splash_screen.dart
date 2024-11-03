@@ -56,26 +56,27 @@ class _SplashScreenState extends State<SplashScreen> {
         children: [
           Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: 130.0.w,
+              horizontal: 100.0.w,
+            ),
+            child: Container(
+              width: double.infinity,
+              child: Image.asset(
+                'assets/images/image_logo_text.png',
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 16.0.h,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 70.0.w,
             ),
             child: Container(
               width: double.infinity,
               child: Image.asset(
                 'assets/images/image_logo.png',
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 50.0.h,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 130.0.w,
-            ),
-            child: Container(
-              width: double.infinity,
-              child: Image.asset(
-                'assets/images/image_character.png',
+                color: Colors.black,
               ),
             ),
           ),
