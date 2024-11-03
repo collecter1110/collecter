@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final storage = FlutterSecureStorage();
     String? userIdString = await storage.read(key: 'USER_ID');
     String? _accessToken = await storage.read(key: 'ACCESS_TOKEN');
-
+    await Future.delayed(Duration(seconds: 1));
     if (_accessToken != null) {
       if (userIdString != null) {
         await DataService.loadInitialData(context);
@@ -51,33 +51,26 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 100.0.w,
-            ),
-            child: Container(
-              width: double.infinity,
-              child: Image.asset(
-                'assets/images/image_logo_text.png',
+          Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 90.0.w,
               ),
-            ),
-          ),
-          SizedBox(
-            height: 16.0.h,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 70.0.w,
-            ),
-            child: Container(
-              width: double.infinity,
               child: Image.asset(
                 'assets/images/image_logo.png',
                 color: Colors.black,
               ),
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.43,
+            child: Image.asset(
+              'assets/images/image_logo_text.png',
+              width: 150.0.w,
+              fit: BoxFit.contain,
             ),
           ),
         ],
