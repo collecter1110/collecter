@@ -285,7 +285,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           child: Form(
                             key: _keywordFormKey,
                             child: AddTextFormField(
-                              keyboardType: TextInputType.name,
+                              keyboardType: TextInputType.text,
                               hintText: '키워드 추가',
                               isMultipleLine: false,
                               onSaved: (value) {

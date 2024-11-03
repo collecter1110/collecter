@@ -320,7 +320,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 8.0.h),
                       child: AddTextFormField(
-                        keyboardType: TextInputType.name,
+                        keyboardType: TextInputType.text,
                         initialText: _initialName,
                         isMultipleLine: false,
                         onSaved: (value) {

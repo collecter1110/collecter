@@ -112,7 +112,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 8.0.h),
                     child: AddTextFormField(
-                      keyboardType: TextInputType.name,
+                      keyboardType: TextInputType.text,
                       hintText: '컬렉션 이름',
                       isMultipleLine: false,
                       onSaved: (value) {
@@ -161,7 +161,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                           child: Form(
                             key: _tagFormKey,
                             child: AddTextFormField(
-                              keyboardType: TextInputType.name,
+                              keyboardType: TextInputType.text,
                               hintText: '태그 추가',
                               formatter: FilteringTextInputFormatter.deny(
                                   RegExp(r'\s')),

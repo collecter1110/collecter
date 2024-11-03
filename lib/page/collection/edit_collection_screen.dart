@@ -300,7 +300,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 8.0.h),
                       child: AddTextFormField(
-                        keyboardType: TextInputType.name,
+                        keyboardType: TextInputType.text,
                         initialText: widget.collectionDetail.title,
                         isMultipleLine: false,
                         onSaved: (value) {
@@ -336,7 +336,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                             child: Form(
                               key: _tagFormKey,
                               child: AddTextFormField(
-                                keyboardType: TextInputType.name,
+                                keyboardType: TextInputType.multiline,
                                 hintText: '태그 추가',
                                 formatter: FilteringTextInputFormatter.deny(
                                     RegExp(r'\s')),
