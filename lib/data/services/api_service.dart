@@ -38,7 +38,7 @@ class ApiService {
           print('Save initial token');
           if (session != null) {
             await TokenService.saveTokens(
-              session.accessToken ?? '',
+              session.accessToken,
               session.refreshToken ?? '',
             );
           }

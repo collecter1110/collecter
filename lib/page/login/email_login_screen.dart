@@ -252,8 +252,9 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                     if (!_emailAuthState) {
                       _handleEmailAuthValid();
                     } else {
-                      await DataService.loadInitialData(context);
                       await ApiService.saveUserIdInStorage();
+                      await DataService.loadInitialData(context);
+
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
                             builder: (context) => PageNavigator()),
