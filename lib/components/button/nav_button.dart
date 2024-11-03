@@ -20,7 +20,7 @@ class NavButton extends StatelessWidget {
     'tab_user',
   ];
 
-  static const List<String> _routeNames = [
+  final List<String> _routeNames = [
     '/',
     '/search',
     '/add',

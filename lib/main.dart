@@ -36,7 +36,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider<PageRouteProvider>(
-          create: (context) => PageRouteProvider(),
+          create: (context) => locator<PageRouteProvider>(),
         ),
         ChangeNotifierProvider<RankingProvider>(
           create: (context) => locator<RankingProvider>(),
@@ -68,7 +68,7 @@ void main() async {
       ],
       builder: (context, child) {
         return ScreenUtilInit(
-          builder: (BuildContext context, child) => const MaterialApp(
+          builder: (BuildContext context, child) => MaterialApp(
             home: MyApp(),
             debugShowCheckedModeBanner: false,
           ),
@@ -81,12 +81,31 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  static final GlobalKey<_MyAppState> globalKey = GlobalKey<_MyAppState>();
+
+  MyApp() : super(key: globalKey);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+  static void restartApp() {
+    globalKey.currentState?.restart();
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+  Key _key = UniqueKey();
+
+  void restart() {
+    setState(() {
+      _key = UniqueKey();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      key: _key,
       debugShowCheckedModeBanner: false,
       title: 'Coffee Conti',
       theme: ThemeData(
