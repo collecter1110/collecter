@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../model/collection_model.dart';
 
 class CollectionProvider with ChangeNotifier {
-  ConnectionState _state = ConnectionState.waiting;
+  ConnectionState _state = ConnectionState.done;
 
   List<CollectionModel>? _searchUsersCollections;
   List<CollectionModel>? _myCollections;
@@ -53,19 +53,6 @@ class CollectionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> getInitialMyCollectionData() async {
-  //   try {
-  //     if (_myCollections != null) {
-  //       return;
-  //     }
-  //     _state = ConnectionState.waiting;
-  //     await Future.delayed(Duration(milliseconds: 300));
-  //     await fetchCollections();
-  //   } catch (e) {
-  //     _state = ConnectionState.none;
-  //   }
-  // }
-
   Future<void> getLikeCollectionData() async {
     try {
       if (_likeCollections != null) {
@@ -85,19 +72,6 @@ class CollectionProvider with ChangeNotifier {
     } catch (e) {
     } finally {}
   }
-
-  // Future<void> fetchCollections() async {
-  //   try {
-  //     _myCollections = await ApiService.getCollections();
-  //     _collectionNum = _myCollections?.length ?? 0;
-  //     print('getCollections');
-  //   } catch (e) {
-  //     _state = ConnectionState.none;
-  //     print('Failed to fetch collections: $e');
-  //   } finally {
-  //     _state = ConnectionState.done;
-  //   }
-  // }
 
   Future<void> fetchLikeCollections() async {
     try {

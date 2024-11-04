@@ -55,7 +55,9 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
     if (widget.collectionDetail.tags != null) {
       tagProvider.saveTags = widget.collectionDetail.tags!;
     } else {
-      tagProvider.clearTags();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        tagProvider.clearTags();
+      });
     }
     _userId = widget.collectionDetail.userId;
     _collectionId = widget.collectionDetail.id;

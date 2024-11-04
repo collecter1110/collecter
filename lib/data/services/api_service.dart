@@ -1234,10 +1234,10 @@ class ApiService {
           _blockedUserIds =
               snapshot.map((item) => item['blocked_user_id'] as int).toList();
           print(_blockedUserIds);
+          await getCollections();
           await getRankingCollections();
           await getRankingSelections();
           await getRankingUsers();
-          await getCollections();
         });
   }
 
