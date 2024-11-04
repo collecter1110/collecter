@@ -1,5 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'api_service.dart';
+
 class TokenService {
   static final _storage = FlutterSecureStorage();
 
@@ -19,5 +21,6 @@ class TokenService {
 
   static Future<void> deleteStorageData() async {
     await _storage.deleteAll();
+    await ApiService.disposeSubscriptions();
   }
 }

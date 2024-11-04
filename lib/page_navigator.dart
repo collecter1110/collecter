@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'components/button/nav_button.dart';
 import 'data/provider/page_route_provider.dart';
+import 'data/services/data_service.dart';
 import 'data/services/locator.dart';
 import 'data/services/route_observer_service.dart';
 import 'data/services/storage_service.dart';
@@ -54,8 +55,8 @@ class _PageNavigatorState extends State<PageNavigator> {
   @override
   void initState() {
     super.initState();
-
     getPermission();
+    initializeData();
   }
 
   Future<void> getPermission() async {
@@ -66,6 +67,12 @@ class _PageNavigatorState extends State<PageNavigator> {
       } else {
         openAppSettings();
       }
+    });
+  }
+
+  Future<void> initializeData() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await DataService.loadInitialData(context);
     });
   }
 

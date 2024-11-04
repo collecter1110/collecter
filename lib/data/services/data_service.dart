@@ -112,10 +112,8 @@ class DataService {
 
   static Future<void> loadInitialData(BuildContext context) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ApiService.initBlockedUsersListener();
-      final collectionProvider = locator<CollectionProvider>();
+      await ApiService.restartSubscriptions();
       final selectingProvider = context.read<SelectingProvider>();
-      await collectionProvider.getInitialMyCollectionData();
       await selectingProvider.getSelectData();
     });
   }

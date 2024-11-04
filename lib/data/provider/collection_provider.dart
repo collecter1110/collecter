@@ -53,18 +53,18 @@ class CollectionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getInitialMyCollectionData() async {
-    try {
-      if (_myCollections != null) {
-        return;
-      }
-      _state = ConnectionState.waiting;
-      await Future.delayed(Duration(milliseconds: 300));
-      await fetchCollections();
-    } catch (e) {
-      _state = ConnectionState.none;
-    }
-  }
+  // Future<void> getInitialMyCollectionData() async {
+  //   try {
+  //     if (_myCollections != null) {
+  //       return;
+  //     }
+  //     _state = ConnectionState.waiting;
+  //     await Future.delayed(Duration(milliseconds: 300));
+  //     await fetchCollections();
+  //   } catch (e) {
+  //     _state = ConnectionState.none;
+  //   }
+  // }
 
   Future<void> getLikeCollectionData() async {
     try {
@@ -86,18 +86,18 @@ class CollectionProvider with ChangeNotifier {
     } finally {}
   }
 
-  Future<void> fetchCollections() async {
-    try {
-      _myCollections = await ApiService.getCollections();
-      _collectionNum = _myCollections?.length ?? 0;
-      print('getCollections');
-    } catch (e) {
-      _state = ConnectionState.none;
-      print('Failed to fetch collections: $e');
-    } finally {
-      _state = ConnectionState.done;
-    }
-  }
+  // Future<void> fetchCollections() async {
+  //   try {
+  //     _myCollections = await ApiService.getCollections();
+  //     _collectionNum = _myCollections?.length ?? 0;
+  //     print('getCollections');
+  //   } catch (e) {
+  //     _state = ConnectionState.none;
+  //     print('Failed to fetch collections: $e');
+  //   } finally {
+  //     _state = ConnectionState.done;
+  //   }
+  // }
 
   Future<void> fetchLikeCollections() async {
     try {

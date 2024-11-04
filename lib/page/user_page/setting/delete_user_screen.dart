@@ -5,6 +5,7 @@ import '../../../components/button/complete_button.dart';
 import '../../../components/pop_up/toast.dart';
 import '../../../components/ui_kit/custom_app_bar.dart';
 import '../../../data/services/api_service.dart';
+import '../../../data/services/token_service.dart';
 import '../../../main.dart';
 
 class DeleteUserScreen extends StatelessWidget {
@@ -24,9 +25,9 @@ class DeleteUserScreen extends StatelessWidget {
       );
       try {
         await ApiService.deleteAllStorageImages();
-        await ApiService.deleteAuthUser();
         await ApiService.cancelMembership();
-        await ApiService.logout();
+        await ApiService.deleteAuthUser();
+        await TokenService.deleteStorageData();
       } catch (e) {
         print('Error: $e');
       } finally {
