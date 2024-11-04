@@ -16,11 +16,13 @@ import 'data/provider/selection_provider.dart';
 import 'data/provider/tag_provider.dart';
 import 'data/provider/user_info_provider.dart';
 import 'data/services/api_service.dart';
+import 'data/services/life_cycle_observer_service.dart';
 import 'data/services/locator.dart';
 import 'page/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding.instance.addObserver(LifeCycleObserverService());
   await dotenv.load(fileName: 'assets/config/.env');
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
