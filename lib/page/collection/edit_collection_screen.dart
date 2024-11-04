@@ -132,37 +132,38 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       },
     );
     try {
-      if (_changedImageName != null) {
-        if (!(_initialImageName ?? '').contains(_changedImageName ?? '')) {
-          print('바꾸기');
-          print('처음 $_initialImageName');
-          print('바꾼후 $_changedImageName');
+      if (!(_initialImageName ?? '').contains(_changedImageName ?? '')) {
+        print('바꾸기');
+        print('처음 $_initialImageName');
+        print('바꾼후 $_changedImageName');
 
-          if (_initialImageName != null) {
-            print('스토리지 삭제');
-            await ApiService.deleteStorageImages(
-                'collections', [_initialImageName!]);
-          }
+        if (_initialImageName != null) {
+          print('스토리지 삭제');
+          await ApiService.deleteStorageImages(
+              'collections', [_initialImageName!]);
+        }
 
-          if (_changedImageName != 'default') {
-            print('스토리지 등록');
-            await ApiService.copyImageFilePath(
-              'selections',
-              'collections',
-              _changedImageName!,
-              widget.collectionDetail.id,
-            );
-            _finalImageFilePath =
-                '${widget.collectionDetail.id}_${_changedImageName}';
-          } else {
-            _finalImageFilePath = null;
-          }
-        } else {
+        if (_changedImageName != 'default') {
+          print('스토리지 등록');
+          await ApiService.copyImageFilePath(
+            'selections',
+            'collections',
+            _changedImageName!,
+            widget.collectionDetail.id,
+          );
           _finalImageFilePath =
               '${widget.collectionDetail.id}_${_changedImageName}';
+        } else {
+          _finalImageFilePath = null;
         }
-        print(_finalImageFilePath);
+      } else if ((_initialImageName ?? '').contains(_changedImageName ?? '') &&
+          _changedImageName != null) {
+        _finalImageFilePath =
+            '${widget.collectionDetail.id}_${_changedImageName}';
+      } else {
+        _finalImageFilePath = _initialImageName;
       }
+      print(_finalImageFilePath);
 
       await ApiService.editCollection(
         widget.collectionDetail.id,
