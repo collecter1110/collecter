@@ -32,9 +32,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This app only accesses selected photos from your photo library, allowing you to upload or share selected photos.</string>
+	<string>Only photos selected for posting to posts and user profiles are accessed. You can configure this in Settings.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app accesses your photo library to allow users to upload or share photos.</string>
+	<string>Access your entire photo library to add photos to posts and user profiles. This is necessary for a better user experience.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
