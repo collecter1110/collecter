@@ -11,7 +11,7 @@ import UIKit
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
   
-  override func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-    return UIInterfaceOrientationMask(arrayLiteral: [UIInterfaceOrientationMask.landscapeLeft, UIInterfaceOrientationMask.landscapeRight])
-  }
+override func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+    return UIInterfaceOrientationMask.portrait
+}
 }
