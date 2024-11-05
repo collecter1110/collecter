@@ -53,19 +53,6 @@ class CollectionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getLikeCollectionData() async {
-    try {
-      if (_likeCollections != null) {
-        return;
-      }
-      _state = ConnectionState.waiting;
-      await Future.delayed(Duration(milliseconds: 300));
-      await fetchLikeCollections();
-    } catch (e) {
-      _state = ConnectionState.none;
-    }
-  }
-
   Future<void> getSearchUsersCollectionData(int userId) async {
     try {
       await fetchUsersCollections(userId);

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/collection_provider.dart';
-import '../provider/ranking_provider.dart';
 import '../provider/search_provider.dart';
 import '../provider/selecting_provider.dart';
 import 'locator.dart';
@@ -113,8 +112,10 @@ class DataService {
   static Future<void> loadInitialData(BuildContext context) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await ApiService.restartSubscriptions();
+      final collectionProvider = locator<CollectionProvider>();
       final selectingProvider = context.read<SelectingProvider>();
       await selectingProvider.getSelectData();
+      await collectionProvider.fetchLikeCollections();
     });
   }
 }
