@@ -119,17 +119,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
     );
     try {
-      if (_pickedImage != null) {
-        _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
-            _pickedImage!, 'userinfo');
+      if (_changedImageFilePath != _initialImageFilePath) {
+        if (_initialImageFilePath != null) {
+          List<String> imageFilePaths = [];
+          imageFilePaths.add(_initialImageFilePath!);
+          print('이미지 지우기');
+          await ApiService.deleteStorageImages('userinfo', imageFilePaths);
+        }
+        if (_pickedImage != null) {
+          print('이미지 업로드');
+          _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
+              _pickedImage!, 'userinfo');
+        }
       }
-
-      if (_changedImageFilePath != _initialImageFilePath &&
-          _initialImageFilePath != null) {
-        List<String> imageFilePaths = [];
-        imageFilePaths.add(_initialImageFilePath!);
-        await ApiService.deleteStorageImages('userinfo', imageFilePaths);
-      }
+      print(_changedImageFilePath);
       await ApiService.editUserInfo(
           _changedName!, _changedDescription, _changedImageFilePath);
       final provider = context.read<UserInfoProvider>();
@@ -152,6 +155,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (_pickedImage != null) {
       setState(() {
         _pickedImage = XFile(_pickedImage!.path);
+        _changedImageFilePath = _pickedImage!.path.split('/').last;
+        print(_changedImageFilePath);
       });
     }
   }
