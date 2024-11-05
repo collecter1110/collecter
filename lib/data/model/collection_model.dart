@@ -1,4 +1,4 @@
-import 'package:collect_er/data/model/keyword_model.dart';
+import 'package:collecter/data/model/keyword_model.dart';
 
 class CollectionModel {
   final int id;

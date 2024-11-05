@@ -160,7 +160,7 @@ class SettingService {
         scheme: 'mailto',
         path: 'contact.collecter@gmail.com',
         queryParameters: {
-          'subject': '[collect_er 문의]',
+          'subject': '[collecter 문의]',
           'body': emailBody,
         },
       );

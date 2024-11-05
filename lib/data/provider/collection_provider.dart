@@ -1,4 +1,4 @@
-import 'package:collect_er/data/services/api_service.dart';
+import 'package:collecter/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 import '../model/collection_model.dart';

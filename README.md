@@ -1,4 +1,4 @@
-# collect_er
+# collecter
 
 A new Flutter project.
 
