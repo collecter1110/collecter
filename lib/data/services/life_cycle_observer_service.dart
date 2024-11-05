@@ -5,6 +5,14 @@ import 'api_service.dart';
 class LifeCycleObserverService with WidgetsBindingObserver {
   DateTime? _backgroundTime;
   final int _inactiveDuration = 5;
+
+  LifeCycleObserverService() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ApiService.disposeSubscriptions();
+      print('앱 새로고침 또는 시작 시 구독 해제 완료');
+    });
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
