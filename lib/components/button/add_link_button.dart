@@ -16,7 +16,7 @@ class AddLinkButton extends StatelessWidget {
       },
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4.0),
+          borderRadius: BorderRadius.circular(4.0.r),
         ),
         padding: EdgeInsets.symmetric(vertical: 3.0.h, horizontal: 6.0.w),
         backgroundColor: Color(0xFFced4da),

@@ -183,7 +183,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           padding: EdgeInsets.symmetric(vertical: 8.0.h),
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
+                              borderRadius: BorderRadius.circular(8.0.r),
                               color: _collectionTitle != null
                                   ? Theme.of(context)
                                       .primaryColor
@@ -397,7 +397,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                                 return AspectRatio(
                                   aspectRatio: 1,
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(6.0),
+                                    borderRadius: BorderRadius.circular(6.0.r),
                                     child: Image.file(
                                       File(
                                         _picekdImages![index].path,

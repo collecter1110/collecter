@@ -57,7 +57,7 @@ class Selection extends StatelessWidget {
                   offset: Offset(0, 0),
                 )
               ],
-              borderRadius: BorderRadius.circular(8)),
+              borderRadius: BorderRadius.circular(8.r)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,8 +66,8 @@ class Selection extends StatelessWidget {
                   ? Expanded(
                       child: ClipRRect(
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8),
-                            topRight: Radius.circular(8),
+                            topLeft: Radius.circular(8.r),
+                            topRight: Radius.circular(8.r),
                           ),
                           child: Container(
                             width: double.infinity,

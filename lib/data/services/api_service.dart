@@ -599,6 +599,8 @@ class ApiService {
         .eq('user_id', userId);
 
     final List<CollectionModel> likeCollections = response
+        .where((item) =>
+            !_blockedUserIds.contains(item['collections']['user_id'] as int))
         .map((item) => CollectionModel.fromJson(item['collections']))
         .toList();
 

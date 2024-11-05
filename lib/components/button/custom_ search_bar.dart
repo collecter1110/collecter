@@ -23,9 +23,8 @@ class CustomSearchBar extends StatelessWidget {
       autofocus: autoFocus,
       decoration: InputDecoration(
         isDense: true,
-        contentPadding: EdgeInsets.symmetric(vertical: 14.0.h),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderRadius: BorderRadius.all(Radius.circular(8.r)),
           borderSide: BorderSide.none,
         ),
         filled: true,
@@ -33,15 +32,15 @@ class CustomSearchBar extends StatelessWidget {
         hintText: '검색어를 입력해주세요.',
         hintStyle: TextStyle(
           color: Color(0xFFADB5BD),
-          fontSize: 15.0.sp,
+          fontSize: 14.0.sp,
           fontFamily: 'Pretendard',
           fontWeight: FontWeight.w500,
           height: 1.3,
         ),
         prefixIcon: Padding(
           padding: EdgeInsets.symmetric(
-            vertical: 12.0.h,
-            horizontal: 12.0.w,
+            vertical: 14.0.h,
+            horizontal: 14.0.w,
           ),
           child: SizedBox(
             height: 20.0.h,
@@ -59,7 +58,7 @@ class CustomSearchBar extends StatelessWidget {
       ),
       style: TextStyle(
         color: Color(0xFF212529),
-        fontSize: 15.sp,
+        fontSize: 14.sp,
         fontFamily: 'Pretendard',
         fontWeight: FontWeight.w600,
       ),

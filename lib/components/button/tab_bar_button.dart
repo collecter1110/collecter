@@ -16,7 +16,7 @@ class TabBarButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: buttonState ? Colors.black : Color(0xFFCED4DA),
-        borderRadius: BorderRadius.circular(6.0),
+        borderRadius: BorderRadius.circular(6.0.r),
       ),
       padding: EdgeInsets.symmetric(
         horizontal: 14.0.w,

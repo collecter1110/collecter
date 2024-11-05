@@ -226,7 +226,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                         padding: EdgeInsets.symmetric(
                             horizontal: 16.0.w, vertical: 16.0.h),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderRadius: BorderRadius.all(Radius.circular(8.r)),
                           child: index == _imageNum
                               ? InkWell(
                                   onTap: () async {

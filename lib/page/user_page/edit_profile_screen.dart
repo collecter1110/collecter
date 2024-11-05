@@ -211,7 +211,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   children: [
                                     ClipRRect(
                                       borderRadius:
-                                          BorderRadius.circular(100.0),
+                                          BorderRadius.circular(100.0.r),
                                       child: SizedBox(
                                         width: 80.w,
                                         height: 80.0.w,
@@ -231,7 +231,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             width: 4.0.w,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(100.0),
+                                              BorderRadius.circular(100.0.r),
                                         ),
                                         child: Padding(
                                           padding: EdgeInsets.all(3.0.w),
@@ -284,7 +284,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: Container(
                         height: 48.0.h,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(8.0.r),
                           color: Color(0xffF5F6F7),
                         ),
                         child: Align(

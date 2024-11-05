@@ -35,10 +35,10 @@ class ReportDialog extends StatelessWidget {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
         return Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.0),
-              topRight: Radius.circular(16.0),
+              topLeft: Radius.circular(16.0.r),
+              topRight: Radius.circular(16.0.r),
             ),
             color: Colors.white,
           ),

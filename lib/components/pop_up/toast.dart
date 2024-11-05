@@ -95,7 +95,7 @@ class Toast {
           actions: null,
           contentTextStyle: TextStyle(fontSize: 16.sp, color: Colors.black),
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
           content: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.min,

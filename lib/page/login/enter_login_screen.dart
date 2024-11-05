@@ -90,7 +90,7 @@ class EnterLoginPage extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 14.h,
+              height: 10.h,
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0.w),

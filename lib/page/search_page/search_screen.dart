@@ -9,8 +9,6 @@ import '../../components/widget/search_collection_widget.dart';
 import '../../components/widget/search_selection_widget.dart';
 import '../../components/widget/search_user_widget.dart';
 import '../../data/provider/search_provider.dart';
-import '../../data/provider/selection_provider.dart';
-import '../../data/provider/user_info_provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -80,7 +78,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         SliverAppBar(
                           pinned: true,
                           toolbarHeight: 64.0.h,
-                          expandedHeight: 140.0.h,
+                          expandedHeight: 120.0.h,
                           elevation: 0,
                           scrolledUnderElevation: 0,
                           foregroundColor: Colors.black,
@@ -96,20 +94,25 @@ class _SearchScreenState extends State<SearchScreen> {
                             title: Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 10.0.h, horizontal: 16.0.w),
-                              child: SearchCategoryWidget(),
+                              child: Container(
+                                  height: 44.0.h,
+                                  child: SearchCategoryWidget()),
                             ),
                             background: Padding(
                               padding: EdgeInsets.only(
                                 left: 16.0.w,
                                 right: 16.0.w,
-                                top: ViewPaddingTopSize(context) + 20.0.h,
+                                top: ViewPaddingTopSize(context) + 14.0.h,
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  CustomSearchBar(
-                                    autoFocus: false,
-                                    enabled: true,
+                                  Container(
+                                    height: 44.0.h,
+                                    child: CustomSearchBar(
+                                      autoFocus: false,
+                                      enabled: true,
+                                    ),
                                   ),
                                 ],
                               ),

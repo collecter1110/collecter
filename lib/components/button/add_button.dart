@@ -16,7 +16,7 @@ class AddButton extends StatelessWidget {
       },
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6.0),
+          borderRadius: BorderRadius.circular(6.0.r),
         ),
         padding: EdgeInsets.all(
           6.0.w,

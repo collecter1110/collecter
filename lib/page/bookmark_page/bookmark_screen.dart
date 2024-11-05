@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 
 import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/collection_widget.dart';
-import '../../data/provider/collection_provider.dart';
 import '../add_page/add_screen.dart';
 
 class BookmarkScreen extends StatefulWidget {
@@ -32,11 +30,6 @@ class _BookmarkScreenState extends State<BookmarkScreen>
 
   Future<void> _onTap(int index) async {
     _tabController!.animateTo(index);
-    final provider = context.read<CollectionProvider>();
-
-    if (index == 1) {
-      await provider.getLikeCollectionData();
-    }
   }
 
   @override
@@ -55,7 +48,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
               automaticallyImplyLeading: false,
               pinned: true,
               toolbarHeight: 64.0.h,
-              expandedHeight: 130.0.h,
+              expandedHeight: 120.0.h,
               elevation: 0,
               scrolledUnderElevation: 0,
               foregroundColor: Colors.black,
@@ -90,12 +83,14 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                                 tabName: 'My Collection',
                                 buttonState: _tabController!.index == 0,
                               ),
+                              height: 44.0.h,
                             ),
                             Tab(
                               child: TabBarButton(
                                 tabName: 'Like Collection',
                                 buttonState: _tabController!.index == 1,
                               ),
+                              height: 44.0.h,
                             ),
                           ],
                         ),

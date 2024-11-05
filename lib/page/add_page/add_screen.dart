@@ -58,7 +58,7 @@ class _AddScreenState extends State<AddScreen>
             automaticallyImplyLeading: false,
             pinned: true,
             toolbarHeight: 64.0.h,
-            expandedHeight: 130.0.h,
+            expandedHeight: 120.0.h,
             elevation: 0,
             scrolledUnderElevation: 0,
             foregroundColor: Colors.black,
@@ -93,12 +93,14 @@ class _AddScreenState extends State<AddScreen>
                               tabName: 'Add Collection',
                               buttonState: _tabController!.index == 0,
                             ),
+                            height: 44.0.h,
                           ),
                           Tab(
                             child: TabBarButton(
                               tabName: 'Add Selection',
                               buttonState: _tabController!.index == 1,
                             ),
+                            height: 44.0.h,
                           ),
                         ],
                       ),

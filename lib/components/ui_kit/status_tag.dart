@@ -16,7 +16,7 @@ class StatusTag extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withOpacity(0.4),
-        borderRadius: BorderRadius.circular(50.0),
+        borderRadius: BorderRadius.circular(50.0.r),
         border: Border.all(
           color: Theme.of(context).primaryColor,
           //  color: Color(0xFF45de99),

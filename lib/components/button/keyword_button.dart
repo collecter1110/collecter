@@ -19,7 +19,7 @@ class KeywordButton extends StatelessWidget {
       decoration: ShapeDecoration(
         color: Color(0xFF212529),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50.0),
+          borderRadius: BorderRadius.circular(50.0.r),
         ),
       ),
       child: Padding(

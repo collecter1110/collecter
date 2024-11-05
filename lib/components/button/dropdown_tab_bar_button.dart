@@ -54,7 +54,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(6.0),
+                borderRadius: BorderRadius.circular(6.0.r),
                 border: Border.all(
                   color: const Color(0xFFdee2e6),
                   width: 1.0,
@@ -150,7 +150,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
         onPressed: _toggleDropdown,
         style: TextButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6.0),
+            borderRadius: BorderRadius.circular(6.0.r),
           ),
           padding: EdgeInsets.symmetric(
             horizontal: 10.0.w,
