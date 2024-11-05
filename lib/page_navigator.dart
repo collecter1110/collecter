@@ -4,6 +4,9 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'components/button/nav_button.dart';
 import 'data/provider/page_route_provider.dart';
+import 'data/services/data_service.dart';
+import 'data/services/locator.dart';
+import 'data/services/route_observer_service.dart';
 import 'data/services/storage_service.dart';
 import 'page/add_page/add_screen.dart';
 import 'page/bookmark_page/bookmark_screen.dart';
@@ -29,7 +32,7 @@ class _PageNavigatorState extends State<PageNavigator> {
     UserScreen(),
   ];
 
-  static const List<String> _routeNames = [
+  final List<String> _routeNames = [
     '/',
     '/search',
     '/add',
@@ -52,8 +55,8 @@ class _PageNavigatorState extends State<PageNavigator> {
   @override
   void initState() {
     super.initState();
-
     getPermission();
+    initializeData();
   }
 
   Future<void> getPermission() async {
@@ -64,6 +67,12 @@ class _PageNavigatorState extends State<PageNavigator> {
       } else {
         openAppSettings();
       }
+    });
+  }
+
+  Future<void> initializeData() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await DataService.loadInitialData(context);
     });
   }
 
@@ -83,7 +92,7 @@ class _PageNavigatorState extends State<PageNavigator> {
           key: _navigatorKey,
           initialRoute: _routeNames[0],
           onGenerateRoute: _onGenerateRoute,
-          observers: [CustomRouteObserver()],
+          observers: [RouteObserverService()],
         ),
         bottomNavigationBar: BottomAppBar(
           padding: EdgeInsets.only(
@@ -98,7 +107,7 @@ class _PageNavigatorState extends State<PageNavigator> {
             isScrollable: false,
             onTap: (index) {
               setState(() {
-                if (PageRouteProvider().getCurrentPageNum == index) {
+                if (locator<PageRouteProvider>().getCurrentPageNum == index) {
                   print('같은 페이지');
                   return;
                 }

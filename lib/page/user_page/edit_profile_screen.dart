@@ -119,17 +119,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
     );
     try {
-      if (_pickedImage != null) {
-        _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
-            _pickedImage!, 'userinfo');
+      if (_changedImageFilePath != _initialImageFilePath) {
+        if (_initialImageFilePath != null) {
+          List<String> imageFilePaths = [];
+          imageFilePaths.add(_initialImageFilePath!);
+          print('이미지 지우기');
+          await ApiService.deleteStorageImages('userinfo', imageFilePaths);
+        }
+        if (_pickedImage != null) {
+          print('이미지 업로드');
+          _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
+              _pickedImage!, 'userinfo');
+        }
       }
-
-      if (_changedImageFilePath != _initialImageFilePath &&
-          _initialImageFilePath != null) {
-        List<String> imageFilePaths = [];
-        imageFilePaths.add(_initialImageFilePath!);
-        await ApiService.deleteStorageImages('userinfo', imageFilePaths);
-      }
+      print(_changedImageFilePath);
       await ApiService.editUserInfo(
           _changedName!, _changedDescription, _changedImageFilePath);
       final provider = context.read<UserInfoProvider>();
@@ -152,6 +155,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (_pickedImage != null) {
       setState(() {
         _pickedImage = XFile(_pickedImage!.path);
+        _changedImageFilePath = _pickedImage!.path.split('/').last;
+        print(_changedImageFilePath);
       });
     }
   }
@@ -206,7 +211,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   children: [
                                     ClipRRect(
                                       borderRadius:
-                                          BorderRadius.circular(100.0),
+                                          BorderRadius.circular(100.0.r),
                                       child: SizedBox(
                                         width: 80.w,
                                         height: 80.0.w,
@@ -226,7 +231,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             width: 4.0.w,
                                           ),
                                           borderRadius:
-                                              BorderRadius.circular(100.0),
+                                              BorderRadius.circular(100.0.r),
                                         ),
                                         child: Padding(
                                           padding: EdgeInsets.all(3.0.w),
@@ -279,7 +284,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: Container(
                         height: 48.0.h,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(8.0.r),
                           color: Color(0xffF5F6F7),
                         ),
                         child: Align(
@@ -320,7 +325,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 8.0.h),
                       child: AddTextFormField(
-                        keyboardType: TextInputType.name,
+                        keyboardType: TextInputType.text,
                         initialText: _initialName,
                         isMultipleLine: false,
                         onSaved: (value) {

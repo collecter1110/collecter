@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen>
             SliverAppBar(
               pinned: true,
               toolbarHeight: 64.0.h,
-              expandedHeight: 130.0.h,
+              expandedHeight: 120.0.h,
               elevation: 0,
               scrolledUnderElevation: 0,
               foregroundColor: Colors.black,
@@ -96,18 +96,21 @@ class _HomeScreenState extends State<HomeScreen>
                                 tabName: 'Collection',
                                 buttonState: _tabController!.index == 0,
                               ),
+                              height: 44.0.h,
                             ),
                             Tab(
                               child: TabBarButton(
                                 tabName: 'Selection',
                                 buttonState: _tabController!.index == 1,
                               ),
+                              height: 44.0.h,
                             ),
                             Tab(
                               child: TabBarButton(
                                 tabName: 'User',
                                 buttonState: _tabController!.index == 2,
                               ),
+                              height: 44.0.h,
                             ),
                           ],
                         ),
@@ -125,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen>
                         children: [
                           Image.asset(
                             'assets/images/image_logo_text.png',
-                            width: 100,
+                            width: 100.w,
                           ),
                           InkWell(
                             onTap: () {

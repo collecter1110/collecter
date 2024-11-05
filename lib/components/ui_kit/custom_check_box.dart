@@ -36,7 +36,7 @@ class CustomCheckBox extends StatelessWidget {
                   hoverColor: Colors.black,
                   side: BorderSide(width: 1.sp, color: Color(0xffCED4DA)),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(4.r),
                   ),
                 ),
               ),

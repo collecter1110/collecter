@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:restart_app/restart_app.dart';
 
 import '../../../components/button/complete_button.dart';
 import '../../../components/pop_up/toast.dart';
 import '../../../components/ui_kit/custom_app_bar.dart';
 import '../../../data/services/api_service.dart';
+import '../../../data/services/token_service.dart';
+import '../../../main.dart';
 
 class DeleteUserScreen extends StatelessWidget {
   const DeleteUserScreen({super.key});
@@ -24,9 +25,9 @@ class DeleteUserScreen extends StatelessWidget {
       );
       try {
         await ApiService.deleteAllStorageImages();
-        await ApiService.deleteAuthUser();
         await ApiService.cancelMembership();
-        await ApiService.logout();
+        await ApiService.deleteAuthUser();
+        await TokenService.deleteStorageData();
       } catch (e) {
         print('Error: $e');
       } finally {
@@ -35,7 +36,7 @@ class DeleteUserScreen extends StatelessWidget {
           Navigator.of(context, rootNavigator: true).pop();
         }
         Toast.notify('회원 탈퇴가 성공적으로 완료되었습니다.');
-        Restart.restartApp();
+        MyApp.restartApp();
       }
     }
 

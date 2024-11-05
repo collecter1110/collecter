@@ -1,6 +1,6 @@
 {
-    "name": "collect_er",
-    "short_name": "collect_er",
+    "name": "collecter",
+    "short_name": "collecter",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

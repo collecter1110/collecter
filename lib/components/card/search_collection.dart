@@ -48,12 +48,12 @@ class SearchCollection extends StatelessWidget {
                           width: 0.5.w,
                         ),
                         borderRadius: BorderRadius.all(
-                          Radius.circular(8),
+                          Radius.circular(8.r),
                         ),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.all(
-                          Radius.circular(8),
+                          Radius.circular(8.r),
                         ),
                         child: Image.network(
                           StorageService.getFullImageUrl(
@@ -66,7 +66,7 @@ class SearchCollection extends StatelessWidget {
                   : Container(
                       decoration: BoxDecoration(
                           color: Color(0xFFf1f3f5),
-                          borderRadius: BorderRadius.circular(8)),
+                          borderRadius: BorderRadius.circular(8.r)),
                     ),
             ),
           ),

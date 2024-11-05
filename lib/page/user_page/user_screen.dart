@@ -115,7 +115,8 @@ class _UserScreenState extends State<UserScreen> {
                                   width: 80.0.w,
                                   height: 80.0.w,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100.0),
+                                    borderRadius:
+                                        BorderRadius.circular(100.0.r),
                                     border: Border.all(
                                       color: Color(0xFFdee2e6),
                                       width: 0.5.w,

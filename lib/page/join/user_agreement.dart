@@ -68,7 +68,7 @@ class _UserAgreementState extends State<UserAgreement> {
                     color: Color(0xFFced4da),
                     width: 0.5.w,
                   ),
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(8.0.r),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 16.0.h),

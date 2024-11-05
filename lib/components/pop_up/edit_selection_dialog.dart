@@ -167,6 +167,11 @@ class EditSelectionDialog extends StatelessWidget {
                                             .fetchSelectionData();
                                         await selectionProvider
                                             .getSelectionDetailData();
+                                        if (selectionDetail.isSelecting ==
+                                            false) {
+                                          await selectingProvider
+                                              .fetchSelectedData();
+                                        }
                                       },
                                       () async {
                                         _closeDialog();

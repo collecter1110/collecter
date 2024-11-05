@@ -54,6 +54,10 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
 
     if (widget.collectionDetail.tags != null) {
       tagProvider.saveTags = widget.collectionDetail.tags!;
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        tagProvider.clearTags();
+      });
     }
     _userId = widget.collectionDetail.userId;
     _collectionId = widget.collectionDetail.id;
@@ -152,9 +156,12 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
         } else {
           _finalImageFilePath = null;
         }
-      } else {
+      } else if ((_initialImageName ?? '').contains(_changedImageName ?? '') &&
+          _changedImageName != null) {
         _finalImageFilePath =
             '${widget.collectionDetail.id}_${_changedImageName}';
+      } else {
+        _finalImageFilePath = _initialImageName;
       }
       print(_finalImageFilePath);
 
@@ -296,7 +303,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 8.0.h),
                       child: AddTextFormField(
-                        keyboardType: TextInputType.name,
+                        keyboardType: TextInputType.text,
                         initialText: widget.collectionDetail.title,
                         isMultipleLine: false,
                         onSaved: (value) {
@@ -332,7 +339,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                             child: Form(
                               key: _tagFormKey,
                               child: AddTextFormField(
-                                keyboardType: TextInputType.name,
+                                keyboardType: TextInputType.multiline,
                                 hintText: '태그 추가',
                                 formatter: FilteringTextInputFormatter.deny(
                                     RegExp(r'\s')),

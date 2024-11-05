@@ -126,7 +126,7 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                                               top: 16.0.h),
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.all(
-                                              Radius.circular(8),
+                                              Radius.circular(8.r),
                                             ),
                                             child: Container(
                                               decoration: BoxDecoration(

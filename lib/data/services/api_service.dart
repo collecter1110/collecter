@@ -21,6 +21,15 @@ class ApiService {
   static final storage = FlutterSecureStorage();
   static final SupabaseClient _supabase = Supabase.instance.client;
   static final authUser = _supabase.auth.currentUser;
+  static StreamSubscription<dynamic>? _blockedUsersSubscription;
+  static StreamSubscription<List<Map<String, dynamic>>>?
+      _rankingCollectionsSubscription;
+  static StreamSubscription<List<Map<String, dynamic>>>?
+      _rankingSelectionsSubscription;
+  static StreamSubscription<List<Map<String, dynamic>>>?
+      _rankingUsersSubscription;
+  static StreamSubscription<List<Map<String, dynamic>>>?
+      _myCollectionsSubscription;
   static List<int> _blockedUserIds = [];
 
   static Future<void> authListener() async {
@@ -439,7 +448,7 @@ class ApiService {
               .map((item) => item['id'] as int)
               .toList();
 
-      _supabase
+      _rankingCollectionsSubscription = _supabase
           .from('collections')
           .stream(primaryKey: ['id'])
           .inFilter('id', _initialRankingCollectionIds)
@@ -473,13 +482,13 @@ class ApiService {
       final completer = Completer<List<SelectionModel>>();
       List<SelectionModel>? updatedSelections;
 
-      _supabase
+      _rankingSelectionsSubscription = _supabase
           .from('selections')
           .stream(primaryKey: ['collection_id', 'selection_id'])
           .order('select_num')
           .limit(20)
           .listen((snapshot) {
-            print('listen');
+            print('랭킹 셀렉션 callback');
 
             updatedSelections = snapshot.where((item) {
               return !_blockedUserIds.contains(item['user_id']) &&
@@ -517,12 +526,13 @@ class ApiService {
     try {
       final completer = Completer<List<UserInfoModel>>();
       List<UserInfoModel>? updatedUsers;
-      _supabase
+      _rankingUsersSubscription = _supabase
           .from('userinfo')
           .stream(primaryKey: ['user_id'])
           .order('created_at', ascending: false)
           .limit(10)
           .listen((snapshot) {
+            print('랭킹 유저 callback');
             updatedUsers = snapshot
                 .where(
                     (item) => !_blockedUserIds.contains(item['user_id'] as int))
@@ -553,7 +563,7 @@ class ApiService {
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
 
-      _supabase
+      _myCollectionsSubscription = _supabase
           .from('collections')
           .stream(primaryKey: ['id'])
           .eq('user_id', userId)
@@ -589,6 +599,9 @@ class ApiService {
         .eq('user_id', userId);
 
     final List<CollectionModel> likeCollections = response
+        .where((item) =>
+            item['collections'] != null &&
+            !_blockedUserIds.contains(item['collections']['user_id'] as int))
         .map((item) => CollectionModel.fromJson(item['collections']))
         .toList();
 
@@ -1210,11 +1223,11 @@ class ApiService {
     }
   }
 
-  static Future<void> initBlockedUsersListener() async {
+  static Future<void> restartSubscriptions() async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
-    _supabase
+    _blockedUsersSubscription = _supabase
         .from('block')
         .stream(primaryKey: ['id'])
         .eq('blocker_user_id', userId)
@@ -1224,10 +1237,20 @@ class ApiService {
           _blockedUserIds =
               snapshot.map((item) => item['blocked_user_id'] as int).toList();
           print(_blockedUserIds);
+          await getCollections();
           await getRankingCollections();
           await getRankingSelections();
           await getRankingUsers();
         });
+  }
+
+  static Future<void> disposeSubscriptions() async {
+    await _blockedUsersSubscription?.cancel();
+    await _rankingCollectionsSubscription?.cancel();
+    await _rankingSelectionsSubscription?.cancel();
+    await _rankingUsersSubscription?.cancel();
+    await _myCollectionsSubscription?.cancel();
+    print('listener canceled');
   }
 
   static void handleError(String? statusCode, String? message) {

@@ -16,7 +16,7 @@ class AuthenticationButton extends StatelessWidget {
       },
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(8.0.r),
         ),
         padding: EdgeInsets.symmetric(
           horizontal: 14.0.w,

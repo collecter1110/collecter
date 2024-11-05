@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:restart_app/restart_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../components/button/setting_button.dart';
 import '../../components/pop_up/toast.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../data/services/api_service.dart';
+import '../../main.dart';
 import 'setting/announcement_screen.dart';
 import 'setting/contact_screen.dart';
 import 'setting/app_version_screen.dart';
@@ -17,7 +17,6 @@ class SettingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> _name = ['공지사항', '문의하기', '이용 약관', '버전 정보', '로그아웃'];
     return Scaffold(
       appBar: CustomAppbar(
         titleText: '설정',
@@ -86,7 +85,7 @@ class SettingScreen extends StatelessWidget {
                       }
                       if (isDelete) {
                         await ApiService.logout();
-                        Restart.restartApp();
+                        MyApp.restartApp();
                       }
                     },
                     text: '로그아웃'),

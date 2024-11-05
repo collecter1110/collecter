@@ -1,4 +1,4 @@
-package com.example.collect_er
+package com.example.collecter
 
 import io.flutter.embedding.android.FlutterActivity
 

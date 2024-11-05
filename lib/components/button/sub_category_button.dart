@@ -25,7 +25,7 @@ class SubCategoryButton extends StatelessWidget {
       },
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6.0),
+          borderRadius: BorderRadius.circular(6.0.r),
         ),
         side: BorderSide(
           color: _isSelected ? Color(0xFF868e96) : const Color(0xFFf1f3f5),

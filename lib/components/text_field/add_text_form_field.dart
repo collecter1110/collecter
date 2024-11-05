@@ -86,10 +86,16 @@ class _AddTextFormFieldState extends State<AddTextFormField> {
         maxLines: null,
         expands: true,
         decoration: InputDecoration(
-          contentPadding:
-              EdgeInsets.symmetric(horizontal: 14.0.w, vertical: 12.0.h),
+          contentPadding: widget.isMultipleLine
+              ? EdgeInsets.symmetric(
+                  horizontal: 14.0.w,
+                  vertical: 12.0.h,
+                )
+              : EdgeInsets.symmetric(
+                  horizontal: 14.0.w,
+                ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: BorderRadius.all(Radius.circular(8.r)),
             borderSide: BorderSide.none,
           ),
           filled: true,

@@ -16,11 +16,13 @@ import 'data/provider/selection_provider.dart';
 import 'data/provider/tag_provider.dart';
 import 'data/provider/user_info_provider.dart';
 import 'data/services/api_service.dart';
+import 'data/services/life_cycle_observer_service.dart';
 import 'data/services/locator.dart';
 import 'page/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding.instance.addObserver(LifeCycleObserverService());
   await dotenv.load(fileName: 'assets/config/.env');
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
@@ -36,7 +38,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider<PageRouteProvider>(
-          create: (context) => PageRouteProvider(),
+          create: (context) => locator<PageRouteProvider>(),
         ),
         ChangeNotifierProvider<RankingProvider>(
           create: (context) => locator<RankingProvider>(),
@@ -68,7 +70,7 @@ void main() async {
       ],
       builder: (context, child) {
         return ScreenUtilInit(
-          builder: (BuildContext context, child) => const MaterialApp(
+          builder: (BuildContext context, child) => MaterialApp(
             home: MyApp(),
             debugShowCheckedModeBanner: false,
           ),
@@ -81,12 +83,31 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  static final GlobalKey<_MyAppState> globalKey = GlobalKey<_MyAppState>();
+
+  MyApp() : super(key: globalKey);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+  static void restartApp() {
+    globalKey.currentState?.restart();
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+  Key _key = UniqueKey();
+
+  void restart() {
+    setState(() {
+      _key = UniqueKey();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      key: _key,
       debugShowCheckedModeBanner: false,
       title: 'Coffee Conti',
       theme: ThemeData(

@@ -21,9 +21,6 @@ class DialogText extends StatelessWidget {
           onTap();
         },
         style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0.0),
-          ),
           padding: EdgeInsets.symmetric(
             vertical: 16.0.h,
           ),

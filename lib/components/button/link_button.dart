@@ -1,7 +1,8 @@
-import 'package:collect_er/components/pop_up/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../pop_up/toast.dart';
 
 class LinkButton extends StatelessWidget {
   final String linkUrl;

@@ -226,7 +226,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                         padding: EdgeInsets.symmetric(
                             horizontal: 16.0.w, vertical: 16.0.h),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderRadius: BorderRadius.all(Radius.circular(8.r)),
                           child: index == _imageNum
                               ? InkWell(
                                   onTap: () async {
@@ -355,7 +355,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 8.0.h),
                       child: AddTextFormField(
-                        keyboardType: TextInputType.name,
+                        keyboardType: TextInputType.text,
                         initialText: _changedTitle,
                         isMultipleLine: false,
                         onSaved: (value) {
@@ -391,7 +391,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                             child: Form(
                               key: _keywordFormKey,
                               child: AddTextFormField(
-                                keyboardType: TextInputType.name,
+                                keyboardType: TextInputType.text,
                                 hintText: '키워드 추가',
                                 formatter: FilteringTextInputFormatter.deny(
                                     RegExp(r'\s')),

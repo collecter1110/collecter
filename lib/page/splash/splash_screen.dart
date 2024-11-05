@@ -28,7 +28,6 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(Duration(seconds: 1));
     if (_accessToken != null) {
       if (userIdString != null) {
-        await DataService.loadInitialData(context);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PageNavigator()),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CollectionThumb extends StatelessWidget {
   const CollectionThumb({super.key});
@@ -6,7 +7,7 @@ class CollectionThumb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(8), // 전체 컨테이너의 둥근 모서리
+      borderRadius: BorderRadius.circular(8.r),
       child: Container(
         color: Colors.transparent,
         child: GridView.builder(

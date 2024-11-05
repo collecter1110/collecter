@@ -14,7 +14,7 @@ class TagButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(100.0),
+        borderRadius: BorderRadius.circular(100.0.r),
         border: Border.all(
           color: Color(0xFFe9ecef),
           width: 1.0,

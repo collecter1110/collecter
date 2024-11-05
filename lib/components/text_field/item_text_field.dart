@@ -253,7 +253,7 @@ class _ItemWidgetState extends State<ItemWidget> {
       child: Container(
         decoration: BoxDecoration(
           color: Color(0xffF5F6F7),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.r),
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 16.0.h),
