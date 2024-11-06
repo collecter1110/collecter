@@ -1,3 +1,4 @@
+import 'package:collecter/data/model/user_info_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -16,24 +17,8 @@ import 'edit_profile_screen.dart';
 import 'selecting_screen.dart';
 import 'setting_screen.dart';
 
-class UserScreen extends StatefulWidget {
+class UserScreen extends StatelessWidget {
   const UserScreen({super.key});
-
-  @override
-  State<UserScreen> createState() => _UserScreenState();
-}
-
-class _UserScreenState extends State<UserScreen> {
-  @override
-  void initState() {
-    super.initState();
-    initializeData();
-  }
-
-  void initializeData() async {
-    final provider = context.read<UserInfoProvider>();
-    await provider.getUsersData();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,106 +66,101 @@ class _UserScreenState extends State<UserScreen> {
                   ],
                 ),
               ),
-              Consumer<UserInfoProvider>(
-                builder: (context, provider, child) {
-                  if (provider.state == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (provider.state == ConnectionState.done) {
-                    final int _userId = provider.userInfo!.userId;
-                    final String _name = provider.userInfo!.name;
-                    final String? _description = provider.userInfo?.description;
-                    final String? _imageFilePath =
-                        provider.userInfo?.imageFilePath;
+              Consumer<UserInfoProvider>(builder: (context, provider, child) {
+                final UserInfoModel? _userInfo = provider.userInfo;
+                if (_userInfo == null) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  final int _userId = _userInfo!.userId;
+                  final String _name = _userInfo!.name;
+                  final String? _description = _userInfo.description;
+                  final String? _imageFilePath = _userInfo.imageFilePath;
 
-                    return Padding(
-                      padding: EdgeInsets.only(top: 36.0.h, bottom: 20.0.h),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          _imageFilePath == null
-                              ? Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xFFe9ecef),
-                                  ),
-                                  child: ClipOval(
-                                    child: Image.asset(
-                                      'assets/icons/tab_user.png',
-                                      height: 64.0.h,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  width: 80.0.w,
-                                  height: 80.0.w,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(100.0.r),
-                                    border: Border.all(
-                                      color: Color(0xFFdee2e6),
-                                      width: 0.5.w,
-                                    ),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        StorageService.getFullImageUrl(
-                                            '${_userId}/userinfo',
-                                            _imageFilePath),
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
+                  return Padding(
+                    padding: EdgeInsets.only(top: 36.0.h, bottom: 20.0.h),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _imageFilePath == null
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(0xFFe9ecef),
+                                ),
+                                child: ClipOval(
+                                  child: Image.asset(
+                                    'assets/icons/tab_user.png',
+                                    height: 64.0.h,
+                                    color: Colors.white,
                                   ),
                                 ),
-                          SizedBox(
-                            width: 16.0.w,
-                          ),
-                          Flexible(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  _name,
-                                  style: TextStyle(
-                                    color: Color(0xFF212529),
-                                    fontSize: 18.sp,
-                                    fontFamily: 'Pretendard',
-                                    fontWeight: FontWeight.w700,
+                              )
+                            : Container(
+                                width: 80.0.w,
+                                height: 80.0.w,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100.0.r),
+                                  border: Border.all(
+                                    color: Color(0xFFdee2e6),
+                                    width: 0.5.w,
+                                  ),
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                      StorageService.getFullImageUrl(
+                                          '${_userId}/userinfo',
+                                          _imageFilePath),
+                                    ),
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                                _description != null
-                                    ? Column(
-                                        children: [
-                                          SizedBox(
-                                            height: 4.0.h,
+                              ),
+                        SizedBox(
+                          width: 16.0.w,
+                        ),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                _name,
+                                style: TextStyle(
+                                  color: Color(0xFF212529),
+                                  fontSize: 18.sp,
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              _description != null
+                                  ? Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 4.0.h,
+                                        ),
+                                        ExpandableText(
+                                          maxLine: 2,
+                                          textStyle: TextStyle(
+                                            color: Color(0xFF495057),
+                                            fontSize: 12.sp,
+                                            fontFamily: 'Pretendard',
+                                            fontWeight: FontWeight.w500,
+                                            height: 1.43,
                                           ),
-                                          ExpandableText(
-                                            maxLine: 2,
-                                            textStyle: TextStyle(
-                                              color: Color(0xFF495057),
-                                              fontSize: 12.sp,
-                                              fontFamily: 'Pretendard',
-                                              fontWeight: FontWeight.w500,
-                                              height: 1.43,
-                                            ),
-                                            text: _description,
-                                          ),
-                                        ],
-                                      )
-                                    : SizedBox.shrink(),
-                              ],
-                            ),
+                                          text: _description,
+                                        ),
+                                      ],
+                                    )
+                                  : SizedBox.shrink(),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  } else {
-                    return const Center(
-                      child: Text('Error occurred.'),
-                    );
-                  }
-                },
-              ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }),
               Container(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
