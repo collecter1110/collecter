@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../provider/collection_provider.dart';
 import '../provider/search_provider.dart';
 import '../provider/selecting_provider.dart';
+import '../provider/user_info_provider.dart';
 import 'locator.dart';
 
 class DataService {
@@ -114,8 +115,10 @@ class DataService {
       await ApiService.restartSubscriptions();
       final collectionProvider = locator<CollectionProvider>();
       final selectingProvider = context.read<SelectingProvider>();
+      final userInfoProvider = context.read<UserInfoProvider>();
       await selectingProvider.getSelectData();
       await collectionProvider.fetchLikeCollections();
+      await userInfoProvider.fetchUserInfo();
     });
   }
 }

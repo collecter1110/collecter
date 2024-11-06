@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/selecting_model.dart';
@@ -122,9 +123,16 @@ class SelectingDialog extends StatelessWidget {
                       text: '셀렉팅',
                       textColor: Colors.black,
                       onTap: () async {
-                        (selectionDetail.isSelectable == false)
-                            ? Toast.completeToast('셀렉팅이 제한된 셀렉션입니다.')
-                            : await _showCollectionTitleDialog();
+                        final storage = FlutterSecureStorage();
+                        final userIdString = await storage.read(key: 'USER_ID');
+                        int userId = int.parse(userIdString!);
+                        if (selectionDetail.isSelectable == false) {
+                          Toast.completeToast('셀렉팅이 제한된 셀렉션입니다.');
+                        } else if (selectionDetail.ownerId == userId) {
+                          Toast.completeToast('해당 셀렉션은 소유한 항목이므로\n선택이 제한됩니다.');
+                        } else {
+                          await _showCollectionTitleDialog();
+                        }
                       },
                     ),
                     Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
