@@ -28,25 +28,20 @@ Future<void> main() async {
   WidgetsBinding.instance.addObserver(LifeCycleObserverService());
   await dotenv.load(fileName: 'assets/config/.env');
 
-  runZonedGuarded(() async {
-    if (!kDebugMode) {
-      await SentryFlutter.init(
-        (options) {
-          options.dsn = dotenv.env['SENTRY_DSN'] ?? '';
-          options.tracesSampleRate = 1.0;
-          options.profilesSampleRate = 1.0;
-          options.attachStacktrace = true;
-        },
-        appRunner: () async {
-          await initializeApp();
-        },
-      );
-    } else {
-      await initializeApp();
-    }
-  }, (exception, stackTrace) async {
-    await Sentry.captureException(exception, stackTrace: stackTrace);
-  });
+  if (!kDebugMode) {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn = dotenv.env['SENTRY_DSN'] ?? '';
+        options.tracesSampleRate = 1.0;
+        options.profilesSampleRate = 1.0;
+        options.attachStacktrace = true;
+      },
+    );
+  }
+
+  await initializeApp();
+
+  runApp(MyAppWrapper());
 }
 
 Future<void> initializeApp() async {
@@ -60,8 +55,12 @@ Future<void> initializeApp() async {
   ]);
   setupLocator();
   await ApiService.authListener();
-  runApp(
-    MultiProvider(
+}
+
+class MyAppWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider<PageRouteProvider>(
           create: (context) => locator<PageRouteProvider>(),
@@ -103,8 +102,8 @@ Future<void> initializeApp() async {
         minTextAdapt: true,
         splitScreenMode: true,
       ),
-    ),
-  );
+    );
+  }
 }
 
 class MyApp extends StatefulWidget {

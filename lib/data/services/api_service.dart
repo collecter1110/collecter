@@ -342,13 +342,7 @@ class ApiService {
 
   static Future<UserInfoModel> getUserInfo() async {
     try {
-      final userIdString = null;
-
-      // 사용자 ID가 null인 경우 예외 발생
-      if (userIdString == null) {
-        throw Exception('User ID is null');
-      }
-
+      final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
       final response = await _supabase
           .from('userinfo')
@@ -356,45 +350,19 @@ class ApiService {
           .eq('user_id', userId)
           .single();
 
-      // 응답이 비어 있는 경우 예외 발생
-      if (response.isEmpty) {
-        throw Exception('Response is empty <getUserInfo>');
+      if (response.isNotEmpty) {
+        final responseData = response;
+        UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
+        return Future.value(userInfoData);
+      } else {
+        throw Exception('Response code error <getUserInfo>');
       }
-
-      final responseData = response;
-      UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
-      return Future.value(userInfoData);
     } catch (e, stackTrace) {
-      // trackError 호출하여 오류 기록
       trackError(e, stackTrace, 'Exception in getUserInfo');
       debugErrorMessage('getUserInfo exception: ${e}');
       throw Exception('getUserInfo exception: ${e}');
     }
   }
-
-  // static Future<UserInfoModel> getUserInfo() async {
-  //   try {
-  //     final userIdString = await storage.read(key: 'USER_ID');
-  //     int userId = int.parse(userIdString!);
-  //     final response = await _supabase
-  //         .from('userinfo')
-  //         .select('name, email, description, image_file_path, user_id')
-  //         .eq('user_id', userId)
-  //         .single();
-
-  //     if (response.isNotEmpty) {
-  //       final responseData = response;
-  //       UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
-  //       return Future.value(userInfoData);
-  //     } else {
-  //       throw Exception('Response code error <getUserInfo>');
-  //     }
-  //   } catch (e, stackTrace) {
-  //     trackError(e, stackTrace, 'Exception in getUserInfo');
-  //     debugErrorMessage('getUserInfo exception: ${e}');
-  //     throw Exception('getUserInfo exception: ${e}');
-  //   }
-  // }
 
   static Future<List<SelectingModel>> getSelectings(String properties) async {
     try {
