@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
@@ -32,45 +34,83 @@ class ApiService {
       _myCollectionsSubscription;
   static List<int> _blockedUserIds = [];
 
+  static Future<void> trackError(
+      dynamic exception, StackTrace stackTrace, String description) async {
+    String? userId = await storage.read(key: 'USER_ID');
+
+    Sentry.captureException(
+      exception,
+      stackTrace: stackTrace,
+      withScope: (scope) {
+        scope.setContexts('USER_INFO', {'userId': userId});
+        scope.setContexts('API Request', {
+          'description': description,
+        });
+      },
+    );
+
+    if (exception is SocketException) {
+      Toast.notify('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
+    } else if (exception is TimeoutException) {
+      Toast.notify('요청 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.');
+    } else if (exception is FormatException) {
+      Toast.notify('데이터 형식 오류가 발생했습니다. 다시 시도해 주세요.');
+    } else if (exception is PlatformException) {
+      Toast.notify('플랫폼 오류가 발생했습니다. 설정을 확인해 주세요.');
+    } else if (exception is HttpException) {
+      Toast.notify('서버 요청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    } else if (exception is AuthException) {
+      Toast.notify('인증 오류가 발생했습니다. 다시 로그인해 주세요.');
+    } else {
+      Toast.notify('죄송합니다.\n현재 일시적인 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.');
+    }
+  }
+
   static Future<void> authListener() async {
     final authSubscription =
         _supabase.auth.onAuthStateChange.listen((data) async {
-      final AuthChangeEvent event = data.event;
-      final Session? session = data.session;
+      try {
+        final AuthChangeEvent event = data.event;
+        final Session? session = data.session;
 
-      print('Auth event: $event');
+        print('Auth event: $event');
 
-      switch (event) {
-        case AuthChangeEvent.initialSession:
-          break;
-        case AuthChangeEvent.signedIn:
-          print('Save initial token');
-          if (session != null) {
-            await TokenService.saveTokens(
-              session.accessToken,
-              session.refreshToken ?? '',
-            );
-          }
-          break;
-        case AuthChangeEvent.tokenRefreshed:
-          if (session != null) {
-            print('get refresh token');
-            await TokenService.saveTokens(
-              session.accessToken,
-              session.refreshToken ?? '',
-            );
-          } else {
-            print('refresh token expired');
+        switch (event) {
+          case AuthChangeEvent.initialSession:
+            break;
+          case AuthChangeEvent.signedIn:
+            print('Save initial token');
+            if (session != null) {
+              await TokenService.saveTokens(
+                session.accessToken,
+                session.refreshToken ?? '',
+              );
+            }
+            break;
+          case AuthChangeEvent.tokenRefreshed:
+            if (session != null) {
+              print('get refresh token');
+              await TokenService.saveTokens(
+                session.accessToken,
+                session.refreshToken ?? '',
+              );
+            } else {
+              print('refresh token expired');
+              await TokenService.deleteStorageData();
+            }
+            break;
+          case AuthChangeEvent.signedOut:
+            print('log out');
             await TokenService.deleteStorageData();
-          }
-          break;
-        case AuthChangeEvent.signedOut:
-          print('log out');
-          await TokenService.deleteStorageData();
-          break;
+            break;
 
-        default:
-          break;
+          default:
+            break;
+        }
+      } catch (e, stackTrace) {
+        trackError(e, stackTrace, 'Exception in authListener');
+        debugErrorMessage('authListener exception: ${e}');
+        throw Exception('authListener exception: ${e}');
       }
     });
   }
@@ -86,10 +126,10 @@ class ApiService {
       int userId = response['user_id'];
       await storage.write(key: 'USER_ID', value: userId.toString());
       print(userId);
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-    } catch (e) {
-      throw Exception('updateUserInfo exception: ${e}');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in saveUserIdInStorage');
+      debugErrorMessage('saveUserIdInStorage exception: ${e}');
+      throw Exception('saveUserIdInStorage exception: ${e}');
     }
   }
 
@@ -98,15 +138,13 @@ class ApiService {
       if (authUser != null) {
         return authUser!.email!;
       } else {
-        handleError('', 'No authenticated user found');
+        debugErrorMessage('No authenticated user found');
         throw Exception('No authenticated user found');
       }
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      print('checkUserInfoExist : $e');
-      throw Exception('An unexpected error occurred');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getEmailFromAuthentication');
+      debugErrorMessage('getEmailFromAuthentication exception: ${e}');
+      throw Exception('getEmailFromAuthentication exception: ${e}');
     }
   }
 
@@ -119,11 +157,9 @@ class ApiService {
           .maybeSingle();
 
       return response == null;
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-      return false;
-    } catch (e) {
-      print('checkEmailExist exception: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in checkEmailDuplicate');
+      debugErrorMessage('checkEmailDuplicate exception: ${e}');
       return false;
     }
   }
@@ -137,11 +173,9 @@ class ApiService {
 
       print('OTP sent to $email');
       return true;
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-      return false;
-    } catch (e) {
-      print('sendOtp exception: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in sendOtp');
+      debugErrorMessage('sendOtp exception: ${e}');
       return false;
     }
   }
@@ -159,16 +193,17 @@ class ApiService {
       } else {
         return false;
       }
-    } on AuthException catch (e) {
-      print('checkOtp exception: $e');
+    } on AuthException catch (e, stackTrace) {
       if (e.message == 'User is banned') {
         Toast.notify(
             '3회 이상 신고로 계정이\n1주일간 정지되었습니다.\n문의 : contact.collect@gmail.com');
       }
+      trackError(e, stackTrace, 'Exception in checkOtp');
+      debugErrorMessage('checkOtp exception: ${e}');
       return false;
-    } catch (e) {
-      print('checkOtp unexpected exception: $e');
-      Toast.notify('알 수 없는 오류가 발생했습니다.');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in checkOtp');
+      debugErrorMessage('checkOtp exception: ${e}');
       return false;
     }
   }
@@ -182,11 +217,9 @@ class ApiService {
           .maybeSingle();
 
       return response == null;
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-      return false;
-    } catch (e) {
-      print('checkEmailExist exception: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in checkUserNameDuplicate');
+      debugErrorMessage('checkUserNameDuplicate exception: ${e}');
       return false;
     }
   }
@@ -199,15 +232,12 @@ class ApiService {
         'name': userName,
         'description': userDescription,
       }).eq('email', email);
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-    } catch (e) {
-      throw Exception('updateUserInfo exception: ${e}');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in setUserInfo');
+      debugErrorMessage('setUserInfo exception: ${e}');
+      throw Exception('setUserInfo exception: ${e}');
     }
   }
-
-  ///앱 로그아웃 시 로컬스토리지 데이터 삭제
-  ///앱 access token 만료시 데이터 삭제
 
   static Future<void> emailLogin(String email) async {
     try {
@@ -217,20 +247,20 @@ class ApiService {
       );
 
       print('OTP sent to $email');
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-    } catch (e) {
-      print('sendOtp exception: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in emailLogin');
+      debugErrorMessage('emailLogin exception: ${e}');
+      throw Exception('emailLogin exception: ${e}');
     }
   }
 
   static Future<void> logout() async {
     try {
       await _supabase.auth.signOut();
-    } on AuthException catch (e) {
-      handleError(e.statusCode, e.message);
-    } catch (e) {
-      print('sendOtp exception: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in logout');
+      debugErrorMessage('logout exception: ${e}');
+      throw Exception('logout exception: ${e}');
     }
   }
 
@@ -241,8 +271,15 @@ class ApiService {
       print('사용자가 로그인되어 있지 않습니다.');
       return;
     }
-    await _supabase
-        .rpc('delete_user_by_owner', params: {'user_uuid': userUuid});
+
+    try {
+      await _supabase
+          .rpc('delete_user_by_owner', params: {'user_uuid': userUuid});
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in deleteAuthUser');
+      debugErrorMessage('deleteAuthUser exception: $e');
+      throw Exception('deleteAuthUser exception: ${e}');
+    }
   }
 
   static Future<void> cancelMembership() async {
@@ -261,9 +298,10 @@ class ApiService {
       } else {
         print('Failed to delete user: ${response.body}');
       }
-    } catch (error) {
-      Toast.error();
-      throw Exception('An unexpected error occurred: $error');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in cancelMembership');
+      debugErrorMessage('cancelMembership exception: ${e}');
+      throw Exception('cancelMembership exception: ${e}');
     }
   }
 
@@ -295,15 +333,22 @@ class ApiService {
       } else {
         print('삭제할 파일이 없습니다.');
       }
-    } catch (e) {
-      Toast.error();
-      throw Exception('delete all storage images exception: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in deleteAllStorageImages');
+      debugErrorMessage('deleteAllStorageImages exception: ${e}');
+      throw Exception('deleteAllStorageImages exception: ${e}');
     }
   }
 
   static Future<UserInfoModel> getUserInfo() async {
     try {
-      final userIdString = await storage.read(key: 'USER_ID');
+      final userIdString = null;
+
+      // 사용자 ID가 null인 경우 예외 발생
+      if (userIdString == null) {
+        throw Exception('User ID is null');
+      }
+
       int userId = int.parse(userIdString!);
       final response = await _supabase
           .from('userinfo')
@@ -311,21 +356,45 @@ class ApiService {
           .eq('user_id', userId)
           .single();
 
-      if (response.isNotEmpty) {
-        final responseData = response;
-        UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
-        return Future.value(userInfoData);
-      } else {
-        throw Exception('Response code error <getUserInfo>');
+      // 응답이 비어 있는 경우 예외 발생
+      if (response.isEmpty) {
+        throw Exception('Response is empty <getUserInfo>');
       }
-    } on AuthException catch (e) {
-      Toast.error();
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      Toast.error();
-      throw Exception('An unexpected error occurred: $e');
+
+      final responseData = response;
+      UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
+      return Future.value(userInfoData);
+    } catch (e, stackTrace) {
+      // trackError 호출하여 오류 기록
+      trackError(e, stackTrace, 'Exception in getUserInfo');
+      debugErrorMessage('getUserInfo exception: ${e}');
+      throw Exception('getUserInfo exception: ${e}');
     }
   }
+
+  // static Future<UserInfoModel> getUserInfo() async {
+  //   try {
+  //     final userIdString = await storage.read(key: 'USER_ID');
+  //     int userId = int.parse(userIdString!);
+  //     final response = await _supabase
+  //         .from('userinfo')
+  //         .select('name, email, description, image_file_path, user_id')
+  //         .eq('user_id', userId)
+  //         .single();
+
+  //     if (response.isNotEmpty) {
+  //       final responseData = response;
+  //       UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
+  //       return Future.value(userInfoData);
+  //     } else {
+  //       throw Exception('Response code error <getUserInfo>');
+  //     }
+  //   } catch (e, stackTrace) {
+  //     trackError(e, stackTrace, 'Exception in getUserInfo');
+  //     debugErrorMessage('getUserInfo exception: ${e}');
+  //     throw Exception('getUserInfo exception: ${e}');
+  //   }
+  // }
 
   static Future<List<SelectingModel>> getSelectings(String properties) async {
     try {
@@ -344,12 +413,10 @@ class ApiService {
           jsonDataList.map((item) => SelectingModel.fromJson(item)).toList();
 
       return Future.value(selectingModelList);
-    } on AuthException catch (e) {
-      Toast.error();
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      Toast.error();
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getSelectings');
+      debugErrorMessage('getSelectings exception: ${e}');
+      throw Exception('getSelectings exception: ${e}');
     }
   }
 
@@ -376,12 +443,10 @@ class ApiService {
       }).toList();
 
       return Future.value(selections);
-    } on AuthException catch (e) {
-      Toast.error();
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      Toast.error();
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getSelections');
+      debugErrorMessage('getSelections exception: ${e}');
+      throw Exception('getSelections exception: ${e}');
     }
   }
 
@@ -402,12 +467,10 @@ class ApiService {
           SelectionModel.fromJson(responseData);
 
       return Future.value(selectionDetailModel);
-    } on AuthException catch (e) {
-      Toast.error();
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      Toast.error();
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getSelectionDetail');
+      debugErrorMessage('getSelectionDetail exception: ${e}');
+      throw Exception('getSelectionDetail exception: ${e}');
     }
   }
 
@@ -422,11 +485,10 @@ class ApiService {
       String title = responseData['title'];
 
       return title;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'getCollectionTitle error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getCollectionTitle');
+      debugErrorMessage('getCollectionTitle exception: ${e}');
+      throw Exception('getCollectionTitle exception: ${e}');
     }
   }
 
@@ -469,11 +531,10 @@ class ApiService {
           });
 
       return _completer.future;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'get ranking collection error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getRankingCollections');
+      debugErrorMessage('getRankingCollections exception: ${e}');
+      throw Exception('getRankingCollections exception: ${e}');
     }
   }
 
@@ -514,11 +575,10 @@ class ApiService {
           });
 
       return completer.future;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'get ranking selection error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getRankingSelections');
+      debugErrorMessage('getRankingSelections exception: ${e}');
+      throw Exception('getRankingSelections exception: ${e}');
     }
   }
 
@@ -548,11 +608,10 @@ class ApiService {
           });
 
       return completer.future;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'get ranking users error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getRankingUsers');
+      debugErrorMessage('getRankingUsers exception: ${e}');
+      throw Exception('getRankingUsers exception: ${e}');
     }
   }
 
@@ -582,30 +641,36 @@ class ApiService {
           });
 
       return _completer.future;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'getCollections error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getCollections');
+      debugErrorMessage('getCollections exception: ${e}');
+      throw Exception('getCollections exception: ${e}');
     }
   }
 
   static Future<List<CollectionModel>> getLikeCollections() async {
-    final userIdString = await storage.read(key: 'USER_ID');
-    int userId = int.parse(userIdString!);
-    final response = await _supabase
-        .from('likes')
-        .select('collections(*)')
-        .eq('user_id', userId);
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
 
-    final List<CollectionModel> likeCollections = response
-        .where((item) =>
-            item['collections'] != null &&
-            !_blockedUserIds.contains(item['collections']['user_id'] as int))
-        .map((item) => CollectionModel.fromJson(item['collections']))
-        .toList();
+      final response = await _supabase
+          .from('likes')
+          .select('collections(*)')
+          .eq('user_id', userId);
 
-    return likeCollections;
+      final List<CollectionModel> likeCollections = response
+          .where((item) =>
+              item['collections'] != null &&
+              !_blockedUserIds.contains(item['collections']['user_id'] as int))
+          .map((item) => CollectionModel.fromJson(item['collections']))
+          .toList();
+
+      return likeCollections;
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getLikeCollections');
+      debugErrorMessage('getLikeCollections exception: ${e}');
+      throw Exception('getLikeCollections exception: ${e}');
+    }
   }
 
   static Future<CollectionModel> getCollectionDetail(int collectionId) async {
@@ -636,11 +701,10 @@ class ApiService {
           CollectionModel.fromJson(responseData, hasLiked: hasLiked);
 
       return collection;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'getCollectionDetail error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getCollectionDetail');
+      debugErrorMessage('getCollectionDetail exception: ${e}');
+      throw Exception('getCollectionDetail exception: ${e}');
     }
   }
 
@@ -657,9 +721,10 @@ class ApiService {
       await _supabase.storage.from('images').upload(filePath, file);
       print('파일 업로드 성공: $_fileName');
       return _fileName;
-    } catch (e) {
-      handleError('', 'upload image error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in uploadAndGetImageFilePath');
+      debugErrorMessage('uploadAndGetImageFilePath exception: ${e}');
+      throw Exception('uploadAndGetImageFilePath exception: ${e}');
     }
   }
 
@@ -677,9 +742,10 @@ class ApiService {
           '$userId/$destinationFolderPath/${collectionId}_$fileName';
 
       await _supabase.storage.from('images').copy(sourcePath, destinationPath);
-    } catch (e) {
-      handleError('', 'copy image error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in copyImageFilePath');
+      debugErrorMessage('copyImageFilePath exception: ${e}');
+      throw Exception('copyImageFilePath exception: ${e}');
     }
   }
 
@@ -695,12 +761,10 @@ class ApiService {
       _fileNames = await Future.wait(uploadFutures);
 
       return _fileNames;
-    } on SocketException catch (e) {
-      handleError('', 'Network error: ${e.message}');
-      throw Exception('Network error occurred: ${e.message}');
-    } catch (e) {
-      handleError('', 'uploadImages error: $e');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in uploadAndGetImageFilePaths');
+      debugErrorMessage('uploadAndGetImageFilePaths exception: ${e}');
+      throw Exception('uploadAndGetImageFilePaths exception: ${e}');
     }
   }
 
@@ -717,11 +781,10 @@ class ApiService {
         'tags': tags,
         'is_public': isPublic,
       });
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'add collections error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in addCollection');
+      debugErrorMessage('addCollection exception: ${e}');
+      throw Exception('addCollection exception: ${e}');
     }
   }
 
@@ -753,11 +816,10 @@ class ApiService {
         'is_ordered': isOrder,
         'is_selectable': isSelectable,
       });
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'addSelections error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in addSelections');
+      debugErrorMessage('addSelections exception: ${e}');
+      throw Exception('addSelections exception: ${e}');
     }
   }
 
@@ -780,21 +842,42 @@ class ApiService {
           .filter('keyword_name', 'in', keywords);
 
       return response;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'addKeywords error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in addKeywords');
+      debugErrorMessage('addKeywords exception: ${e}');
+      throw Exception('addKeywords exception: ${e}');
     }
   }
 
   Future<void> actionLike(int collectionId) async {
+    try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+      await _supabase.from('likes').insert({
+        'user_id': userId,
+        'collection_id': collectionId,
+      });
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in actionLike');
+      debugErrorMessage('actionLike exception: ${e}');
+      throw Exception('actionLike exception: ${e}');
+    }
+  }
+
+  Future<void> actionUnlike(int collectionId) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
-    await _supabase.from('likes').insert({
-      'user_id': userId,
-      'collection_id': collectionId,
-    });
+    try {
+      await _supabase
+          .from('likes')
+          .delete()
+          .eq('user_id', userId)
+          .eq('collection_id', collectionId);
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in actionUnlike');
+      debugErrorMessage('actionUnlike exception: ${e}');
+      throw Exception('actionUnlike exception: ${e}');
+    }
   }
 
   static Future<void> editCollection(
@@ -812,11 +895,10 @@ class ApiService {
         'tags': tags,
         'is_public': isPublic,
       }).eq('id', collectionId);
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'edit collections error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in editCollection');
+      debugErrorMessage('editCollection exception: ${e}');
+      throw Exception('editCollection exception: ${e}');
     }
   }
 
@@ -847,11 +929,10 @@ class ApiService {
           })
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId);
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'edit selections error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in editSelection');
+      debugErrorMessage('editSelection exception: ${e}');
+      throw Exception('editSelection exception: ${e}');
     }
   }
 
@@ -868,22 +949,11 @@ class ApiService {
         'description': description,
         'image_file_path': imageFilePath,
       }).eq('user_id', userId);
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'edit userInfo error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in editUserInfo');
+      debugErrorMessage('editUserInfo exception: ${e}');
+      throw Exception('editUserInfo exception: ${e}');
     }
-  }
-
-  Future<void> actionUnlike(int collectionId) async {
-    final userIdString = await storage.read(key: 'USER_ID');
-    int userId = int.parse(userIdString!);
-    await _supabase
-        .from('likes')
-        .delete()
-        .eq('user_id', userId)
-        .eq('collection_id', collectionId);
   }
 
   static Future<List<CollectionModel>> searchCollectionsByKeyword(
@@ -900,11 +970,10 @@ class ApiService {
       }).toList();
 
       return collections;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'searchCollectionsByKeyword error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in searchCollectionsByKeyword');
+      debugErrorMessage('searchCollectionsByKeyword exception: ${e}');
+      throw Exception('searchCollectionsByKeyword exception: ${e}');
     }
   }
 
@@ -922,11 +991,10 @@ class ApiService {
       }).toList();
 
       return collections;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'searchCollectionsByTag error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in searchCollectionsByTag');
+      debugErrorMessage('searchCollectionsByTag exception: ${e}');
+      throw Exception('searchCollectionsByTag exception: ${e}');
     }
   }
 
@@ -952,11 +1020,10 @@ class ApiService {
       }).toList();
 
       return selections;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'get search selections error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in searchSelections');
+      debugErrorMessage('searchSelections exception: ${e}');
+      throw Exception('searchSelections exception: ${e}');
     }
   }
 
@@ -972,15 +1039,14 @@ class ApiService {
         return UserInfoModel.fromJson(item);
       }).toList();
       return users;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'get search users error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in searchUsers');
+      debugErrorMessage('searchUsers exception: ${e}');
+      throw Exception('searchUsers exception: ${e}');
     }
   }
 
-  static Future<UserInfoModel> getOtherUserInfo(int userId) async {
+  static Future<UserInfoModel?> getOtherUserInfo(int userId) async {
     try {
       final response = await _supabase
           .from('userinfo')
@@ -993,16 +1059,12 @@ class ApiService {
         UserInfoModel userInfoData = UserInfoModel.fromJson(responseData);
         return Future.value(userInfoData);
       } else {
-        Toast.error();
-        throw Exception('Response code error <getUserInfo>');
+        return null;
       }
-    } on AuthException catch (e) {
-      Toast.error();
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      Toast.error();
-      handleError('', 'getOtherUserInfo error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getOtherUserInfo');
+      debugErrorMessage('getOtherUserInfo exception: ${e}');
+      throw Exception('getOtherUserInfo exception: ${e}');
     }
   }
 
@@ -1024,11 +1086,10 @@ class ApiService {
       }).toList();
 
       return collections;
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'getUsersCollections error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getUsersCollections');
+      debugErrorMessage('getUsersCollections exception: ${e}');
+      throw Exception('getUsersCollections exception: ${e}');
     }
   }
 
@@ -1058,9 +1119,10 @@ class ApiService {
         }
       }
       await _supabase.from('collections').delete().eq('id', collection.id);
-    } catch (e) {
-      handleError('', 'deleteCollection error');
-      print('Failed to delete data: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in deleteCollection');
+      debugErrorMessage('deleteCollection exception: ${e}');
+      throw Exception('deleteCollection exception: ${e}');
     }
   }
 
@@ -1077,9 +1139,10 @@ class ApiService {
           .delete()
           .eq('collection_id', selection.collectionId)
           .eq('selection_id', selection.selectionId);
-    } catch (e) {
-      handleError('', 'deleteSelection error');
-      print('Failed to delete selection data: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in deleteSelection');
+      debugErrorMessage('deleteSelection exception: ${e}');
+      throw Exception('deleteSelection exception: ${e}');
     }
   }
 
@@ -1103,9 +1166,10 @@ class ApiService {
         print('Deleting images from paths: $fullFilePaths');
         print('Failed to delete storage images');
       }
-    } catch (e) {
-      handleError('', 'deleteStorageImages error');
-      print('Failed to delete storage image: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in deleteStorageImages');
+      debugErrorMessage('deleteStorageImages exception: ${e}');
+      throw Exception('deleteStorageImages exception: ${e}');
     }
   }
 
@@ -1117,11 +1181,10 @@ class ApiService {
           .update({'collection_id': newCollectionId, 'selection_id': null})
           .eq('collection_id', oldCollectionId)
           .eq('selection_id', oldSelectionId);
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'moveSelections error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in moveSelection');
+      debugErrorMessage('moveSelection exception: ${e}');
+      throw Exception('moveSelection exception: ${e}');
     }
   }
 
@@ -1178,11 +1241,10 @@ class ApiService {
         'selected_selection_id': _selectedSelectionId,
         'selected_user_id': selectedData.ownerId,
       }).eq('uuid', newData['selecting_uuid']);
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'moveSelections error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in selecting');
+      debugErrorMessage('selecting exception: ${e}');
+      throw Exception('selecting exception: ${e}');
     }
   }
 
@@ -1198,11 +1260,10 @@ class ApiService {
         'reporter_user_id': reportedUserId,
         'reported_post_id': reportedPostId,
       });
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'report error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in report');
+      debugErrorMessage('report exception: ${e}');
+      throw Exception('report exception: ${e}');
     }
   }
 
@@ -1215,64 +1276,55 @@ class ApiService {
         'blocker_user_id': blockerUserId,
         'blocked_user_id': blockedUserId,
       });
-    } on AuthException catch (e) {
-      throw Exception('Authentication error: ${e.message}');
-    } catch (e) {
-      handleError('', 'block error');
-      throw Exception('An unexpected error occurred: $e');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in block');
+      debugErrorMessage('block exception: ${e}');
+      throw Exception('block exception: ${e}');
     }
   }
 
   static Future<void> restartSubscriptions() async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
+    try {
+      _blockedUsersSubscription = _supabase
+          .from('block')
+          .stream(primaryKey: ['id'])
+          .eq('blocker_user_id', userId)
+          .listen((snapshot) async {
+            print('Blocked users updated');
 
-    _blockedUsersSubscription = _supabase
-        .from('block')
-        .stream(primaryKey: ['id'])
-        .eq('blocker_user_id', userId)
-        .listen((snapshot) async {
-          print('Blocked users updated');
-
-          _blockedUserIds =
-              snapshot.map((item) => item['blocked_user_id'] as int).toList();
-          print(_blockedUserIds);
-          await getCollections();
-          await getRankingCollections();
-          await getRankingSelections();
-          await getRankingUsers();
-        });
+            _blockedUserIds =
+                snapshot.map((item) => item['blocked_user_id'] as int).toList();
+            print(_blockedUserIds);
+            await getCollections();
+            await getRankingCollections();
+            await getRankingSelections();
+            await getRankingUsers();
+          });
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in restartSubscriptions');
+      debugErrorMessage('restartSubscriptions exception: ${e}');
+      throw Exception('restartSubscriptions exception: ${e}');
+    }
   }
 
   static Future<void> disposeSubscriptions() async {
-    await _blockedUsersSubscription?.cancel();
-    await _rankingCollectionsSubscription?.cancel();
-    await _rankingSelectionsSubscription?.cancel();
-    await _rankingUsersSubscription?.cancel();
-    await _myCollectionsSubscription?.cancel();
-    print('listener canceled');
+    try {
+      await _blockedUsersSubscription?.cancel();
+      await _rankingCollectionsSubscription?.cancel();
+      await _rankingSelectionsSubscription?.cancel();
+      await _rankingUsersSubscription?.cancel();
+      await _myCollectionsSubscription?.cancel();
+      print('listener canceled');
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in disposeSubscriptions');
+      debugErrorMessage('disposeSubscriptions exception: ${e}');
+      throw Exception('disposeSubscriptions exception: ${e}');
+    }
   }
 
-  static void handleError(String? statusCode, String? message) {
-    Toast.error();
-    if (statusCode == '400') {
-      print('Bad Request - 400: 잘못된 요청입니다.');
-    } else if (statusCode == '401') {
-      print('Unauthorized - 401: 인증이 필요합니다.');
-    } else if (statusCode == '403') {
-      print('Forbidden - 403: 접근이 금지되었습니다.');
-    } else if (statusCode == '404') {
-      print('Not Found - 404: 요청한 리소스를 찾을 수 없습니다.');
-    } else if (statusCode == '500') {
-      print('Internal Server Error - 500: 서버에 문제가 발생했습니다.');
-    } else if (statusCode == '502') {
-      print('Bad Gateway - 502: 잘못된 게이트웨이입니다.');
-    } else if (statusCode == '503') {
-      print('Service Unavailable - 503: 서비스가 일시적으로 이용 불가능합니다.');
-    } else if (statusCode == '504') {
-      print('Gateway Timeout - 504: 게이트웨이 응답 시간이 초과되었습니다.');
-    } else {
-      print('Unknown error: $message');
-    }
+  static void debugErrorMessage(String? message) {
+    print('$message');
   }
 }
