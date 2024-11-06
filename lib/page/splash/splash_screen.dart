@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../data/services/data_service.dart';
 import '../../page_navigator.dart';
 import '../join/set_user_info_screen.dart';
 import '../login/enter_login_screen.dart';
@@ -65,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.43,
+            top: MediaQuery.of(context).size.height * 0.42,
             child: Image.asset(
               'assets/images/image_logo_text.png',
               width: 150.0.w,
