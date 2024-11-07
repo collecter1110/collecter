@@ -36,7 +36,7 @@ class SearchProvider with ChangeNotifier {
   List<SelectionModel>? get searchSelections => _searchSelections;
   List<UserInfoModel>? get searchUsers => _searchUsers;
 
-  set saveSearchText(String searchText) {
+  set saveSearchText(String? searchText) {
     _searchText = searchText;
     notifyListeners();
   }

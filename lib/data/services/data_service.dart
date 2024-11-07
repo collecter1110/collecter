@@ -116,9 +116,11 @@ class DataService {
       final collectionProvider = locator<CollectionProvider>();
       final selectingProvider = context.read<SelectingProvider>();
       final userInfoProvider = context.read<UserInfoProvider>();
+      final searchProvider = context.read<SearchProvider>();
       await selectingProvider.getSelectData();
       await collectionProvider.fetchLikeCollections();
       await userInfoProvider.fetchUserInfo();
+      searchProvider.saveSearchText = null;
     });
   }
 }

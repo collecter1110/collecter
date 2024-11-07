@@ -24,10 +24,8 @@ class SelectingProvider with ChangeNotifier {
 
   Future<void> getSelectData() async {
     try {
-      if (_selectingMap.isEmpty && _selectedMap.isEmpty) {
-        await fetchSelectingData();
-        await fetchSelectedData();
-      }
+      await fetchSelectingData();
+      await fetchSelectedData();
     } catch (e) {
       print('Failed to get select data: $e');
     }
