@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:collecter/data/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/collection_provider.dart';
@@ -112,15 +113,20 @@ class DataService {
 
   static Future<void> loadInitialData(BuildContext context) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ApiService.restartSubscriptions();
-      final collectionProvider = locator<CollectionProvider>();
-      final selectingProvider = context.read<SelectingProvider>();
-      final userInfoProvider = context.read<UserInfoProvider>();
-      final searchProvider = context.read<SearchProvider>();
-      await selectingProvider.getSelectData();
-      await collectionProvider.fetchLikeCollections();
-      await userInfoProvider.fetchUserInfo();
-      searchProvider.saveSearchText = null;
+      final storage = FlutterSecureStorage();
+      final userIdString = await storage.read(key: 'USER_ID');
+      if (userIdString != null) {
+        int userId = int.parse(userIdString);
+        await ApiService.restartSubscriptions(userId);
+        final collectionProvider = locator<CollectionProvider>();
+        final selectingProvider = context.read<SelectingProvider>();
+        final userInfoProvider = context.read<UserInfoProvider>();
+        final searchProvider = context.read<SearchProvider>();
+        await selectingProvider.getSelectData();
+        await collectionProvider.fetchLikeCollections();
+        await userInfoProvider.fetchUserInfo();
+        searchProvider.saveSearchText = null;
+      }
     });
   }
 }

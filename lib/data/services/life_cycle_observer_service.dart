@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../main.dart';
 import 'api_service.dart';
 
@@ -14,19 +15,25 @@ class LifeCycleObserverService with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.paused) {
       _backgroundTime = DateTime.now();
-      ApiService.disposeSubscriptions();
+      await ApiService.disposeSubscriptions();
     } else if (state == AppLifecycleState.resumed) {
       if (_backgroundTime != null) {
         final timeInBackground = DateTime.now().difference(_backgroundTime!);
         if (timeInBackground.inMinutes >= _inactiveDuration) {
-          ApiService.disposeSubscriptions().then((_) => _restartApp());
+          await ApiService.disposeSubscriptions();
+          _restartApp();
         } else {
-          ApiService.restartSubscriptions();
+          final storage = FlutterSecureStorage();
+          final userIdString = await storage.read(key: 'USER_ID');
+          if (userIdString != null) {
+            int userId = int.parse(userIdString);
+            await ApiService.restartSubscriptions(userId);
+          }
+          _backgroundTime = null;
         }
-        _backgroundTime = null;
       }
     }
   }
