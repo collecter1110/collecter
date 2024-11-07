@@ -80,13 +80,13 @@ class ReportDialog extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(top: 10.0.h),
                   child: Text(
-                    '3건 이상의 신고가 접수되면 해당 컬렉션은 자동 삭제 됩니다.',
+                    '신고 3건 이상 접수 시, 24시간 내 심사 후 게시물이 삭제됩니다.\n(사용자 신고가 누적되면 계정이 1주일간 정지됩니다.)',
                     style: TextStyle(
                       fontFamily: 'PretendardRegular',
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
                       color: Colors.black,
-                      height: 1.2,
+                      height: 1.5,
                     ),
                   ),
                 ),

@@ -1252,24 +1252,29 @@ class ApiService {
   }
 
   static Future<void> restartSubscriptions() async {
+    final storage = FlutterSecureStorage();
     final userIdString = await storage.read(key: 'USER_ID');
-    int userId = int.parse(userIdString!);
     try {
-      _blockedUsersSubscription = _supabase
-          .from('block')
-          .stream(primaryKey: ['id'])
-          .eq('blocker_user_id', userId)
-          .listen((snapshot) async {
-            print('Blocked users updated');
+      if (userIdString != null) {
+        int userId = int.parse(userIdString);
+        _blockedUsersSubscription = _supabase
+            .from('block')
+            .stream(primaryKey: ['id'])
+            .eq('blocker_user_id', userId)
+            .listen((snapshot) async {
+              print('Blocked users updated');
 
-            _blockedUserIds =
-                snapshot.map((item) => item['blocked_user_id'] as int).toList();
-            print(_blockedUserIds);
-            await getCollections();
-            await getRankingCollections();
-            await getRankingSelections();
-            await getRankingUsers();
-          });
+              _blockedUserIds = snapshot
+                  .map((item) => item['blocked_user_id'] as int)
+                  .toList();
+              await getCollections();
+              await getRankingCollections();
+              await getRankingSelections();
+              await getRankingUsers();
+            });
+      } else {
+        return;
+      }
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in restartSubscriptions');
       debugErrorMessage('restartSubscriptions exception: ${e}');
