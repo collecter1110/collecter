@@ -120,7 +120,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                             ? _title = null
                             : _title = value;
                       },
-                      formatter: LengthLimitingTextInputFormatter(30),
+                      inputFormatter: [LengthLimitingTextInputFormatter(30)],
                     ),
                   ),
                   SizedBox(
@@ -163,8 +163,9 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                             child: AddTextFormField(
                               keyboardType: TextInputType.text,
                               hintText: '태그 추가',
-                              formatter: FilteringTextInputFormatter.deny(
-                                  RegExp(r'\s')),
+                              inputFormatter: [
+                                FilteringTextInputFormatter.deny(RegExp(r'\s'))
+                              ],
                               isMultipleLine: false,
                               onSaved: (value) {
                                 _inputTagValue = value ?? '';
@@ -238,7 +239,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                               ? _description = null
                               : _description = value;
                         },
-                        formatter: LengthLimitingTextInputFormatter(100),
+                        inputFormatter: [LengthLimitingTextInputFormatter(100)],
                       ),
                     ),
                   ),

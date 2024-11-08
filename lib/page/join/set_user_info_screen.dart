@@ -1,3 +1,4 @@
+import 'package:collecter/page/join/email_authentication_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
 import '../../data/services/api_service.dart';
-import 'welcome_screen_.dart';
 
 class SetUserInfoScreen extends StatefulWidget {
   const SetUserInfoScreen({
@@ -50,6 +50,45 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
     }
     if (!_userNameExist && _userNameFilled) {
       return '이미 존재하는 이름입니다.';
+    }
+  }
+
+  Future<void> serUserInfoWithLoading() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    try {
+      _userNameExist = await ApiService.checkUserNameDuplicate(userName);
+
+      if (!_userNameExist) {
+        final formKeyState = _userNameFormKey.currentState!;
+        if (formKeyState.validate()) {
+          formKeyState.save();
+        }
+      } else {
+        String? _description = _userDescriptionController.text.isNotEmpty
+            ? _userDescriptionController.text
+            : null;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EmailAuthenticationScreen(
+              userName: userName,
+              description: _description,
+            ),
+          ),
+        );
+      }
+    } finally {
+      Navigator.of(context, rootNavigator: true).pop();
     }
   }
 
@@ -131,28 +170,8 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
                   secondFieldState: true,
                   onTap: () async {
                     FocusScope.of(context).unfocus();
-                    _userNameExist =
-                        await ApiService.checkUserNameDuplicate(userName);
 
-                    if (!_userNameExist) {
-                      final formKeyState = _userNameFormKey.currentState!;
-                      if (formKeyState.validate()) {
-                        formKeyState.save();
-                      }
-                    } else {
-                      String? _description =
-                          _userDescriptionController.text.isNotEmpty
-                              ? _userDescriptionController.text
-                              : null;
-                      await ApiService.setUserInfo(userName, _description);
-                      await ApiService.saveUserIdInStorage();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WelcomeScreen(),
-                        ),
-                      );
-                    }
+                    await serUserInfoWithLoading();
                   },
                   text: '완료')
             ],

@@ -1,3 +1,4 @@
+import 'package:collecter/page/join/set_user_info_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -5,7 +6,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/pop_up/toast.dart';
 import '../../components/ui_kit/custom_check_box.dart';
-import 'email_authentication_screen.dart';
 
 class UserAgreement extends StatefulWidget {
   const UserAgreement({Key? key}) : super(key: key);
@@ -131,7 +131,7 @@ class _UserAgreementState extends State<UserAgreement> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const EmailAuthenticationScreen(),
+                        builder: (context) => const SetUserInfoScreen(),
                       ),
                     );
                   },

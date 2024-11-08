@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -333,6 +334,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ? _changedName = null
                               : _changedName = value;
                         },
+                        inputFormatter: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(
+                              r'^[a-zA-Z0-9_.]*$', // 영문, 숫자, 밑줄, 마침표만 허용
+                            ),
+                          ),
+                          LengthLimitingTextInputFormatter(10),
+                        ],
                       ),
                     ),
                     SizedBox(

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:collecter/page/join/welcome_screen_.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -6,10 +7,15 @@ import '../../components/button/authentication_button.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
 import '../../data/services/api_service.dart';
-import 'set_user_info_screen.dart';
 
 class EmailAuthenticationScreen extends StatefulWidget {
-  const EmailAuthenticationScreen({Key? key}) : super(key: key);
+  String userName;
+  String? description;
+  EmailAuthenticationScreen({
+    super.key,
+    required this.userName,
+    this.description,
+  });
 
   @override
   State<EmailAuthenticationScreen> createState() =>
@@ -122,16 +128,47 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
       } else {
         _emailAddressValid = await ApiService.sendOtp(emailAddress);
 
-        if (!_emailAddressValid) {
-          _handleEmailAddressValid();
-        } else {
+        if (_emailAddressValid) {
           FocusScope.of(context).requestFocus(_emailAuthFocus);
           startTimer();
+        } else {
+          _handleEmailAddressValid();
         }
       }
     } catch (e) {
       // 에러 처리 (필요한 경우)
       print('Error: $e');
+    } finally {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+  }
+
+  Future<void> verifyOtpWithLoading(
+      String authNumber, String emailAddress) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    try {
+      _emailAuthState = await ApiService.checkOtp(authNumber, emailAddress);
+      await ApiService.setUserInfo(widget.userName, widget.description);
+      await Future.delayed(Duration(seconds: 1));
+      if (!_emailAuthState) {
+        _handleEmailAuthValid();
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WelcomeScreen(),
+          ),
+        );
+      }
     } finally {
       Navigator.of(context, rootNavigator: true).pop();
     }
@@ -262,18 +299,8 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
                   secondFieldState: _emailAuthFilled,
                   onTap: () async {
                     FocusScope.of(context).unfocus();
-                    _emailAuthState =
-                        await ApiService.checkOtp(authNumber, emailAddress);
-                    if (!_emailAuthState) {
-                      _handleEmailAuthValid();
-                    } else {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SetUserInfoScreen(),
-                        ),
-                      );
-                    }
+
+                    await verifyOtpWithLoading(authNumber, emailAddress);
                   },
                   text: '회원가입')
             ],

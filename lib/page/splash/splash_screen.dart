@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../page_navigator.dart';
-import '../join/set_user_info_screen.dart';
 import '../login/enter_login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -22,21 +21,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _getAccessToken(BuildContext context) async {
     final storage = FlutterSecureStorage();
-    String? userIdString = await storage.read(key: 'USER_ID');
     String? _accessToken = await storage.read(key: 'ACCESS_TOKEN');
     await Future.delayed(Duration(seconds: 1));
     if (_accessToken != null) {
-      if (userIdString != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => PageNavigator()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => SetUserInfoScreen()),
-        );
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PageNavigator()),
+      );
     } else {
       Navigator.pushReplacement(
         context,

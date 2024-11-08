@@ -244,7 +244,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                             ? _title = null
                             : _title = value;
                       },
-                      formatter: LengthLimitingTextInputFormatter(30),
+                      inputFormatter: [LengthLimitingTextInputFormatter(30)],
                     ),
                   ),
                   SizedBox(
@@ -360,7 +360,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               ? _description = null
                               : _description = value;
                         },
-                        formatter: LengthLimitingTextInputFormatter(300),
+                        inputFormatter: [LengthLimitingTextInputFormatter(300)],
                       ),
                     ),
                   ),

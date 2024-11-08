@@ -311,7 +311,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                               ? _changedTitle = null
                               : _changedTitle = value;
                         },
-                        formatter: LengthLimitingTextInputFormatter(30),
+                        inputFormatter: [LengthLimitingTextInputFormatter(30)],
                       ),
                     ),
                     SizedBox(
@@ -341,8 +341,10 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                               child: AddTextFormField(
                                 keyboardType: TextInputType.multiline,
                                 hintText: '태그 추가',
-                                formatter: FilteringTextInputFormatter.deny(
-                                    RegExp(r'\s')),
+                                inputFormatter: [
+                                  FilteringTextInputFormatter.deny(
+                                      RegExp(r'\s'))
+                                ],
                                 isMultipleLine: false,
                                 onSaved: (value) {
                                   _inputTagValue = value ?? '';
@@ -420,7 +422,9 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                                 ? _changedDescription = null
                                 : _changedDescription = value;
                           },
-                          formatter: LengthLimitingTextInputFormatter(100),
+                          inputFormatter: [
+                            LengthLimitingTextInputFormatter(100)
+                          ],
                         ),
                       ),
                     ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/complete_button.dart';
-import '../../data/services/data_service.dart';
 import '../../page_navigator.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -10,6 +9,26 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> loading() async {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+      try {
+        await Future.delayed(Duration(seconds: 1));
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => PageNavigator()),
+            (route) => false);
+      } finally {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+    }
+
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0.h),
@@ -52,9 +71,7 @@ class WelcomeScreen extends StatelessWidget {
               secondFieldState: true,
               text: '시작하기',
               onTap: () async {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => PageNavigator()),
-                    (route) => false);
+                await loading();
               },
             ),
           ],
