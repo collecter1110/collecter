@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:collecter/page/join/welcome_screen_.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -6,10 +7,15 @@ import '../../components/button/authentication_button.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
 import '../../data/services/api_service.dart';
-import 'set_user_info_screen.dart';
 
 class EmailAuthenticationScreen extends StatefulWidget {
-  const EmailAuthenticationScreen({Key? key}) : super(key: key);
+  String userName;
+  String? description;
+  EmailAuthenticationScreen({
+    super.key,
+    required this.userName,
+    this.description,
+  });
 
   @override
   State<EmailAuthenticationScreen> createState() =>
@@ -151,6 +157,7 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
 
     try {
       _emailAuthState = await ApiService.checkOtp(authNumber, emailAddress);
+      await ApiService.setUserInfo(widget.userName, widget.description);
       await Future.delayed(Duration(seconds: 1));
       if (!_emailAuthState) {
         _handleEmailAuthValid();
@@ -158,7 +165,7 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => SetUserInfoScreen(),
+            builder: (context) => WelcomeScreen(),
           ),
         );
       }

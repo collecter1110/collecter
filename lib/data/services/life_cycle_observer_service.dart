@@ -29,8 +29,7 @@ class LifeCycleObserverService with WidgetsBindingObserver {
           final storage = FlutterSecureStorage();
           final userIdString = await storage.read(key: 'USER_ID');
           if (userIdString != null) {
-            int userId = int.parse(userIdString);
-            await ApiService.restartSubscriptions(userId);
+            await ApiService.restartSubscriptions();
           }
           _backgroundTime = null;
         }

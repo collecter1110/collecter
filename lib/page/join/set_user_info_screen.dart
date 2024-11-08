@@ -1,3 +1,4 @@
+import 'package:collecter/page/join/email_authentication_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
 import '../../data/services/api_service.dart';
-import 'welcome_screen_.dart';
 
 class SetUserInfoScreen extends StatefulWidget {
   const SetUserInfoScreen({
@@ -76,12 +76,14 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
         String? _description = _userDescriptionController.text.isNotEmpty
             ? _userDescriptionController.text
             : null;
-        await ApiService.setUserInfo(userName, _description);
-        await ApiService.saveUserIdInStorage();
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => WelcomeScreen(),
+            builder: (context) => EmailAuthenticationScreen(
+              userName: userName,
+              description: _description,
+            ),
           ),
         );
       }

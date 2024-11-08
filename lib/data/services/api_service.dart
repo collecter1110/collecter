@@ -22,7 +22,8 @@ import 'token_service.dart';
 class ApiService {
   static final storage = FlutterSecureStorage();
   static final SupabaseClient _supabase = Supabase.instance.client;
-  static final authUser = _supabase.auth.currentUser;
+  static Session? currentSession = _supabase.auth.currentSession;
+  static User? authUser = _supabase.auth.currentUser;
   static StreamSubscription<dynamic>? _blockedUsersSubscription;
   static StreamSubscription<List<Map<String, dynamic>>>?
       _rankingCollectionsSubscription;
@@ -72,39 +73,26 @@ class ApiService {
         _supabase.auth.onAuthStateChange.listen((data) async {
       try {
         final AuthChangeEvent event = data.event;
-        final Session? session = data.session;
+        currentSession = data.session;
+        authUser = _supabase.auth.currentUser;
 
         print('Auth event: $event');
 
         switch (event) {
           case AuthChangeEvent.initialSession:
+            await handleSessionTokens();
             break;
           case AuthChangeEvent.signedIn:
-            print('Save initial token');
-            if (session != null) {
-              await TokenService.saveTokens(
-                session.accessToken,
-                session.refreshToken ?? '',
-              );
-            }
+            await handleSessionTokens();
             break;
           case AuthChangeEvent.tokenRefreshed:
-            if (session != null) {
-              print('get refresh token');
-              await TokenService.saveTokens(
-                session.accessToken,
-                session.refreshToken ?? '',
-              );
-            } else {
-              print('refresh token expired');
-              await TokenService.deleteStorageData();
-            }
+            await handleSessionTokens();
+            await disposeSubscriptions();
+            await restartSubscriptions();
             break;
           case AuthChangeEvent.signedOut:
-            print('log out');
             await TokenService.deleteStorageData();
             break;
-
           default:
             break;
         }
@@ -116,36 +104,15 @@ class ApiService {
     });
   }
 
-  static Future<void> saveUserIdInStorage() async {
-    try {
-      String email = await ApiService.getEmailFromAuthentication();
-      final response = await _supabase
-          .from('userinfo')
-          .select('user_id')
-          .eq('email', email)
-          .single();
-      int userId = response['user_id'];
-      await storage.write(key: 'USER_ID', value: userId.toString());
-      print(userId);
-    } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in saveUserIdInStorage');
-      debugErrorMessage('saveUserIdInStorage exception: ${e}');
-      throw Exception('saveUserIdInStorage exception: ${e}');
-    }
-  }
-
-  static Future<String> getEmailFromAuthentication() async {
-    try {
-      if (authUser != null) {
-        return authUser!.email!;
-      } else {
-        debugErrorMessage('No authenticated user found');
-        throw Exception('No authenticated user found');
-      }
-    } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in getEmailFromAuthentication');
-      debugErrorMessage('getEmailFromAuthentication exception: ${e}');
-      throw Exception('getEmailFromAuthentication exception: ${e}');
+  static Future<void> handleSessionTokens() async {
+    if (currentSession != null && currentSession!.accessToken.isNotEmpty) {
+      await TokenService.saveTokens(
+        currentSession!.accessToken,
+        currentSession!.refreshToken ?? '',
+      );
+      print('토큰 세이브');
+    } else {
+      await TokenService.deleteStorageData();
     }
   }
 
@@ -190,6 +157,13 @@ class ApiService {
       );
 
       if (response.user != null) {
+        final response = await _supabase
+            .from('userinfo')
+            .select('user_id')
+            .eq('email', email)
+            .single();
+        int userId = response['user_id'];
+        await storage.write(key: 'USER_ID', value: userId.toString());
         return true;
       } else {
         return false;
@@ -199,7 +173,7 @@ class ApiService {
         Toast.notify(
             '3회 이상 신고로 계정이\n1주일간 정지되었습니다.\n문의 : contact.collect@gmail.com');
       }
-      trackError(e, stackTrace, 'Exception in checkOtp');
+      trackError(e, stackTrace, e.message);
       debugErrorMessage('checkOtp exception: ${e}');
       return false;
     } catch (e, stackTrace) {
@@ -228,11 +202,15 @@ class ApiService {
   static Future<void> setUserInfo(
       String userName, String? userDescription) async {
     try {
-      String email = await getEmailFromAuthentication();
-      await _supabase.from('userinfo').update({
-        'name': userName,
-        'description': userDescription,
-      }).eq('email', email);
+      String? _email = authUser!.email;
+      if (_email != null) {
+        await _supabase.from('userinfo').update({
+          'name': userName,
+          'description': userDescription,
+        }).eq('email', _email);
+      } else {
+        print('authUser email is null');
+      }
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in setUserInfo');
       debugErrorMessage('setUserInfo exception: ${e}');
@@ -1276,34 +1254,39 @@ class ApiService {
     }
   }
 
-  static Future<void> restartSubscriptions(userId) async {
+  static Future<void> restartSubscriptions() async {
     try {
-      _blockedUsersSubscription = _supabase
-          .from('block')
-          .stream(primaryKey: ['id'])
-          .eq('blocker_user_id', userId)
-          .listen((snapshot) async {
-            print('Blocked users updated');
+      final userIdString = await storage.read(key: 'USER_ID');
+      if (userIdString != null) {
+        int userId = int.parse(userIdString);
+        _blockedUsersSubscription = _supabase
+            .from('block')
+            .stream(primaryKey: ['id'])
+            .eq('blocker_user_id', userId)
+            .listen((snapshot) async {
+              print('Blocked users updated');
 
-            _blockedUserIds =
-                snapshot.map((item) => item['blocked_user_id'] as int).toList();
-            try {
-              await getCollections();
-              await getRankingCollections();
-              await getRankingSelections();
-              await getRankingUsers();
-            } catch (innerError, innerStackTrace) {
-              trackError(innerError, innerStackTrace,
-                  'Exception during data updates in restartSubscriptions');
+              _blockedUserIds = snapshot
+                  .map((item) => item['blocked_user_id'] as int)
+                  .toList();
+              try {
+                await getCollections();
+                await getRankingCollections();
+                await getRankingSelections();
+                await getRankingUsers();
+              } catch (innerError, innerStackTrace) {
+                trackError(innerError, innerStackTrace,
+                    'Exception during data updates in restartSubscriptions');
+                debugErrorMessage(
+                    'Data update exception in restartSubscriptions: $innerError');
+              }
+            }, onError: (error, stackTrace) {
+              trackError(error, stackTrace,
+                  'Exception in stream subscription of restartSubscriptions');
               debugErrorMessage(
-                  'Data update exception in restartSubscriptions: $innerError');
-            }
-          }, onError: (error, stackTrace) {
-            trackError(error, stackTrace,
-                'Exception in stream subscription of restartSubscriptions');
-            debugErrorMessage(
-                'Stream subscription exception in restartSubscriptions: $error');
-          });
+                  'Stream subscription exception in restartSubscriptions: $error');
+            });
+      }
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in restartSubscriptions');
       debugErrorMessage('restartSubscriptions exception: ${e}');
