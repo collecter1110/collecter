@@ -23,7 +23,6 @@ class LifeCycleObserverService with WidgetsBindingObserver {
       if (_backgroundTime != null) {
         final timeInBackground = DateTime.now().difference(_backgroundTime!);
         if (timeInBackground.inMinutes >= _inactiveDuration) {
-          await ApiService.disposeSubscriptions();
           _restartApp();
         } else {
           final storage = FlutterSecureStorage();

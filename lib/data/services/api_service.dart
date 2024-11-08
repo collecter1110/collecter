@@ -173,6 +173,9 @@ class ApiService {
         Toast.notify(
             '3회 이상 신고로 계정이\n1주일간 정지되었습니다.\n문의 : contact.collect@gmail.com');
       }
+      if (e.message == 'Token has expired or is invalid') {
+        return false;
+      }
       trackError(e, stackTrace, e.message);
       debugErrorMessage('checkOtp exception: ${e}');
       return false;
