@@ -80,13 +80,13 @@ class ApiService {
 
         switch (event) {
           case AuthChangeEvent.initialSession:
-            await handleSessionTokens();
+            await handleSaveAccessTokens();
             break;
           case AuthChangeEvent.signedIn:
-            await handleSessionTokens();
+            await handleSaveAccessTokens();
             break;
           case AuthChangeEvent.tokenRefreshed:
-            await handleSessionTokens();
+            await handleSaveAccessTokens();
             await disposeSubscriptions();
             await restartSubscriptions();
             break;
@@ -104,7 +104,7 @@ class ApiService {
     });
   }
 
-  static Future<void> handleSessionTokens() async {
+  static Future<void> handleSaveAccessTokens() async {
     if (currentSession != null && currentSession!.accessToken.isNotEmpty) {
       await TokenService.saveTokens(
         currentSession!.accessToken,
