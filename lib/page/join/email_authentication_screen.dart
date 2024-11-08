@@ -122,11 +122,11 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
       } else {
         _emailAddressValid = await ApiService.sendOtp(emailAddress);
 
-        if (!_emailAddressValid) {
-          _handleEmailAddressValid();
-        } else {
+        if (_emailAddressValid) {
           FocusScope.of(context).requestFocus(_emailAuthFocus);
           startTimer();
+        } else {
+          _handleEmailAddressValid();
         }
       }
     } catch (e) {

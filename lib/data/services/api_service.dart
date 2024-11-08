@@ -49,7 +49,8 @@ class ApiService {
       },
     );
 
-    if (exception is SocketException) {
+    if (exception is SocketException ||
+        exception is RealtimeSubscribeException) {
       Toast.notify('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
     } else if (exception is TimeoutException) {
       Toast.notify('요청 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.');
@@ -176,7 +177,7 @@ class ApiService {
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in sendOtp');
       debugErrorMessage('sendOtp exception: ${e}');
-      return false;
+      throw Exception('sendOtp exception: ${e}');
     }
   }
 
