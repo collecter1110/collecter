@@ -28,6 +28,7 @@ class DeleteUserScreen extends StatelessWidget {
         await ApiService.cancelMembership();
         await ApiService.deleteAuthUser();
         await TokenService.deleteStorageData();
+        await ApiService.logout();
       } catch (e) {
         print('Error: $e');
       } finally {
