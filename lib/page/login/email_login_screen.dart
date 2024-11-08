@@ -6,7 +6,6 @@ import '../../components/button/authentication_button.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/data_service.dart';
 import '../../page_navigator.dart';
 
 class EmailLoginScreen extends StatefulWidget {
@@ -116,6 +115,36 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
         startTimer();
       } else {
         _handleEmailAddressValid();
+      }
+    } finally {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+  }
+
+  Future<void> verifyOtpWithLoading(
+      String authNumber, String emailAddress) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    try {
+      _emailAuthState = await ApiService.checkOtp(authNumber, emailAddress);
+      await Future.delayed(Duration(seconds: 1));
+      if (!_emailAuthState) {
+        _handleEmailAuthValid();
+      } else {
+        await ApiService.saveUserIdInStorage();
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => PageNavigator()),
+          (route) => false,
+        );
       }
     } finally {
       Navigator.of(context, rootNavigator: true).pop();
@@ -247,19 +276,8 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                   secondFieldState: _emailAuthFilled,
                   onTap: () async {
                     FocusScope.of(context).unfocus();
-                    _emailAuthState =
-                        await ApiService.checkOtp(authNumber, emailAddress);
-                    if (!_emailAuthState) {
-                      _handleEmailAuthValid();
-                    } else {
-                      await ApiService.saveUserIdInStorage();
 
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => PageNavigator()),
-                        (route) => false,
-                      );
-                    }
+                    await verifyOtpWithLoading(authNumber, emailAddress);
                   },
                   text: '로그인')
             ],

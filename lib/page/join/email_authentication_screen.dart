@@ -137,6 +137,36 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
     }
   }
 
+  Future<void> verifyOtpWithLoading(
+      String authNumber, String emailAddress) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    try {
+      _emailAuthState = await ApiService.checkOtp(authNumber, emailAddress);
+      await Future.delayed(Duration(seconds: 1));
+      if (!_emailAuthState) {
+        _handleEmailAuthValid();
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SetUserInfoScreen(),
+          ),
+        );
+      }
+    } finally {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+  }
+
   void _handleEmailAddressValid() {
     final formKeyState = _emailAddressFormKey.currentState!;
     if (formKeyState.validate()) {
@@ -262,18 +292,8 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
                   secondFieldState: _emailAuthFilled,
                   onTap: () async {
                     FocusScope.of(context).unfocus();
-                    _emailAuthState =
-                        await ApiService.checkOtp(authNumber, emailAddress);
-                    if (!_emailAuthState) {
-                      _handleEmailAuthValid();
-                    } else {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SetUserInfoScreen(),
-                        ),
-                      );
-                    }
+
+                    await verifyOtpWithLoading(authNumber, emailAddress);
                   },
                   text: '회원가입')
             ],

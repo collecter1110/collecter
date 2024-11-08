@@ -53,6 +53,43 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
     }
   }
 
+  Future<void> serUserInfoWithLoading() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    try {
+      _userNameExist = await ApiService.checkUserNameDuplicate(userName);
+
+      if (!_userNameExist) {
+        final formKeyState = _userNameFormKey.currentState!;
+        if (formKeyState.validate()) {
+          formKeyState.save();
+        }
+      } else {
+        String? _description = _userDescriptionController.text.isNotEmpty
+            ? _userDescriptionController.text
+            : null;
+        await ApiService.setUserInfo(userName, _description);
+        await ApiService.saveUserIdInStorage();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WelcomeScreen(),
+          ),
+        );
+      }
+    } finally {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+  }
+
   @override
   void dispose() {
     _userNameFocus.dispose();
@@ -131,28 +168,8 @@ class _SetUserInfoScreenState extends State<SetUserInfoScreen> {
                   secondFieldState: true,
                   onTap: () async {
                     FocusScope.of(context).unfocus();
-                    _userNameExist =
-                        await ApiService.checkUserNameDuplicate(userName);
 
-                    if (!_userNameExist) {
-                      final formKeyState = _userNameFormKey.currentState!;
-                      if (formKeyState.validate()) {
-                        formKeyState.save();
-                      }
-                    } else {
-                      String? _description =
-                          _userDescriptionController.text.isNotEmpty
-                              ? _userDescriptionController.text
-                              : null;
-                      await ApiService.setUserInfo(userName, _description);
-                      await ApiService.saveUserIdInStorage();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WelcomeScreen(),
-                        ),
-                      );
-                    }
+                    await serUserInfoWithLoading();
                   },
                   text: '완료')
             ],
