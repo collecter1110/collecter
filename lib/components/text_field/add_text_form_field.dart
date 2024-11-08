@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AddTextFormField extends StatefulWidget {
   final TextInputType keyboardType;
   final String? hintText;
-  final TextInputFormatter? formatter;
+  final List<TextInputFormatter>? inputFormatter;
   final bool isMultipleLine;
   final FormFieldSetter<String> onSaved;
   final String? initialText;
@@ -14,7 +14,7 @@ class AddTextFormField extends StatefulWidget {
     super.key,
     required this.keyboardType,
     this.hintText,
-    this.formatter,
+    this.inputFormatter,
     required this.isMultipleLine,
     required this.onSaved,
     this.initialText,
@@ -103,7 +103,8 @@ class _AddTextFormFieldState extends State<AddTextFormField> {
           hintText: widget.hintText,
           hintStyle: _hintTextStyle,
         ),
-        inputFormatters: widget.formatter != null ? [widget.formatter!] : [],
+        inputFormatters:
+            widget.inputFormatter != null ? widget.inputFormatter! : [],
         style: _fieldTextStyle,
         onSaved: widget.onSaved,
       ),

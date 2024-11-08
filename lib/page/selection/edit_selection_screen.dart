@@ -363,7 +363,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                               ? _changedTitle = null
                               : _changedTitle = value;
                         },
-                        formatter: LengthLimitingTextInputFormatter(30),
+                        inputFormatter: [LengthLimitingTextInputFormatter(30)],
                       ),
                     ),
                     SizedBox(
@@ -393,8 +393,10 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                               child: AddTextFormField(
                                 keyboardType: TextInputType.text,
                                 hintText: '키워드 추가',
-                                formatter: FilteringTextInputFormatter.deny(
-                                    RegExp(r'\s')),
+                                inputFormatter: [
+                                  FilteringTextInputFormatter.deny(
+                                      RegExp(r'\s'))
+                                ],
                                 isMultipleLine: false,
                                 onSaved: (value) {
                                   _inputKeywordValue = value ?? '';
@@ -472,7 +474,9 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                 ? _changedDescription = null
                                 : _changedDescription = value;
                           },
-                          formatter: LengthLimitingTextInputFormatter(300),
+                          inputFormatter: [
+                            LengthLimitingTextInputFormatter(300)
+                          ],
                         ),
                       ),
                     ),
