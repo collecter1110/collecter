@@ -46,8 +46,8 @@ Future<void> main() async {
 
 Future<void> initializeApp() async {
   await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL'] ?? '',
-    anonKey: dotenv.env['SUPABASE_API_KEY'] ?? '',
+    url: dotenv.env['SUPABASE_TEST_URL'] ?? '',
+    anonKey: dotenv.env['SUPABASE_TEST_API_KEY'] ?? '',
   );
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
