@@ -7,18 +7,11 @@ class LifeCycleObserverService with WidgetsBindingObserver {
   DateTime? _backgroundTime;
   final int _inactiveDuration = 5;
 
-  LifeCycleObserverService() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ApiService.disposeSubscriptions();
-      print('앱 새로고침 또는 시작 시 구독 해제 완료');
-    });
-  }
-
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.paused) {
       _backgroundTime = DateTime.now();
-      await ApiService.disposeSubscriptions();
+      await ApiService.stopSubscriptions();
     } else if (state == AppLifecycleState.resumed) {
       if (_backgroundTime != null) {
         final timeInBackground = DateTime.now().difference(_backgroundTime!);
@@ -28,7 +21,7 @@ class LifeCycleObserverService with WidgetsBindingObserver {
           final storage = FlutterSecureStorage();
           final userIdString = await storage.read(key: 'USER_ID');
           if (userIdString != null) {
-            await ApiService.restartSubscriptions();
+            await ApiService.startSubscriptions();
           }
           _backgroundTime = null;
         }

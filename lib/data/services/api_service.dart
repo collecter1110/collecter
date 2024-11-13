@@ -16,7 +16,6 @@ import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
 import '../provider/collection_provider.dart';
-import '../provider/ranking_provider.dart';
 import 'locator.dart';
 import 'token_service.dart';
 
@@ -26,12 +25,6 @@ class ApiService {
   static Session? currentSession = _supabase.auth.currentSession;
   static User? authUser = _supabase.auth.currentUser;
   static StreamSubscription<dynamic>? _blockedUsersSubscription;
-  static StreamSubscription<List<Map<String, dynamic>>>?
-      _rankingCollectionsSubscription;
-  static StreamSubscription<List<Map<String, dynamic>>>?
-      _rankingSelectionsSubscription;
-  static StreamSubscription<List<Map<String, dynamic>>>?
-      _rankingUsersSubscription;
   static StreamSubscription<List<Map<String, dynamic>>>?
       _myCollectionsSubscription;
   static List<int> _blockedUserIds = [];
@@ -95,8 +88,6 @@ class ApiService {
             break;
           case AuthChangeEvent.tokenRefreshed:
             await handleSaveAccessTokens();
-            await disposeSubscriptions();
-            await restartSubscriptions();
             break;
           case AuthChangeEvent.signedOut:
             await TokenService.deleteStorageData();
@@ -441,146 +432,77 @@ class ApiService {
 
   static Future<List<CollectionModel>> getRankingCollections() async {
     try {
-      final _completer = Completer<List<CollectionModel>>();
-      List<CollectionModel>? _updatedCollections;
-
-      final _initialRankingCollections = await _supabase
+      final response = await _supabase
           .from('collections')
           .select()
           .eq('is_public', true)
+          .not('user_id', 'in', _blockedUserIds)
           .order('like_num')
           .limit(10);
 
-      List<int> _initialRankingCollectionIds =
-          (_initialRankingCollections as List<dynamic>)
-              .where((item) => !_blockedUserIds.contains(item['user_id']))
-              .map((item) => item['id'] as int)
-              .toList();
+      List<CollectionModel> rankingCollctions =
+          response.map((item) => CollectionModel.fromJson(item)).toList();
 
-      _rankingCollectionsSubscription = _supabase
-          .from('collections')
-          .stream(primaryKey: ['id'])
-          .inFilter('id', _initialRankingCollectionIds)
-          .order('like_num')
-          .limit(20)
-          .listen((snapshot) {
-            print('랭킹 컬렉션 callback');
-            _updatedCollections = snapshot.map((item) {
-              return CollectionModel.fromJson(item);
-            }).toList();
-
-            locator<RankingProvider>().updateRankingCollections =
-                _updatedCollections!;
-
-            if (!_completer.isCompleted) {
-              _completer.complete(_updatedCollections!);
-            }
-          }, onError: (error, stackTrace) {
-            trackError(error, stackTrace, 'Exception in getRankingCollections');
-            debugErrorMessage('getRankingCollections exception: $error');
-            if (!_completer.isCompleted) {
-              _completer.completeError(error, stackTrace);
-            }
-          });
-
-      return _completer.future;
+      return rankingCollctions;
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in getRankingCollections');
-      debugErrorMessage('getRankingCollections exception: ${e}');
-      throw Exception('getRankingCollections exception: ${e}');
+      debugErrorMessage('getRankingCollections exception: $e');
+      throw Exception('getRankingCollections exception: $e');
     }
   }
 
   static Future<List<SelectionModel>> getRankingSelections() async {
     try {
-      final _completer = Completer<List<SelectionModel>>();
-      List<SelectionModel>? updatedSelections;
-
-      _rankingSelectionsSubscription = _supabase
+      final responseData = await _supabase
           .from('selections')
-          .stream(primaryKey: ['collection_id', 'selection_id'])
+          .select()
+          .eq('is_selecting', false)
+          .not('user_id', 'in', _blockedUserIds)
           .order('select_num')
-          .limit(20)
-          .listen((snapshot) {
-            print('랭킹 셀렉션 callback');
+          .limit(20);
 
-            updatedSelections = snapshot.where((item) {
-              return !_blockedUserIds.contains(item['user_id']) &&
-                  item['is_selecting'] == false;
-            }).map((item) {
-              List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
-              String? firstImagePath =
-                  imageFilePaths != null && imageFilePaths.isNotEmpty
-                      ? imageFilePaths.first as String
-                      : null;
+      List<SelectionModel> rankingSelections = responseData.map((item) {
+        List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
+        String? firstImagePath =
+            imageFilePaths != null && imageFilePaths.isNotEmpty
+                ? imageFilePaths.first as String
+                : null;
 
-              return SelectionModel.fromJson({
-                ...item,
-              }, thumbFilePath: firstImagePath);
-            }).toList();
+        return SelectionModel.fromJson({
+          ...item,
+        }, thumbFilePath: firstImagePath);
+      }).toList();
 
-            locator<RankingProvider>().updateRankingSelections =
-                updatedSelections!;
-
-            if (!_completer.isCompleted) {
-              _completer.complete(updatedSelections!);
-            }
-          }, onError: (error, stackTrace) {
-            trackError(error, stackTrace, 'Exception in getRankingSelections');
-            debugErrorMessage('getRankingSelections exception: $error');
-            if (!_completer.isCompleted) {
-              _completer.completeError(error, stackTrace);
-            }
-          });
-
-      return _completer.future;
+      return rankingSelections;
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in getRankingSelections');
-      debugErrorMessage('getRankingSelections exception: ${e}');
-      throw Exception('getRankingSelections exception: ${e}');
+      debugErrorMessage('getRankingSelections exception: $e');
+      throw Exception('getRankingSelections exception: $e');
     }
   }
 
   static Future<List<UserInfoModel>> getRankingUsers() async {
     try {
-      final _completer = Completer<List<UserInfoModel>>();
-      List<UserInfoModel>? updatedUsers;
-      _rankingUsersSubscription = _supabase
+      final response = await _supabase
           .from('userinfo')
-          .stream(primaryKey: ['user_id'])
+          .select()
+          .not('user_id', 'in', _blockedUserIds)
           .order('created_at', ascending: false)
-          .limit(10)
-          .listen((snapshot) {
-            print('랭킹 유저 callback');
-            updatedUsers = snapshot
-                .where(
-                    (item) => !_blockedUserIds.contains(item['user_id'] as int))
-                .map((item) {
-              return UserInfoModel.fromJson(item);
-            }).toList();
+          .limit(10);
 
-            locator<RankingProvider>().updateRankingUsers = updatedUsers!;
+      List<UserInfoModel> rankingUsers = (response as List<dynamic>)
+          .map((item) => UserInfoModel.fromJson(item))
+          .toList();
 
-            if (!_completer.isCompleted) {
-              _completer.complete(updatedUsers!);
-            }
-          }, onError: (error, stackTrace) {
-            trackError(error, stackTrace, 'Exception in getRankingUsers');
-            debugErrorMessage('getRankingUsers exception: $error');
-            if (!_completer.isCompleted) {
-              _completer.completeError(error, stackTrace);
-            }
-          });
-
-      return _completer.future;
+      return rankingUsers;
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in getRankingUsers');
-      debugErrorMessage('getRankingUsers exception: ${e}');
-      throw Exception('getRankingUsers exception: ${e}');
+      debugErrorMessage('getRankingUsers exception: $e');
+      throw Exception('getRankingUsers exception: $e');
     }
   }
 
-  static Future<List<CollectionModel>> getCollections() async {
+  static Future<List<CollectionModel>> myCollectionsSubscription() async {
     try {
       final _completer = Completer<List<CollectionModel>>();
       List<CollectionModel>? _updatedCollections;
@@ -1254,7 +1176,12 @@ class ApiService {
     }
   }
 
-  static Future<void> restartSubscriptions() async {
+  static Future<void> startSubscriptions() async {
+    await blockSubscriptions();
+    await myCollectionsSubscription();
+  }
+
+  static Future<void> blockSubscriptions() async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       if (userIdString != null) {
@@ -1269,17 +1196,6 @@ class ApiService {
               _blockedUserIds = snapshot
                   .map((item) => item['blocked_user_id'] as int)
                   .toList();
-              try {
-                await getCollections();
-                await getRankingCollections();
-                await getRankingSelections();
-                await getRankingUsers();
-              } catch (innerError, innerStackTrace) {
-                trackError(innerError, innerStackTrace,
-                    'Exception during data updates in restartSubscriptions');
-                debugErrorMessage(
-                    'Data update exception in restartSubscriptions: $innerError');
-              }
             }, onError: (error, stackTrace) {
               trackError(error, stackTrace,
                   'Exception in stream subscription of restartSubscriptions');
@@ -1294,13 +1210,12 @@ class ApiService {
     }
   }
 
-  static Future<void> disposeSubscriptions() async {
+  static Future<void> stopSubscriptions() async {
     try {
       await _blockedUsersSubscription?.cancel();
-      await _rankingCollectionsSubscription?.cancel();
-      await _rankingSelectionsSubscription?.cancel();
-      await _rankingUsersSubscription?.cancel();
       await _myCollectionsSubscription?.cancel();
+      _blockedUsersSubscription = null;
+      _myCollectionsSubscription = null;
       print('listener canceled');
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in disposeSubscriptions');
