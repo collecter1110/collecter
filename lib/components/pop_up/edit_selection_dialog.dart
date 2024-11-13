@@ -63,9 +63,7 @@ class EditSelectionDialog extends StatelessWidget {
             voidCallback: () async {
               await DataService.updateDataProcessHandler(
                 context,
-                selectionDetail.collectionId,
                 selectionDetail.userId!,
-                selectionDetail.selectionId,
                 () async {
                   await ApiService.moveSelection(selectionDetail.collectionId,
                       selectionDetail.selectionId, provider.collectionId!);
@@ -116,9 +114,7 @@ class EditSelectionDialog extends StatelessWidget {
                         if (isDelete) {
                           await DataService.updateDataProcessHandler(
                             context,
-                            selectionDetail.collectionId,
                             selectionDetail.userId!,
-                            selectionDetail.selectionId,
                             () async {
                               await ApiService.deleteSelection(selectionDetail);
 
@@ -157,9 +153,7 @@ class EditSelectionDialog extends StatelessWidget {
                                   callback: () async {
                                     await DataService.updateDataProcessHandler(
                                       context,
-                                      selectionDetail.collectionId,
                                       selectionDetail.userId!,
-                                      selectionDetail.selectionId,
                                       () async {
                                         await collectionProvider
                                             .fetchCollectionDetail();

@@ -66,7 +66,7 @@ class MyAppWrapper extends StatelessWidget {
           create: (context) => locator<PageRouteProvider>(),
         ),
         ChangeNotifierProvider<RankingProvider>(
-          create: (context) => RankingProvider(),
+          create: (context) => locator<RankingProvider>(),
         ),
         ChangeNotifierProvider<TagProvider>(
           create: (context) => TagProvider(),

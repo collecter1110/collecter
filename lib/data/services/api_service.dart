@@ -16,6 +16,7 @@ import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
 import '../provider/collection_provider.dart';
+import 'data_service.dart';
 import 'locator.dart';
 import 'token_service.dart';
 
@@ -28,6 +29,7 @@ class ApiService {
   static StreamSubscription<List<Map<String, dynamic>>>?
       _myCollectionsSubscription;
   static List<int> _blockedUserIds = [];
+  static int? _blockedUserId;
 
   static Future<void> trackError(
       dynamic exception, StackTrace stackTrace, String description) async {
@@ -1164,7 +1166,7 @@ class ApiService {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       int blockerUserId = int.parse(userIdString!);
-
+      _blockedUserId = blockedUserId;
       await _supabase.from('block').insert({
         'blocker_user_id': blockerUserId,
         'blocked_user_id': blockedUserId,
@@ -1196,6 +1198,10 @@ class ApiService {
               _blockedUserIds = snapshot
                   .map((item) => item['blocked_user_id'] as int)
                   .toList();
+              if (_blockedUserId != null) {
+                await DataService.reloadLocalData(_blockedUserId!);
+                _blockedUserId = null;
+              }
             }, onError: (error, stackTrace) {
               trackError(error, stackTrace,
                   'Exception in stream subscription of restartSubscriptions');

@@ -19,49 +19,41 @@ class RankingProvider with ChangeNotifier {
   Future<void> getRankingCollectionData() async {
     _state = ConnectionState.waiting;
     await Future.delayed(Duration(milliseconds: 300));
-
     try {
       await fetchRankingCollections();
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {
-      notifyListeners();
-    }
+    } finally {}
   }
 
   Future<void> getRankingSelectionData() async {
     _state = ConnectionState.waiting;
     await Future.delayed(Duration(milliseconds: 300));
-
     try {
       await fetchRankingSelections();
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {
-      notifyListeners();
-    }
+    } finally {}
   }
 
   Future<void> getRankingUserData() async {
     _state = ConnectionState.waiting;
     await Future.delayed(Duration(milliseconds: 300));
-
     try {
       await fetchRankingUsers();
       _state = ConnectionState.done;
     } catch (e) {
       _state = ConnectionState.none;
-    } finally {
-      notifyListeners();
-    }
+    } finally {}
   }
 
   Future<void> fetchRankingCollections() async {
     try {
       _rankingCollections = await ApiService.getRankingCollections();
       print('_rankingCollections');
+      notifyListeners();
     } catch (e) {
       print('Failed to fetchRankingCollections: $e');
     }
@@ -71,6 +63,7 @@ class RankingProvider with ChangeNotifier {
     try {
       _rankingSelections = await ApiService.getRankingSelections();
       print('_rankingSelections');
+      notifyListeners();
     } catch (e) {
       print('Failed to fetchRankingSelections: $e');
     }
@@ -80,6 +73,7 @@ class RankingProvider with ChangeNotifier {
     try {
       _rankingUsers = await ApiService.getRankingUsers();
       print('_rankingUsers');
+      notifyListeners();
     } catch (e) {
       print('Failed to rankingUsers: $e');
     }
