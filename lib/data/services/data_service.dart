@@ -127,10 +127,14 @@ class DataService {
   static Future<void> loadInitialData(BuildContext context) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await ApiService.startSubscriptions();
+      final rankingProvider = locator<RankingProvider>();
       final collectionProvider = locator<CollectionProvider>();
       final selectingProvider = context.read<SelectingProvider>();
       final userInfoProvider = context.read<UserInfoProvider>();
       final searchProvider = context.read<SearchProvider>();
+      await rankingProvider.fetchRankingCollections();
+      await rankingProvider.fetchRankingSelections();
+      await rankingProvider.fetchRankingUsers();
       await selectingProvider.getSelectData();
       await collectionProvider.fetchLikeCollections();
       await userInfoProvider.fetchUserInfo();

@@ -6,48 +6,13 @@ import '../model/user_info_model.dart';
 import '../services/api_service.dart';
 
 class RankingProvider with ChangeNotifier {
-  ConnectionState _state = ConnectionState.waiting;
   List<CollectionModel>? _rankingCollections;
   List<SelectionModel>? _rankingSelections;
   List<UserInfoModel>? _rankingUsers;
 
-  ConnectionState get state => _state;
   List<CollectionModel>? get rankingCollections => _rankingCollections;
   List<SelectionModel>? get rankingSelections => _rankingSelections;
   List<UserInfoModel>? get rankingUsers => _rankingUsers;
-
-  Future<void> getRankingCollectionData() async {
-    _state = ConnectionState.waiting;
-    await Future.delayed(Duration(milliseconds: 300));
-    try {
-      await fetchRankingCollections();
-      _state = ConnectionState.done;
-    } catch (e) {
-      _state = ConnectionState.none;
-    } finally {}
-  }
-
-  Future<void> getRankingSelectionData() async {
-    _state = ConnectionState.waiting;
-    await Future.delayed(Duration(milliseconds: 300));
-    try {
-      await fetchRankingSelections();
-      _state = ConnectionState.done;
-    } catch (e) {
-      _state = ConnectionState.none;
-    } finally {}
-  }
-
-  Future<void> getRankingUserData() async {
-    _state = ConnectionState.waiting;
-    await Future.delayed(Duration(milliseconds: 300));
-    try {
-      await fetchRankingUsers();
-      _state = ConnectionState.done;
-    } catch (e) {
-      _state = ConnectionState.none;
-    } finally {}
-  }
 
   Future<void> fetchRankingCollections() async {
     try {
