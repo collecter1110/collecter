@@ -230,7 +230,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                           child: index == _imageNum
                               ? InkWell(
                                   onTap: () async {
-                                    if (index == _imageNum && _imageNum <= 4) {
+                                    if (index == _imageNum && _imageNum <= 1) {
                                       await _pickImages(ImageSource.gallery);
                                     } else {
                                       Toast.notify('최대 사진 개수를 초과했습니다.');

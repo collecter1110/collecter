@@ -106,7 +106,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   }
 
   Future _pickImages() async {
-    final List<XFile> pickedFileList = await _picker.pickMultiImage(limit: 5);
+    final List<XFile> pickedFileList = await _picker.pickMultiImage(limit: 2);
     setState(() {
       _picekdImages = pickedFileList;
     });
