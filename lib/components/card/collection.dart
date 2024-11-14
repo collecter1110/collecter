@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/collection_model.dart';
@@ -37,36 +38,52 @@ class Collection extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AspectRatio(
-            aspectRatio: 0.9,
-            child: collectionDetail.imageFilePath != null
-                ? Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color(0xFFdee2e6),
-                        width: 0.5.w,
+          Stack(
+            children: [
+              AspectRatio(
+                aspectRatio: 0.9,
+                child: collectionDetail.imageFilePath != null
+                    ? Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Color(0xFFdee2e6),
+                            width: 0.5.w,
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.r),
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.r),
+                          ),
+                          child: Image.network(
+                            StorageService.getFullImageUrl(
+                                '${collectionDetail.userId}/collections',
+                                collectionDetail.imageFilePath!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                            color: Color(0xFFf1f3f5),
+                            borderRadius: BorderRadius.circular(8.r)),
                       ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.r),
+              ),
+              collectionDetail.isPublic
+                  ? SizedBox.shrink()
+                  : Positioned(
+                      top: 6.0.w,
+                      right: 4.0.w,
+                      child: SvgPicture.asset(
+                        'assets/icons/icon_lock.svg',
+                        height: 24.0.h,
+                        colorFilter:
+                            ColorFilter.mode(Colors.white, BlendMode.srcIn),
                       ),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.r),
-                      ),
-                      child: Image.network(
-                        StorageService.getFullImageUrl(
-                            '${collectionDetail.userId}/collections',
-                            collectionDetail.imageFilePath!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  )
-                : Container(
-                    decoration: BoxDecoration(
-                        color: Color(0xFFf1f3f5),
-                        borderRadius: BorderRadius.circular(8.r)),
-                  ),
+            ],
           ),
           Expanded(
             child: Padding(
