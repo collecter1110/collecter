@@ -25,11 +25,8 @@ class ApiService {
   static final SupabaseClient _supabase = Supabase.instance.client;
   static Session? currentSession = _supabase.auth.currentSession;
   static User? authUser = _supabase.auth.currentUser;
-  static StreamSubscription<dynamic>? _blockedUsersSubscription;
-  static StreamSubscription<List<Map<String, dynamic>>>?
-      _myCollectionsSubscription;
+  static RealtimeChannel? _myCollectionsChannel;
   static List<int> _blockedUserIds = [];
-  static int? _blockedUserId;
 
   static Future<void> trackError(
       dynamic exception, StackTrace stackTrace, String description) async {
@@ -46,9 +43,10 @@ class ApiService {
       },
     );
 
-    if (exception is SocketException ||
-        exception is RealtimeSubscribeException) {
+    if (exception is SocketException) {
       Toast.notify('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
+    } else if (exception is RealtimeSubscribeException) {
+      // Toast.notify('구독을 초기화 하고 있습니다. 잠시만 기다려 주세요');
     } else if (exception is TimeoutException) {
       Toast.notify('요청 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.');
     } else if (exception is FormatException) {
@@ -58,13 +56,17 @@ class ApiService {
     } else if (exception is HttpException) {
       Toast.notify('서버 요청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
     } else if (exception is AuthException) {
-      if (exception.message == 'User is banned') {
+      if (exception.code == 'user_banned') {
         Toast.notify(
             '3회 이상 신고로 계정이\n1주일간 정지되었습니다.\n문의 : contact.collect@gmail.com');
       } else if (exception.message == 'Token has expired or is invalid') {
         MyApp.restartApp();
       } else {
         Toast.notify('인증 오류가 발생했습니다. 다시 로그인해 주세요.');
+      }
+    } else if (exception is PostgrestException) {
+      if (exception.code == 'PGRST116') {
+        Toast.notify('삭제된 게시물 입니다.');
       }
     } else {
       Toast.notify('죄송합니다.\n현재 일시적인 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.');
@@ -106,14 +108,21 @@ class ApiService {
   }
 
   static Future<void> handleSaveAccessTokens() async {
-    if (currentSession != null && currentSession!.accessToken.isNotEmpty) {
-      await TokenService.saveTokens(
-        currentSession!.accessToken,
-        currentSession!.refreshToken ?? '',
-      );
-      print('토큰 세이브');
-    } else {
-      await TokenService.deleteStorageData();
+    try {
+      if (currentSession != null && currentSession!.accessToken.isNotEmpty) {
+        print('유효한 세션 - 토큰을 저장합니다.');
+        await TokenService.saveTokens(
+          currentSession!.accessToken,
+          currentSession!.refreshToken ?? '',
+        );
+      } else {
+        print('세션이 만료되었거나 없습니다.');
+        await TokenService.deleteStorageData();
+        await _supabase.auth.signOut();
+      }
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in handleSaveAccessTokens');
+      debugErrorMessage('handleSaveAccessTokens exception: ${e}');
     }
   }
 
@@ -504,38 +513,63 @@ class ApiService {
     }
   }
 
-  static Future<List<CollectionModel>> myCollectionsSubscription() async {
+  static Future<void> initializeMyCollections() async {
     try {
-      final _completer = Completer<List<CollectionModel>>();
-      List<CollectionModel>? _updatedCollections;
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
 
-      _myCollectionsSubscription = _supabase
-          .from('collections')
-          .stream(primaryKey: ['id'])
-          .eq('user_id', userId)
-          .listen((snapshot) {
-            print('내 콜렉션 callback');
-            _updatedCollections = snapshot.map((item) {
-              return CollectionModel.fromJson(item);
-            }).toList();
+      final responseData =
+          await _supabase.from('collections').select('').eq('user_id', userId);
 
-            locator<CollectionProvider>().updateCollections =
-                _updatedCollections!;
+      List<CollectionModel> collections = responseData.map((item) {
+        return CollectionModel.fromJson(item);
+      }).toList();
+      locator<CollectionProvider>().initializeMyCollections = collections;
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in initializeBlockedIds');
+      debugErrorMessage('initializeBlockedIds exception: ${e}');
+      throw Exception('initializeBlockedIds exception: ${e}');
+    }
+  }
 
-            if (!_completer.isCompleted) {
-              _completer.complete(_updatedCollections!);
-            }
-          }, onError: (error, stackTrace) {
-            trackError(error, stackTrace, 'Exception in getCollections');
-            debugErrorMessage('getCollections exception: $error');
-            if (!_completer.isCompleted) {
-              _completer.completeError(error, stackTrace);
-            }
-          });
+  static Future<void> myCollectionsSubscription() async {
+    try {
+      print('myCollectionsSubscription');
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
+      _myCollectionsChannel = _supabase
+          .channel('public:collections')
+          .onPostgresChanges(
+              event: PostgresChangeEvent.all,
+              schema: 'public',
+              filter: PostgresChangeFilter(
+                type: PostgresChangeFilterType.eq,
+                column: 'user_id',
+                value: userId,
+              ),
+              table: 'collections',
+              callback: (payload) async {
+                print('내 콜랙션 callback');
 
-      return _completer.future;
+                final newRecord = payload.newRecord;
+                final oldRecord = payload.oldRecord;
+
+                if (payload.eventType == PostgresChangeEvent.insert) {
+                  CollectionModel newCollectionData =
+                      CollectionModel.fromJson(newRecord);
+                  locator<CollectionProvider>().upsertMyCollections =
+                      newCollectionData;
+                } else if (payload.eventType == PostgresChangeEvent.update) {
+                  CollectionModel newCollectionData =
+                      CollectionModel.fromJson(newRecord);
+                  locator<CollectionProvider>().upsertMyCollections =
+                      newCollectionData;
+                } else if (payload.eventType == PostgresChangeEvent.delete) {
+                  locator<CollectionProvider>().deleteMyCollections =
+                      oldRecord['id'];
+                }
+              })
+          .subscribe();
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in getCollections');
       debugErrorMessage('getCollections exception: ${e}');
@@ -1166,11 +1200,12 @@ class ApiService {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       int blockerUserId = int.parse(userIdString!);
-      _blockedUserId = blockedUserId;
       await _supabase.from('block').insert({
         'blocker_user_id': blockerUserId,
         'blocked_user_id': blockedUserId,
       });
+      _blockedUserIds.add(blockedUserId);
+      await DataService.reloadLocalData(blockedUserId);
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in block');
       debugErrorMessage('block exception: ${e}');
@@ -1178,55 +1213,44 @@ class ApiService {
     }
   }
 
-  static Future<void> startSubscriptions() async {
-    await blockSubscriptions();
-    await myCollectionsSubscription();
-  }
-
-  static Future<void> blockSubscriptions() async {
+  static Future<void> initializeBlockedIds() async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       if (userIdString != null) {
         int userId = int.parse(userIdString);
-        _blockedUsersSubscription = _supabase
-            .from('block')
-            .stream(primaryKey: ['id'])
-            .eq('blocker_user_id', userId)
-            .listen((snapshot) async {
-              print('Blocked users updated');
 
-              _blockedUserIds = snapshot
-                  .map((item) => item['blocked_user_id'] as int)
-                  .toList();
-              if (_blockedUserId != null) {
-                await DataService.reloadLocalData(_blockedUserId!);
-                _blockedUserId = null;
-              }
-            }, onError: (error, stackTrace) {
-              trackError(error, stackTrace,
-                  'Exception in stream subscription of restartSubscriptions');
-              debugErrorMessage(
-                  'Stream subscription exception in restartSubscriptions: $error');
-            });
+        final responseData = await _supabase
+            .from('block')
+            .select('blocked_user_id')
+            .eq('blocker_user_id', userId);
+
+        _blockedUserIds = (responseData)
+            .map((item) => item['blocked_user_id'] as int)
+            .toList();
+
+        print('Initial blocked users: $_blockedUserIds');
       }
     } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in restartSubscriptions');
-      debugErrorMessage('restartSubscriptions exception: ${e}');
-      throw Exception('restartSubscriptions exception: ${e}');
+      trackError(e, stackTrace, 'Exception in initializeBlockedIds');
+      debugErrorMessage('initializeBlockedIds exception: ${e}');
+      throw Exception('initializeBlockedIds exception: ${e}');
     }
+  }
+
+  static Future<void> startSubscriptions() async {
+    await myCollectionsSubscription();
   }
 
   static Future<void> stopSubscriptions() async {
     try {
-      await _blockedUsersSubscription?.cancel();
-      await _myCollectionsSubscription?.cancel();
-      _blockedUsersSubscription = null;
-      _myCollectionsSubscription = null;
-      print('listener canceled');
+      if (_myCollectionsChannel != null) {
+        _supabase.removeChannel(_myCollectionsChannel!);
+        print('listener canceled');
+      }
     } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in disposeSubscriptions');
-      debugErrorMessage('disposeSubscriptions exception: ${e}');
-      throw Exception('disposeSubscriptions exception: ${e}');
+      trackError(e, stackTrace, 'Exception in stopSubscriptions');
+      debugErrorMessage('stopSubscriptions exception: ${e}');
+      throw Exception('stopSubscriptions exception: ${e}');
     }
   }
 

@@ -31,7 +31,7 @@ class likedButton extends StatelessWidget {
                   : await ApiService().actionLike(collectionId);
 
               final collectionProvider = context.read<CollectionProvider>();
-              await collectionProvider.getCollectionDetailData();
+              await collectionProvider.fetchCollectionDetail();
               await collectionProvider.fetchLikeCollections();
             },
             child: isLiked

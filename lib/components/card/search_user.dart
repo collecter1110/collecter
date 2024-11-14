@@ -22,9 +22,7 @@ class SearchUser extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         final int _userId = userInfoDetail.userId!;
-        context
-            .read<CollectionProvider>()
-            .getSearchUsersCollectionData(_userId);
+        context.read<CollectionProvider>().fetchUsersCollections(_userId);
 
         Navigator.push(
           context,
