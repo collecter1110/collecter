@@ -16,7 +16,7 @@ import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
 import '../model/user_info_model.dart';
 import '../provider/collection_provider.dart';
-import '../provider/ranking_provider.dart';
+import 'data_service.dart';
 import 'locator.dart';
 import 'token_service.dart';
 
@@ -25,15 +25,7 @@ class ApiService {
   static final SupabaseClient _supabase = Supabase.instance.client;
   static Session? currentSession = _supabase.auth.currentSession;
   static User? authUser = _supabase.auth.currentUser;
-  static StreamSubscription<dynamic>? _blockedUsersSubscription;
-  static StreamSubscription<List<Map<String, dynamic>>>?
-      _rankingCollectionsSubscription;
-  static StreamSubscription<List<Map<String, dynamic>>>?
-      _rankingSelectionsSubscription;
-  static StreamSubscription<List<Map<String, dynamic>>>?
-      _rankingUsersSubscription;
-  static StreamSubscription<List<Map<String, dynamic>>>?
-      _myCollectionsSubscription;
+  static RealtimeChannel? _myCollectionsChannel;
   static List<int> _blockedUserIds = [];
 
   static Future<void> trackError(
@@ -51,9 +43,10 @@ class ApiService {
       },
     );
 
-    if (exception is SocketException ||
-        exception is RealtimeSubscribeException) {
+    if (exception is SocketException) {
       Toast.notify('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
+    } else if (exception is RealtimeSubscribeException) {
+      // Toast.notify('구독을 초기화 하고 있습니다. 잠시만 기다려 주세요');
     } else if (exception is TimeoutException) {
       Toast.notify('요청 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.');
     } else if (exception is FormatException) {
@@ -63,13 +56,17 @@ class ApiService {
     } else if (exception is HttpException) {
       Toast.notify('서버 요청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
     } else if (exception is AuthException) {
-      if (exception.message == 'User is banned') {
+      if (exception.code == 'user_banned') {
         Toast.notify(
             '3회 이상 신고로 계정이\n1주일간 정지되었습니다.\n문의 : contact.collect@gmail.com');
       } else if (exception.message == 'Token has expired or is invalid') {
         MyApp.restartApp();
       } else {
         Toast.notify('인증 오류가 발생했습니다. 다시 로그인해 주세요.');
+      }
+    } else if (exception is PostgrestException) {
+      if (exception.code == 'PGRST116') {
+        Toast.notify('삭제된 게시물 입니다.');
       }
     } else {
       Toast.notify('죄송합니다.\n현재 일시적인 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.');
@@ -95,8 +92,6 @@ class ApiService {
             break;
           case AuthChangeEvent.tokenRefreshed:
             await handleSaveAccessTokens();
-            await disposeSubscriptions();
-            await restartSubscriptions();
             break;
           case AuthChangeEvent.signedOut:
             await TokenService.deleteStorageData();
@@ -113,14 +108,21 @@ class ApiService {
   }
 
   static Future<void> handleSaveAccessTokens() async {
-    if (currentSession != null && currentSession!.accessToken.isNotEmpty) {
-      await TokenService.saveTokens(
-        currentSession!.accessToken,
-        currentSession!.refreshToken ?? '',
-      );
-      print('토큰 세이브');
-    } else {
-      await TokenService.deleteStorageData();
+    try {
+      if (currentSession != null && currentSession!.accessToken.isNotEmpty) {
+        print('유효한 세션 - 토큰을 저장합니다.');
+        await TokenService.saveTokens(
+          currentSession!.accessToken,
+          currentSession!.refreshToken ?? '',
+        );
+      } else {
+        print('세션이 만료되었거나 없습니다.');
+        await TokenService.deleteStorageData();
+        await _supabase.auth.signOut();
+      }
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in handleSaveAccessTokens');
+      debugErrorMessage('handleSaveAccessTokens exception: ${e}');
     }
   }
 
@@ -441,177 +443,139 @@ class ApiService {
 
   static Future<List<CollectionModel>> getRankingCollections() async {
     try {
-      final _completer = Completer<List<CollectionModel>>();
-      List<CollectionModel>? _updatedCollections;
-
-      final _initialRankingCollections = await _supabase
+      final response = await _supabase
           .from('collections')
           .select()
           .eq('is_public', true)
+          .not('user_id', 'in', _blockedUserIds)
           .order('like_num')
           .limit(10);
 
-      List<int> _initialRankingCollectionIds =
-          (_initialRankingCollections as List<dynamic>)
-              .where((item) => !_blockedUserIds.contains(item['user_id']))
-              .map((item) => item['id'] as int)
-              .toList();
+      List<CollectionModel> rankingCollctions =
+          response.map((item) => CollectionModel.fromJson(item)).toList();
 
-      _rankingCollectionsSubscription = _supabase
-          .from('collections')
-          .stream(primaryKey: ['id'])
-          .inFilter('id', _initialRankingCollectionIds)
-          .order('like_num')
-          .limit(20)
-          .listen((snapshot) {
-            print('랭킹 컬렉션 callback');
-            _updatedCollections = snapshot.map((item) {
-              return CollectionModel.fromJson(item);
-            }).toList();
-
-            locator<RankingProvider>().updateRankingCollections =
-                _updatedCollections!;
-
-            if (!_completer.isCompleted) {
-              _completer.complete(_updatedCollections!);
-            }
-          }, onError: (error, stackTrace) {
-            trackError(error, stackTrace, 'Exception in getRankingCollections');
-            debugErrorMessage('getRankingCollections exception: $error');
-            if (!_completer.isCompleted) {
-              _completer.completeError(error, stackTrace);
-            }
-          });
-
-      return _completer.future;
+      return rankingCollctions;
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in getRankingCollections');
-      debugErrorMessage('getRankingCollections exception: ${e}');
-      throw Exception('getRankingCollections exception: ${e}');
+      debugErrorMessage('getRankingCollections exception: $e');
+      throw Exception('getRankingCollections exception: $e');
     }
   }
 
   static Future<List<SelectionModel>> getRankingSelections() async {
     try {
-      final _completer = Completer<List<SelectionModel>>();
-      List<SelectionModel>? updatedSelections;
-
-      _rankingSelectionsSubscription = _supabase
+      final responseData = await _supabase
           .from('selections')
-          .stream(primaryKey: ['collection_id', 'selection_id'])
+          .select()
+          .eq('is_selecting', false)
+          .not('user_id', 'in', _blockedUserIds)
           .order('select_num')
-          .limit(20)
-          .listen((snapshot) {
-            print('랭킹 셀렉션 callback');
+          .limit(20);
 
-            updatedSelections = snapshot.where((item) {
-              return !_blockedUserIds.contains(item['user_id']) &&
-                  item['is_selecting'] == false;
-            }).map((item) {
-              List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
-              String? firstImagePath =
-                  imageFilePaths != null && imageFilePaths.isNotEmpty
-                      ? imageFilePaths.first as String
-                      : null;
+      List<SelectionModel> rankingSelections = responseData.map((item) {
+        List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
+        String? firstImagePath =
+            imageFilePaths != null && imageFilePaths.isNotEmpty
+                ? imageFilePaths.first as String
+                : null;
 
-              return SelectionModel.fromJson({
-                ...item,
-              }, thumbFilePath: firstImagePath);
-            }).toList();
+        return SelectionModel.fromJson({
+          ...item,
+        }, thumbFilePath: firstImagePath);
+      }).toList();
 
-            locator<RankingProvider>().updateRankingSelections =
-                updatedSelections!;
-
-            if (!_completer.isCompleted) {
-              _completer.complete(updatedSelections!);
-            }
-          }, onError: (error, stackTrace) {
-            trackError(error, stackTrace, 'Exception in getRankingSelections');
-            debugErrorMessage('getRankingSelections exception: $error');
-            if (!_completer.isCompleted) {
-              _completer.completeError(error, stackTrace);
-            }
-          });
-
-      return _completer.future;
+      return rankingSelections;
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in getRankingSelections');
-      debugErrorMessage('getRankingSelections exception: ${e}');
-      throw Exception('getRankingSelections exception: ${e}');
+      debugErrorMessage('getRankingSelections exception: $e');
+      throw Exception('getRankingSelections exception: $e');
     }
   }
 
   static Future<List<UserInfoModel>> getRankingUsers() async {
     try {
-      final _completer = Completer<List<UserInfoModel>>();
-      List<UserInfoModel>? updatedUsers;
-      _rankingUsersSubscription = _supabase
+      final response = await _supabase
           .from('userinfo')
-          .stream(primaryKey: ['user_id'])
+          .select()
+          .not('user_id', 'in', _blockedUserIds)
           .order('created_at', ascending: false)
-          .limit(10)
-          .listen((snapshot) {
-            print('랭킹 유저 callback');
-            updatedUsers = snapshot
-                .where(
-                    (item) => !_blockedUserIds.contains(item['user_id'] as int))
-                .map((item) {
-              return UserInfoModel.fromJson(item);
-            }).toList();
+          .limit(10);
 
-            locator<RankingProvider>().updateRankingUsers = updatedUsers!;
+      List<UserInfoModel> rankingUsers = (response as List<dynamic>)
+          .map((item) => UserInfoModel.fromJson(item))
+          .toList();
 
-            if (!_completer.isCompleted) {
-              _completer.complete(updatedUsers!);
-            }
-          }, onError: (error, stackTrace) {
-            trackError(error, stackTrace, 'Exception in getRankingUsers');
-            debugErrorMessage('getRankingUsers exception: $error');
-            if (!_completer.isCompleted) {
-              _completer.completeError(error, stackTrace);
-            }
-          });
-
-      return _completer.future;
+      return rankingUsers;
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in getRankingUsers');
-      debugErrorMessage('getRankingUsers exception: ${e}');
-      throw Exception('getRankingUsers exception: ${e}');
+      debugErrorMessage('getRankingUsers exception: $e');
+      throw Exception('getRankingUsers exception: $e');
     }
   }
 
-  static Future<List<CollectionModel>> getCollections() async {
+  static Future<void> initializeMyCollections() async {
     try {
-      final _completer = Completer<List<CollectionModel>>();
-      List<CollectionModel>? _updatedCollections;
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
 
-      _myCollectionsSubscription = _supabase
-          .from('collections')
-          .stream(primaryKey: ['id'])
-          .eq('user_id', userId)
-          .listen((snapshot) {
-            print('내 콜렉션 callback');
-            _updatedCollections = snapshot.map((item) {
-              return CollectionModel.fromJson(item);
-            }).toList();
+      final responseData =
+          await _supabase.from('collections').select('').eq('user_id', userId);
 
-            locator<CollectionProvider>().updateCollections =
-                _updatedCollections!;
+      List<CollectionModel> collections = responseData.map((item) {
+        return CollectionModel.fromJson(item);
+      }).toList();
+      locator<CollectionProvider>().initializeMyCollections = collections;
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in initializeBlockedIds');
+      debugErrorMessage('initializeBlockedIds exception: ${e}');
+      throw Exception('initializeBlockedIds exception: ${e}');
+    }
+  }
 
-            if (!_completer.isCompleted) {
-              _completer.complete(_updatedCollections!);
-            }
-          }, onError: (error, stackTrace) {
-            trackError(error, stackTrace, 'Exception in getCollections');
-            debugErrorMessage('getCollections exception: $error');
-            if (!_completer.isCompleted) {
-              _completer.completeError(error, stackTrace);
-            }
-          });
+  static Future<void> myCollectionsSubscription() async {
+    try {
+      print('myCollectionsSubscription');
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
 
-      return _completer.future;
+      Timer? _debounceTimer;
+      _myCollectionsChannel = _supabase
+          .channel('public:collections')
+          .onPostgresChanges(
+              event: PostgresChangeEvent.all,
+              schema: 'public',
+              filter: PostgresChangeFilter(
+                type: PostgresChangeFilterType.eq,
+                column: 'user_id',
+                value: userId,
+              ),
+              table: 'collections',
+              callback: (payload) async {
+                print('내 콜랙션 callback');
+                Map<String, dynamic> newRecord = payload.newRecord;
+                Map<String, dynamic> oldRecord = payload.oldRecord;
+
+                if (payload.eventType == PostgresChangeEvent.insert) {
+                  CollectionModel newCollectionData =
+                      CollectionModel.fromJson(newRecord);
+                  locator<CollectionProvider>().upsertMyCollections =
+                      newCollectionData;
+                } else if (payload.eventType == PostgresChangeEvent.update) {
+                  CollectionModel newCollectionData =
+                      CollectionModel.fromJson(newRecord);
+                  locator<CollectionProvider>().upsertMyCollections =
+                      newCollectionData;
+                } else if (payload.eventType == PostgresChangeEvent.delete) {
+                  locator<CollectionProvider>().deleteMyCollections =
+                      oldRecord['id'];
+                }
+                _debounceTimer?.cancel();
+                _debounceTimer =
+                    Timer(const Duration(milliseconds: 500), () async {
+                  await DataService.reloadLocalData(userId);
+                });
+              })
+          .subscribe();
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in getCollections');
       debugErrorMessage('getCollections exception: ${e}');
@@ -1242,11 +1206,12 @@ class ApiService {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       int blockerUserId = int.parse(userIdString!);
-
       await _supabase.from('block').insert({
         'blocker_user_id': blockerUserId,
         'blocked_user_id': blockedUserId,
       });
+      _blockedUserIds.add(blockedUserId);
+      await DataService.reloadLocalData(blockedUserId);
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in block');
       debugErrorMessage('block exception: ${e}');
@@ -1254,58 +1219,44 @@ class ApiService {
     }
   }
 
-  static Future<void> restartSubscriptions() async {
+  static Future<void> initializeBlockedIds() async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       if (userIdString != null) {
         int userId = int.parse(userIdString);
-        _blockedUsersSubscription = _supabase
-            .from('block')
-            .stream(primaryKey: ['id'])
-            .eq('blocker_user_id', userId)
-            .listen((snapshot) async {
-              print('Blocked users updated');
 
-              _blockedUserIds = snapshot
-                  .map((item) => item['blocked_user_id'] as int)
-                  .toList();
-              try {
-                await getCollections();
-                await getRankingCollections();
-                await getRankingSelections();
-                await getRankingUsers();
-              } catch (innerError, innerStackTrace) {
-                trackError(innerError, innerStackTrace,
-                    'Exception during data updates in restartSubscriptions');
-                debugErrorMessage(
-                    'Data update exception in restartSubscriptions: $innerError');
-              }
-            }, onError: (error, stackTrace) {
-              trackError(error, stackTrace,
-                  'Exception in stream subscription of restartSubscriptions');
-              debugErrorMessage(
-                  'Stream subscription exception in restartSubscriptions: $error');
-            });
+        final responseData = await _supabase
+            .from('block')
+            .select('blocked_user_id')
+            .eq('blocker_user_id', userId);
+
+        _blockedUserIds = (responseData)
+            .map((item) => item['blocked_user_id'] as int)
+            .toList();
+
+        print('Initial blocked users: $_blockedUserIds');
       }
     } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in restartSubscriptions');
-      debugErrorMessage('restartSubscriptions exception: ${e}');
-      throw Exception('restartSubscriptions exception: ${e}');
+      trackError(e, stackTrace, 'Exception in initializeBlockedIds');
+      debugErrorMessage('initializeBlockedIds exception: ${e}');
+      throw Exception('initializeBlockedIds exception: ${e}');
     }
   }
 
-  static Future<void> disposeSubscriptions() async {
+  static Future<void> startSubscriptions() async {
+    await myCollectionsSubscription();
+  }
+
+  static Future<void> stopSubscriptions() async {
     try {
-      await _blockedUsersSubscription?.cancel();
-      await _rankingCollectionsSubscription?.cancel();
-      await _rankingSelectionsSubscription?.cancel();
-      await _rankingUsersSubscription?.cancel();
-      await _myCollectionsSubscription?.cancel();
-      print('listener canceled');
+      if (_myCollectionsChannel != null) {
+        _supabase.removeChannel(_myCollectionsChannel!);
+        print('listener canceled');
+      }
     } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in disposeSubscriptions');
-      debugErrorMessage('disposeSubscriptions exception: ${e}');
-      throw Exception('disposeSubscriptions exception: ${e}');
+      trackError(e, stackTrace, 'Exception in stopSubscriptions');
+      debugErrorMessage('stopSubscriptions exception: ${e}');
+      throw Exception('stopSubscriptions exception: ${e}');
     }
   }
 

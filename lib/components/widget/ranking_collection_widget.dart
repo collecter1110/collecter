@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-
 import '../../data/model/collection_model.dart';
 import '../../data/provider/ranking_provider.dart';
 import '../card/collection.dart';
@@ -15,13 +14,11 @@ class RankingCollectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RankingProvider>(builder: (context, provider, child) {
       final List<CollectionModel>? _collections = provider.rankingCollections;
-
       if (_collections == null) {
         return Center(
           child: CircularProgressIndicator(),
         );
       }
-
       return (_collections.isNotEmpty)
           ? GridView.builder(
               padding: EdgeInsets.symmetric(

@@ -24,7 +24,7 @@ class Collection extends StatelessWidget {
       onTap: () async {
         context.read<CollectionProvider>().saveCollectionId =
             collectionDetail.id;
-        await context.read<CollectionProvider>().getCollectionDetailData();
+        await context.read<CollectionProvider>().fetchCollectionDetail();
         Navigator.push(
           context,
           MaterialPageRoute(

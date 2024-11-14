@@ -71,7 +71,7 @@ class OtherCollectionDialog extends StatelessWidget {
                         await _userInfoProvider.fetchOtherUserInfo(_userId);
                         await context
                             .read<CollectionProvider>()
-                            .getSearchUsersCollectionData(_userId);
+                            .fetchUsersCollections(_userId);
                         UserInfoModel _userInfo =
                             _userInfoProvider.otherUserInfo!;
 

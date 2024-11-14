@@ -64,9 +64,6 @@ class EditCollectionDialog extends StatelessWidget {
                         if (isDelete) {
                           await DataService.updateDataProcessHandler(
                             context,
-                            collectionDetail.id,
-                            collectionDetail.userId,
-                            null,
                             () async {
                               await ApiService.deleteCollection(
                                   collectionDetail);
@@ -96,9 +93,6 @@ class EditCollectionDialog extends StatelessWidget {
                                 callback: () async {
                                   await DataService.updateDataProcessHandler(
                                     context,
-                                    collectionDetail.id,
-                                    collectionDetail.userId,
-                                    null,
                                     () async {
                                       await collectionProvider
                                           .fetchCollectionDetail();

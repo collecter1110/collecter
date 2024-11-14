@@ -47,17 +47,32 @@ class CollectionProvider with ChangeNotifier {
     _collectionTitle = null;
   }
 
-  set updateCollections(List<CollectionModel> updateCollections) {
-    _myCollections = updateCollections;
-    _collectionNum = _myCollections?.length ?? 0;
+  set initializeMyCollections(List<CollectionModel> collections) {
+    _myCollections = collections;
+    _collectionNum = _myCollections!.length;
     notifyListeners();
   }
 
-  Future<void> getSearchUsersCollectionData(int userId) async {
-    try {
-      await fetchUsersCollections(userId);
-    } catch (e) {
-    } finally {}
+  set upsertMyCollections(CollectionModel collectionData) {
+    final int index = _myCollections!
+        .indexWhere((collection) => collection.id == collectionData.id);
+    if (index != -1) {
+      _myCollections![index] = collectionData;
+    } else {
+      _myCollections!.add(collectionData);
+    }
+    _collectionNum = _myCollections!.length;
+    notifyListeners();
+  }
+
+  set deleteMyCollections(int collectionId) {
+    final int index = _myCollections!
+        .indexWhere((collection) => collection.id == collectionId);
+    if (index != -1) {
+      _myCollections!.removeAt(index);
+    }
+    _collectionNum = _myCollections!.length;
+    notifyListeners();
   }
 
   Future<void> fetchLikeCollections() async {
@@ -83,10 +98,6 @@ class CollectionProvider with ChangeNotifier {
     } finally {
       notifyListeners();
     }
-  }
-
-  Future<void> getCollectionDetailData() async {
-    await fetchCollectionDetail();
   }
 
   Future<void> fetchCollectionDetail() async {

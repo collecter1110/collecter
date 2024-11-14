@@ -31,7 +31,6 @@ class OtherUserDialog extends StatelessWidget {
       );
       try {
         await ApiService.block(userInfo.userId);
-        await DataService.reloadSearchData();
       } catch (e) {
         print('Error: $e');
       } finally {

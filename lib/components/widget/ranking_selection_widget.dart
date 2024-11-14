@@ -16,13 +16,11 @@ class RankingSelectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RankingProvider>(builder: (context, provider, child) {
       final List<SelectionModel>? _selections = provider.rankingSelections;
-
       if (_selections == null) {
         return Center(
           child: CircularProgressIndicator(),
         );
       }
-
       return (_selections.isNotEmpty)
           ? GridView.builder(
               padding: EdgeInsets.symmetric(

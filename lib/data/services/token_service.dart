@@ -21,6 +21,6 @@ class TokenService {
 
   static Future<void> deleteStorageData() async {
     await _storage.deleteAll();
-    await ApiService.disposeSubscriptions();
+    await ApiService.stopSubscriptions();
   }
 }

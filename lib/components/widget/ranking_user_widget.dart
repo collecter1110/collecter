@@ -15,13 +15,11 @@ class RankingUserWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RankingProvider>(builder: (context, provider, child) {
       final List<UserInfoModel>? _users = provider.rankingUsers;
-
       if (_users == null) {
         return Center(
           child: CircularProgressIndicator(),
         );
       }
-
       return (_users.isNotEmpty)
           ? GridView.builder(
               padding: EdgeInsets.symmetric(
@@ -36,7 +34,7 @@ class RankingUserWidget extends StatelessWidget {
               ),
               itemCount: _users.length,
               itemBuilder: (context, index) {
-                final UserInfoModel _user = _users![index];
+                final UserInfoModel _user = _users[index];
                 return SearchUser(
                   routeName: '/',
                   userInfoDetail: _user,
