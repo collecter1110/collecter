@@ -537,6 +537,8 @@ class ApiService {
       print('myCollectionsSubscription');
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
+
+      Timer? _debounceTimer;
       _myCollectionsChannel = _supabase
           .channel('public:collections')
           .onPostgresChanges(
@@ -550,9 +552,8 @@ class ApiService {
               table: 'collections',
               callback: (payload) async {
                 print('내 콜랙션 callback');
-
-                final newRecord = payload.newRecord;
-                final oldRecord = payload.oldRecord;
+                Map<String, dynamic> newRecord = payload.newRecord;
+                Map<String, dynamic> oldRecord = payload.oldRecord;
 
                 if (payload.eventType == PostgresChangeEvent.insert) {
                   CollectionModel newCollectionData =
@@ -568,6 +569,11 @@ class ApiService {
                   locator<CollectionProvider>().deleteMyCollections =
                       oldRecord['id'];
                 }
+                _debounceTimer?.cancel();
+                _debounceTimer =
+                    Timer(const Duration(milliseconds: 500), () async {
+                  await DataService.reloadLocalData(userId);
+                });
               })
           .subscribe();
     } catch (e, stackTrace) {

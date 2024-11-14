@@ -68,7 +68,6 @@ class CollectionProvider with ChangeNotifier {
   set deleteMyCollections(int collectionId) {
     final int index = _myCollections!
         .indexWhere((collection) => collection.id == collectionId);
-    print(index);
     if (index != -1) {
       _myCollections!.removeAt(index);
     }

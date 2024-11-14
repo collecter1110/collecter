@@ -83,18 +83,17 @@ class DataService {
       await rankingProvider.fetchRankingSelections();
     }
 
-    bool existsUsers = rankingProvider.rankingUsers
-            ?.any((userInfo) => userInfo.userId == userId) ??
-        false;
+    // bool existsUsers = rankingProvider.rankingUsers
+    //         ?.any((userInfo) => userInfo.userId == userId) ??
+    //     false;
 
-    if (existsUsers) {
-      await rankingProvider.fetchRankingUsers();
-    }
+    // if (existsUsers) {
+    //   await rankingProvider.fetchRankingUsers();
+    // }
   }
 
   static Future<void> updateDataProcessHandler(
     BuildContext context,
-    int userId,
     Future<void> Function() updateData,
     Future<void> Function() nextNavigate,
   ) async {
@@ -112,7 +111,6 @@ class DataService {
     );
 
     try {
-      await reloadLocalData(userId);
       await nextNavigate();
       await updateData();
     } catch (e) {

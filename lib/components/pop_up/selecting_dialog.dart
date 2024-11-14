@@ -59,7 +59,6 @@ class SelectingDialog extends StatelessWidget {
             voidCallback: () async {
               await DataService.updateDataProcessHandler(
                 context,
-                selectionDetail.userId!,
                 () async {
                   await ApiService.selecting(
                       collectionProvider.collectionId!, selectionDetail);
