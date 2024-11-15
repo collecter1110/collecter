@@ -10,6 +10,7 @@ import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
 import '../../components/ui_kit/tag_text.dart';
+import '../../components/ui_kit/text_utils.dart';
 import '../../components/widget/selection_widget.dart';
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
@@ -88,7 +89,7 @@ class CollectionDetailScreen extends StatelessWidget {
                           children: [
                             Flexible(
                               child: Text(
-                                _collectionDetail.title,
+                                TextUtils.insertZwj(_collectionDetail.title),
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 22.sp,
