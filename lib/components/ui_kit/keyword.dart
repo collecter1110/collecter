@@ -20,10 +20,10 @@ class Keyword extends StatelessWidget {
           keywordName,
           style: TextStyle(
             color: Theme.of(context).primaryColor,
-            fontSize: 11.0.sp,
+            fontSize: 10.0.sp,
             fontFamily: 'Pretendard',
             fontWeight: FontWeight.w600,
-            height: 1.5,
+            height: 1.4,
           ),
         ),
       ),

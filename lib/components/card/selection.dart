@@ -1,5 +1,7 @@
+import 'package:collecter/data/model/selection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/keyword_model.dart';
@@ -8,6 +10,7 @@ import '../../data/provider/selection_provider.dart';
 import '../../data/services/storage_service.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
+import '../ui_kit/text_utils.dart';
 
 class Selection extends StatelessWidget {
   final String? routeName;
@@ -17,6 +20,7 @@ class Selection extends StatelessWidget {
   final String ownerName;
   final int ownerId;
   final PropertiesData properties;
+  final bool isRanking;
 
   const Selection({
     super.key,
@@ -27,6 +31,7 @@ class Selection extends StatelessWidget {
     required this.ownerName,
     required this.ownerId,
     required this.properties,
+    required this.isRanking,
   });
 
   @override
@@ -44,69 +49,73 @@ class Selection extends StatelessWidget {
         );
       },
       child: AspectRatio(
-        aspectRatio: 0.7,
+        aspectRatio: 0.67,
         child: Container(
-          width: double.infinity,
           decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 0.5,
-                  blurRadius: 3,
+                  color: Color(0xFFe9ecef),
+                  spreadRadius: 5,
+                  blurRadius: 5,
                   offset: Offset(0, 0),
                 )
               ],
               borderRadius: BorderRadius.circular(8.r)),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              thumbFilePath != null
-                  ? Expanded(
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8.r),
-                            topRight: Radius.circular(8.r),
-                          ),
-                          child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  StorageService.getFullImageUrl(
-                                      '$ownerId/selections', thumbFilePath!),
-                                ),
-                                fit: BoxFit.cover,
+              AspectRatio(
+                aspectRatio: 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8.r),
+                    topRight: Radius.circular(8.r),
+                  ),
+                  child: thumbFilePath != null
+                      ? Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                StorageService.getFullImageUrl(
+                                    '${ownerId}/selections', thumbFilePath!),
                               ),
+                              fit: BoxFit.cover,
                             ),
-                          )),
-                    )
-                  : SizedBox.shrink(),
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ),
+              ),
               Padding(
                 padding:
-                    EdgeInsets.symmetric(horizontal: 12.0.w, vertical: 12.0.h),
+                    EdgeInsets.symmetric(horizontal: 12.0.w, vertical: 10.0.h),
                 child: Column(
-                  //mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: Color(0xFF343A40),
-                        fontSize: 15.sp,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                        height: 1.33,
+                    Container(
+                      height: isRanking ? 19.95.sp : 39.9.sp,
+                      child: Text(
+                        TextUtils.insertZwj(title),
+                        style: TextStyle(
+                          color: Color(0xFF343A40),
+                          fontSize: 15.sp,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w600,
+                          height: 1.33,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: isRanking ? 1 : 2,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4.0.h),
-                      child: keywords != null
-                          ? SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
+                    keywords != null && isRanking
+                        ? SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 3.0.h),
                               child: Row(
                                 children: keywords!.map((keyword) {
                                   return Padding(
@@ -116,17 +125,34 @@ class Selection extends StatelessWidget {
                                   );
                                 }).toList(),
                               ),
-                            )
-                          : SizedBox.shrink(),
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12.0.w,
+                ),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/icon_user.svg',
+                      colorFilter:
+                          ColorFilter.mode(Color(0xFFadb5bd), BlendMode.srcIn),
+                      height: 10.0.h,
+                    ),
+                    SizedBox(
+                      width: 4.0.w,
                     ),
                     Text(
-                      ownerName,
+                      '${ownerName}',
                       style: TextStyle(
-                        color: Color(0xFF868e96),
-                        fontSize: 12.sp,
+                        color: Color(0xFF868E96),
+                        fontSize: 10.sp,
                         fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w600,
-                        height: 1.5,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],

@@ -30,7 +30,7 @@ class RankingCollectionWidget extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 24.0.h,
                 crossAxisSpacing: 12.0.w,
-                childAspectRatio: 0.65,
+                childAspectRatio: 0.64,
               ),
               itemCount: _collections.length,
               itemBuilder: (context, index) {
@@ -38,6 +38,7 @@ class RankingCollectionWidget extends StatelessWidget {
                 return Collection(
                   routName: '/',
                   collectionDetail: _collection,
+                  isRanking: true,
                 );
               },
             )
