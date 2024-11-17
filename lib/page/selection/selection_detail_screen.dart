@@ -9,6 +9,7 @@ import '../../components/pop_up/selecting_dialog.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
+import '../../components/ui_kit/text_utils.dart';
 import '../../components/widget/selection_item_widget.dart';
 import '../../data/model/selection_model.dart';
 import '../../data/provider/selection_provider.dart';
@@ -106,7 +107,7 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                           ? Column(
                               children: [
                                 AspectRatio(
-                                  aspectRatio: 1 / 1,
+                                  aspectRatio: 0.9,
                                   child: PageView.builder(
                                       controller: _pageController,
                                       onPageChanged: (index) {
@@ -186,7 +187,7 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    _selectionDetail.title,
+                                    TextUtils.insertZwj(_selectionDetail.title),
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 22.sp,

@@ -8,6 +8,7 @@ import '../../data/services/storage_service.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 import '../ui_kit/tag_text.dart';
+import '../ui_kit/text_utils.dart';
 
 class SearchCollection extends StatelessWidget {
   final CollectionModel collectionDetail;
@@ -81,7 +82,7 @@ class SearchCollection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    collectionDetail.title,
+                    TextUtils.insertZwj(collectionDetail.title),
                     style: TextStyle(
                       color: Color(0xFF343A40),
                       fontSize: 16.0.sp,

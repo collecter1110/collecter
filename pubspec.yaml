@@ -50,6 +50,7 @@ dependencies:
   http: ^1.2.2
   flutter_launcher_icons: ^0.14.1
   sentry_flutter: ^8.9.0
+  flutter_svg: ^2.0.14
 
 dev_dependencies:
   flutter_test:

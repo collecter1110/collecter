@@ -32,7 +32,7 @@ class RankingSelectionWidget extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 24.0.h,
                 crossAxisSpacing: 12.0.w,
-                childAspectRatio: 0.65,
+                childAspectRatio: 0.67,
               ),
               itemCount: _selections.length,
               itemBuilder: (context, index) {
@@ -50,6 +50,7 @@ class RankingSelectionWidget extends StatelessWidget {
                   ownerName: _selection.ownerName,
                   ownerId: _selection.ownerId,
                   keywords: _selection.keywords,
+                  isRanking: true,
                 );
               },
             )

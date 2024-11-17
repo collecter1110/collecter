@@ -84,7 +84,7 @@ class SelectingWidget extends StatelessWidget {
                             crossAxisCount: 2,
                             mainAxisSpacing: 26.0.h,
                             crossAxisSpacing: 12.0.w,
-                            childAspectRatio: 0.62,
+                            childAspectRatio: 0.59,
                           ),
                           itemCount: selectDatas.length,
                           itemBuilder: (context, index) {
@@ -104,6 +104,7 @@ class SelectingWidget extends StatelessWidget {
                                   ownerName: selectDatas[index].ownerName,
                                   ownerId: selectDatas[index].ownerId,
                                   properties: selectDatas[index].properties,
+                                  isRanking: false,
                                 ),
                               ],
                             );

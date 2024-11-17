@@ -52,7 +52,7 @@ class _SelectionWidgetState extends State<SelectionWidget> {
             crossAxisCount: 2,
             mainAxisSpacing: 24.0.h,
             crossAxisSpacing: 12.0.w,
-            childAspectRatio: 0.7,
+            childAspectRatio: 0.67,
           ),
           itemCount: _selections.length,
           itemBuilder: (context, index) {
@@ -70,6 +70,7 @@ class _SelectionWidgetState extends State<SelectionWidget> {
               ownerName: _selection.ownerName,
               ownerId: _selection.ownerId,
               keywords: _selection.keywords,
+              isRanking: false,
             );
           },
         );

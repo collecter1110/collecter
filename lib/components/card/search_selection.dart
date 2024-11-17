@@ -10,6 +10,7 @@ import '../../data/services/storage_service.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../button/go_collection_button.dart';
 import '../ui_kit/keyword.dart';
+import '../ui_kit/text_utils.dart';
 
 class SearchSelection extends StatelessWidget {
   final SelectionModel selectionDetail;
@@ -110,7 +111,7 @@ class SearchSelection extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 8.0.h),
                             child: Text(
-                              selectionDetail.title,
+                              TextUtils.insertZwj(selectionDetail.title),
                               style: TextStyle(
                                 color: Color(0xFF343A40),
                                 fontSize: 16.0.sp,

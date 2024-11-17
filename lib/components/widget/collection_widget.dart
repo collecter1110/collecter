@@ -40,7 +40,7 @@ class CollectionWidget extends StatelessWidget {
                   crossAxisCount: 2,
                   mainAxisSpacing: 24.0.h,
                   crossAxisSpacing: 12.0.w,
-                  childAspectRatio: 0.65,
+                  childAspectRatio: 0.68,
                 ),
                 itemCount: _collections.length,
                 itemBuilder: (context, index) {
@@ -48,6 +48,7 @@ class CollectionWidget extends StatelessWidget {
                   return Collection(
                     routName: routeName,
                     collectionDetail: _collection,
+                    isRanking: isLiked == true,
                   );
                 },
               )
