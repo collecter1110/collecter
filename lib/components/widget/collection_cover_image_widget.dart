@@ -52,38 +52,52 @@ class _CollectionCoverImageWidgetState
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return Align(
-          alignment: Alignment.centerLeft,
-          child: ListView.separated(
-            primary: false,
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(vertical: 24.0.h),
-            shrinkWrap: true,
-            itemCount: _selections.length,
-            itemBuilder: (context, index) {
-              final SelectionModel _selection = _selections[index];
-              return CoverImage(
-                  coverIndex: index,
-                  thumbFilePath: _selection.thumbFilePath!,
-                  selectedCoverIndex: selectedCoverIndex,
-                  ownerId: _selection.ownerId,
-                  onTap: (value) {
-                    setState(() {
-                      selectedCoverIndex = value;
-                      seletedCoverFilePath =
-                          _selections[selectedCoverIndex!].thumbFilePath!;
-                      provider.saveCollectionCoverImage = seletedCoverFilePath!;
-                      widget.isSelected(true);
-                    });
-                  });
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return SizedBox(
-                width: 20.0.h,
+        return _selections.isEmpty
+            ? Center(
+                child: Text(
+                  '선택할 수 있는 셀렉션이 없습니다.\n셀렉션을 추가해주세요.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Color(0xFFadb5bd),
+                      fontSize: 14.sp,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w500,
+                      height: 1.43),
+                ),
+              )
+            : Align(
+                alignment: Alignment.centerLeft,
+                child: ListView.separated(
+                  primary: false,
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(vertical: 24.0.h),
+                  shrinkWrap: true,
+                  itemCount: _selections.length,
+                  itemBuilder: (context, index) {
+                    final SelectionModel _selection = _selections[index];
+                    return CoverImage(
+                        coverIndex: index,
+                        thumbFilePath: _selection.thumbFilePath!,
+                        selectedCoverIndex: selectedCoverIndex,
+                        ownerId: _selection.ownerId,
+                        onTap: (value) {
+                          setState(() {
+                            selectedCoverIndex = value;
+                            seletedCoverFilePath =
+                                _selections[selectedCoverIndex!].thumbFilePath!;
+                            provider.saveCollectionCoverImage =
+                                seletedCoverFilePath!;
+                            widget.isSelected(true);
+                          });
+                        });
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return SizedBox(
+                      width: 20.0.h,
+                    );
+                  },
+                ),
               );
-            },
-          ),
-        );
       } else {
         return const Center(
           child: Text('Error occurred.'),
