@@ -435,7 +435,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _changedIsPublic! ? '공개' : '비공개',
+                          _changedIsPublic! ? '전체 공개' : '비공개',
                           style: TextStyle(
                             fontFamily: 'PretendardRegular',
                             fontSize: 16.sp,

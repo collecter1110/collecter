@@ -613,7 +613,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _changedIsSelectable! ? '공유 가능' : '공유 불가능',
+                          _changedIsSelectable! ? '셀렉팅 허용' : '셀렉팅 제한',
                           style: TextStyle(
                             fontFamily: 'PretendardRegular',
                             fontSize: 16.sp,

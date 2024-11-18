@@ -24,7 +24,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   String? _title;
   String? _description;
 
-  bool _isPublic = false;
+  bool _isPublic = true;
   String _inputTagValue = '';
 
   @override
@@ -250,7 +250,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        _isPublic ? '공개' : '비공개',
+                        _isPublic ? '전체 공개' : '비공개',
                         style: TextStyle(
                           fontFamily: 'PretendardRegular',
                           fontSize: 16.sp,
