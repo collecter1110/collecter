@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/constants/screen_size.dart';
-import '../join/user_agreement.dart';
+import '../join/tutorial_screen_.dart';
 import 'email_login_screen.dart';
 
 class EnterLoginPage extends StatelessWidget {
@@ -99,7 +99,7 @@ class EnterLoginPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const UserAgreement(),
+                      builder: (context) => TutorialScreen(),
                     ),
                   );
                 },
