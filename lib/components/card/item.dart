@@ -31,24 +31,15 @@ class Item extends StatelessWidget {
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0.w, vertical: 20.0.h),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                itemData[index].itemTitle,
-                style: TextStyle(
-                  color: Color(0xFF343a40),
-                  fontSize: 14.sp,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w500,
-                  height: 1.43,
-                ),
-              ),
-              SizedBox(
-                height: 16.0.h,
-              ),
-            ],
+          child: Text(
+            itemData[index].itemTitle,
+            style: TextStyle(
+              color: Color(0xFF343a40),
+              fontSize: 14.sp,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w500,
+              height: 1.43,
+            ),
           ),
         ),
       );

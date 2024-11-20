@@ -256,8 +256,11 @@ class _ItemWidgetState extends State<ItemWidget> {
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 16.0.h),
+          padding: EdgeInsets.symmetric(
+            horizontal: 16.0.w,
+          ),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
@@ -274,7 +277,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                     fontSize: 14.sp,
                     fontFamily: 'Pretendard',
                     fontWeight: FontWeight.w500,
-                    height: 1,
+                    height: 1.43,
                   ),
                   decoration: InputDecoration(
                     hintText: '내용을 입력해주세요.',
@@ -283,25 +286,29 @@ class _ItemWidgetState extends State<ItemWidget> {
                       fontSize: 14.sp,
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w500,
+                      height: 1.43,
                     ),
                     isDense: true,
                     contentPadding: EdgeInsets.symmetric(
-                      vertical: 4.0.h,
+                      vertical: 20.0.h,
                     ),
                     border: InputBorder.none,
                   ),
                 ),
               ),
               InkWell(
-                child: Image.asset(
-                  'assets/icons/icon_delete_fill.png',
-                  width: 20.0.h,
-                  color: Color(0xFF343a40),
-                ),
                 onTap: () {
                   FocusScope.of(context).unfocus();
                   widget.onDelete(itemKey);
                 },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.0.h),
+                  child: Image.asset(
+                    'assets/icons/icon_delete_fill.png',
+                    width: 20.0.h,
+                    color: Color(0xFF343a40),
+                  ),
+                ),
               ),
             ],
           ),

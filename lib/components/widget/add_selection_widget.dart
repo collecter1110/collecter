@@ -33,7 +33,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   List<String>? _imageFilePaths;
   String? _link;
   List<Map<String, dynamic>>? _items;
-  bool _isSelectable = false;
+  bool _isSelectable = true;
   String _inputKeywordValue = '';
 
   bool _isOrder = false;
@@ -265,7 +265,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'ex) 다이어트, 로맨틱 코미디 ,추리물',
+                        'ex) 레시피, 영화, 책 등의 단어로 입력해주세요.',
                         style: TextStyle(
                           fontFamily: 'PretendardRegular',
                           fontSize: 12.sp,
@@ -476,7 +476,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _isOrder ? '아이템 순서' : '아이템 리스트',
+                            _isOrder ? '아이템 순서 (선택)' : '아이템 리스트 (선택)',
                             style: TextStyle(
                               fontFamily: 'PretendardRegular',
                               fontSize: 16.sp,
@@ -492,7 +492,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               child: Text(
                                 _isOrder
                                     ? '아이템을 꾹 눌러서 순서를 변경해보세요.'
-                                    : '오른쪽 버튼을 눌러 순서를 설정하세요.',
+                                    : '오른쪽 토글을 눌러 순서를 설정하세요.',
                                 style: TextStyle(
                                   fontFamily: 'PretendardRegular',
                                   fontSize: 12.sp,
@@ -505,51 +505,50 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: 90.0.w,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ValueListenableBuilder<int>(
-                                valueListenable:
-                                    context.watch<ItemProvider>().countNotifier,
-                                builder: (context, itemNum, child) {
-                                  return AddButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        FocusScope.of(context).unfocus();
-                                        if (itemNum >= 9) {
-                                          Toast.notify(
-                                              '아이템은 최대 9개까지 추가가 가능합니다.');
-                                          return;
-                                        } else {
-                                          _itemIndex++;
-                                          _itemState = true;
-                                        }
-                                      });
-                                    },
-                                  );
-                                }),
-                            Transform.scale(
-                              scale: 0.8,
-                              child: Switch(
-                                value: _isOrder,
-                                onChanged: (value) {
-                                  setState(() {
-                                    FocusScope.of(context).unfocus();
-                                    _isOrder = value;
-                                  });
-                                },
-                                inactiveThumbColor: Colors.white,
-                                inactiveTrackColor: Color(0xffdee2e6),
-                                activeTrackColor: Colors.black,
-                                activeColor: Theme.of(context).primaryColor,
-                                trackOutlineColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                              ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ValueListenableBuilder<int>(
+                              valueListenable:
+                                  context.watch<ItemProvider>().countNotifier,
+                              builder: (context, itemNum, child) {
+                                return AddButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      FocusScope.of(context).unfocus();
+                                      if (itemNum >= 9) {
+                                        Toast.notify('아이템은 최대 9개까지 추가가 가능합니다.');
+                                        return;
+                                      } else {
+                                        _itemIndex++;
+                                        _itemState = true;
+                                      }
+                                    });
+                                  },
+                                );
+                              }),
+                          SizedBox(
+                            width: 10.0.w,
+                          ),
+                          Transform.scale(
+                            scale: 0.8,
+                            child: Switch(
+                              value: _isOrder,
+                              onChanged: (value) {
+                                setState(() {
+                                  FocusScope.of(context).unfocus();
+                                  _isOrder = value;
+                                });
+                              },
+                              inactiveThumbColor: Colors.white,
+                              inactiveTrackColor: Color(0xffdee2e6),
+                              activeTrackColor: Colors.black,
+                              activeColor: Theme.of(context).primaryColor,
+                              trackOutlineColor:
+                                  MaterialStateProperty.all(Colors.transparent),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -572,15 +571,33 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        _isSelectable ? '공유 가능' : '공유 불가능',
-                        style: TextStyle(
-                          fontFamily: 'PretendardRegular',
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff343A40),
-                          height: 1.5,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _isSelectable ? '셀렉팅 허용' : '셀렉팅 제한',
+                            style: TextStyle(
+                              fontFamily: 'PretendardRegular',
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff343A40),
+                              height: 1.5,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 2.0.h),
+                            child: Text(
+                              '공유 가능 상태를 설정합니다.',
+                              style: TextStyle(
+                                fontFamily: 'PretendardRegular',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xffADB5BD),
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(width: 10),
                       Transform.scale(

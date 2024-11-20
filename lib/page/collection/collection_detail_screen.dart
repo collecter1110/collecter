@@ -101,13 +101,10 @@ class CollectionDetailScreen extends StatelessWidget {
                                 maxLines: 2,
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 16.0.w),
-                              child: likedButton(
-                                collectionId: _collectionDetail.id,
-                                isLiked: _collectionDetail.isLiked!,
-                                likedNum: _collectionDetail.likeNum!,
-                              ),
+                            LikedButton(
+                              collectionId: _collectionDetail.id,
+                              isLiked: _collectionDetail.isLiked!,
+                              likedNum: _collectionDetail.likeNum!,
                             ),
                           ],
                         ),

@@ -83,13 +83,13 @@ class DataService {
       await rankingProvider.fetchRankingSelections();
     }
 
-    // bool existsUsers = rankingProvider.rankingUsers
-    //         ?.any((userInfo) => userInfo.userId == userId) ??
-    //     false;
+    bool existsUsers = rankingProvider.rankingUsers
+            ?.any((userInfo) => userInfo.userId == userId) ??
+        false;
 
-    // if (existsUsers) {
-    //   await rankingProvider.fetchRankingUsers();
-    // }
+    if (existsUsers) {
+      await rankingProvider.fetchRankingUsers();
+    }
   }
 
   static Future<void> updateDataProcessHandler(
