@@ -14,11 +14,11 @@ class UsersArchiveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Text(
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Text(
             '$number',
             style: TextStyle(
               color: Color(0xFF212529),
@@ -28,18 +28,18 @@ class UsersArchiveButton extends StatelessWidget {
               height: 1.5,
             ),
           ),
-        ),
-        Text(
-          name,
-          style: TextStyle(
-            color: Color(0xFF212529),
-            fontSize: 12.sp,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w500,
-            height: 1.5,
+          Text(
+            name,
+            style: TextStyle(
+              color: Color(0xFF212529),
+              fontSize: 12.sp,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

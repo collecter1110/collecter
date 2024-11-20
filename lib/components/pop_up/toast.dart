@@ -90,33 +90,41 @@ class Toast {
         );
         return AlertDialog(
           backgroundColor: Colors.white,
-          contentPadding:
-              EdgeInsets.symmetric(vertical: 0.0.h, horizontal: 0.0.h),
+          contentPadding: EdgeInsets.symmetric(vertical: 2.0.h),
           actions: null,
           contentTextStyle: TextStyle(fontSize: 16.sp, color: Colors.black),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
-          content: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextButton(
-                child: Text(
-                  "이미지 선택",
-                  style: contentTextStyle,
+          content: SizedBox(
+            width: 260.0.w,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    child: Text(
+                      "이미지 선택",
+                      style: contentTextStyle,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-              ),
-              Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
-              TextButton(
-                child: Text("기본 이미지로 변경", style: contentTextStyle),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-              ),
-            ],
+                Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    child: Text("기본 이미지로 변경", style: contentTextStyle),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

@@ -505,51 +505,50 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: 90.0.w,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ValueListenableBuilder<int>(
-                                valueListenable:
-                                    context.watch<ItemProvider>().countNotifier,
-                                builder: (context, itemNum, child) {
-                                  return AddButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        FocusScope.of(context).unfocus();
-                                        if (itemNum >= 9) {
-                                          Toast.notify(
-                                              '아이템은 최대 9개까지 추가가 가능합니다.');
-                                          return;
-                                        } else {
-                                          _itemIndex++;
-                                          _itemState = true;
-                                        }
-                                      });
-                                    },
-                                  );
-                                }),
-                            Transform.scale(
-                              scale: 0.8,
-                              child: Switch(
-                                value: _isOrder,
-                                onChanged: (value) {
-                                  setState(() {
-                                    FocusScope.of(context).unfocus();
-                                    _isOrder = value;
-                                  });
-                                },
-                                inactiveThumbColor: Colors.white,
-                                inactiveTrackColor: Color(0xffdee2e6),
-                                activeTrackColor: Colors.black,
-                                activeColor: Theme.of(context).primaryColor,
-                                trackOutlineColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                              ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ValueListenableBuilder<int>(
+                              valueListenable:
+                                  context.watch<ItemProvider>().countNotifier,
+                              builder: (context, itemNum, child) {
+                                return AddButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      FocusScope.of(context).unfocus();
+                                      if (itemNum >= 9) {
+                                        Toast.notify('아이템은 최대 9개까지 추가가 가능합니다.');
+                                        return;
+                                      } else {
+                                        _itemIndex++;
+                                        _itemState = true;
+                                      }
+                                    });
+                                  },
+                                );
+                              }),
+                          SizedBox(
+                            width: 10.0.w,
+                          ),
+                          Transform.scale(
+                            scale: 0.8,
+                            child: Switch(
+                              value: _isOrder,
+                              onChanged: (value) {
+                                setState(() {
+                                  FocusScope.of(context).unfocus();
+                                  _isOrder = value;
+                                });
+                              },
+                              inactiveThumbColor: Colors.white,
+                              inactiveTrackColor: Color(0xffdee2e6),
+                              activeTrackColor: Colors.black,
+                              activeColor: Theme.of(context).primaryColor,
+                              trackOutlineColor:
+                                  MaterialStateProperty.all(Colors.transparent),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
