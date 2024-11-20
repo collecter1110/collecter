@@ -25,12 +25,12 @@ class CollectionWidget extends StatelessWidget {
         _collections =
             isLiked! ? provider.likeCollections : provider.myCollections;
       }
-      if (provider.state == ConnectionState.waiting) {
+      if (provider.state == ConnectionState.waiting || _collections == null) {
         return Center(
           child: CircularProgressIndicator(),
         );
       } else if (provider.state == ConnectionState.done) {
-        return _collections!.isNotEmpty
+        return _collections.isNotEmpty
             ? GridView.builder(
                 padding:
                     EdgeInsets.symmetric(vertical: 22.0.h, horizontal: 16.0.w),
