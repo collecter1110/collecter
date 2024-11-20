@@ -296,19 +296,17 @@ class _ItemWidgetState extends State<ItemWidget> {
                   ),
                 ),
               ),
-              Flexible(
-                child: InkWell(
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                    widget.onDelete(itemKey);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20.0.h),
-                    child: Image.asset(
-                      'assets/icons/icon_delete_fill.png',
-                      width: 20.0.h,
-                      color: Color(0xFF343a40),
-                    ),
+              InkWell(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  widget.onDelete(itemKey);
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.0.h),
+                  child: Image.asset(
+                    'assets/icons/icon_delete_fill.png',
+                    width: 20.0.h,
+                    color: Color(0xFF343a40),
                   ),
                 ),
               ),
