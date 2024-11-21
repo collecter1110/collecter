@@ -1,3 +1,4 @@
+import 'package:collecter/components/widget/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -9,7 +10,6 @@ import '../../components/ui_kit/expandable_text.dart';
 import '../../components/widget/collection_widget.dart';
 import '../../data/model/user_info_model.dart';
 import '../../data/provider/user_info_provider.dart';
-import '../../data/services/storage_service.dart';
 
 class OtherUserScreen extends StatelessWidget {
   final UserInfoModel userInfoDetail;
@@ -80,24 +80,11 @@ class OtherUserScreen extends StatelessWidget {
                               ),
                             ),
                           )
-                        : Container(
-                            width: 80.0.w,
-                            height: 80.0.w,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100.0.r),
-                              border: Border.all(
-                                color: Color(0xFFdee2e6),
-                                width: 0.5.w, // 테두리 두께
-                              ),
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  StorageService.getFullImageUrl(
-                                      '${userInfoDetail.userId}/userinfo',
-                                      _imageFilePath),
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                        : ImageWidget(
+                            storageFolderName:
+                                '${userInfoDetail.userId}/userinfo',
+                            imageFilePath: _imageFilePath,
+                            boarderRadius: 100.r,
                           ),
                     SizedBox(
                       width: 16.0.w,

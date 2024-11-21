@@ -1,3 +1,4 @@
+import 'package:collecter/components/widget/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,7 +6,6 @@ import 'package:provider/provider.dart';
 
 import '../../data/model/collection_model.dart';
 import '../../data/provider/collection_provider.dart';
-import '../../data/services/storage_service.dart';
 import '../../page/collection/collection_detail_screen.dart';
 import '../ui_kit/text_utils.dart';
 
@@ -45,27 +45,11 @@ class Collection extends StatelessWidget {
               AspectRatio(
                 aspectRatio: 0.9,
                 child: collectionDetail.imageFilePath != null
-                    ? Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Color(0xFFdee2e6),
-                            width: 0.5.w,
-                          ),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(8.r),
-                          ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(8.r),
-                          ),
-                          child: Image.network(
-                            StorageService.getFullImageUrl(
-                                '${collectionDetail.userId}/collections',
-                                collectionDetail.imageFilePath!),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                    ? ImageWidget(
+                        storageFolderName:
+                            '${collectionDetail.userId}/collections',
+                        imageFilePath: collectionDetail.imageFilePath!,
+                        boarderRadius: 8.r,
                       )
                     : Container(
                         decoration: BoxDecoration(

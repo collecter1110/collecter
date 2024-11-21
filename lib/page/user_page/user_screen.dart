@@ -7,11 +7,11 @@ import '../../components/button/user_page_edit_button.dart';
 import '../../components/button/users_archive_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/expandable_text.dart';
+import '../../components/widget/image_widget.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/selecting_provider.dart';
 import '../../data/provider/user_info_provider.dart';
 import '../../data/services/locator.dart';
-import '../../data/services/storage_service.dart';
 import '../bookmark_page/bookmark_screen.dart';
 import 'edit_profile_screen.dart';
 import 'selecting_screen.dart';
@@ -100,20 +100,10 @@ class UserScreen extends StatelessWidget {
                             : Container(
                                 width: 80.0.w,
                                 height: 80.0.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100.0.r),
-                                  border: Border.all(
-                                    color: Color(0xFFdee2e6),
-                                    width: 0.5.w,
-                                  ),
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      StorageService.getFullImageUrl(
-                                          '${_userId}/userinfo',
-                                          _imageFilePath),
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
+                                child: ImageWidget(
+                                  storageFolderName: '${_userId}/userinfo',
+                                  imageFilePath: _imageFilePath,
+                                  boarderRadius: 100.r,
                                 ),
                               ),
                         SizedBox(

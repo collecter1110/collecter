@@ -1,3 +1,4 @@
+import 'package:collecter/components/widget/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../../data/model/keyword_model.dart';
 import '../../data/model/selecting_model.dart';
 import '../../data/provider/selection_provider.dart';
-import '../../data/services/storage_service.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../ui_kit/keyword.dart';
 import '../ui_kit/text_utils.dart';
@@ -73,17 +73,10 @@ class Selection extends StatelessWidget {
                     topRight: Radius.circular(8.r),
                   ),
                   child: thumbFilePath != null
-                      ? Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                StorageService.getFullImageUrl(
-                                    '${ownerId}/selections', thumbFilePath!),
-                              ),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                      ? ImageWidget(
+                          storageFolderName: '${ownerId}/selections',
+                          imageFilePath: thumbFilePath!,
+                          boarderRadius: 0.r,
                         )
                       : SizedBox.shrink(),
                 ),

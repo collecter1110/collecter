@@ -1,10 +1,10 @@
+import 'package:collecter/components/widget/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/model/user_info_model.dart';
 import '../../data/provider/collection_provider.dart';
-import '../../data/services/storage_service.dart';
 import '../../page/search_page/other_user_screen.dart';
 
 class SearchUser extends StatelessWidget {
@@ -53,22 +53,10 @@ class SearchUser extends StatelessWidget {
                       ),
                     ),
                   )
-                : Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100.0.r),
-                      border: Border.all(
-                        color: Color(0xFFdee2e6),
-                        width: 0.5.w,
-                      ),
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          StorageService.getFullImageUrl(
-                              '${userInfoDetail.userId}/userinfo',
-                              userInfoDetail.imageFilePath!),
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                : ImageWidget(
+                    storageFolderName: '${userInfoDetail.userId}/userinfo',
+                    imageFilePath: userInfoDetail.imageFilePath!,
+                    boarderRadius: 100.0.r,
                   ),
           ),
           SizedBox(

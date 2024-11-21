@@ -38,7 +38,6 @@ dependencies:
   provider: ^6.0.5
   image_picker: ^1.1.2
   supabase_flutter: ^2.8.0
-  flutter_dotenv: ^5.1.0
   fluttertoast: ^8.2.8
   flutter_secure_storage: ^9.0.0
   permission_handler: ^11.3.1
@@ -51,7 +50,8 @@ dependencies:
   flutter_launcher_icons: ^0.14.1
   sentry_flutter: ^8.9.0
   flutter_svg: ^2.0.14
-  characters: ^1.3.1
+  characters: ^1.3.0
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:
