@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../data/services/setting_service.dart';
 import '../../page_navigator.dart';
 import '../login/enter_login_screen.dart';
 
@@ -16,7 +17,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _getAccessToken(context);
+    getConfig(context);
+  }
+
+  Future<void> getConfig(BuildContext context) async {
+    bool checkSupabaseConfig = await SettingService.fetchConfigs(context);
+    if (checkSupabaseConfig) {
+      _getAccessToken(context);
+    }
   }
 
   Future<void> _getAccessToken(BuildContext context) async {

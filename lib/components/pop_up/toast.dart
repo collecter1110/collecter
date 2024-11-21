@@ -2,15 +2,67 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Toast {
+  static void showUpdateDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            '앱 업데이트',
+            style: TextStyle(
+              fontFamily: 'PretendardRegular',
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
+            ),
+          ),
+          content: Text('🚀 최신 버전이 출시되었습니다. 🚀\n원활한 서비스 이용을 위해 업데이트가 필요합니다.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Uri url = Uri.parse(
+                    'https://apps.apple.com/kr/app/collecter/id6737822766');
+                if (!await launchUrl(
+                  url,
+                  mode: LaunchMode.externalApplication,
+                )) {
+                  Toast.notify('유효하지 않은 링크입니다.');
+                }
+              },
+              child: Text(
+                '업데이트',
+                style: TextStyle(
+                  fontFamily: 'PretendardRegular',
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   static Future<void> showNoticeDialog(BuildContext context) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: Text("알림"),
+          title: Text(
+            "알림",
+            style: TextStyle(
+              fontFamily: 'PretendardRegular',
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
+            ),
+          ),
           content: Text(
               "죄송합니다.\n기본 메일 앱 사용이 불가능하여 앱에서 바로 메일을 전송할 수 없습니다.\n아래 명시된 이메일로 연락 주시면 친절하고 빠르게 답변해드리겠습니다.\n\n감사합니다:)\n\n\n contact.collecter@gmail.com"),
           actions: <Widget>[
@@ -41,7 +93,15 @@ class Toast {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: Text("알림"),
+          title: Text(
+            "알림",
+            style: TextStyle(
+              fontFamily: 'PretendardRegular',
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
+            ),
+          ),
           content: Text(contents),
           actions: <Widget>[
             TextButton(

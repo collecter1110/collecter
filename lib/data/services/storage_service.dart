@@ -1,26 +1,30 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../components/pop_up/toast.dart';
+import 'api_service.dart';
 
 class StorageService {
-  static String getFullImageUrl(
-      String storageFolderName, String imageFilePath) {
-    // 환경 변수에서 Supabase URL 가져오기
-    final String supabaseUrl = dotenv.env['SUPABASE_TEST_URL'] ?? '';
+  static final _storage = FlutterSecureStorage();
 
-    // 전체 URL 생성 (버킷 이름과 폴더 경로 포함)
-    return '$supabaseUrl/storage/v1/object/public/images/$storageFolderName/$imageFilePath';
+  static Future<void> saveConfigs(String supabaseUrl) async {
+    await _storage.write(key: 'SUPABASE_URL', value: supabaseUrl);
   }
 
-  static Future<bool> requestPhotoPermission() async {
-    PermissionStatus status = await Permission.photos.request();
+  static Future<void> saveTokens(
+      String accessToken, String refreshToken) async {
+    await _storage.write(key: 'ACCESS_TOKEN', value: accessToken);
+    await _storage.write(key: 'REFRESH_TOKEN', value: refreshToken);
+  }
 
-    if (status.isGranted || status.isLimited) {
-      return true;
-    } else {
-      await Toast.handlePhotoPermission(status);
-      return false;
-    }
+  static Future<String?> getAccessToken() async {
+    return await _storage.read(key: 'ACCESS_TOKEN');
+  }
+
+  static Future<String?> getRefreshToken() async {
+    return await _storage.read(key: 'REFRESH_TOKEN');
+  }
+
+  static Future<void> deleteStorageData() async {
+    await _storage.deleteAll();
+    await ApiService.stopSubscriptions();
   }
 }

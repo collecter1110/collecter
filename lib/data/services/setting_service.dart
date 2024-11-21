@@ -1,13 +1,20 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../components/pop_up/toast.dart';
+import 'api_service.dart';
+import 'storage_service.dart';
 
 class SettingService {
-  static Future<Map<String, dynamic>> getAppInfo() async {
+  static Future<Map<String, String>> getAppInfo() async {
     PackageInfo info = await PackageInfo.fromPlatform();
     return {"앱 버전": info.version};
   }
@@ -172,6 +179,62 @@ class SettingService {
       }
     } catch (e) {
       Toast.showNoticeDialog(context);
+    }
+  }
+
+  static Future<bool> fetchConfigs(BuildContext context) async {
+    final response = await http.get(Uri.parse(
+        'https://seq8d7fq74.execute-api.us-east-2.amazonaws.com/prod'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      final bodyData = jsonDecode(data['body']);
+      Map<String, String> configs = {
+        'supabaseUrl': bodyData['supabaseUrl'],
+        'supabaseApiKey': bodyData['supabaseApiKey'],
+        'latestAppVersion': bodyData['latestAppVersion'],
+        'sentryDsn': bodyData['sentryDsn'],
+      };
+
+      bool checkVersion = await checkAppVersion(context, configs);
+
+      return checkVersion;
+    } else {
+      throw Exception('Failed to fetch Supabase config');
+    }
+  }
+
+  static Future<bool> checkAppVersion(
+      BuildContext context, Map<String, String> configs) async {
+    Map<String, String> appVersionData = await getAppInfo();
+    String clientAppVersion = appVersionData['앱 버전'] ?? '';
+    if (clientAppVersion != configs['latestAppVersion']) {
+      Toast.showUpdateDialog(context);
+      await StorageService.deleteStorageData();
+      return false;
+    } else {
+      await serverInitialize(configs);
+      return true;
+    }
+  }
+
+  static Future<void> serverInitialize(Map<String, String> configs) async {
+    await Supabase.initialize(
+      url: configs['supabaseUrl'] ?? '',
+      anonKey: configs['supabaseApiKey'] ?? '',
+    );
+    await ApiService.authListener();
+    await StorageService.saveConfigs(configs['supabaseUrl']!);
+    if (!kDebugMode) {
+      await SentryFlutter.init(
+        (options) {
+          options.dsn = configs['sentryDsn'] ?? '';
+          options.tracesSampleRate = 1.0;
+          options.profilesSampleRate = 1.0;
+          options.attachStacktrace = true;
+        },
+      );
     }
   }
 }
