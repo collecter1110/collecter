@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,7 @@ import 'page/splash/splash_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsBinding.instance.addObserver(LifeCycleObserverService());
+  await dotenv.load(fileName: 'assets/config/.env');
   await initializeAppSetting();
   runApp(MyAppWrapper());
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -183,9 +184,15 @@ class SettingService {
   }
 
   static Future<bool> fetchConfigs(BuildContext context) async {
-    final response = await http.get(Uri.parse(
-        'https://seq8d7fq74.execute-api.us-east-2.amazonaws.com/prod'));
-
+    String apiKey = dotenv.env['AWS_API_KEY'] ?? '';
+    final Uri url = Uri.parse(
+        "https://seq8d7fq74.execute-api.us-east-2.amazonaws.com/prod");
+    final response = await http.get(
+      url,
+      headers: {
+        "x-api-key": "$apiKey",
+      },
+    );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
