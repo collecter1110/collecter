@@ -56,7 +56,7 @@ class _ImageWidgetState extends State<ImageWidget> {
               ),
             ),
             errorWidget: (context, url, error) =>
-                Center(child: Text('No data')),
+                Center(child: Text('Fail to fetch data')),
           );
         } else {
           return Center(child: Text('Error: ${snapshot.error}'));

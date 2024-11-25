@@ -183,7 +183,7 @@ class SettingService {
     }
   }
 
-  static Future<bool> fetchConfigs(BuildContext context) async {
+  static Future<bool> fetchConfigs() async {
     String apiKey = dotenv.env['AWS_API_KEY'] ?? '';
     final Uri url = Uri.parse(
         "https://seq8d7fq74.execute-api.us-east-2.amazonaws.com/prod");
@@ -204,7 +204,7 @@ class SettingService {
         'sentryDsn': bodyData['sentryDsn'],
       };
 
-      bool checkVersion = await checkAppVersion(context, configs);
+      bool checkVersion = await checkAppVersion(configs);
 
       return checkVersion;
     } else {
@@ -212,13 +212,10 @@ class SettingService {
     }
   }
 
-  static Future<bool> checkAppVersion(
-      BuildContext context, Map<String, String> configs) async {
+  static Future<bool> checkAppVersion(Map<String, String> configs) async {
     Map<String, String> appVersionData = await getAppInfo();
     String clientAppVersion = appVersionData['앱 버전'] ?? '';
     if (clientAppVersion != configs['latestAppVersion']) {
-      Toast.showUpdateDialog(context);
-      await StorageService.deleteStorageData();
       return false;
     } else {
       await serverInitialize(configs);

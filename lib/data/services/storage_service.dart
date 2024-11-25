@@ -24,7 +24,8 @@ class StorageService {
   }
 
   static Future<void> deleteStorageData() async {
-    await _storage.deleteAll();
+    await _storage.delete(key: 'ACCESS_TOKEN');
+    await _storage.delete(key: 'REFRESH_TOKEN');
     await ApiService.stopSubscriptions();
   }
 }
