@@ -16,16 +16,36 @@ class _TutorialScreenState extends State<TutorialScreen> {
   TextStyle commonTextStyle = TextStyle(
       fontFamily: 'PretendardRegular',
       fontSize: 22.sp,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w500,
       color: Color(0xFF212529),
+      height: 1.8);
+  TextStyle highlightTextStyle = TextStyle(
+      fontFamily: 'PretendardRegular',
+      fontSize: 26.sp,
+      fontWeight: FontWeight.w900,
+      color: Colors.black,
       height: 1.8);
 
   @override
   Widget build(BuildContext context) {
     List<Widget> _tutorialTexts = [
-      Text(
-        '나만의 감성을 담은 콘텐츠\n한곳에서 볼 수는 없을까?',
-        style: commonTextStyle,
+      Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '내 취향을 담은 기록들\n',
+              style: commonTextStyle,
+            ),
+            TextSpan(
+              text: '한곳에',
+              style: highlightTextStyle,
+            ),
+            TextSpan(
+              text: ' 정리할 수는 없을까?',
+              style: commonTextStyle,
+            ),
+          ],
+        ),
         textAlign: TextAlign.center,
       ),
       RichText(
@@ -36,29 +56,121 @@ class _TutorialScreenState extends State<TutorialScreen> {
             WidgetSpan(
               child: Image.asset(
                 'assets/images/image_logo_text.png',
-                height: 20.sp,
+                height: 24.sp,
               ),
             ),
             TextSpan(
-              text: ' 로\n한눈에 관리하자!',
+              text: ' 에서\n한눈에 관리하자!',
             ),
           ],
         ),
       ),
-      Text(
-        '여러 셀렉션들이 모여 \n완성되는 나만의 컬렉션',
-        style: commonTextStyle,
+      Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '기록하고 싶은\n아이템, ',
+              style: commonTextStyle,
+            ),
+            TextSpan(
+              text: '셀렉션',
+              style: highlightTextStyle,
+            ),
+          ],
+        ),
         textAlign: TextAlign.center,
       ),
-      Text(
-        '마음에 드는 셀렉션을\n선택하고',
-        style: commonTextStyle,
+      Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '셀렉션이 모여 \n완성되는 그룹, ',
+              style: commonTextStyle,
+            ),
+            TextSpan(
+              text: '컬렉션',
+              style: highlightTextStyle,
+            ),
+          ],
+        ),
         textAlign: TextAlign.center,
       ),
-      Text(
-        '나의 공간으로 가져와\n컬렉션을 완성하자!',
-        style: commonTextStyle,
+      Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '셀렉션을 직접 ',
+              style: commonTextStyle,
+            ),
+            TextSpan(
+              text: '만들어',
+              style: highlightTextStyle,
+            ),
+            TextSpan(
+              text: '\n 컬렉션에 추가하거나',
+              style: commonTextStyle,
+            ),
+          ],
+        ),
         textAlign: TextAlign.center,
+      ),
+      Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '마음에 드는 셀렉션은\n',
+              style: commonTextStyle,
+            ),
+            TextSpan(
+              text: '선택',
+              style: highlightTextStyle,
+            ),
+            TextSpan(
+              text: '하고',
+              style: commonTextStyle,
+            ),
+          ],
+        ),
+        textAlign: TextAlign.center,
+      ),
+      Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '원하는 컬렉션에\n',
+              style: commonTextStyle,
+            ),
+            TextSpan(
+              text: '저장',
+              style: highlightTextStyle,
+            ),
+            TextSpan(
+              text: '하여',
+              style: commonTextStyle,
+            ),
+          ],
+        ),
+        textAlign: TextAlign.center,
+      ),
+      RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style: commonTextStyle,
+          children: [
+            TextSpan(
+              text: '나만의 컬렉션을 만들어서\n',
+              style: commonTextStyle,
+            ),
+            TextSpan(
+              text: '한곳에',
+              style: highlightTextStyle,
+            ),
+            TextSpan(
+              text: ' 기록하자!',
+              style: commonTextStyle,
+            ),
+          ],
+        ),
       ),
     ];
     Future<void> loading() async {
