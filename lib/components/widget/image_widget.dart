@@ -26,6 +26,19 @@ class _ImageWidgetState extends State<ImageWidget> {
   @override
   void initState() {
     super.initState();
+    _updateImageUrlFuture();
+  }
+
+  @override
+  void didUpdateWidget(covariant ImageWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.storageFolderName != oldWidget.storageFolderName ||
+        widget.imageFilePath != oldWidget.imageFilePath) {
+      _updateImageUrlFuture();
+    }
+  }
+
+  void _updateImageUrlFuture() {
     _imageUrlFuture = ImageService.getFullImageUrl(
       widget.storageFolderName,
       widget.imageFilePath,
