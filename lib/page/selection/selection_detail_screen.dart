@@ -1,3 +1,4 @@
+import 'package:collecter/components/widget/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,6 @@ import '../../components/ui_kit/text_utils.dart';
 import '../../components/widget/selection_item_widget.dart';
 import '../../data/model/selection_model.dart';
 import '../../data/provider/selection_provider.dart';
-import '../../data/services/storage_service.dart';
 
 class SelectionDetailScreen extends StatefulWidget {
   const SelectionDetailScreen({
@@ -125,24 +125,12 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                                               left: 16.0.w,
                                               right: 16.0.w,
                                               top: 16.0.h),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(8.r),
-                                            ),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                    StorageService.getFullImageUrl(
-                                                        '${_selectionDetail.ownerId}/selections',
-                                                        _selectionDetail
-                                                                .imageFilePaths![
-                                                            index]),
-                                                  ),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
+                                          child: ImageWidget(
+                                            storageFolderName:
+                                                '${_selectionDetail.ownerId}/selections',
+                                            imageFilePath: _selectionDetail
+                                                .imageFilePaths![index],
+                                            boarderRadius: 8.r,
                                           ),
                                         );
                                       }),

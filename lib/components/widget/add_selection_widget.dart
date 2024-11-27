@@ -395,21 +395,31 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                               itemCount: _picekdImages!.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return AspectRatio(
-                                  aspectRatio: 1,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(6.0.r),
-                                    child: Image.file(
-                                      File(
-                                        _picekdImages![index].path,
+                                  aspectRatio: 0.9,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      border: Border.all(
+                                        color: Color(0xFFdee2e6),
+                                        width: 0.5.w,
                                       ),
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (BuildContext context,
-                                          Object error,
-                                          StackTrace? stackTrace) {
-                                        return const Center(
-                                            child: Text(
-                                                'This image type is not supported'));
-                                      },
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.circular(8.0.r),
+                                      child: Image.file(
+                                        File(
+                                          _picekdImages![index].path,
+                                        ),
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (BuildContext context,
+                                            Object error,
+                                            StackTrace? stackTrace) {
+                                          return const Center(
+                                              child: Text(
+                                                  'This image type is not supported'));
+                                        },
+                                      ),
                                     ),
                                   ),
                                 );

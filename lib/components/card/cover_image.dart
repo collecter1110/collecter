@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../data/services/storage_service.dart';
+import '../widget/image_widget.dart';
 
 class CoverImage extends StatelessWidget {
   final int coverIndex;
@@ -30,31 +30,21 @@ class CoverImage extends StatelessWidget {
         aspectRatio: 0.9,
         child: Stack(
           children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Color(0xFFdee2e6),
-                  width: 0.5.w,
-                ),
-                borderRadius: BorderRadius.circular(8.r),
-                image: DecorationImage(
-                  image: NetworkImage(
-                    StorageService.getFullImageUrl(
-                        '$ownerId/selections', thumbFilePath),
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.r),
-                  color: isSelected
-                      ? Colors.black.withOpacity(0.5)
-                      : Colors.transparent,
-                ),
-              ),
+            ImageWidget(
+              storageFolderName: '$ownerId/selections',
+              imageFilePath: thumbFilePath,
+              boarderRadius: 8.r,
             ),
+            isSelected
+                ? Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.r),
+                      color: isSelected
+                          ? Colors.black.withOpacity(0.5)
+                          : Colors.transparent,
+                    ),
+                  )
+                : SizedBox.shrink(),
             isSelected
                 ? Positioned(
                     right: 6.0.w,

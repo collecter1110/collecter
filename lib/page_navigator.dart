@@ -7,7 +7,7 @@ import 'data/provider/page_route_provider.dart';
 import 'data/services/data_service.dart';
 import 'data/services/locator.dart';
 import 'data/services/route_observer_service.dart';
-import 'data/services/storage_service.dart';
+import 'data/services/image_service.dart';
 import 'page/add_page/add_screen.dart';
 import 'page/bookmark_page/bookmark_screen.dart';
 import 'page/home_page/home_screen.dart';
@@ -61,7 +61,7 @@ class _PageNavigatorState extends State<PageNavigator> {
 
   Future<void> getPermission() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      bool isPermissionGranted = await StorageService.requestPhotoPermission();
+      bool isPermissionGranted = await ImageService.requestPhotoPermission();
 
       if (isPermissionGranted) {
       } else {

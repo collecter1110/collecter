@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
+import 'package:collecter/components/widget/splash_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'data/provider/collection_provider.dart';
 import 'data/provider/item_provider.dart';
@@ -18,43 +16,26 @@ import 'data/provider/selecting_provider.dart';
 import 'data/provider/selection_provider.dart';
 import 'data/provider/tag_provider.dart';
 import 'data/provider/user_info_provider.dart';
-import 'data/services/api_service.dart';
 import 'data/services/life_cycle_observer_service.dart';
 import 'data/services/locator.dart';
+import 'data/services/setting_service.dart';
 import 'page/splash/splash_screen.dart';
+import 'page/splash/update_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsBinding.instance.addObserver(LifeCycleObserverService());
   await dotenv.load(fileName: 'assets/config/.env');
-
-  if (!kDebugMode) {
-    await SentryFlutter.init(
-      (options) {
-        options.dsn = dotenv.env['SENTRY_DSN'] ?? '';
-        options.tracesSampleRate = 1.0;
-        options.profilesSampleRate = 1.0;
-        options.attachStacktrace = true;
-      },
-    );
-  }
-
-  await initializeApp();
-
+  await initializeAppSetting();
   runApp(MyAppWrapper());
 }
 
-Future<void> initializeApp() async {
-  await Supabase.initialize(
-    url: dotenv.env['SUPABASE_TEST_URL'] ?? '',
-    anonKey: dotenv.env['SUPABASE_TEST_API_KEY'] ?? '',
-  );
+Future<void> initializeAppSetting() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
   setupLocator();
-  await ApiService.authListener();
 }
 
 class MyAppWrapper extends StatelessWidget {
@@ -119,12 +100,24 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late Future<bool> _needVersionUpdate;
+
+  @override
+  void initState() {
+    super.initState();
+    _needVersionUpdate = checkVersion();
+  }
+
   Key _key = UniqueKey();
 
   void restart() {
     setState(() {
       _key = UniqueKey();
     });
+  }
+
+  Future<bool> checkVersion() async {
+    return await SettingService.fetchConfigs();
   }
 
   @override
@@ -142,7 +135,22 @@ class _MyAppState extends State<MyApp> {
           elevation: 0,
         ),
       ),
-      home: SplashScreen(),
+      home: FutureBuilder<bool>(
+        future: _needVersionUpdate,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SplashWidget();
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.data == true) {
+            return SplashScreen();
+          } else if (snapshot.data == false) {
+            return UpdateScreen();
+          } else {
+            return SizedBox.shrink();
+          }
+        },
+      ),
     );
   }
 }

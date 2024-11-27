@@ -1,3 +1,4 @@
+import 'package:collecter/components/widget/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +7,6 @@ import '../../data/model/selecting_model.dart';
 import '../../data/model/selection_model.dart';
 import '../../data/provider/selection_provider.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/storage_service.dart';
 import '../../page/selection/selection_detail_screen.dart';
 import '../button/go_collection_button.dart';
 import '../ui_kit/keyword.dart';
@@ -62,36 +62,19 @@ class SearchSelection extends StatelessWidget {
                     width: 100.0.w,
                     child: AspectRatio(
                       aspectRatio: 0.9,
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            color: Color(0xFFf1f3f5),
-                            borderRadius: BorderRadius.circular(8.r)),
-                        child: selectionDetail.thumbFilePath != null
-                            ? Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Color(0xFFdee2e6),
-                                    width: 0.5.w,
-                                  ),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.r),
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8.r),
-                                  ),
-                                  child: Image.network(
-                                    StorageService.getFullImageUrl(
-                                        '${selectionDetail.ownerId}/selections',
-                                        selectionDetail.thumbFilePath!),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              )
-                            : SizedBox.shrink(),
-                      ),
+                      child: selectionDetail.thumbFilePath != null
+                          ? ImageWidget(
+                              storageFolderName:
+                                  '${selectionDetail.ownerId}/selections',
+                              imageFilePath: selectionDetail.thumbFilePath!,
+                              boarderRadius: 8.r,
+                            )
+                          : Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: Color(0xFFf1f3f5),
+                                  borderRadius: BorderRadius.circular(8.r)),
+                            ),
                     ),
                   ),
                   SizedBox(

@@ -1,3 +1,4 @@
+import 'package:collecter/components/widget/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,7 +15,6 @@ import '../../data/model/collection_model.dart';
 import '../../data/provider/selection_provider.dart';
 import '../../data/provider/tag_provider.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/storage_service.dart';
 
 class EditCollectionScreen extends StatefulWidget {
   final CollectionModel collectionDetail;
@@ -78,31 +78,22 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
     }
 
     if (_changedImageName != null) {
-      return _buildNetworkImage(
-        StorageService.getFullImageUrl(
-            '$_userId/selections', _changedImageName!),
+      return ImageWidget(
+        storageFolderName: '$_userId/selections',
+        imageFilePath: _changedImageName!,
+        boarderRadius: 8.r,
       );
     }
 
     if (_initialImageName != null) {
-      return _buildNetworkImage(
-        StorageService.getFullImageUrl(
-            '$_userId/collections', _initialImageName!),
+      return ImageWidget(
+        storageFolderName: '$_userId/collections',
+        imageFilePath: _initialImageName!,
+        boarderRadius: 8.r,
       );
     }
 
     return _buildDefaultImage();
-  }
-
-  Widget _buildNetworkImage(String url) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(url),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
   }
 
   Widget _buildDefaultImage() {
@@ -260,12 +251,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                               width: 130.w,
                               child: AspectRatio(
                                 aspectRatio: 0.9,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.r),
-                                  ),
-                                  child: _buildImageWidget(),
-                                ),
+                                child: _buildImageWidget(),
                               ),
                             ),
                           ),

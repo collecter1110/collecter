@@ -9,10 +9,10 @@ import '../../components/button/complete_button.dart';
 import '../../components/pop_up/toast.dart';
 import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
+import '../../components/widget/image_widget.dart';
 import '../../data/model/user_info_model.dart';
 import '../../data/provider/user_info_provider.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/storage_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({
@@ -79,16 +79,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       );
     } else if (!_isChangedImage) {
-      return Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(
-              StorageService.getFullImageUrl(
-                  '${_userId}/userinfo', _changedImageFilePath!),
-            ),
-            fit: BoxFit.cover,
-          ),
-        ),
+      return ImageWidget(
+        storageFolderName: '${_userId}/userinfo',
+        imageFilePath: _changedImageFilePath!,
+        boarderRadius: 100.r,
       );
     } else if (_isChangedImage) {
       return Image.file(
@@ -210,14 +204,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 aspectRatio: 1 / 1,
                                 child: Stack(
                                   children: [
-                                    ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(100.0.r),
-                                      child: SizedBox(
-                                        width: 80.w,
-                                        height: 80.0.w,
-                                        child: _buildImageWidget(),
-                                      ),
+                                    SizedBox(
+                                      width: 80.w,
+                                      height: 80.0.w,
+                                      child: _buildImageWidget(),
                                     ),
                                     Positioned(
                                       right: 0.0.w,

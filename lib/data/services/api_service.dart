@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -18,7 +17,7 @@ import '../model/user_info_model.dart';
 import '../provider/collection_provider.dart';
 import 'data_service.dart';
 import 'locator.dart';
-import 'token_service.dart';
+import 'storage_service.dart';
 
 class ApiService {
   static final storage = FlutterSecureStorage();
@@ -94,7 +93,7 @@ class ApiService {
             await handleSaveAccessTokens();
             break;
           case AuthChangeEvent.signedOut:
-            await TokenService.deleteStorageData();
+            await StorageService.deleteStorageData();
             break;
           default:
             break;
@@ -111,13 +110,13 @@ class ApiService {
     try {
       if (currentSession != null && currentSession!.accessToken.isNotEmpty) {
         print('유효한 세션 - 토큰을 저장합니다.');
-        await TokenService.saveTokens(
+        await StorageService.saveTokens(
           currentSession!.accessToken,
           currentSession!.refreshToken ?? '',
         );
       } else {
         print('세션이 만료되었거나 없습니다.');
-        await TokenService.deleteStorageData();
+        await StorageService.deleteStorageData();
         await _supabase.auth.signOut();
       }
     } catch (e, stackTrace) {
@@ -264,7 +263,7 @@ class ApiService {
   }
 
   static Future<void> cancelMembership() async {
-    final supabaseUrl = dotenv.env['SUPABASE_TEST_URL'] ?? '';
+    final supabaseUrl = await storage.read(key: 'SUPABASE_URL');
     final accessToken = await storage.read(key: 'ACCESS_TOKEN');
     final url = Uri.parse('$supabaseUrl/functions/v1/delete-user');
 

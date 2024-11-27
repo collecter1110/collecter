@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:collecter/components/widget/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +19,6 @@ import '../../data/provider/item_provider.dart';
 
 import '../../data/provider/keyword_provider.dart';
 import '../../data/services/api_service.dart';
-import '../../data/services/storage_service.dart';
 
 class EditSelectionScreen extends StatefulWidget {
   final SelectionModel selectionDetail;
@@ -210,7 +210,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AspectRatio(
-                aspectRatio: 1 / 1,
+                aspectRatio: 0.9,
                 child: PageView.builder(
                     controller: _pageController,
                     onPageChanged: (index) {
@@ -253,21 +253,12 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                               : Stack(
                                   children: [
                                     _isNetworkImage(_changedImagePaths[index])
-                                        ? Container(
-                                            height: double.infinity,
-                                            width: double.infinity,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: NetworkImage(
-                                                  StorageService.getFullImageUrl(
-                                                      '${widget.selectionDetail.ownerId}/selections',
-                                                      _changedImagePaths[
-                                                          index]),
-                                                ),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          )
+                                        ? ImageWidget(
+                                            storageFolderName:
+                                                '${widget.selectionDetail.ownerId}/selections',
+                                            imageFilePath:
+                                                _changedImagePaths[index],
+                                            boarderRadius: 8.r)
                                         : Image.file(
                                             height: double.infinity,
                                             width: double.infinity,
