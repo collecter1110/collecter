@@ -126,7 +126,6 @@ class CategoryDialog extends StatelessWidget {
                             selectedCollectionId: selectedCategoryId,
                             onTap: (value) {
                               setState(() {
-                                print('선택한 카테고리 아이디 :$value');
                                 selectedCategoryId = value;
                               });
                             },
@@ -145,7 +144,6 @@ class CategoryDialog extends StatelessWidget {
                     secondFieldState: selectedCategoryId != null,
                     onTap: () async {
                       Navigator.pop(context);
-                      print(selectedCategoryId);
                       saveCategory(_categoryInfo.firstWhere((category) =>
                           category.categoryId == selectedCategoryId));
                     },

@@ -831,6 +831,7 @@ class ApiService {
   }
 
   static Future<void> editCollection(
+      int categoryId,
       int collectionId,
       String title,
       String? description,
@@ -839,6 +840,7 @@ class ApiService {
       bool isPublic) async {
     try {
       await _supabase.from('collections').update({
+        'category_id': categoryId,
         'title': title,
         'description': description,
         'image_file_path': imageFilePath,
