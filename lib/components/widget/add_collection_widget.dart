@@ -8,6 +8,7 @@ import '../../data/services/api_service.dart';
 import '../button/add_button.dart';
 import '../button/complete_button.dart';
 import '../button/tag_button.dart';
+import '../pop_up/category_dialog.dart';
 import '../pop_up/toast.dart';
 import '../text_field/add_text_form_field.dart';
 
@@ -27,6 +28,18 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   bool _isPublic = true;
   String _inputTagValue = '';
 
+  int? _categoryId = null;
+  List<String> category = [
+    '🎸 음악',
+    '📚 책',
+    '🎬 영화/TV',
+    '🥘 요리',
+    '🚩 장소',
+    '🍸 테이스팅 노트',
+    '😎 기타'
+  ];
+  String? _categoryName = null;
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +56,26 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       final tagProvider = context.read<TagProvider>();
       tagProvider.clearTags();
     });
+  }
+
+  Future<void> _showGroupDialog() async {
+    showModalBottomSheet(
+      context: context,
+      constraints: BoxConstraints(
+        maxWidth: double.infinity,
+      ),
+      isScrollControlled: false,
+      builder: (context) {
+        return CategoryDialog(
+          saveCategory: (value) {
+            setState(() {
+              _categoryId = value;
+              _categoryName = category[value];
+            });
+          },
+        );
+      },
+    );
   }
 
   Future<void> _passFieldValidator() async {
@@ -99,6 +132,70 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '카테고리 선택',
+                        style: TextStyle(
+                          fontFamily: 'PretendardRegular',
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff343A40),
+                          height: 1.5,
+                        ),
+                      ),
+                      AddButton(
+                        onPressed: () async {
+                          await _showGroupDialog();
+                        },
+                      ),
+                    ],
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      await _showGroupDialog();
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0.r),
+                          color: _categoryName != null
+                              ? Theme.of(context).primaryColor.withOpacity(0.3)
+                              : Colors.white,
+                          border: Border.all(
+                            color: _categoryName != null
+                                ? Theme.of(context).primaryColor
+                                : const Color(0xFFf1f3f5),
+                            width: 1.0,
+                            style: BorderStyle.solid,
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 12.0.h, horizontal: 16.0.w),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            _categoryName != null
+                                ? '${_categoryName}'
+                                : '카테고리를 선택해주세요.',
+                            style: TextStyle(
+                              color: _categoryName != null
+                                  ? Colors.black
+                                  : const Color(0xffADB5BD),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                              height: 1.43,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.0.h,
+                  ),
                   Text(
                     '컬렉션 이름',
                     style: TextStyle(
