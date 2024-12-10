@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/model/category_model.dart';
 import '../../data/provider/tag_provider.dart';
 import '../../data/services/api_service.dart';
 import '../button/add_button.dart';
@@ -28,16 +29,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   bool _isPublic = true;
   String _inputTagValue = '';
 
-  int? _categoryId = null;
-  List<String> category = [
-    '🎸 음악',
-    '📚 책',
-    '🎬 영화/TV',
-    '🥘 요리',
-    '🚩 장소',
-    '🍸 테이스팅 노트',
-    '😎 기타'
-  ];
+  CategoryModel? _categoryInfo = null;
   String? _categoryName = null;
 
   @override
@@ -67,10 +59,11 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       isScrollControlled: false,
       builder: (context) {
         return CategoryDialog(
+          selectedCategoryId: _categoryInfo?.categoryId,
           saveCategory: (value) {
             setState(() {
-              _categoryId = value;
-              _categoryName = category[value];
+              _categoryInfo = value;
+              _categoryName = _categoryInfo!.categoryName;
             });
           },
         );
@@ -89,8 +82,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       },
     );
     try {
-      await ApiService.addCollection(_title!, _description,
-          context.read<TagProvider>().tagNames, _isPublic);
+      await ApiService.addCollection(_categoryInfo!.categoryId, _title!,
+          _description, context.read<TagProvider>().tagNames, _isPublic);
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -388,7 +381,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
 
                         WidgetsBinding.instance.addPostFrameCallback((_) async {
                           final fieldValidator = FieldValidator({
-                            '컬렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
+                            '카테고리를 선택해주세요.': _categoryInfo?.categoryId != null,
+                            '컬렉션 이름을 입력해주세요.': _title?.isNotEmpty == true,
                           });
 
                           if (!fieldValidator.validateFields()) {

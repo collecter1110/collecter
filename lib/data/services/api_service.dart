@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 
 import '../../components/pop_up/toast.dart';
 import '../../main.dart';
+import '../model/category_model.dart';
 import '../model/collection_model.dart';
 import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
@@ -422,6 +423,19 @@ class ApiService {
     }
   }
 
+  static Future<List<CategoryModel>> getCategoryInfo() async {
+    try {
+      final responseData = await _supabase.from('categoryinfo').select('*');
+      final List<CategoryModel> categoryInfo =
+          responseData.map((item) => CategoryModel.fromJson(item)).toList();
+      return categoryInfo;
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getCategoryInfo');
+      debugErrorMessage('getCategoryInfo exception: ${e}');
+      throw Exception('getCategoryInfo exception: ${e}');
+    }
+  }
+
   static Future<String> getCollectionTitle(int collectionId) async {
     try {
       final responseData = await _supabase
@@ -613,6 +627,7 @@ class ApiService {
 
     try {
       final responseData = await _supabase.from('collections').select('''
+        category_id,
         id, 
         title, 
         description, 
@@ -702,13 +717,14 @@ class ApiService {
     }
   }
 
-  static Future<void> addCollection(String title, String? description,
-      List<String>? tags, bool isPublic) async {
+  static Future<void> addCollection(int categoryId, String title,
+      String? description, List<String>? tags, bool isPublic) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
     try {
       await _supabase.from('collections').insert({
+        'category_id': categoryId,
         'user_id': userId,
         'title': title,
         'description': description,

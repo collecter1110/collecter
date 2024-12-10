@@ -643,8 +643,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           (_) async {
                             final fieldValidator = FieldValidator({
                               '컬렉션을 선택해주세요.': _collectionId != null,
-                              '셀렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
-                              '키워드를 입력해주세요': context
+                              '셀렉션 이름을 입력해주세요.': _title?.isNotEmpty == true,
+                              '키워드를 입력해주세요.': context
                                       .read<KeywordProvider>()
                                       .keywordNames
                                       ?.isNotEmpty ==

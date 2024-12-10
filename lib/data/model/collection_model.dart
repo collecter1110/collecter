@@ -1,6 +1,7 @@
 import 'package:collecter/data/model/keyword_model.dart';
 
 class CollectionModel {
+  final int categoryId;
   final int id;
   final String title;
   final String? description;
@@ -16,6 +17,7 @@ class CollectionModel {
   final bool? isLiked;
 
   CollectionModel({
+    required this.categoryId,
     required this.id,
     required this.title,
     this.description,
@@ -35,6 +37,7 @@ class CollectionModel {
   factory CollectionModel.fromJson(Map<String, dynamic> json,
       {bool? hasLiked}) {
     return CollectionModel(
+      categoryId: json['category_id'],
       id: json['id'],
       title: json['title'],
       description: json['description'],
