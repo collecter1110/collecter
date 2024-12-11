@@ -1,13 +1,13 @@
-class KeywordData {
+class KeywordModel {
   int keywordId;
   String keywordName;
+  int? categoryId;
 
-  KeywordData({
-    required this.keywordId,
-    required this.keywordName,
-  });
+  KeywordModel(
+      {required this.keywordId, required this.keywordName, this.categoryId});
 
-  KeywordData.fromJson(Map<String, dynamic> json)
+  KeywordModel.fromJson(Map<String, dynamic> json)
       : keywordId = json['keyword_id'],
-        keywordName = json['keyword_name'];
+        keywordName = json['keyword_name'],
+        categoryId = json['category_id'] as int?;
 }

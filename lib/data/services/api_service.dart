@@ -778,20 +778,20 @@ class ApiService {
 
   static Future<List<Map<String, dynamic>>> addKeywords(
     List<String> keywords,
+    int categoryId,
   ) async {
     try {
-      List<Map<String, dynamic>> newKeywordEntries =
-          keywords.map((keyword) => {'keyword_name': keyword}).toList();
+      List<Map<String, dynamic>> newKeywordEntries = keywords
+          .map(
+              (keyword) => {'keyword_name': keyword, 'category_id': categoryId})
+          .toList();
 
-      await _supabase
-          .from('keywordinfo')
-          .upsert(newKeywordEntries,
-              onConflict: 'keyword_name', ignoreDuplicates: true)
-          .select();
+      await _supabase.from('keywordinfo').insert(newKeywordEntries);
 
       final response = await _supabase
           .from('keywordinfo')
-          .select()
+          .select('keyword_name, keyword_id')
+          .eq('category_id', categoryId)
           .filter('keyword_name', 'in', keywords);
 
       return response;

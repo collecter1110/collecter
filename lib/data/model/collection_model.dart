@@ -10,7 +10,7 @@ class CollectionModel {
   final List<dynamic>? tags;
   final int userId;
   final String userName;
-  final List<KeywordData>? primaryKeywords;
+  final List<KeywordModel>? primaryKeywords;
   final int? selectionNum;
   final int? likeNum;
   final bool isPublic;
@@ -47,7 +47,7 @@ class CollectionModel {
       userName: json['user_name'],
       userId: json['user_id'],
       primaryKeywords: (json['primary_keywords'] as List<dynamic>?)
-          ?.map((keyword) => KeywordData.fromJson(keyword))
+          ?.map((keyword) => KeywordModel.fromJson(keyword))
           .toList(),
       selectionNum: json['selection_num'] as int?,
       likeNum: json['like_num'] as int?,

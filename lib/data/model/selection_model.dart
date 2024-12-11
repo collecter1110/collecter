@@ -9,7 +9,7 @@ class SelectionModel {
   final String title;
   final String? description;
   final List<dynamic>? imageFilePaths;
-  final List<KeywordData>? keywords;
+  final List<KeywordModel>? keywords;
   final String? link;
   final List<ItemData>? items;
   final bool? isOrdered;
@@ -50,7 +50,7 @@ class SelectionModel {
       imageFilePaths: json['image_file_paths'] as List<dynamic>?,
       keywords: json['keywords'] != null
           ? (json['keywords'] as List<dynamic>)
-              .map((item) => KeywordData.fromJson(item))
+              .map((item) => KeywordModel.fromJson(item))
               .toList()
           : null,
       link: json['link'] as String?,

@@ -26,6 +26,7 @@ class AddSelectionWidget extends StatefulWidget {
 
 class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   final GlobalKey<FormState> _keywordFormKey = GlobalKey<FormState>();
+  int? _categoryId;
   int? _collectionId;
   String? _title;
   List<Map<String, dynamic>>? _keywords;
@@ -78,7 +79,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     try {
       _items = context.read<ItemProvider>().itemDataListToJson();
       _keywords = await ApiService.addKeywords(
-          context.read<KeywordProvider>().keywordNames!);
+          context.read<KeywordProvider>().keywordNames!, _categoryId!);
       if (_picekdImages != null && _picekdImages!.isNotEmpty) {
         _imageFilePaths = await ApiService.uploadAndGetImageFilePaths(
             _picekdImages!, 'selections');
@@ -166,14 +167,17 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                       ),
                     ],
                   ),
-                  Selector<CollectionProvider, ({String? item1, int? item2})>(
+                  Selector<CollectionProvider,
+                      ({String? item1, int? item2, int? item3})>(
                     selector: (context, collectionProvider) => (
                       item1: collectionProvider.collectionTitle,
-                      item2: collectionProvider.collectionId
+                      item2: collectionProvider.collectionId,
+                      item3: collectionProvider.categoryId
                     ),
                     builder: (context, data, child) {
                       String? _collectionTitle = data.item1;
                       _collectionId = data.item2;
+                      _categoryId = data.item3;
 
                       return InkWell(
                         onTap: () async {
