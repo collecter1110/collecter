@@ -1,54 +1,57 @@
+import 'package:collecter/data/model/selection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import '../../data/model/collection_model.dart';
+
+import '../../data/model/selecting_model.dart';
 import '../../data/provider/ranking_provider.dart';
-import '../card/collection.dart';
+import '../card/selection.dart';
 import '../ui_kit/category_banner.dart';
 
-class CategoryCollectionWidget extends StatelessWidget {
+class CategorySelectionWidget extends StatelessWidget {
   final int categoryId;
 
-  const CategoryCollectionWidget({
+  const CategorySelectionWidget({
     super.key,
     required this.categoryId,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24.0.h),
+    return Container(
+      color: Color(0xFFf8f9fa),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CategoryBanner(
-            showDescription: true,
-            categoryId: categoryId,
+          Padding(
+            padding: EdgeInsets.only(top: 12.0.h),
+            child: CategoryBanner(
+              showDescription: false,
+              categoryId: categoryId,
+            ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 24.0.h),
+            padding: EdgeInsets.symmetric(vertical: 12.0.h),
             child:
                 Consumer<RankingProvider>(builder: (context, provider, child) {
-              final List<CollectionModel>? _collections;
+              final List<SelectionModel>? _selections;
               if (categoryId == 4) {
-                _collections = provider.movieCollections;
+                _selections = provider.movieSelections;
               } else if (categoryId == 1) {
-                _collections = provider.musicCollections;
+                _selections = provider.musicSelections;
               } else if (categoryId == 3) {
-                _collections = provider.bookCollections;
-              } else if (categoryId == 5) {
-                _collections = provider.cookCollections;
+                _selections = provider.bookSelections;
               } else {
-                _collections = null;
+                _selections = null;
               }
 
-              if (_collections == null) {
+              if (_selections == null) {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
               }
-              return (_collections.isNotEmpty)
+              return (_selections.isNotEmpty)
                   ? SizedBox(
                       height: 240.0.h,
                       child: ListView.separated(
@@ -57,22 +60,34 @@ class CategoryCollectionWidget extends StatelessWidget {
                           horizontal: 18.0.w,
                         ),
                         shrinkWrap: true,
-                        itemCount: _collections.length,
+                        itemCount: _selections.length,
                         itemBuilder: (context, index) {
-                          final CollectionModel _collection =
-                              _collections![index];
-                          return AspectRatio(
-                            aspectRatio: 0.63,
-                            child: Collection(
-                              routName: '/',
-                              collectionDetail: _collection,
-                              isRanking: true,
+                          final SelectionModel _selection = _selections![index];
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                            child: AspectRatio(
+                              aspectRatio: 0.63,
+                              child: Selection(
+                                routeName: '/',
+                                properties: PropertiesData.fromJson(
+                                  {
+                                    "collection_id": _selection.collectionId,
+                                    "selection_id": _selection.selectionId,
+                                  },
+                                ),
+                                title: _selection.title,
+                                thumbFilePath: _selection.thumbFilePath,
+                                ownerName: _selection.ownerName,
+                                ownerId: _selection.ownerId,
+                                keywords: _selection.keywords,
+                                isRanking: true,
+                              ),
                             ),
                           );
                         },
                         separatorBuilder: (BuildContext context, int index) {
                           return SizedBox(
-                            width: 12.0.w,
+                            width: 16.0.w,
                           );
                         },
                       ),

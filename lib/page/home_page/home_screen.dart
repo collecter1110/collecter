@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
-import '../../components/widget/ranking_collection_widget.dart';
+import '../../components/widget/ranking_widget.dart';
 import '../../components/widget/ranking_selection_widget.dart';
 import '../../components/widget/ranking_user_widget.dart';
 
@@ -149,26 +149,15 @@ class _HomeScreenState extends State<HomeScreen>
           ];
         },
         body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           controller: _tabController,
           children: [
+            RankingCollectionWidget(),
+            RankingSelectionWidget(),
             Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 18.0.w,
-              ),
-              child: RankingCollectionWidget(),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 18.0.w,
-              ),
-              child: RankingSelectionWidget(),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 18.0.w,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 18.0.w),
               child: RankingUserWidget(),
-            ),
+            )
           ],
         ),
       )),

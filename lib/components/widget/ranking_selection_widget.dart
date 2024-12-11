@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 
-import '../../data/model/selecting_model.dart';
-import '../../data/model/selection_model.dart';
-import '../../data/provider/ranking_provider.dart';
-import '../card/selection.dart';
+import 'category_selection_widget.dart';
 
 class RankingSelectionWidget extends StatelessWidget {
   const RankingSelectionWidget({
@@ -14,58 +10,56 @@ class RankingSelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RankingProvider>(builder: (context, provider, child) {
-      final List<SelectionModel>? _selections = provider.rankingSelections;
-      if (_selections == null) {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      }
-      return (_selections.isNotEmpty)
-          ? GridView.builder(
-              padding: EdgeInsets.symmetric(
-                vertical: 22.0.h,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18.0.w, vertical: 24.0.h),
+            child: Text(
+              '✏️ 컬렉션으로\n셀렉팅 해보세요!',
+              style: TextStyle(
+                color: Color(0xff343a40),
+                fontSize: 24.sp,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w600,
               ),
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 24.0.h,
-                crossAxisSpacing: 12.0.w,
-                childAspectRatio: 0.67,
-              ),
-              itemCount: _selections.length,
-              itemBuilder: (context, index) {
-                final SelectionModel _selection = _selections![index];
-                return Selection(
-                  routeName: '/',
-                  properties: PropertiesData.fromJson(
-                    {
-                      "collection_id": _selection.collectionId,
-                      "selection_id": _selection.selectionId,
-                    },
-                  ),
-                  title: _selection.title,
-                  thumbFilePath: _selection.thumbFilePath,
-                  ownerName: _selection.ownerName,
-                  ownerId: _selection.ownerId,
-                  keywords: _selection.keywords,
-                  isRanking: true,
-                );
-              },
-            )
-          : Center(
-              child: Text(
-                '랭킹 셀렉션이 없습니다.\n셀렉팅을 많이 받아보세요!',
-                style: TextStyle(
-                  color: Color(0xFF868e96),
-                  fontSize: 14.sp,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            );
-    });
+            ),
+          ),
+          SizedBox(
+            height: 24.0.h,
+          ),
+          CategorySelectionWidget(
+            categoryId: 1,
+          ),
+          Divider(
+            thickness: 12.0.h,
+            height: 12.0.h,
+            color: Colors.white,
+          ),
+          CategorySelectionWidget(
+            categoryId: 4,
+          ),
+          Divider(
+            thickness: 12.0.h,
+            height: 12.0.h,
+            color: Colors.white,
+          ),
+          CategorySelectionWidget(
+            categoryId: 3,
+          ),
+
+          // Padding(
+          //   padding: EdgeInsets.symmetric(vertical: 24.0.h),
+          //   child: SizedBox(
+          //     height: 120.0.h,
+          //     child: RankingUserWidget(),
+          //   ),
+          // ),
+          // RankingSelectionWidget(),
+        ],
+      ),
+    );
   }
 }

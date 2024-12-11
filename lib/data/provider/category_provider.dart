@@ -17,7 +17,9 @@ class CategoryProvider with ChangeNotifier {
       } else {
         return _categoryInfo;
       }
-    } finally {}
+    } finally {
+      notifyListeners();
+    }
   }
 
   void sortCategoryInfo() {

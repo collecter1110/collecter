@@ -454,12 +454,14 @@ class ApiService {
     }
   }
 
-  static Future<List<CollectionModel>> getRankingCollections() async {
+  static Future<List<CollectionModel>> getRankingCollections(
+      int categoryId) async {
     try {
       final response = await _supabase
           .from('collections')
           .select()
           .eq('is_public', true)
+          .eq('category_id', categoryId)
           .not('user_id', 'in', _blockedUserIds)
           .order('like_num')
           .limit(10);
@@ -475,7 +477,8 @@ class ApiService {
     }
   }
 
-  static Future<List<SelectionModel>> getRankingSelections() async {
+  static Future<List<SelectionModel>> getRankingSelections(
+      int categoryId) async {
     try {
       final responseData = await _supabase
           .from('selections')
@@ -1023,6 +1026,7 @@ class ApiService {
   static Future<List<CollectionModel>> getUsersCollections(int userId) async {
     try {
       final responseData = await _supabase.from('collections').select('''
+        category_id,
         id, 
         title, 
         image_file_path, 
