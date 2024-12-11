@@ -84,8 +84,17 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
         _imageFilePaths = await ApiService.uploadAndGetImageFilePaths(
             _picekdImages!, 'selections');
       }
-      await ApiService.addSelections(_collectionId!, _title!, _description,
-          _imageFilePaths, _keywords!, _link, _items, _isOrder, _isSelectable);
+      await ApiService.addSelections(
+          _categoryId!,
+          _collectionId!,
+          _title!,
+          _description,
+          _imageFilePaths,
+          _keywords!,
+          _link,
+          _items,
+          _isOrder,
+          _isSelectable);
     } catch (e) {
       print('Error: $e');
     } finally {

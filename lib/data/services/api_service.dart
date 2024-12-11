@@ -376,7 +376,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, title, image_file_paths, keywords, owner_name, owner_id, is_selecting')
+              'category_id, collection_id, selection_id, title, image_file_paths, keywords, owner_name, owner_id, is_selecting')
           .eq('collection_id', collectionId);
 
       List<SelectionModel> selections = responseData.map((item) {
@@ -407,7 +407,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_selectable, is_selecting')
+              'category_id,collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_selectable, is_selecting')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -484,6 +484,7 @@ class ApiService {
           .from('selections')
           .select()
           .eq('is_selecting', false)
+          .eq('category_id', categoryId)
           .not('user_id', 'in', _blockedUserIds)
           .order('select_num')
           .limit(20);
@@ -742,6 +743,7 @@ class ApiService {
   }
 
   static Future<void> addSelections(
+      int categoryId,
       int collectionId,
       String title,
       String? description,
@@ -756,6 +758,7 @@ class ApiService {
 
     try {
       await _supabase.from('selections').insert({
+        'category_id': categoryId,
         'owner_id': userId,
         'user_id': userId,
         'collection_id': collectionId,
@@ -858,6 +861,7 @@ class ApiService {
   }
 
   static Future<void> editSelection(
+    int categoryId,
     int collectionId,
     int selectionId,
     String title,
@@ -873,6 +877,7 @@ class ApiService {
       await _supabase
           .from('selections')
           .update({
+            'category_id': categoryId,
             'title': title,
             'description': description,
             'image_file_paths': imageFilePaths,
@@ -1129,12 +1134,16 @@ class ApiService {
     }
   }
 
-  static Future<void> moveSelection(
-      int oldCollectionId, int oldSelectionId, int newCollectionId) async {
+  static Future<void> moveSelection(int categoryId, int oldCollectionId,
+      int oldSelectionId, int newCollectionId) async {
     try {
       await _supabase
           .from('selections')
-          .update({'collection_id': newCollectionId, 'selection_id': null})
+          .update({
+            'category_id': categoryId,
+            'collection_id': newCollectionId,
+            'selection_id': null
+          })
           .eq('collection_id', oldCollectionId)
           .eq('selection_id', oldSelectionId);
     } catch (e, stackTrace) {
@@ -1144,8 +1153,8 @@ class ApiService {
     }
   }
 
-  static Future<void> selecting(
-      int selectingCollectionId, SelectionModel selectedData) async {
+  static Future<void> selecting(int categoryId, int selectingCollectionId,
+      SelectionModel selectedData) async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
@@ -1175,6 +1184,7 @@ class ApiService {
       final newData = await _supabase
           .from('selections')
           .insert({
+            'category_id': categoryId,
             'collection_id': selectingCollectionId,
             'selection_id': null,
             'owner_id': selectedSelectionData['owner_id'],

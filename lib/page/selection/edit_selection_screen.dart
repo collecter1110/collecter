@@ -153,6 +153,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
           : null;
 
       await ApiService.editSelection(
+        context.read<CollectionProvider>().categoryId!,
         widget.selectionDetail.collectionId,
         widget.selectionDetail.selectionId,
         _changedTitle!,
