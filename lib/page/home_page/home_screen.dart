@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
-import '../../components/widget/ranking_widget.dart';
+import '../../components/widget/ranking_collection_widget.dart';
 import '../../components/widget/ranking_selection_widget.dart';
 import '../../components/widget/ranking_user_widget.dart';
 
@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                             Tab(
                               child: TabBarButton(
-                                tabName: 'User',
+                                tabName: 'Collecter',
                                 buttonState: _tabController!.index == 2,
                               ),
                               height: 44.0.h,
@@ -129,15 +129,6 @@ class _HomeScreenState extends State<HomeScreen>
                           Image.asset(
                             'assets/images/image_logo_text.png',
                             width: 100.w,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.of(context).pushNamed('/search');
-                            },
-                            child: Image.asset(
-                              'assets/icons/tab_search.png',
-                              height: 20.0.h,
-                            ),
                           ),
                         ],
                       ),

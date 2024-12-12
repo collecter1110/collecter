@@ -40,7 +40,7 @@ class CategoryBanner extends StatelessWidget {
             ),
             showDescription
                 ? Padding(
-                    padding: EdgeInsets.only(top: 12.0.h),
+                    padding: EdgeInsets.only(top: 10.0.h),
                     child: Text(
                       categoryDescription!,
                       style: TextStyle(
