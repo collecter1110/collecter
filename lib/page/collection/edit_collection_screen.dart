@@ -132,7 +132,10 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
 
   Widget _buildDefaultImage() {
     return Container(
-      color: const Color(0xffF8F9FA),
+      decoration: BoxDecoration(
+        color: const Color(0xffF8F9FA),
+        borderRadius: BorderRadius.circular(8.0.r),
+      ),
       child: Center(
         child: SizedBox(
           height: 24.0.h,
@@ -280,7 +283,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                                   width: 0.5.w,
                                 ),
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(10.r),
+                                  Radius.circular(8.r),
                                 ),
                               ),
                               width: 130.w,
