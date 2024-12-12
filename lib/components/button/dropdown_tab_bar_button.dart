@@ -115,7 +115,7 @@ class _DropdownTabBarButtonState extends State<DropdownTabBarButton> {
                   ),
                   ListTile(
                     title: Text(
-                      'User',
+                      'Collecter',
                       style: TextStyle(
                         fontFamily: 'PretendardRegular',
                         fontSize: 14.sp,

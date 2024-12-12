@@ -45,7 +45,7 @@ class OtherUserScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: CustomAppbar(
-        titleText: 'User',
+        titleText: 'Collecter',
         actionButtonOnTap: () async {
           await _showDialog();
         },

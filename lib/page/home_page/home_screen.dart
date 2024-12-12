@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                             Tab(
                               child: TabBarButton(
-                                tabName: 'User',
+                                tabName: 'Collecter',
                                 buttonState: _tabController!.index == 2,
                               ),
                               height: 44.0.h,
@@ -130,15 +130,6 @@ class _HomeScreenState extends State<HomeScreen>
                             'assets/images/image_logo_text.png',
                             width: 100.w,
                           ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.of(context).pushNamed('/search');
-                            },
-                            child: Image.asset(
-                              'assets/icons/tab_search.png',
-                              height: 20.0.h,
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -149,26 +140,15 @@ class _HomeScreenState extends State<HomeScreen>
           ];
         },
         body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           controller: _tabController,
           children: [
+            RankingCollectionWidget(),
+            RankingSelectionWidget(),
             Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 18.0.w,
-              ),
-              child: RankingCollectionWidget(),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 18.0.w,
-              ),
-              child: RankingSelectionWidget(),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 18.0.w,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 18.0.w),
               child: RankingUserWidget(),
-            ),
+            )
           ],
         ),
       )),

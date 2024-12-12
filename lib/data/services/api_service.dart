@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 
 import '../../components/pop_up/toast.dart';
 import '../../main.dart';
+import '../model/category_model.dart';
 import '../model/collection_model.dart';
 import '../model/selecting_model.dart';
 import '../model/selection_model.dart';
@@ -375,7 +376,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, title, image_file_paths, keywords, owner_name, owner_id, is_selecting')
+              'category_id, collection_id, selection_id, title, image_file_paths, keywords, owner_name, owner_id, is_selecting')
           .eq('collection_id', collectionId);
 
       List<SelectionModel> selections = responseData.map((item) {
@@ -406,7 +407,7 @@ class ApiService {
       final responseData = await _supabase
           .from('selections')
           .select(
-              'collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_selectable, is_selecting')
+              'category_id,collection_id, selection_id, user_id, owner_id, title, description, image_file_paths, is_ordered, link, items, keywords, created_at, owner_name, is_selectable, is_selecting')
           .eq('collection_id', collectionId)
           .eq('selection_id', selectionId)
           .single();
@@ -419,6 +420,19 @@ class ApiService {
       trackError(e, stackTrace, 'Exception in getSelectionDetail');
       debugErrorMessage('getSelectionDetail exception: ${e}');
       throw Exception('getSelectionDetail exception: ${e}');
+    }
+  }
+
+  static Future<List<CategoryModel>> getCategoryInfo() async {
+    try {
+      final responseData = await _supabase.from('categoryinfo').select('*');
+      final List<CategoryModel> categoryInfo =
+          responseData.map((item) => CategoryModel.fromJson(item)).toList();
+      return categoryInfo;
+    } catch (e, stackTrace) {
+      trackError(e, stackTrace, 'Exception in getCategoryInfo');
+      debugErrorMessage('getCategoryInfo exception: ${e}');
+      throw Exception('getCategoryInfo exception: ${e}');
     }
   }
 
@@ -440,12 +454,14 @@ class ApiService {
     }
   }
 
-  static Future<List<CollectionModel>> getRankingCollections() async {
+  static Future<List<CollectionModel>> getRankingCollections(
+      int categoryId) async {
     try {
       final response = await _supabase
           .from('collections')
           .select()
           .eq('is_public', true)
+          .eq('category_id', categoryId)
           .not('user_id', 'in', _blockedUserIds)
           .order('like_num')
           .limit(10);
@@ -461,12 +477,14 @@ class ApiService {
     }
   }
 
-  static Future<List<SelectionModel>> getRankingSelections() async {
+  static Future<List<SelectionModel>> getRankingSelections(
+      int categoryId) async {
     try {
       final responseData = await _supabase
           .from('selections')
           .select()
           .eq('is_selecting', false)
+          .eq('category_id', categoryId)
           .not('user_id', 'in', _blockedUserIds)
           .order('select_num')
           .limit(20);
@@ -613,6 +631,7 @@ class ApiService {
 
     try {
       final responseData = await _supabase.from('collections').select('''
+        category_id,
         id, 
         title, 
         description, 
@@ -702,13 +721,14 @@ class ApiService {
     }
   }
 
-  static Future<void> addCollection(String title, String? description,
-      List<String>? tags, bool isPublic) async {
+  static Future<void> addCollection(int categoryId, String title,
+      String? description, List<String>? tags, bool isPublic) async {
     final userIdString = await storage.read(key: 'USER_ID');
     int userId = int.parse(userIdString!);
 
     try {
       await _supabase.from('collections').insert({
+        'category_id': categoryId,
         'user_id': userId,
         'title': title,
         'description': description,
@@ -723,6 +743,7 @@ class ApiService {
   }
 
   static Future<void> addSelections(
+      int categoryId,
       int collectionId,
       String title,
       String? description,
@@ -737,6 +758,7 @@ class ApiService {
 
     try {
       await _supabase.from('selections').insert({
+        'category_id': categoryId,
         'owner_id': userId,
         'user_id': userId,
         'collection_id': collectionId,
@@ -759,20 +781,20 @@ class ApiService {
 
   static Future<List<Map<String, dynamic>>> addKeywords(
     List<String> keywords,
+    int categoryId,
   ) async {
     try {
-      List<Map<String, dynamic>> newKeywordEntries =
-          keywords.map((keyword) => {'keyword_name': keyword}).toList();
+      List<Map<String, dynamic>> newKeywordEntries = keywords
+          .map(
+              (keyword) => {'keyword_name': keyword, 'category_id': categoryId})
+          .toList();
 
-      await _supabase
-          .from('keywordinfo')
-          .upsert(newKeywordEntries,
-              onConflict: 'keyword_name', ignoreDuplicates: true)
-          .select();
+      await _supabase.from('keywordinfo').insert(newKeywordEntries);
 
       final response = await _supabase
           .from('keywordinfo')
-          .select()
+          .select('keyword_name, keyword_id')
+          .eq('category_id', categoryId)
           .filter('keyword_name', 'in', keywords);
 
       return response;
@@ -815,6 +837,7 @@ class ApiService {
   }
 
   static Future<void> editCollection(
+      int categoryId,
       int collectionId,
       String title,
       String? description,
@@ -823,6 +846,7 @@ class ApiService {
       bool isPublic) async {
     try {
       await _supabase.from('collections').update({
+        'category_id': categoryId,
         'title': title,
         'description': description,
         'image_file_path': imageFilePath,
@@ -837,6 +861,7 @@ class ApiService {
   }
 
   static Future<void> editSelection(
+    int categoryId,
     int collectionId,
     int selectionId,
     String title,
@@ -852,6 +877,7 @@ class ApiService {
       await _supabase
           .from('selections')
           .update({
+            'category_id': categoryId,
             'title': title,
             'description': description,
             'image_file_paths': imageFilePaths,
@@ -1005,6 +1031,7 @@ class ApiService {
   static Future<List<CollectionModel>> getUsersCollections(int userId) async {
     try {
       final responseData = await _supabase.from('collections').select('''
+        category_id,
         id, 
         title, 
         image_file_path, 
@@ -1107,12 +1134,16 @@ class ApiService {
     }
   }
 
-  static Future<void> moveSelection(
-      int oldCollectionId, int oldSelectionId, int newCollectionId) async {
+  static Future<void> moveSelection(int categoryId, int oldCollectionId,
+      int oldSelectionId, int newCollectionId) async {
     try {
       await _supabase
           .from('selections')
-          .update({'collection_id': newCollectionId, 'selection_id': null})
+          .update({
+            'category_id': categoryId,
+            'collection_id': newCollectionId,
+            'selection_id': null
+          })
           .eq('collection_id', oldCollectionId)
           .eq('selection_id', oldSelectionId);
     } catch (e, stackTrace) {
@@ -1122,8 +1153,8 @@ class ApiService {
     }
   }
 
-  static Future<void> selecting(
-      int selectingCollectionId, SelectionModel selectedData) async {
+  static Future<void> selecting(int categoryId, int selectingCollectionId,
+      SelectionModel selectedData) async {
     try {
       final userIdString = await storage.read(key: 'USER_ID');
       int userId = int.parse(userIdString!);
@@ -1153,6 +1184,7 @@ class ApiService {
       final newData = await _supabase
           .from('selections')
           .insert({
+            'category_id': categoryId,
             'collection_id': selectingCollectionId,
             'selection_id': null,
             'owner_id': selectedSelectionData['owner_id'],

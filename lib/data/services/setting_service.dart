@@ -184,6 +184,25 @@ class SettingService {
   }
 
   static Future<bool> fetchConfigs() async {
+    if (kDebugMode) {
+      return await fetchDebugConfigs();
+    } else {
+      return await fetchReleaseConfigs();
+    }
+  }
+
+  static Future<bool> fetchDebugConfigs() async {
+    String supabaseTestUrl = dotenv.env['SUPABASE_TEST_URL'] ?? '';
+    String supabaseTestApiKey = dotenv.env['SUPABASE_TEST_API_KEY'] ?? '';
+    Map<String, String> configs = {
+      'supabaseUrl': supabaseTestUrl,
+      'supabaseApiKey': supabaseTestApiKey,
+    };
+    await serverInitialize(configs);
+    return true;
+  }
+
+  static Future<bool> fetchReleaseConfigs() async {
     String apiKey = dotenv.env['AWS_API_KEY'] ?? '';
     final Uri url = Uri.parse(
         "https://seq8d7fq74.execute-api.us-east-2.amazonaws.com/prod");

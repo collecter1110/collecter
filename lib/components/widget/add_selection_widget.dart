@@ -26,6 +26,7 @@ class AddSelectionWidget extends StatefulWidget {
 
 class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   final GlobalKey<FormState> _keywordFormKey = GlobalKey<FormState>();
+  int? _categoryId;
   int? _collectionId;
   String? _title;
   List<Map<String, dynamic>>? _keywords;
@@ -78,13 +79,22 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
     try {
       _items = context.read<ItemProvider>().itemDataListToJson();
       _keywords = await ApiService.addKeywords(
-          context.read<KeywordProvider>().keywordNames!);
+          context.read<KeywordProvider>().keywordNames!, _categoryId!);
       if (_picekdImages != null && _picekdImages!.isNotEmpty) {
         _imageFilePaths = await ApiService.uploadAndGetImageFilePaths(
             _picekdImages!, 'selections');
       }
-      await ApiService.addSelections(_collectionId!, _title!, _description,
-          _imageFilePaths, _keywords!, _link, _items, _isOrder, _isSelectable);
+      await ApiService.addSelections(
+          _categoryId!,
+          _collectionId!,
+          _title!,
+          _description,
+          _imageFilePaths,
+          _keywords!,
+          _link,
+          _items,
+          _isOrder,
+          _isSelectable);
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -166,14 +176,17 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                       ),
                     ],
                   ),
-                  Selector<CollectionProvider, ({String? item1, int? item2})>(
+                  Selector<CollectionProvider,
+                      ({String? item1, int? item2, int? item3})>(
                     selector: (context, collectionProvider) => (
                       item1: collectionProvider.collectionTitle,
-                      item2: collectionProvider.collectionId
+                      item2: collectionProvider.collectionId,
+                      item3: collectionProvider.categoryId
                     ),
                     builder: (context, data, child) {
                       String? _collectionTitle = data.item1;
                       _collectionId = data.item2;
+                      _categoryId = data.item3;
 
                       return InkWell(
                         onTap: () async {
@@ -643,8 +656,8 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
                           (_) async {
                             final fieldValidator = FieldValidator({
                               '컬렉션을 선택해주세요.': _collectionId != null,
-                              '셀렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
-                              '키워드를 입력해주세요': context
+                              '셀렉션 이름을 입력해주세요.': _title?.isNotEmpty == true,
+                              '키워드를 입력해주세요.': context
                                       .read<KeywordProvider>()
                                       .keywordNames
                                       ?.isNotEmpty ==

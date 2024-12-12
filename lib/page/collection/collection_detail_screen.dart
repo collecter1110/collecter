@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../components/button/like_button.dart';
 import '../../components/pop_up/edit_collection_dialog.dart';
 import '../../components/pop_up/other_collection_dialog.dart';
+import '../../components/ui_kit/category.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
@@ -83,6 +84,12 @@ class CollectionDetailScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Category(
+                          categoryId: _collectionDetail.categoryId,
+                        ),
+                        SizedBox(
+                          height: 12.0.h,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,

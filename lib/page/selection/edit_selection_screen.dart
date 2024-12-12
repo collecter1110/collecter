@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:collecter/components/widget/image_widget.dart';
+import 'package:collecter/data/provider/collection_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -142,7 +143,8 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
     try {
       _changedItems = context.read<ItemProvider>().itemDataListToJson();
       _changedKeywords = await ApiService.addKeywords(
-          context.read<KeywordProvider>().keywordNames!);
+          context.read<KeywordProvider>().keywordNames!,
+          context.read<CollectionProvider>().categoryId!);
       if (_deletedImages.isNotEmpty) {
         ApiService.deleteStorageImages('selections', _deletedImages);
       }
@@ -151,6 +153,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
           : null;
 
       await ApiService.editSelection(
+        context.read<CollectionProvider>().categoryId!,
         widget.selectionDetail.collectionId,
         widget.selectionDetail.selectionId,
         _changedTitle!,

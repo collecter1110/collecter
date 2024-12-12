@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import 'data/provider/category_provider.dart';
 import 'data/provider/collection_provider.dart';
 import 'data/provider/item_provider.dart';
 import 'data/provider/keyword_provider.dart';
@@ -60,6 +61,9 @@ class MyAppWrapper extends StatelessWidget {
         ),
         ChangeNotifierProvider<SelectingProvider>(
           create: (context) => SelectingProvider(),
+        ),
+        ChangeNotifierProvider<CategoryProvider>(
+          create: (context) => CategoryProvider(),
         ),
         ChangeNotifierProvider<CollectionProvider>(
           create: (context) => locator<CollectionProvider>(),

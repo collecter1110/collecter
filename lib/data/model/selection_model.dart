@@ -2,6 +2,7 @@ import 'item_model.dart';
 import 'keyword_model.dart';
 
 class SelectionModel {
+  final int categoryId;
   final int collectionId;
   final int selectionId;
   final int ownerId;
@@ -9,7 +10,7 @@ class SelectionModel {
   final String title;
   final String? description;
   final List<dynamic>? imageFilePaths;
-  final List<KeywordData>? keywords;
+  final List<KeywordModel>? keywords;
   final String? link;
   final List<ItemData>? items;
   final bool? isOrdered;
@@ -20,6 +21,7 @@ class SelectionModel {
   final String? thumbFilePath;
 
   SelectionModel({
+    required this.categoryId,
     required this.collectionId,
     required this.selectionId,
     required this.ownerId,
@@ -41,6 +43,7 @@ class SelectionModel {
   factory SelectionModel.fromJson(Map<String, dynamic> json,
       {String? thumbFilePath}) {
     return SelectionModel(
+      categoryId: json['category_id'],
       collectionId: json['collection_id'],
       selectionId: json['selection_id'],
       ownerId: json['owner_id'],
@@ -50,7 +53,7 @@ class SelectionModel {
       imageFilePaths: json['image_file_paths'] as List<dynamic>?,
       keywords: json['keywords'] != null
           ? (json['keywords'] as List<dynamic>)
-              .map((item) => KeywordData.fromJson(item))
+              .map((item) => KeywordModel.fromJson(item))
               .toList()
           : null,
       link: json['link'] as String?,

@@ -10,6 +10,7 @@ class CollectionProvider with ChangeNotifier {
   List<CollectionModel>? _myCollections;
   List<CollectionModel>? _likeCollections;
   CollectionModel? _collectionDetail;
+  int? _categoryId;
   int? _collectionId;
   String? _collectionTitle;
   int _collectionNum = 0;
@@ -20,6 +21,7 @@ class CollectionProvider with ChangeNotifier {
   List<CollectionModel>? get myCollections => _myCollections;
   List<CollectionModel>? get likeCollections => _likeCollections;
   CollectionModel? get collectionDetail => _collectionDetail;
+  int? get categoryId => _categoryId;
   int? get collectionId => _collectionId;
   String? get collectionTitle => _collectionTitle;
   int get collectionNum => _collectionNum;
@@ -39,6 +41,12 @@ class CollectionProvider with ChangeNotifier {
             ?.where((collection) => collection.id == _collectionId)
             .firstOrNull
             ?.title;
+
+    _categoryId = _myCollections
+        ?.firstWhere((collection) => collection.id == _collectionId)
+        .categoryId;
+
+    print('카테고리 아이디 : $_categoryId');
     notifyListeners();
   }
 

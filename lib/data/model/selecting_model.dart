@@ -22,7 +22,7 @@ class SelectingData {
   final String createdTime;
   final String selectionName;
   final String? imageFilePath;
-  final List<KeywordData>? keywords;
+  final List<KeywordModel>? keywords;
   final String ownerName;
   final int ownerId;
   final String? userName;
@@ -45,7 +45,7 @@ class SelectingData {
         imageFilePath = json['image_file_path'] as String?,
         keywords = json['keywords'] != null
             ? (json['keywords'] as List<dynamic>)
-                .map((item) => KeywordData.fromJson(item))
+                .map((item) => KeywordModel.fromJson(item))
                 .toList()
             : null,
         ownerName = json['owner_name'],

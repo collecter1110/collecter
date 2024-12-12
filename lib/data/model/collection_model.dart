@@ -1,6 +1,7 @@
 import 'package:collecter/data/model/keyword_model.dart';
 
 class CollectionModel {
+  final int categoryId;
   final int id;
   final String title;
   final String? description;
@@ -9,13 +10,14 @@ class CollectionModel {
   final List<dynamic>? tags;
   final int userId;
   final String userName;
-  final List<KeywordData>? primaryKeywords;
+  final List<KeywordModel>? primaryKeywords;
   final int? selectionNum;
   final int? likeNum;
   final bool isPublic;
   final bool? isLiked;
 
   CollectionModel({
+    required this.categoryId,
     required this.id,
     required this.title,
     this.description,
@@ -35,6 +37,7 @@ class CollectionModel {
   factory CollectionModel.fromJson(Map<String, dynamic> json,
       {bool? hasLiked}) {
     return CollectionModel(
+      categoryId: json['category_id'],
       id: json['id'],
       title: json['title'],
       description: json['description'],
@@ -44,7 +47,7 @@ class CollectionModel {
       userName: json['user_name'],
       userId: json['user_id'],
       primaryKeywords: (json['primary_keywords'] as List<dynamic>?)
-          ?.map((keyword) => KeywordData.fromJson(keyword))
+          ?.map((keyword) => KeywordModel.fromJson(keyword))
           .toList(),
       selectionNum: json['selection_num'] as int?,
       likeNum: json['like_num'] as int?,

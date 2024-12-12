@@ -7,7 +7,7 @@ import '../services/api_service.dart';
 
 class SearchProvider with ChangeNotifier {
   String _selectedCategoryName = 'Collection';
-  final List<String> _categoryNames = ['Collection', 'Selection', 'User'];
+  final List<String> _categoryNames = ['Collection', 'Selection', 'Collecter'];
   int _selectedCategoryIndex = 0;
   String? _searchText;
   String? _keywordCurrentSearchText;

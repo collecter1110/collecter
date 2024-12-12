@@ -15,7 +15,7 @@ class Selection extends StatelessWidget {
   final String? routeName;
   final String title;
   final String? thumbFilePath;
-  final List<KeywordData>? keywords;
+  final List<KeywordModel>? keywords;
   final String ownerName;
   final int ownerId;
   final PropertiesData properties;

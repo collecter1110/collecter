@@ -7,11 +7,14 @@ import 'package:provider/provider.dart';
 import '../../components/button/add_button.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/button/tag_button.dart';
+import '../../components/pop_up/category_dialog.dart';
 import '../../components/pop_up/collection_cover_dialog.dart';
 import '../../components/pop_up/toast.dart';
 import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
+import '../../data/model/category_model.dart';
 import '../../data/model/collection_model.dart';
+import '../../data/provider/category_provider.dart';
 import '../../data/provider/selection_provider.dart';
 import '../../data/provider/tag_provider.dart';
 import '../../data/services/api_service.dart';
@@ -33,6 +36,7 @@ class EditCollectionScreen extends StatefulWidget {
 class _EditCollectionScreenState extends State<EditCollectionScreen> {
   final GlobalKey<FormState> _tagFormKey = GlobalKey<FormState>();
   int? _userId;
+  int? _categoryId;
   int? _collectionId;
   String? _changedTitle;
   String? _changedDescription;
@@ -42,6 +46,8 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
   bool? _changedIsPublic;
 
   String _inputTagValue = '';
+  List<CategoryModel> _categoryInfo = [];
+  String? _categoryName;
 
   @override
   void initState() {
@@ -51,7 +57,8 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
 
   void initializeData() {
     final tagProvider = context.read<TagProvider>();
-
+    final categoryProvider = context.read<CategoryProvider>();
+    _categoryInfo = categoryProvider.categoryInfo;
     if (widget.collectionDetail.tags != null) {
       tagProvider.saveTags = widget.collectionDetail.tags!;
     } else {
@@ -60,6 +67,10 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       });
     }
     _userId = widget.collectionDetail.userId;
+    _categoryId = widget.collectionDetail.categoryId;
+    _categoryName = _categoryInfo
+        .firstWhere((category) => category.categoryId == _categoryId)
+        .categoryName;
     _collectionId = widget.collectionDetail.id;
     _changedTitle = widget.collectionDetail.title;
     _changedDescription = widget.collectionDetail.description;
@@ -70,6 +81,29 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<void> _showGroupDialog() async {
+    showModalBottomSheet(
+      context: context,
+      constraints: BoxConstraints(
+        maxWidth: double.infinity,
+      ),
+      isScrollControlled: false,
+      builder: (context) {
+        return CategoryDialog(
+          selectedCategoryId: _categoryId,
+          saveCategory: (value) {
+            setState(() {
+              _categoryId = value.categoryId;
+              _categoryName = _categoryInfo
+                  .firstWhere((category) => category.categoryId == _categoryId)
+                  .categoryName;
+            });
+          },
+        );
+      },
+    );
   }
 
   Widget _buildImageWidget() {
@@ -157,6 +191,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       print(_finalImageFilePath);
 
       await ApiService.editCollection(
+        _categoryId!,
         widget.collectionDetail.id,
         _changedTitle!,
         _changedDescription,
@@ -271,6 +306,53 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 26.0.h,
+                    ),
+                    Text(
+                      '카테고리',
+                      style: TextStyle(
+                        fontFamily: 'PretendardRegular',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff343A40),
+                        height: 1.5,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        await _showGroupDialog();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0.r),
+                            color:
+                                Theme.of(context).primaryColor.withOpacity(0.3),
+                            border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 1.0,
+                              style: BorderStyle.solid,
+                            ),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12.0.h, horizontal: 16.0.w),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              _categoryName ?? '',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                height: 1.43,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(

@@ -10,7 +10,7 @@ class KeywordProvider extends ChangeNotifier {
   List<String>? get keywordNames => _keywordNames;
   bool get keywordState => _keywordState;
 
-  set saveKeywords(List<KeywordData> keywords) {
+  set saveKeywords(List<KeywordModel> keywords) {
     _keywordNames = keywords.map((keyword) => keyword.keywordName).toList();
   }
 

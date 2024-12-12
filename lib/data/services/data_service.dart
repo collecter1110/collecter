@@ -4,6 +4,7 @@ import 'package:collecter/data/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../provider/category_provider.dart';
 import '../provider/collection_provider.dart';
 import '../provider/search_provider.dart';
 import '../provider/selecting_provider.dart';
@@ -68,20 +69,20 @@ class DataService {
       await collectionProvider.fetchLikeCollections();
     }
 
-    bool existsRankingCollections = rankingProvider.rankingCollections
-            ?.any((collection) => collection.userId == userId) ??
-        false;
+    // bool existsRankingCollections = rankingProvider.rankingCollections
+    //         ?.any((collection) => collection.userId == userId) ??
+    //     false;
 
-    if (existsRankingCollections) {
-      await rankingProvider.fetchRankingCollections();
-    }
-    bool existsRankingSelections = rankingProvider.rankingSelections
-            ?.any((selection) => selection.userId == userId) ??
-        false;
+    // if (existsRankingCollections) {
+    //   await rankingProvider.fetchRankingCollections();
+    // }
+    // bool existsRankingSelections = rankingProvider.rankingSelections
+    //         ?.any((selection) => selection.userId == userId) ??
+    //     false;
 
-    if (existsRankingSelections) {
-      await rankingProvider.fetchRankingSelections();
-    }
+    // if (existsRankingSelections) {
+    //   await rankingProvider.fetchRankingSelections();
+    // }
 
     bool existsUsers = rankingProvider.rankingUsers
             ?.any((userInfo) => userInfo.userId == userId) ??
@@ -127,11 +128,13 @@ class DataService {
       await ApiService.startSubscriptions();
       await ApiService.initializeBlockedIds();
       await ApiService.initializeMyCollections();
+      final categoryProvider = context.read<CategoryProvider>();
       final rankingProvider = locator<RankingProvider>();
       final collectionProvider = locator<CollectionProvider>();
       final selectingProvider = context.read<SelectingProvider>();
       final userInfoProvider = context.read<UserInfoProvider>();
       final searchProvider = context.read<SearchProvider>();
+      await categoryProvider.fetchCategoryInfo();
       await rankingProvider.fetchRankingCollections();
       await rankingProvider.fetchRankingSelections();
       await rankingProvider.fetchRankingUsers();

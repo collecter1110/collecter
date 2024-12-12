@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/model/category_model.dart';
 import '../../data/provider/tag_provider.dart';
 import '../../data/services/api_service.dart';
 import '../button/add_button.dart';
 import '../button/complete_button.dart';
 import '../button/tag_button.dart';
+import '../pop_up/category_dialog.dart';
 import '../pop_up/toast.dart';
 import '../text_field/add_text_form_field.dart';
 
@@ -27,6 +29,9 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
   bool _isPublic = true;
   String _inputTagValue = '';
 
+  CategoryModel? _categoryInfo = null;
+  String? _categoryName = null;
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +50,27 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
     });
   }
 
+  Future<void> _showGroupDialog() async {
+    showModalBottomSheet(
+      context: context,
+      constraints: BoxConstraints(
+        maxWidth: double.infinity,
+      ),
+      isScrollControlled: false,
+      builder: (context) {
+        return CategoryDialog(
+          selectedCategoryId: _categoryInfo?.categoryId,
+          saveCategory: (value) {
+            setState(() {
+              _categoryInfo = value;
+              _categoryName = _categoryInfo!.categoryName;
+            });
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _passFieldValidator() async {
     showDialog(
       context: context,
@@ -56,8 +82,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       },
     );
     try {
-      await ApiService.addCollection(_title!, _description,
-          context.read<TagProvider>().tagNames, _isPublic);
+      await ApiService.addCollection(_categoryInfo!.categoryId, _title!,
+          _description, context.read<TagProvider>().tagNames, _isPublic);
     } catch (e) {
       print('Error: $e');
     } finally {
@@ -99,6 +125,70 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '카테고리 선택',
+                        style: TextStyle(
+                          fontFamily: 'PretendardRegular',
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff343A40),
+                          height: 1.5,
+                        ),
+                      ),
+                      AddButton(
+                        onPressed: () async {
+                          await _showGroupDialog();
+                        },
+                      ),
+                    ],
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      await _showGroupDialog();
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0.r),
+                          color: _categoryName != null
+                              ? Theme.of(context).primaryColor.withOpacity(0.3)
+                              : Colors.white,
+                          border: Border.all(
+                            color: _categoryName != null
+                                ? Theme.of(context).primaryColor
+                                : const Color(0xFFf1f3f5),
+                            width: 1.0,
+                            style: BorderStyle.solid,
+                          ),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 12.0.h, horizontal: 16.0.w),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            _categoryName != null
+                                ? '${_categoryName}'
+                                : '카테고리를 선택해주세요.',
+                            style: TextStyle(
+                              color: _categoryName != null
+                                  ? Colors.black
+                                  : const Color(0xffADB5BD),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                              height: 1.43,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.0.h,
+                  ),
                   Text(
                     '컬렉션 이름',
                     style: TextStyle(
@@ -291,7 +381,8 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
 
                         WidgetsBinding.instance.addPostFrameCallback((_) async {
                           final fieldValidator = FieldValidator({
-                            '컬렉션 이름을 입력해주세요': _title?.isNotEmpty == true,
+                            '카테고리를 선택해주세요.': _categoryInfo?.categoryId != null,
+                            '컬렉션 이름을 입력해주세요.': _title?.isNotEmpty == true,
                           });
 
                           if (!fieldValidator.validateFields()) {
