@@ -6,45 +6,66 @@ import '../model/user_info_model.dart';
 import '../services/api_service.dart';
 
 class RankingProvider with ChangeNotifier {
-  List<CollectionModel>? _musicCollections;
-  List<CollectionModel>? _bookCollections;
-  List<CollectionModel>? _movieCollections;
-  List<CollectionModel>? _tripCollections;
-  List<CollectionModel>? _cookCollections;
-  List<CollectionModel>? _placeCollections;
-  List<CollectionModel>? _tastingNoteCollections;
-  List<CollectionModel>? _knittingCollections;
-  List<SelectionModel>? _musicSelections;
-  List<SelectionModel>? _bookSelections;
-  List<SelectionModel>? _movieSelections;
+  List<CollectionModel> _rankingCollections = [];
+  final Map<int, List<CollectionModel>> _categoryCollections = {
+    1: [], // Music
+    2: [], // Trip
+    3: [], // Book
+    4: [], // Movie
+    5: [], // Cook
+    6: [], // Place
+    7: [], // Tasting Note
+    8: [] // Knitting
+  };
+
+  List<SelectionModel> _rankingSelections = [];
+  final Map<int, List<SelectionModel>> _categorySelections = {
+    1: [], // Music
+    2: [], // Trip
+    3: [], // Book
+    4: [], // Movie
+    5: [], // Cook
+    6: [], // Place
+    7: [], // Tasting Note
+    8: [] // Knitting
+  };
 
   List<UserInfoModel>? _rankingUsers;
 
-  List<CollectionModel>? get musicCollections => _musicCollections;
-  List<CollectionModel>? get movieCollections => _movieCollections;
-  List<CollectionModel>? get bookCollections => _bookCollections;
-  List<CollectionModel>? get cookCollections => _cookCollections;
-  List<CollectionModel>? get tripCollections => _tripCollections;
-  List<CollectionModel>? get placeCollections => _placeCollections;
-  List<CollectionModel>? get tastingNoteCollections => _tastingNoteCollections;
-  List<CollectionModel>? get knittingCollections => _knittingCollections;
+  List<CollectionModel>? get rankingCollections => _rankingCollections;
+  List<CollectionModel>? get musicCollections => _categoryCollections[1];
+  List<CollectionModel>? get tripCollections => _categoryCollections[2];
+  List<CollectionModel>? get bookCollections => _categoryCollections[3];
+  List<CollectionModel>? get movieCollections => _categoryCollections[4];
+  List<CollectionModel>? get cookCollections => _categoryCollections[5];
+  List<CollectionModel>? get placeCollections => _categoryCollections[6];
+  List<CollectionModel>? get tastingNoteCollections => _categoryCollections[7];
+  List<CollectionModel>? get knittingCollections => _categoryCollections[8];
 
-  List<SelectionModel>? get musicSelections => _musicSelections;
-  List<SelectionModel>? get bookSelections => _bookSelections;
-  List<SelectionModel>? get movieSelections => _movieSelections;
+  List<SelectionModel>? get rankingSelections => _rankingSelections;
+  List<SelectionModel>? get musicSelections => _categorySelections[1];
+  List<SelectionModel>? get tripSelecitons => _categorySelections[2];
+  List<SelectionModel>? get bookSelections => _categorySelections[3];
+  List<SelectionModel>? get movieSelections => _categorySelections[4];
+  List<SelectionModel>? get cookSelections => _categorySelections[5];
+  List<SelectionModel>? get placeSelections => _categorySelections[6];
+  List<SelectionModel>? get tastingNoteSelecitons => _categorySelections[7];
+  List<SelectionModel>? get knittingSelections => _categorySelections[8];
 
   List<UserInfoModel>? get rankingUsers => _rankingUsers;
-
   Future<void> fetchRankingCollections() async {
     try {
-      await fetchMusicCollections();
-      await fetchBookCollections();
-      await fetchMovieCollections();
-      await fetchCookCollections();
-      await fetchTripCollections();
-      await fetchPlaceCollections();
-      await fetchTastingNoteCollections();
-      await fetchKnittingCollections();
+      _rankingCollections = await ApiService.getRankingCollections();
+
+      for (var list in _categoryCollections.values) {
+        list.clear();
+      }
+
+      for (var collection in _rankingCollections) {
+        _categoryCollections[collection.categoryId]?.add(collection);
+      }
+
+      print('Fetch ranking collections');
     } catch (e) {
       print('Failed to fetchRankingCollections: $e');
     } finally {
@@ -52,114 +73,23 @@ class RankingProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchMusicCollections() async {
-    try {
-      _musicCollections = await ApiService.getRankingCollections(1);
-      print('_musicCollections');
-    } catch (e) {
-      print('Failed to fetchMusicCollections: $e');
-    }
-  }
-
-  Future<void> fetchBookCollections() async {
-    try {
-      _bookCollections = await ApiService.getRankingCollections(3);
-      print('_bookCollections');
-    } catch (e) {
-      print('Failed to fetchBookCollections: $e');
-    }
-  }
-
-  Future<void> fetchMovieCollections() async {
-    try {
-      _movieCollections = await ApiService.getRankingCollections(4);
-      print('_musicCollections');
-    } catch (e) {
-      print('Failed to fetchMovieCollections: $e');
-    }
-  }
-
-  Future<void> fetchCookCollections() async {
-    try {
-      _cookCollections = await ApiService.getRankingCollections(5);
-      print('_cookCollections');
-    } catch (e) {
-      print('Failed to fetchCookCollections: $e');
-    }
-  }
-
-  Future<void> fetchTripCollections() async {
-    try {
-      _tripCollections = await ApiService.getRankingCollections(2);
-      print('_tripCollections');
-    } catch (e) {
-      print('Failed to fetchTripCollections: $e');
-    }
-  }
-
-  Future<void> fetchPlaceCollections() async {
-    try {
-      _placeCollections = await ApiService.getRankingCollections(6);
-      print('_placeCollections');
-    } catch (e) {
-      print('Failed to fetchPlaceCollections: $e');
-    }
-  }
-
-  Future<void> fetchTastingNoteCollections() async {
-    try {
-      _tastingNoteCollections = await ApiService.getRankingCollections(7);
-      print('_tastingNoteCollections');
-    } catch (e) {
-      print('Failed to fetchTastingNoteCollections: $e');
-    }
-  }
-
-  Future<void> fetchKnittingCollections() async {
-    try {
-      _knittingCollections = await ApiService.getRankingCollections(8);
-      print('_knittingCollections');
-    } catch (e) {
-      print('Failed to fetchKnittingCollections: $e');
-    }
-  }
-
   Future<void> fetchRankingSelections() async {
     try {
-      await fetchMusicSelections();
-      await fetchBookSelections();
-      await fetchMovieSelections();
+      _rankingSelections = await ApiService.getRankingSelections();
+
+      for (var list in _categorySelections.values) {
+        list.clear();
+      }
+
+      for (var selection in _rankingSelections) {
+        _categorySelections[selection.categoryId]?.add(selection);
+      }
+
+      print('Fetch ranking selections');
     } catch (e) {
       print('Failed to fetchRankingSelections: $e');
     } finally {
       notifyListeners();
-    }
-  }
-
-  Future<void> fetchMusicSelections() async {
-    try {
-      _musicSelections = await ApiService.getRankingSelections(3);
-      print('_musicSelections');
-    } catch (e) {
-      print('Failed to fetchMusicSelections: $e');
-    }
-  }
-
-  Future<void> fetchBookSelections() async {
-    try {
-      _bookSelections = await ApiService.getRankingSelections(1);
-      print('_bookSelections');
-    } catch (e) {
-      print('Failed to fetchBookSelections: $e');
-    }
-  }
-
-  Future<void> fetchMovieSelections() async {
-    try {
-      _movieSelections = await ApiService.getRankingSelections(4);
-      print('_movieSelections');
-    } catch (e) {
-      print('Failed to fetchMovieSelections: $e');
     }
   }
 
@@ -169,6 +99,8 @@ class RankingProvider with ChangeNotifier {
       print('_rankingUsers');
     } catch (e) {
       print('Failed to rankingUsers: $e');
+    } finally {
+      notifyListeners();
     }
   }
 }
