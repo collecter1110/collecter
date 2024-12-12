@@ -116,10 +116,14 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
   }
 
   Future _pickImages() async {
-    final List<XFile> pickedFileList = await _picker.pickMultiImage(limit: 2);
-    setState(() {
-      _picekdImages = pickedFileList;
-    });
+    try {
+      final List<XFile> pickedFileList = await _picker.pickMultiImage(limit: 2);
+      setState(() {
+        _picekdImages = pickedFileList;
+      });
+    } catch (e, stackTrace) {
+      ApiService.trackError(e, stackTrace, 'Exception in Platform');
+    }
   }
 
   Future<void> _showGroupDialog() async {

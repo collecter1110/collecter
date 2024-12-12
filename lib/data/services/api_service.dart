@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:collecter/data/services/image_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -42,8 +43,13 @@ class ApiService {
         });
       },
     );
-
-    if (exception is SocketException) {
+    if (exception is PlatformException) {
+      if (exception.message == 'The user did not allow photo access.') {
+        await ImageService.getPermission();
+      } else {
+        Toast.notify('데이터를 불러올 수 없습니다.\n잠시후에 다시 시도해주세요.');
+      }
+    } else if (exception is SocketException) {
       Toast.notify('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
     } else if (exception is RealtimeSubscribeException) {
       // Toast.notify('구독을 초기화 하고 있습니다. 잠시만 기다려 주세요');

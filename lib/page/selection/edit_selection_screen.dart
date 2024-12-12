@@ -184,15 +184,19 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   }
 
   Future _pickImages(ImageSource imageSource) async {
-    _pickedImage = await _picker.pickImage(source: imageSource);
+    try {
+      _pickedImage = await _picker.pickImage(source: imageSource);
 
-    if (_pickedImage != null) {
-      setState(() {
-        _changedImagePaths.insert(
-            _changedImagePaths.length, _pickedImage!.path);
+      if (_pickedImage != null) {
+        setState(() {
+          _changedImagePaths.insert(
+              _changedImagePaths.length, _pickedImage!.path);
 
-        _imageNum = _changedImagePaths.length;
-      });
+          _imageNum = _changedImagePaths.length;
+        });
+      }
+    } catch (e, stackTrace) {
+      ApiService.trackError(e, stackTrace, 'Exception in Platform');
     }
   }
 
