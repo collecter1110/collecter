@@ -75,16 +75,20 @@ class OtherUserScreen extends StatelessWidget {
                             child: ClipOval(
                               child: Image.asset(
                                 'assets/icons/tab_user.png',
-                                height: 64.0.h,
+                                height: 64.0.w,
                                 color: Colors.white,
                               ),
                             ),
                           )
-                        : ImageWidget(
-                            storageFolderName:
-                                '${userInfoDetail.userId}/userinfo',
-                            imageFilePath: _imageFilePath,
-                            boarderRadius: 100.r,
+                        : Container(
+                            height: 64.0.w,
+                            width: 64.0.w,
+                            child: ImageWidget(
+                              storageFolderName:
+                                  '${userInfoDetail.userId}/userinfo',
+                              imageFilePath: _imageFilePath,
+                              boarderRadius: 100.r,
+                            ),
                           ),
                     SizedBox(
                       width: 16.0.w,
