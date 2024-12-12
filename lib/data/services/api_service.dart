@@ -10,7 +10,6 @@ import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
 
 import '../../components/pop_up/toast.dart';
-import '../../main.dart';
 import '../model/category_model.dart';
 import '../model/collection_model.dart';
 import '../model/selecting_model.dart';
@@ -65,8 +64,8 @@ class ApiService {
       if (exception.code == 'user_banned') {
         Toast.notify(
             '3회 이상 신고로 계정이\n1주일간 정지되었습니다.\n문의 : contact.collect@gmail.com');
-      } else if (exception.message == 'Token has expired or is invalid') {
-        MyApp.restartApp();
+      } else if (exception.code == 'otp_expired') {
+      } else if (exception.code == 'validation_failed') {
       } else {
         Toast.notify('인증 오류가 발생했습니다. 다시 로그인해 주세요.');
       }
@@ -160,7 +159,7 @@ class ApiService {
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in sendOtp');
       debugErrorMessage('sendOtp exception: ${e}');
-      throw Exception('sendOtp exception: ${e}');
+      return false;
     }
   }
 
