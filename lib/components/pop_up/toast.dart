@@ -8,6 +8,7 @@ class Toast {
   static void showUpdateDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
           title: Text(

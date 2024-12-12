@@ -145,14 +145,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future _pickImages(ImageSource imageSource) async {
-    _pickedImage = await _picker.pickImage(source: imageSource);
+    try {
+      _pickedImage = await _picker.pickImage(source: imageSource);
 
-    if (_pickedImage != null) {
-      setState(() {
-        _pickedImage = XFile(_pickedImage!.path);
-        _changedImageFilePath = _pickedImage!.path.split('/').last;
-        print(_changedImageFilePath);
-      });
+      if (_pickedImage != null) {
+        setState(() {
+          _pickedImage = XFile(_pickedImage!.path);
+          _changedImageFilePath = _pickedImage!.path.split('/').last;
+          print(_changedImageFilePath);
+        });
+      }
+    } catch (e, stackTrace) {
+      ApiService.trackError(e, stackTrace, 'Exception in Platform');
     }
   }
 

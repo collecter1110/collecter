@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../components/widget/splash_widget.dart';
+import '../../data/services/data_service.dart';
 import '../../page_navigator.dart';
 import '../login/enter_login_screen.dart';
 
@@ -24,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final storage = FlutterSecureStorage();
     String? _accessToken = await storage.read(key: 'ACCESS_TOKEN');
     if (_accessToken != null) {
+      await DataService.loadInitialData(context);
       return true;
     } else {
       return false;

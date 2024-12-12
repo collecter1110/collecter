@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:collecter/components/widget/splash_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -28,7 +27,12 @@ Future<void> main() async {
   WidgetsBinding.instance.addObserver(LifeCycleObserverService());
   await dotenv.load(fileName: 'assets/config/.env');
   await initializeAppSetting();
-  runApp(MyAppWrapper());
+  bool needUpdate = await SettingService.checkVersion();
+  if (needUpdate) {
+    runApp(UpdateScreen());
+  } else {
+    runApp(MyAppWrapper());
+  }
 }
 
 Future<void> initializeAppSetting() async {
@@ -104,12 +108,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late Future<bool> _needVersionUpdate;
-
   @override
   void initState() {
     super.initState();
-    _needVersionUpdate = checkVersion();
   }
 
   Key _key = UniqueKey();
@@ -118,10 +119,6 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _key = UniqueKey();
     });
-  }
-
-  Future<bool> checkVersion() async {
-    return await SettingService.fetchConfigs();
   }
 
   @override
@@ -139,22 +136,7 @@ class _MyAppState extends State<MyApp> {
           elevation: 0,
         ),
       ),
-      home: FutureBuilder<bool>(
-        future: _needVersionUpdate,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return SplashWidget();
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.data == true) {
-            return SplashScreen();
-          } else if (snapshot.data == false) {
-            return UpdateScreen();
-          } else {
-            return SizedBox.shrink();
-          }
-        },
-      ),
+      home: SplashScreen(),
     );
   }
 }

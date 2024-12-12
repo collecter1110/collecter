@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -183,15 +184,17 @@ class SettingService {
     }
   }
 
-  static Future<bool> fetchConfigs() async {
+  static Future<bool> checkVersion() async {
     if (kDebugMode) {
-      return await fetchDebugConfigs();
+      return await setDebugConfigs();
     } else {
-      return await fetchReleaseConfigs();
+      Map<String, String> configs = await setReleaseConfigs();
+      bool needUpdate = await checkAppVersion(configs);
+      return needUpdate;
     }
   }
 
-  static Future<bool> fetchDebugConfigs() async {
+  static Future<bool> setDebugConfigs() async {
     String supabaseTestUrl = dotenv.env['SUPABASE_TEST_URL'] ?? '';
     String supabaseTestApiKey = dotenv.env['SUPABASE_TEST_API_KEY'] ?? '';
     Map<String, String> configs = {
@@ -199,34 +202,38 @@ class SettingService {
       'supabaseApiKey': supabaseTestApiKey,
     };
     await serverInitialize(configs);
-    return true;
+    return false;
   }
 
-  static Future<bool> fetchReleaseConfigs() async {
-    String apiKey = dotenv.env['AWS_API_KEY'] ?? '';
-    final Uri url = Uri.parse(
-        "https://seq8d7fq74.execute-api.us-east-2.amazonaws.com/prod");
-    final response = await http.get(
-      url,
-      headers: {
-        "x-api-key": "$apiKey",
-      },
-    );
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+  static Future<Map<String, String>> setReleaseConfigs() async {
+    try {
+      String apiKey = dotenv.env['AWS_API_KEY'] ?? '';
+      final Uri url = Uri.parse(
+          "https://seq8d7fq74.execute-api.us-east-2.amazonaws.com/prod");
+      final response = await http.get(
+        url,
+        headers: {
+          "x-api-key": "$apiKey",
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
 
-      final bodyData = jsonDecode(data['body']);
-      Map<String, String> configs = {
-        'supabaseUrl': bodyData['supabaseUrl'],
-        'supabaseApiKey': bodyData['supabaseApiKey'],
-        'latestAppVersion': bodyData['latestAppVersion'],
-        'sentryDsn': bodyData['sentryDsn'],
-      };
-
-      bool checkVersion = await checkAppVersion(configs);
-
-      return checkVersion;
-    } else {
+        final bodyData = jsonDecode(data['body']);
+        Map<String, String> configs = {
+          'supabaseUrl': bodyData['supabaseUrl'],
+          'supabaseApiKey': bodyData['supabaseApiKey'],
+          'latestAppVersion': bodyData['latestAppVersion'],
+          'sentryDsn': bodyData['sentryDsn'],
+        };
+        return configs;
+      } else {
+        Toast.notify('데이터를 불러올 수 없습니다.\n잠시후에 다시 시도해주세요.');
+        throw Exception('Failed to fetch Supabase config');
+      }
+    } catch (e, stackTrace) {
+      Toast.notify('데이터를 불러올 수 없습니다.\n잠시후에 다시 시도해주세요.');
+      ApiService.trackError(e, stackTrace, 'Exception in Platform');
       throw Exception('Failed to fetch Supabase config');
     }
   }
@@ -235,10 +242,11 @@ class SettingService {
     Map<String, String> appVersionData = await getAppInfo();
     String clientAppVersion = appVersionData['앱 버전'] ?? '';
     if (clientAppVersion != configs['latestAppVersion']) {
-      return false;
+      return true;
     } else {
       await serverInitialize(configs);
-      return true;
+      await sentryInitialize(configs);
+      return false;
     }
   }
 
@@ -249,15 +257,16 @@ class SettingService {
     );
     await ApiService.authListener();
     await StorageService.saveConfigs(configs['supabaseUrl']!);
-    if (!kDebugMode) {
-      await SentryFlutter.init(
-        (options) {
-          options.dsn = configs['sentryDsn'] ?? '';
-          options.tracesSampleRate = 1.0;
-          options.profilesSampleRate = 1.0;
-          options.attachStacktrace = true;
-        },
-      );
-    }
+  }
+
+  static Future<void> sentryInitialize(Map<String, String> configs) async {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn = configs['sentryDsn'] ?? '';
+        options.tracesSampleRate = 1.0;
+        options.profilesSampleRate = 1.0;
+        options.attachStacktrace = true;
+      },
+    );
   }
 }

@@ -55,24 +55,12 @@ class _PageNavigatorState extends State<PageNavigator> {
   @override
   void initState() {
     super.initState();
-    getPermission();
     initializeData();
-  }
-
-  Future<void> getPermission() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      bool isPermissionGranted = await ImageService.requestPhotoPermission();
-
-      if (isPermissionGranted) {
-      } else {
-        openAppSettings();
-      }
-    });
   }
 
   Future<void> initializeData() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await DataService.loadInitialData(context);
+      await ImageService.getPermission();
     });
   }
 

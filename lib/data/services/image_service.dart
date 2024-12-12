@@ -6,6 +6,15 @@ import '../../components/pop_up/toast.dart';
 class ImageService {
   static final _storage = FlutterSecureStorage();
 
+  static Future<void> getPermission() async {
+    bool isPermissionGranted = await requestPhotoPermission();
+
+    if (isPermissionGranted) {
+    } else {
+      openAppSettings();
+    }
+  }
+
   static Future<String> getFullImageUrl(
       String storageFolderName, String imageFilePath) async {
     final String supabaseUrl = await _storage.read(key: 'SUPABASE_URL') ?? '';
