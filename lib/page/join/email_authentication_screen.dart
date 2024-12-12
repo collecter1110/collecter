@@ -157,11 +157,11 @@ class _EmailAuthenticationScreenState extends State<EmailAuthenticationScreen> {
 
     try {
       _emailAuthState = await ApiService.checkOtp(authNumber, emailAddress);
-      await ApiService.setUserInfo(widget.userName, widget.description);
-      await Future.delayed(Duration(seconds: 1));
+
       if (!_emailAuthState) {
         _handleEmailAuthValid();
       } else {
+        await ApiService.setUserInfo(widget.userName, widget.description);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

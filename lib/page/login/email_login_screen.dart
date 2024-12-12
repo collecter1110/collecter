@@ -135,7 +135,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
 
     try {
       _emailAuthState = await ApiService.checkOtp(authNumber, emailAddress);
-      await Future.delayed(Duration(seconds: 1));
+
       if (!_emailAuthState) {
         _handleEmailAuthValid();
       } else {

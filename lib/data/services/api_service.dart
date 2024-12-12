@@ -66,6 +66,7 @@ class ApiService {
         Toast.notify(
             '3회 이상 신고로 계정이\n1주일간 정지되었습니다.\n문의 : contact.collect@gmail.com');
       } else if (exception.message == 'Token has expired or is invalid') {
+        Toast.notify('토큰이 만료되었습니다. 다시 로그인 해주세요.');
         MyApp.restartApp();
       } else {
         Toast.notify('인증 오류가 발생했습니다. 다시 로그인해 주세요.');
