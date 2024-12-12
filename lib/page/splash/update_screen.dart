@@ -1,17 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/pop_up/toast.dart';
 import '../../components/widget/splash_widget.dart';
 import '../../data/services/storage_service.dart';
 
-class UpdateScreen extends StatefulWidget {
-  const UpdateScreen({Key? key}) : super(key: key);
-
+class UpdateScreen extends StatelessWidget {
   @override
-  State<UpdateScreen> createState() => _UpdateScreenState();
+  Widget build(BuildContext context) {
+    return ScreenUtilInit(
+      builder: (BuildContext context, child) => MaterialApp(
+        home: UpdateScreenWidget(),
+        debugShowCheckedModeBanner: false,
+      ),
+      designSize: const Size(390, 844),
+      minTextAdapt: true,
+      splitScreenMode: true,
+    );
+  }
 }
 
-class _UpdateScreenState extends State<UpdateScreen> {
+class UpdateScreenWidget extends StatefulWidget {
+  const UpdateScreenWidget({Key? key}) : super(key: key);
+
+  @override
+  State<UpdateScreenWidget> createState() => _UpdateScreenWidgetState();
+}
+
+class _UpdateScreenWidgetState extends State<UpdateScreenWidget> {
   @override
   void initState() {
     super.initState();

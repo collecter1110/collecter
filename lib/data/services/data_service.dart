@@ -124,24 +124,22 @@ class DataService {
   }
 
   static Future<void> loadInitialData(BuildContext context) async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ApiService.startSubscriptions();
-      await ApiService.initializeBlockedIds();
-      await ApiService.initializeMyCollections();
-      final categoryProvider = context.read<CategoryProvider>();
-      final rankingProvider = locator<RankingProvider>();
-      final collectionProvider = locator<CollectionProvider>();
-      final selectingProvider = context.read<SelectingProvider>();
-      final userInfoProvider = context.read<UserInfoProvider>();
-      final searchProvider = context.read<SearchProvider>();
-      await categoryProvider.fetchCategoryInfo();
-      await rankingProvider.fetchRankingCollections();
-      await rankingProvider.fetchRankingSelections();
-      await rankingProvider.fetchRankingUsers();
-      await selectingProvider.getSelectData();
-      await collectionProvider.fetchLikeCollections();
-      await userInfoProvider.fetchUserInfo();
-      searchProvider.saveSearchText = null;
-    });
+    await ApiService.startSubscriptions();
+    await ApiService.initializeBlockedIds();
+    await ApiService.initializeMyCollections();
+    final categoryProvider = context.read<CategoryProvider>();
+    final rankingProvider = locator<RankingProvider>();
+    final collectionProvider = locator<CollectionProvider>();
+    final selectingProvider = context.read<SelectingProvider>();
+    final userInfoProvider = context.read<UserInfoProvider>();
+    final searchProvider = context.read<SearchProvider>();
+    await categoryProvider.fetchCategoryInfo();
+    await rankingProvider.fetchRankingCollections();
+    await rankingProvider.fetchRankingSelections();
+    await rankingProvider.fetchRankingUsers();
+    await selectingProvider.getSelectData();
+    await collectionProvider.fetchLikeCollections();
+    await userInfoProvider.fetchUserInfo();
+    searchProvider.saveSearchText = null;
   }
 }

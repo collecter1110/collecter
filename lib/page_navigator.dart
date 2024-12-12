@@ -61,7 +61,6 @@ class _PageNavigatorState extends State<PageNavigator> {
   Future<void> initializeData() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await ImageService.getPermission();
-      await DataService.loadInitialData(context);
     });
   }
 
