@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/complete_button.dart';
+import '../../data/services/data_service.dart';
 import '../../page_navigator.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -20,7 +21,7 @@ class WelcomeScreen extends StatelessWidget {
         },
       );
       try {
-        await Future.delayed(Duration(seconds: 1));
+        await DataService.loadInitialData(context);
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => PageNavigator()),
             (route) => false);

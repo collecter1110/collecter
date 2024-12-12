@@ -6,6 +6,7 @@ import '../../components/button/authentication_button.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/text_field/custom_text_form_field.dart';
 import '../../data/services/api_service.dart';
+import '../../data/services/data_service.dart';
 import '../../page_navigator.dart';
 
 class EmailLoginScreen extends StatefulWidget {
@@ -139,6 +140,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
       if (!_emailAuthState) {
         _handleEmailAuthValid();
       } else {
+        await DataService.loadInitialData(context);
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => PageNavigator()),
           (route) => false,
