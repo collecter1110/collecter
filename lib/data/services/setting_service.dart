@@ -188,8 +188,10 @@ class SettingService {
     if (kDebugMode) {
       return await setDebugConfigs();
     } else {
-      Map<String, String> configs = await setReleaseConfigs();
-      bool needUpdate = await checkAppVersion(configs);
+      Map<String, String> appVersionData = await getAppInfo();
+      String clientAppVersion = appVersionData['앱 버전'] ?? '';
+      Map<String, String> configs = await setReleaseConfigs(clientAppVersion);
+      bool needUpdate = await checkAppVersion(configs, clientAppVersion);
       return needUpdate;
     }
   }
@@ -205,11 +207,12 @@ class SettingService {
     return false;
   }
 
-  static Future<Map<String, String>> setReleaseConfigs() async {
+  static Future<Map<String, String>> setReleaseConfigs(
+      String clientAppVersion) async {
     try {
       String apiKey = dotenv.env['AWS_API_KEY'] ?? '';
       final Uri url = Uri.parse(
-          "https://seq8d7fq74.execute-api.us-east-2.amazonaws.com/prod");
+          "https://471wqi3x7i.execute-api.us-east-2.amazonaws.com/prod?appVersion=$clientAppVersion");
       final response = await http.get(
         url,
         headers: {
@@ -219,12 +222,11 @@ class SettingService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        final bodyData = jsonDecode(data['body']);
         Map<String, String> configs = {
-          'supabaseUrl': bodyData['supabaseUrl'],
-          'supabaseApiKey': bodyData['supabaseApiKey'],
-          'latestAppVersion': bodyData['latestAppVersion'],
-          'sentryDsn': bodyData['sentryDsn'],
+          'supabaseUrl': data['supabaseUrl'],
+          'supabaseApiKey': data['supabaseApiKey'],
+          'latestAppVersion': data['latestAppVersion'],
+          'sentryDsn': data['sentryDsn'],
         };
         return configs;
       } else {
@@ -238,10 +240,20 @@ class SettingService {
     }
   }
 
-  static Future<bool> checkAppVersion(Map<String, String> configs) async {
-    Map<String, String> appVersionData = await getAppInfo();
-    String clientAppVersion = appVersionData['앱 버전'] ?? '';
-    if (clientAppVersion != configs['latestAppVersion']) {
+  static bool needUpdate(String clientVersion, String appVersion) {
+    List<String> clientParts = clientVersion.split('.');
+    List<String> appParts = appVersion.split('.');
+
+    if (clientVersion.length >= 2 && appParts.length >= 2) {
+      return clientParts[0] != appParts[0] || clientParts[1] != appParts[1];
+    }
+
+    return false;
+  }
+
+  static Future<bool> checkAppVersion(
+      Map<String, String> configs, String clientAppVersion) async {
+    if (needUpdate(clientAppVersion, configs['latestAppVersion']!)) {
       return true;
     } else {
       await serverInitialize(configs);
