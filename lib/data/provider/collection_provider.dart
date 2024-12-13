@@ -70,6 +70,7 @@ class CollectionProvider with ChangeNotifier {
       _myCollections!.add(collectionData);
     }
     _collectionNum = _myCollections!.length;
+    print('upsertMyCollections');
     notifyListeners();
   }
 
@@ -80,6 +81,7 @@ class CollectionProvider with ChangeNotifier {
       _myCollections!.removeAt(index);
     }
     _collectionNum = _myCollections!.length;
+    print('deleteMyCollections');
     notifyListeners();
   }
 
@@ -111,9 +113,10 @@ class CollectionProvider with ChangeNotifier {
   Future<void> fetchCollectionDetail() async {
     try {
       _collectionDetail = await ApiService.getCollectionDetail(_collectionId!);
-      notifyListeners();
     } catch (e) {
       print('Failed to fetch collection detail data: $e');
+    } finally {
+      notifyListeners();
     }
   }
 }

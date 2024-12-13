@@ -577,24 +577,25 @@ class ApiService {
                 print('내 콜랙션 callback');
                 Map<String, dynamic> newRecord = payload.newRecord;
                 Map<String, dynamic> oldRecord = payload.oldRecord;
-
-                if (payload.eventType == PostgresChangeEvent.insert) {
-                  CollectionModel newCollectionData =
-                      CollectionModel.fromJson(newRecord);
-                  locator<CollectionProvider>().upsertMyCollections =
-                      newCollectionData;
-                } else if (payload.eventType == PostgresChangeEvent.update) {
-                  CollectionModel newCollectionData =
-                      CollectionModel.fromJson(newRecord);
-                  locator<CollectionProvider>().upsertMyCollections =
-                      newCollectionData;
-                } else if (payload.eventType == PostgresChangeEvent.delete) {
-                  locator<CollectionProvider>().deleteMyCollections =
-                      oldRecord['id'];
+                if (_debounceTimer?.isActive ?? false) {
+                  _debounceTimer?.cancel();
                 }
-                _debounceTimer?.cancel();
                 _debounceTimer =
-                    Timer(const Duration(milliseconds: 500), () async {
+                    Timer(const Duration(milliseconds: 300), () async {
+                  if (payload.eventType == PostgresChangeEvent.insert) {
+                    CollectionModel newCollectionData =
+                        CollectionModel.fromJson(newRecord);
+                    locator<CollectionProvider>().upsertMyCollections =
+                        newCollectionData;
+                  } else if (payload.eventType == PostgresChangeEvent.update) {
+                    CollectionModel newCollectionData =
+                        CollectionModel.fromJson(newRecord);
+                    locator<CollectionProvider>().upsertMyCollections =
+                        newCollectionData;
+                  } else if (payload.eventType == PostgresChangeEvent.delete) {
+                    locator<CollectionProvider>().deleteMyCollections =
+                        oldRecord['id'];
+                  }
                   await DataService.reloadLocalCollectionData(newRecord['id']);
                 });
               })
