@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../components/button/category_button.dart';
 import '../../components/button/tab_bar_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/widget/collection_widget.dart';
@@ -16,11 +17,12 @@ class BookmarkScreen extends StatefulWidget {
 class _BookmarkScreenState extends State<BookmarkScreen>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
+  int? _selectedCategoryId;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
     _tabController?.addListener(() {
       setState(() {
         // _currentTabIndex = _tabController?.index ?? 0;
@@ -30,6 +32,9 @@ class _BookmarkScreenState extends State<BookmarkScreen>
 
   Future<void> _onTap(int index) async {
     _tabController!.animateTo(index);
+    setState(() {
+      _selectedCategoryId = null;
+    });
   }
 
   @override
@@ -47,8 +52,8 @@ class _BookmarkScreenState extends State<BookmarkScreen>
             SliverAppBar(
               automaticallyImplyLeading: false,
               pinned: true,
-              toolbarHeight: 64.0.h,
-              expandedHeight: 120.0.h,
+              toolbarHeight: 100.0.h,
+              expandedHeight: 160.0.h,
               elevation: 0,
               scrolledUnderElevation: 0,
               foregroundColor: Colors.black,
@@ -64,36 +69,65 @@ class _BookmarkScreenState extends State<BookmarkScreen>
                     centerTitle: false,
                     titlePadding: EdgeInsets.zero,
                     title: Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.0.h, horizontal: 16.0.w),
-                        child: TabBar(
-                          controller: _tabController,
-                          dividerHeight: 0,
-                          indicatorColor: Colors.transparent,
-                          isScrollable: true,
-                          labelPadding: EdgeInsets.only(left: 0, right: 10.w),
-                          tabAlignment: TabAlignment.start,
-                          onTap: (value) async {
-                            await _onTap(value);
-                          },
-                          tabs: [
-                            Tab(
-                              child: TabBarButton(
-                                tabName: 'My Collection',
-                                buttonState: _tabController!.index == 0,
-                              ),
-                              height: 44.0.h,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TabBar(
+                            controller: _tabController,
+                            dividerHeight: 0,
+                            indicatorColor: Colors.transparent,
+                            isScrollable: true,
+                            labelPadding: EdgeInsets.only(
+                              left: 18.0.w,
                             ),
-                            Tab(
-                              child: TabBarButton(
-                                tabName: 'Like Collection',
-                                buttonState: _tabController!.index == 1,
+                            tabAlignment: TabAlignment.start,
+                            onTap: (value) async {
+                              await _onTap(value);
+                            },
+                            tabs: [
+                              Tab(
+                                child: TabBarButton(
+                                  tabName: 'My Collection',
+                                  buttonState: _selectedCategoryId == null,
+                                ),
+                                height: 44.0.h,
                               ),
-                              height: 44.0.h,
+                            ],
+                          ),
+                          Container(
+                            height: 50.0.h,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12.0.h),
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                padding:
+                                    EdgeInsets.symmetric(horizontal: 18.0.h),
+                                shrinkWrap: true,
+                                primary: true,
+                                // physics: const NeverScrollableScrollPhysics(),
+                                itemCount: 9,
+                                itemBuilder: (context, index) {
+                                  return CategoryButton(
+                                    categoryId: index,
+                                    selectedCategoryId: _selectedCategoryId,
+                                    onTap: (value) {
+                                      setState(() {
+                                        _selectedCategoryId = value;
+                                      });
+                                    },
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return SizedBox(
+                                    width: 12.0.w,
+                                  );
+                                },
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                     background: Padding(
@@ -144,10 +178,7 @@ class _BookmarkScreenState extends State<BookmarkScreen>
             CollectionWidget(
               isLiked: false,
               routeName: '/bookmark',
-            ),
-            CollectionWidget(
-              isLiked: true,
-              routeName: '/bookmark',
+              categoryId: _selectedCategoryId,
             ),
           ],
         ),

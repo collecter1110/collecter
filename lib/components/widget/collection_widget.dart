@@ -7,10 +7,12 @@ import '../../data/provider/collection_provider.dart';
 import '../card/collection.dart';
 
 class CollectionWidget extends StatelessWidget {
+  final int? categoryId;
   final bool? isLiked;
   final String routeName;
   const CollectionWidget({
     super.key,
+    this.categoryId,
     this.isLiked,
     required this.routeName,
   });
@@ -18,12 +20,17 @@ class CollectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<CollectionProvider>(builder: (context, provider, child) {
-      final List<CollectionModel>? _collections;
+      List<CollectionModel>? _collections;
       if (isLiked == null) {
         _collections = provider.searchUsersCollections;
       } else {
         _collections =
             isLiked! ? provider.likeCollections : provider.myCollections;
+        if (categoryId != null) {
+          _collections = _collections?.where((collection) {
+            return collection.categoryId == categoryId;
+          }).toList();
+        }
       }
       if (provider.state == ConnectionState.waiting || _collections == null) {
         return Center(

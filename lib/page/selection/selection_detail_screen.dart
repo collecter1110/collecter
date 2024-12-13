@@ -7,7 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../components/button/link_button.dart';
 import '../../components/pop_up/edit_selection_dialog.dart';
 import '../../components/pop_up/selecting_dialog.dart';
-import '../../components/ui_kit/category.dart';
+import '../../components/ui_kit/category_tag.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/ui_kit/keyword.dart';
@@ -170,8 +170,9 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Category(
+                            CategoryTag(
                               categoryId: _selectionDetail.categoryId,
+                              buttonState: true,
                             ),
                             SizedBox(
                               height: 12.0.h,
