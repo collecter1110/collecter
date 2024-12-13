@@ -69,20 +69,20 @@ class DataService {
       await collectionProvider.fetchLikeCollections();
     }
 
-    // bool existsRankingCollections = rankingProvider.rankingCollections
-    //         ?.any((collection) => collection.userId == userId) ??
-    //     false;
+    bool existsRankingCollections = rankingProvider.rankingCollections
+            ?.any((collection) => collection.userId == userId) ??
+        false;
 
-    // if (existsRankingCollections) {
-    //   await rankingProvider.fetchRankingCollections();
-    // }
-    // bool existsRankingSelections = rankingProvider.rankingSelections
-    //         ?.any((selection) => selection.userId == userId) ??
-    //     false;
+    if (existsRankingCollections) {
+      await rankingProvider.fetchRankingCollections();
+    }
+    bool existsRankingSelections = rankingProvider.rankingSelections
+            ?.any((selection) => selection.userId == userId) ??
+        false;
 
-    // if (existsRankingSelections) {
-    //   await rankingProvider.fetchRankingSelections();
-    // }
+    if (existsRankingSelections) {
+      await rankingProvider.fetchRankingSelections();
+    }
 
     bool existsUsers = rankingProvider.rankingUsers
             ?.any((userInfo) => userInfo.userId == userId) ??
@@ -90,6 +90,18 @@ class DataService {
 
     if (existsUsers) {
       await rankingProvider.fetchRankingUsers();
+    }
+  }
+
+  static Future<void> reloadLocalCollectionData(int collectionId) async {
+    final collectionProvider = locator<CollectionProvider>();
+
+    bool existLikeCollections = collectionProvider.likeCollections
+            ?.any((collection) => collection.id == collectionId) ??
+        false;
+
+    if (existLikeCollections) {
+      await collectionProvider.fetchLikeCollections();
     }
   }
 

@@ -459,22 +459,23 @@ class ApiService {
     }
   }
 
-  static Future<List<CollectionModel>> getRankingCollections(
-      int categoryId) async {
+  static Future<List<CollectionModel>> getRankingCollections() async {
     try {
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
       final response = await _supabase
-          .from('collections')
-          .select()
-          .eq('is_public', true)
-          .eq('category_id', categoryId)
-          .not('user_id', 'in', _blockedUserIds)
-          .order('like_num')
-          .limit(10);
+          .rpc('get_ranking_collections', params: {'input_user_id': userId});
 
-      List<CollectionModel> rankingCollctions =
-          response.map((item) => CollectionModel.fromJson(item)).toList();
+      if (response is List<dynamic>) {
+        List<CollectionModel> rankingCollections = response
+            .map((item) =>
+                CollectionModel.fromJson(item as Map<String, dynamic>))
+            .toList();
 
-      return rankingCollctions;
+        return rankingCollections;
+      } else {
+        throw Exception('Unexpected response type: ${response.runtimeType}');
+      }
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in getRankingCollections');
       debugErrorMessage('getRankingCollections exception: $e');
@@ -482,31 +483,31 @@ class ApiService {
     }
   }
 
-  static Future<List<SelectionModel>> getRankingSelections(
-      int categoryId) async {
+  static Future<List<SelectionModel>> getRankingSelections() async {
     try {
-      final responseData = await _supabase
-          .from('selections')
-          .select()
-          .eq('is_selecting', false)
-          .eq('category_id', categoryId)
-          .not('user_id', 'in', _blockedUserIds)
-          .order('select_num')
-          .limit(20);
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
 
-      List<SelectionModel> rankingSelections = responseData.map((item) {
-        List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
-        String? firstImagePath =
-            imageFilePaths != null && imageFilePaths.isNotEmpty
-                ? imageFilePaths.first as String
-                : null;
+      final response = await _supabase
+          .rpc('get_ranking_selections', params: {'input_user_id': userId});
 
-        return SelectionModel.fromJson({
-          ...item,
-        }, thumbFilePath: firstImagePath);
-      }).toList();
+      if (response is List<dynamic>) {
+        List<SelectionModel> rankingSelections = response.map((item) {
+          List? imageFilePaths = item['image_file_paths'] as List<dynamic>?;
+          String? firstImagePath =
+              imageFilePaths != null && imageFilePaths.isNotEmpty
+                  ? imageFilePaths.first as String
+                  : null;
 
-      return rankingSelections;
+          return SelectionModel.fromJson({
+            ...item,
+          }, thumbFilePath: firstImagePath);
+        }).toList();
+
+        return rankingSelections;
+      } else {
+        throw Exception('Unexpected response type: ${response.runtimeType}');
+      }
     } catch (e, stackTrace) {
       trackError(e, stackTrace, 'Exception in getRankingSelections');
       debugErrorMessage('getRankingSelections exception: $e');
@@ -548,9 +549,9 @@ class ApiService {
       }).toList();
       locator<CollectionProvider>().initializeMyCollections = collections;
     } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in initializeBlockedIds');
-      debugErrorMessage('initializeBlockedIds exception: ${e}');
-      throw Exception('initializeBlockedIds exception: ${e}');
+      trackError(e, stackTrace, 'Exception in initializeMyCollections');
+      debugErrorMessage('initializeMyCollections exception: ${e}');
+      throw Exception('initializeMyCollections exception: ${e}');
     }
   }
 
@@ -576,25 +577,26 @@ class ApiService {
                 print('내 콜랙션 callback');
                 Map<String, dynamic> newRecord = payload.newRecord;
                 Map<String, dynamic> oldRecord = payload.oldRecord;
-
-                if (payload.eventType == PostgresChangeEvent.insert) {
-                  CollectionModel newCollectionData =
-                      CollectionModel.fromJson(newRecord);
-                  locator<CollectionProvider>().upsertMyCollections =
-                      newCollectionData;
-                } else if (payload.eventType == PostgresChangeEvent.update) {
-                  CollectionModel newCollectionData =
-                      CollectionModel.fromJson(newRecord);
-                  locator<CollectionProvider>().upsertMyCollections =
-                      newCollectionData;
-                } else if (payload.eventType == PostgresChangeEvent.delete) {
-                  locator<CollectionProvider>().deleteMyCollections =
-                      oldRecord['id'];
+                if (_debounceTimer?.isActive ?? false) {
+                  _debounceTimer?.cancel();
                 }
-                _debounceTimer?.cancel();
                 _debounceTimer =
-                    Timer(const Duration(milliseconds: 500), () async {
-                  await DataService.reloadLocalData(userId);
+                    Timer(const Duration(milliseconds: 300), () async {
+                  if (payload.eventType == PostgresChangeEvent.insert) {
+                    CollectionModel newCollectionData =
+                        CollectionModel.fromJson(newRecord);
+                    locator<CollectionProvider>().upsertMyCollections =
+                        newCollectionData;
+                  } else if (payload.eventType == PostgresChangeEvent.update) {
+                    CollectionModel newCollectionData =
+                        CollectionModel.fromJson(newRecord);
+                    locator<CollectionProvider>().upsertMyCollections =
+                        newCollectionData;
+                  } else if (payload.eventType == PostgresChangeEvent.delete) {
+                    locator<CollectionProvider>().deleteMyCollections =
+                        oldRecord['id'];
+                  }
+                  await DataService.reloadLocalCollectionData(newRecord['id']);
                 });
               })
           .subscribe();
