@@ -10,6 +10,7 @@ import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
 
 import '../../components/pop_up/toast.dart';
+import '../../main.dart';
 import '../model/category_model.dart';
 import '../model/collection_model.dart';
 import '../model/selecting_model.dart';
@@ -61,7 +62,10 @@ class ApiService {
     } else if (exception is HttpException) {
       Toast.notify('서버 요청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
     } else if (exception is AuthException) {
-      if (exception.code == 'user_banned') {
+      if (exception.code == 'session_expired') {
+        Toast.notify('세션이 만료되었습니다.\n다시 로그인 해주세요.');
+        MyApp.restartApp();
+      } else if (exception.code == 'user_banned') {
         Toast.notify(
             '3회 이상 신고로 계정이\n1주일간 정지되었습니다.\n문의 : contact.collect@gmail.com');
       } else if (exception.code == 'otp_expired') {

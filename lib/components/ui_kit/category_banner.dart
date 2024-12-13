@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/provider/category_provider.dart';
-import 'category.dart';
+import 'category_tag.dart';
 
 class CategoryBanner extends StatelessWidget {
   final bool showDescription;
@@ -35,9 +35,7 @@ class CategoryBanner extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Category(
-              categoryId: categoryId,
-            ),
+            CategoryTag(categoryId: categoryId, buttonState: true),
             showDescription
                 ? Padding(
                     padding: EdgeInsets.only(top: 10.0.h),

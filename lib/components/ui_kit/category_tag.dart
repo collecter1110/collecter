@@ -5,11 +5,13 @@ import 'package:provider/provider.dart';
 import '../../data/model/category_model.dart';
 import '../../data/provider/category_provider.dart';
 
-class Category extends StatelessWidget {
+class CategoryTag extends StatelessWidget {
   final int categoryId;
-  Category({
+  final bool buttonState;
+  CategoryTag({
     super.key,
     required this.categoryId,
+    required this.buttonState,
   });
 
   String? categoryName;
@@ -30,8 +32,14 @@ class Category extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.4),
+        color: buttonState
+            ? Theme.of(context).primaryColor.withOpacity(0.4)
+            : Colors.white,
         borderRadius: BorderRadius.circular(6.0.r),
+        border: Border.all(
+          color: Theme.of(context).primaryColor.withOpacity(0.4),
+          width: 1.0.w,
+        ),
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0.w, vertical: 3.0.h),
