@@ -42,12 +42,17 @@ class CollectionProvider with ChangeNotifier {
             .firstOrNull
             ?.title;
 
+    saveCategoryId();
+
+    notifyListeners();
+  }
+
+  void saveCategoryId() {
     _categoryId = _myCollections
         ?.firstWhere((collection) => collection.id == _collectionId)
         .categoryId;
 
     print('카테고리 아이디 : $_categoryId');
-    notifyListeners();
   }
 
   void resetCollectionTitle() {

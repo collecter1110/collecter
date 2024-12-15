@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:collecter/components/widget/image_widget.dart';
-import 'package:collecter/data/provider/collection_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,12 +9,15 @@ import 'package:provider/provider.dart';
 import '../../components/button/add_button.dart';
 import '../../components/button/complete_button.dart';
 import '../../components/button/keyword_button.dart';
+import '../../components/pop_up/category_dialog.dart';
 import '../../components/pop_up/toast.dart';
 import '../../components/text_field/Item_text_field.dart';
 import '../../components/text_field/add_text_form_field.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
+import '../../data/model/category_model.dart';
 import '../../data/model/item_model.dart';
 import '../../data/model/selection_model.dart';
+import '../../data/provider/category_provider.dart';
 import '../../data/provider/item_provider.dart';
 
 import '../../data/provider/keyword_provider.dart';
@@ -37,6 +39,7 @@ class EditSelectionScreen extends StatefulWidget {
 
 class _EditSelectionScreenState extends State<EditSelectionScreen> {
   final GlobalKey<FormState> _keywordFormKey = GlobalKey<FormState>();
+  int? _categoryId;
   String? _changedTitle;
   String? _changedDescription;
   String? _changedLink;
@@ -50,6 +53,8 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   List<String> _changedImagePaths = [];
   List<String> _deletedImages = [];
   List<ItemData>? _initialItemData;
+  List<CategoryModel> _categoryInfo = [];
+  String? _categoryName;
 
   String _inputKeywordValue = '';
 
@@ -69,6 +74,12 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
 
   void initializeData() {
     _changedTitle = widget.selectionDetail.title;
+    final categoryProvider = context.read<CategoryProvider>();
+    _categoryInfo = categoryProvider.categoryInfo;
+    _categoryId = widget.selectionDetail.categoryId;
+    _categoryName = _categoryInfo
+        .firstWhere((category) => category.categoryId == _categoryId)
+        .categoryName;
     _changedDescription = widget.selectionDetail.description;
     _changedLink = widget.selectionDetail.link;
     _changedIsSelectable = widget.selectionDetail.isSelectable;
@@ -103,6 +114,29 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _showGroupDialog() async {
+    showModalBottomSheet(
+      context: context,
+      constraints: BoxConstraints(
+        maxWidth: double.infinity,
+      ),
+      isScrollControlled: false,
+      builder: (context) {
+        return CategoryDialog(
+          selectedCategoryId: _categoryId,
+          saveCategory: (value) {
+            setState(() {
+              _categoryId = value.categoryId;
+              _categoryName = _categoryInfo
+                  .firstWhere((category) => category.categoryId == _categoryId)
+                  .categoryName;
+            });
+          },
+        );
+      },
+    );
   }
 
   bool _isNetworkImage(String imagePath) {
@@ -143,8 +177,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
     try {
       _changedItems = context.read<ItemProvider>().itemDataListToJson();
       _changedKeywords = await ApiService.addKeywords(
-          context.read<KeywordProvider>().keywordNames!,
-          context.read<CollectionProvider>().categoryId!);
+          context.read<KeywordProvider>().keywordNames!, _categoryId!);
       if (_deletedImages.isNotEmpty) {
         ApiService.deleteStorageImages('selections', _deletedImages);
       }
@@ -153,7 +186,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
           : null;
 
       await ApiService.editSelection(
-        context.read<CollectionProvider>().categoryId!,
+        _categoryId!,
         widget.selectionDetail.collectionId,
         widget.selectionDetail.selectionId,
         _changedTitle!,
@@ -340,6 +373,72 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '카테고리 선택',
+                          style: TextStyle(
+                            fontFamily: 'PretendardRegular',
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff343A40),
+                            height: 1.5,
+                          ),
+                        ),
+                        AddButton(
+                          onPressed: () async {
+                            await _showGroupDialog();
+                          },
+                        ),
+                      ],
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        await _showGroupDialog();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0.r),
+                            color: _categoryName != null
+                                ? Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(0.3)
+                                : Colors.white,
+                            border: Border.all(
+                              color: _categoryName != null
+                                  ? Theme.of(context).primaryColor
+                                  : const Color(0xFFf1f3f5),
+                              width: 1.0,
+                              style: BorderStyle.solid,
+                            ),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12.0.h, horizontal: 16.0.w),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              _categoryName != null
+                                  ? '${_categoryName}'
+                                  : '카테고리를 선택해주세요.',
+                              style: TextStyle(
+                                color: _categoryName != null
+                                    ? Colors.black
+                                    : const Color(0xffADB5BD),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                height: 1.43,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.0.h,
+                    ),
                     Text(
                       '셀렉션 이름',
                       style: TextStyle(
