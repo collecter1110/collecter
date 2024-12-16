@@ -17,13 +17,8 @@ class ImageService {
 
   static Future<String> getFullImageUrl(
       String storageFolderName, String imageFilePath) async {
-    final String awsBucketName =
-        await _storage.read(key: 'AWS_BUCKET_NAME') ?? '';
-
-    String awsStorgeUrl =
-        "https://${awsBucketName}.s3.ap-northeast-2.amazonaws.com";
-
-    return '$awsStorgeUrl/$storageFolderName/$imageFilePath';
+    final String imageUrl = await _storage.read(key: 'IMAGE_URL') ?? '';
+    return '$imageUrl/$storageFolderName/$imageFilePath';
   }
 
   static Future<bool> requestPhotoPermission() async {

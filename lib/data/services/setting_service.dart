@@ -202,7 +202,7 @@ class SettingService {
     Map<String, String> configs = {
       'supabaseUrl': supabaseTestUrl,
       'supabaseApiKey': supabaseTestApiKey,
-      'storageBucketName': 'collecter-test'
+      'imageUrl': 'https://image.irismake.shop'
     };
     await serverInitialize(configs);
     return false;
@@ -227,7 +227,7 @@ class SettingService {
           'supabaseUrl': data['supabaseUrl'],
           'supabaseApiKey': data['supabaseApiKey'],
           'latestAppVersion': data['latestAppVersion'],
-          'storageBucketName': data['storageBucketName'],
+          'imageUrl': data['imageUrl'],
           'sentryDsn': data['sentryDsn'],
         };
         return configs;
@@ -266,7 +266,7 @@ class SettingService {
 
   static Future<void> serverInitialize(Map<String, String> configs) async {
     await StorageService.saveConfigs(
-        configs['storageBucketName']!, configs['supabaseUrl']!);
+        configs['imageUrl']!, configs['supabaseUrl']!);
     await Supabase.initialize(
       url: configs['supabaseUrl'] ?? '',
       anonKey: configs['supabaseApiKey'] ?? '',
