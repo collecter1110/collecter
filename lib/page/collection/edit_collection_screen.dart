@@ -160,10 +160,11 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       },
     );
     try {
+      print(_initialImageName);
+      print(_changedImageName);
+
       if (!(_initialImageName ?? '').contains(_changedImageName ?? '')) {
-        print('바꾸기');
-        print('처음 $_initialImageName');
-        print('바꾼후 $_changedImageName');
+        print('커버 바꾸기');
 
         if (_initialImageName != null) {
           print('스토리지 삭제');
@@ -173,7 +174,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
 
         if (_changedImageName != 'default') {
           print('스토리지 등록');
-          await ApiService.copyImageFilePath(
+          await ApiService.copyImage(
             'selections',
             'collections',
             _changedImageName!,

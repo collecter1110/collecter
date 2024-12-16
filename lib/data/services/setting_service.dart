@@ -202,6 +202,7 @@ class SettingService {
     Map<String, String> configs = {
       'supabaseUrl': supabaseTestUrl,
       'supabaseApiKey': supabaseTestApiKey,
+      'imageUrl': 'https://image.irismake.shop'
     };
     await serverInitialize(configs);
     return false;
@@ -212,7 +213,7 @@ class SettingService {
     try {
       String apiKey = dotenv.env['AWS_API_KEY'] ?? '';
       final Uri url = Uri.parse(
-          "https://471wqi3x7i.execute-api.us-east-2.amazonaws.com/prod?appVersion=$clientAppVersion");
+          "https://wielcrs40m.execute-api.ap-northeast-2.amazonaws.com/prod?appVersion=$clientAppVersion");
       final response = await http.get(
         url,
         headers: {
@@ -226,6 +227,7 @@ class SettingService {
           'supabaseUrl': data['supabaseUrl'],
           'supabaseApiKey': data['supabaseApiKey'],
           'latestAppVersion': data['latestAppVersion'],
+          'imageUrl': data['imageUrl'],
           'sentryDsn': data['sentryDsn'],
         };
         return configs;
@@ -263,12 +265,13 @@ class SettingService {
   }
 
   static Future<void> serverInitialize(Map<String, String> configs) async {
+    await StorageService.saveConfigs(
+        configs['imageUrl']!, configs['supabaseUrl']!);
     await Supabase.initialize(
       url: configs['supabaseUrl'] ?? '',
       anonKey: configs['supabaseApiKey'] ?? '',
     );
     await ApiService.authListener();
-    await StorageService.saveConfigs(configs['supabaseUrl']!);
   }
 
   static Future<void> sentryInitialize(Map<String, String> configs) async {

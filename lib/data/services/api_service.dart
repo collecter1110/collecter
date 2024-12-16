@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:collecter/data/services/image_service.dart';
 import 'package:flutter/services.dart';
@@ -295,38 +296,33 @@ class ApiService {
     }
   }
 
-  static Future<void> deleteAllStorageImages() async {
+  static Future<void> deleteStorageFolder() async {
+    final supabaseUrl = await storage.read(key: 'SUPABASE_URL');
+    final accessToken = await storage.read(key: 'ACCESS_TOKEN');
+    final userIdString = await storage.read(key: 'USER_ID');
     try {
-      final userIdString = await storage.read(key: 'USER_ID');
-      String userId = userIdString!.toString();
+      final edgeFunctionUrl =
+          Uri.parse('$supabaseUrl/functions/v1/delete-folder');
 
-      final response = await _supabase.rpc('get_storage_files', params: {
-        'user_id': userId,
-      });
+      final response = await http.post(
+        edgeFunctionUrl,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${accessToken}',
+        },
+        body: jsonEncode({'folderPath': userIdString}),
+      );
 
-      if (response == null || response is! List) {
-        print('파일 목록 가져오기 실패 또는 데이터가 비어 있습니다.');
-        return;
-      }
-
-      final List<String> filesToRemove =
-          List<String>.from(response.map((item) => item['file_name']));
-      if (filesToRemove.isNotEmpty) {
-        final deleteResponse =
-            await _supabase.storage.from('images').remove(filesToRemove);
-
-        if (deleteResponse == null) {
-          print('파일 삭제 실패: ${deleteResponse}');
-        } else {
-          print('폴더 내 모든 파일 삭제 성공');
-        }
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        print('Deleted files: ${responseBody['deletedFilePaths']}');
       } else {
-        print('삭제할 파일이 없습니다.');
+        print('Error: ${response.body}');
       }
     } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in deleteAllStorageImages');
-      debugErrorMessage('deleteAllStorageImages exception: ${e}');
-      throw Exception('deleteAllStorageImages exception: ${e}');
+      trackError(e, stackTrace, 'Exception in deleteStorageFolder');
+      debugErrorMessage('deleteStorageFolder exception: ${e}');
+      throw Exception('deleteStorageFolder exception: ${e}');
     }
   }
 
@@ -591,16 +587,21 @@ class ApiService {
                         CollectionModel.fromJson(newRecord);
                     locator<CollectionProvider>().upsertMyCollections =
                         newCollectionData;
+                    await DataService.reloadLocalCollectionData(
+                        newRecord['id']);
                   } else if (payload.eventType == PostgresChangeEvent.update) {
                     CollectionModel newCollectionData =
                         CollectionModel.fromJson(newRecord);
                     locator<CollectionProvider>().upsertMyCollections =
                         newCollectionData;
+                    await DataService.reloadLocalCollectionData(
+                        newRecord['id']);
                   } else if (payload.eventType == PostgresChangeEvent.delete) {
                     locator<CollectionProvider>().deleteMyCollections =
                         oldRecord['id'];
+                    await DataService.reloadLocalCollectionData(
+                        oldRecord['id']);
                   }
-                  await DataService.reloadLocalCollectionData(newRecord['id']);
                 });
               })
           .subscribe();
@@ -672,63 +673,148 @@ class ApiService {
     }
   }
 
-  static Future<String> uploadAndGetImageFilePath(
-    XFile xfile,
-    String folderPath,
-  ) async {
-    final userIdString = await storage.read(key: 'USER_ID');
-    int userId = int.parse(userIdString!);
-    try {
-      String _fileName = path.basename(xfile.path);
-      final String filePath = '$userId/$folderPath/$_fileName';
-      File file = File(xfile.path);
-      await _supabase.storage.from('images').upload(filePath, file);
-      print('파일 업로드 성공: $_fileName');
-      return _fileName;
-    } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in uploadAndGetImageFilePath');
-      debugErrorMessage('uploadAndGetImageFilePath exception: ${e}');
-      throw Exception('uploadAndGetImageFilePath exception: ${e}');
-    }
-  }
-
-  static Future<void> copyImageFilePath(
+  static Future<void> copyImage(
     String sourceFolderPath,
     String destinationFolderPath,
     String fileName,
     int collectionId,
   ) async {
-    final userIdString = await storage.read(key: 'USER_ID');
-    int userId = int.parse(userIdString!);
     try {
-      final String sourcePath = '$userId/$sourceFolderPath/$fileName';
-      final String destinationPath =
-          '$userId/$destinationFolderPath/${collectionId}_$fileName';
+      final supabaseUrl = await storage.read(key: 'SUPABASE_URL');
+      final accessToken = await storage.read(key: 'ACCESS_TOKEN');
+      final userIdString = await storage.read(key: 'USER_ID');
+      int userId = int.parse(userIdString!);
 
-      await _supabase.storage.from('images').copy(sourcePath, destinationPath);
+      final edgeFunctionUrl = Uri.parse('$supabaseUrl/functions/v1/copy-image');
+
+      final response = await http.post(
+        edgeFunctionUrl,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${accessToken}',
+        },
+        body: jsonEncode({
+          'sourceFolderPath': sourceFolderPath,
+          'destinationFolderPath': destinationFolderPath,
+          'fileName': fileName,
+          'userId': userId,
+          'collectionId': collectionId
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        print('File copied successfully: ${responseBody['message']}');
+      } else {
+        print('Error: ${response.body}');
+      }
     } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in copyImageFilePath');
-      debugErrorMessage('copyImageFilePath exception: ${e}');
-      throw Exception('copyImageFilePath exception: ${e}');
+      trackError(e, stackTrace, 'Exception in copyImage');
+      debugErrorMessage('copyImage exception: ${e}');
+      throw Exception('copyImage exception: ${e}');
     }
   }
 
-  static Future<List<String>> uploadAndGetImageFilePaths(
+  static Future<List<String>> uploadAndGetImageFileNames(
       List<XFile> xfiles, String folderPath) async {
-    List<String> _fileNames = [];
+    final supabaseUrl = await storage.read(key: 'SUPABASE_URL');
+    final accessToken = await storage.read(key: 'ACCESS_TOKEN');
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
 
     try {
-      final uploadFutures = xfiles.map((xfile) {
-        return uploadAndGetImageFilePath(xfile, folderPath);
-      }).toList();
+      final edgeFunctionUrl =
+          Uri.parse('$supabaseUrl/functions/v1/upload-images');
+      List<String> fileNames = [];
+      List<String> filePaths = [];
+      List<Map<String, dynamic>> fileMetadata = [];
+      List<int> combinedFileBytes = [];
 
-      _fileNames = await Future.wait(uploadFutures);
+      for (XFile xfile in xfiles) {
+        final fileBytes = await xfile.readAsBytes();
+        String fileName = path.basename(xfile.path);
+        final filePath = '$userId/$folderPath/$fileName';
 
-      return _fileNames;
+        filePaths.add(filePath);
+        fileNames.add(fileName);
+
+        fileMetadata.add({
+          "fileName": fileName,
+          "filePath": filePath,
+          "start": combinedFileBytes.length,
+          "length": fileBytes.length,
+        });
+
+        combinedFileBytes.addAll(fileBytes);
+      }
+
+      final payload = jsonEncode({"filePaths": filePaths});
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      };
+      try {
+        final response = await http.post(
+          edgeFunctionUrl,
+          headers: headers,
+          body: payload,
+        );
+
+        if (response.statusCode == 200) {
+          final responseBody = jsonDecode(response.body);
+
+          final presignedUrls = responseBody['presignedUrls'] as List;
+          if (presignedUrls.isEmpty) {
+            throw Exception('No presigned URLs returned');
+          }
+
+          for (int i = 0; i < presignedUrls.length; i++) {
+            final urlInfo = presignedUrls[i];
+            final filePath = urlInfo['filePath'];
+            final presignedUrl = urlInfo['url'];
+
+            final start = fileMetadata[i]["start"] as int;
+            final length = fileMetadata[i]["length"] as int;
+            final fileBytes = combinedFileBytes.sublist(start, start + length);
+
+            try {
+              final uploadResponse = await http.put(
+                Uri.parse(presignedUrl),
+                headers: {
+                  'Content-Type': 'application/octet-stream',
+                  'X-File-Metadata': jsonEncode(fileMetadata[i]),
+                },
+                body: fileBytes,
+              );
+
+              if (uploadResponse.statusCode != 200) {
+                throw Exception(
+                    'Failed to upload file $filePath (status: ${uploadResponse.statusCode}): ${uploadResponse.body}');
+              }
+            } catch (e, stackTrace) {
+              trackError(e, stackTrace, 'Exception in upload to aws s3');
+              debugErrorMessage(
+                  'Exception in upload to aws s3: ${e.toString()}');
+              throw Exception('Exception in upload to aws s3: ${e.toString()}');
+            }
+          }
+          return fileNames;
+        } else {
+          throw Exception(
+              'Failed to get presigned URLs (status: ${response.statusCode}): ${response.body}');
+        }
+      } catch (e, stackTrace) {
+        trackError(e, stackTrace, 'Exception in edgeFunction upload-images');
+        debugErrorMessage(
+            'edgeFunction upload-images exception: ${e.toString()}');
+        throw Exception(
+            'edgeFunction upload-images exception: ${e.toString()}');
+      }
     } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in uploadAndGetImageFilePaths');
-      debugErrorMessage('uploadAndGetImageFilePaths exception: ${e}');
-      throw Exception('uploadAndGetImageFilePaths exception: ${e}');
+      trackError(e, stackTrace, 'Exception in uploadAndGetImageFileNames');
+      debugErrorMessage(
+          'uploadAndGetImageFileNames exception: ${e.toString()}');
+      throw Exception('uploadAndGetImageFileNames exception: ${e.toString()}');
     }
   }
 
@@ -1119,29 +1205,59 @@ class ApiService {
   }
 
   static Future<void> deleteStorageImages(
-    String storageFolderName,
+    String folderPath,
     List<String> imageFilePaths,
   ) async {
-    try {
-      final userIdString = await storage.read(key: 'USER_ID');
-      int userId = int.parse(userIdString!);
-      List<String> fullFilePaths = [];
+    final supabaseUrl = await storage.read(key: 'SUPABASE_URL');
+    final accessToken = await storage.read(key: 'ACCESS_TOKEN');
+    final userIdString = await storage.read(key: 'USER_ID');
+    int userId = int.parse(userIdString!);
 
-      fullFilePaths = imageFilePaths
-          .map((filePath) => '$userId/$storageFolderName/$filePath')
+    try {
+      final edgeFunctionUrl =
+          Uri.parse('$supabaseUrl/functions/v1/delete-images');
+
+      // 전체 경로 생성 (사용자 ID + 폴더 경로 + 파일 이름)
+      List<String> fullFilePaths = imageFilePaths
+          .map((filePath) => '$userId/$folderPath/$filePath')
           .toList();
 
-      final response =
-          await _supabase.storage.from('images').remove(fullFilePaths);
+      // 삭제할 파일 경로를 Edge Function으로 전송
+      final payload = jsonEncode({"filePaths": fullFilePaths});
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      };
 
-      if (response.isEmpty) {
-        print('Deleting images from paths: $fullFilePaths');
-        print('Failed to delete storage images');
+      try {
+        final response = await http.post(
+          edgeFunctionUrl,
+          headers: headers,
+          body: payload,
+        );
+
+        if (response.statusCode == 200) {
+          final responseBody = jsonDecode(response.body);
+          final deletedFilePaths = responseBody['deletedFilePaths'] as List;
+
+          if (deletedFilePaths.isEmpty) {
+            throw Exception('No files were deleted');
+          }
+        } else {
+          throw Exception(
+              'Failed to delete files (status: ${response.statusCode}): ${response.body}');
+        }
+      } catch (e, stackTrace) {
+        trackError(e, stackTrace, 'Exception in edgeFunction delete-images');
+        debugErrorMessage(
+            'Exception in edgeFunction delete-images: ${e.toString()}');
+        throw Exception(
+            'Exception in edgeFunction delete-images: ${e.toString()}');
       }
     } catch (e, stackTrace) {
-      trackError(e, stackTrace, 'Exception in deleteStorageImages');
-      debugErrorMessage('deleteStorageImages exception: ${e}');
-      throw Exception('deleteStorageImages exception: ${e}');
+      trackError(e, stackTrace, 'Exception in deleteImages');
+      debugErrorMessage('deleteImages exception: ${e.toString()}');
+      throw Exception('deleteImages exception: ${e.toString()}');
     }
   }
 

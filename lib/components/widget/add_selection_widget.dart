@@ -81,7 +81,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
       _keywords = await ApiService.addKeywords(
           context.read<KeywordProvider>().keywordNames!, _categoryId!);
       if (_picekdImages != null && _picekdImages!.isNotEmpty) {
-        _imageFilePaths = await ApiService.uploadAndGetImageFilePaths(
+        _imageFilePaths = await ApiService.uploadAndGetImageFileNames(
             _picekdImages!, 'selections');
       }
       await ApiService.addSelections(

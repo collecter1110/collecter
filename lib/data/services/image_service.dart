@@ -17,9 +17,8 @@ class ImageService {
 
   static Future<String> getFullImageUrl(
       String storageFolderName, String imageFilePath) async {
-    final String supabaseUrl = await _storage.read(key: 'SUPABASE_URL') ?? '';
-
-    return '$supabaseUrl/storage/v1/object/public/images/$storageFolderName/$imageFilePath';
+    final String imageUrl = await _storage.read(key: 'IMAGE_URL') ?? '';
+    return '$imageUrl/$storageFolderName/$imageFilePath';
   }
 
   static Future<bool> requestPhotoPermission() async {

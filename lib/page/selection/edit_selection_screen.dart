@@ -156,7 +156,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
 
     if (localImages.isNotEmpty) {
       List<String> uploadedImageUrls =
-          await ApiService.uploadAndGetImageFilePaths(
+          await ApiService.uploadAndGetImageFileNames(
               localImages, 'selections');
       finalImagePaths.addAll(uploadedImageUrls);
     }

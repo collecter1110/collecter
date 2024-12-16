@@ -123,8 +123,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         }
         if (_pickedImage != null) {
           print('이미지 업로드');
-          _changedImageFilePath = await ApiService.uploadAndGetImageFilePath(
-              _pickedImage!, 'userinfo');
+          List<XFile> _pickedImages = [];
+          List<String> _pickedImageNames = [];
+          _pickedImages.add(_pickedImage!);
+          _pickedImageNames = await ApiService.uploadAndGetImageFileNames(
+              _pickedImages, 'userinfo');
+          _changedImageFilePath = _pickedImageNames.first;
         }
       }
       print(_changedImageFilePath);

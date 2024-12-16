@@ -5,7 +5,8 @@ import 'api_service.dart';
 class StorageService {
   static final _storage = FlutterSecureStorage();
 
-  static Future<void> saveConfigs(String supabaseUrl) async {
+  static Future<void> saveConfigs(String imageUrl, String supabaseUrl) async {
+    await _storage.write(key: 'IMAGE_URL', value: imageUrl);
     await _storage.write(key: 'SUPABASE_URL', value: supabaseUrl);
   }
 
