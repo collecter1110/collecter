@@ -24,7 +24,7 @@ class DeleteUserScreen extends StatelessWidget {
         },
       );
       try {
-        await ApiService.deleteAllStorageImages();
+        await ApiService.deleteStorageFolder();
         await ApiService.cancelMembership();
         await ApiService.deleteAuthUser();
         await StorageService.deleteStorageData();

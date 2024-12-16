@@ -199,6 +199,7 @@ class SettingService {
   static Future<bool> setDebugConfigs() async {
     String supabaseTestUrl = dotenv.env['SUPABASE_TEST_URL'] ?? '';
     String supabaseTestApiKey = dotenv.env['SUPABASE_TEST_API_KEY'] ?? '';
+    await StorageService.saveConfigs('collecter-test');
     Map<String, String> configs = {
       'supabaseUrl': supabaseTestUrl,
       'supabaseApiKey': supabaseTestApiKey,
@@ -268,7 +269,7 @@ class SettingService {
       anonKey: configs['supabaseApiKey'] ?? '',
     );
     await ApiService.authListener();
-    await StorageService.saveConfigs(configs['supabaseUrl']!);
+    await StorageService.saveConfigs('collecter-image');
   }
 
   static Future<void> sentryInitialize(Map<String, String> configs) async {
