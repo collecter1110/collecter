@@ -236,7 +236,6 @@ class Toast {
       await Future.delayed(Duration(seconds: 1));
       await openAppSettings();
     }
-    print(status);
   }
 }
 

@@ -85,7 +85,7 @@ class _AddCollectionWidgetState extends State<AddCollectionWidget> {
       await ApiService.addCollection(_categoryInfo!.categoryId, _title!,
           _description, context.read<TagProvider>().tagNames, _isPublic);
     } catch (e) {
-      print('Error: $e');
+      throw Exception('Error: $e');
     } finally {
       if (Navigator.of(context, rootNavigator: true).canPop()) {
         Navigator.of(context, rootNavigator: true).pop();

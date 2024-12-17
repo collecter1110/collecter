@@ -53,8 +53,6 @@ class CollectionProvider with ChangeNotifier {
     _categoryId = _myCollections
         ?.firstWhere((collection) => collection.id == _collectionId)
         .categoryId;
-
-    print('카테고리 아이디 : $_categoryId');
   }
 
   void resetCollectionTitle() {

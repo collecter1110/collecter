@@ -131,7 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _changedImageFilePath = _pickedImageNames.first;
         }
       }
-      print(_changedImageFilePath);
+
       await ApiService.editUserInfo(
           _changedName!, _changedDescription, _changedImageFilePath);
       final provider = context.read<UserInfoProvider>();
@@ -156,7 +156,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         setState(() {
           _pickedImage = XFile(_pickedImage!.path);
           _changedImageFilePath = _pickedImage!.path.split('/').last;
-          print(_changedImageFilePath);
         });
       }
     } catch (e, stackTrace) {

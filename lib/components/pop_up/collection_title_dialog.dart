@@ -82,7 +82,6 @@ class CollectionTitleDialog extends StatelessWidget {
                             onTap: (value) {
                               setState(() {
                                 selectedCollectionId = value;
-                                // print(selectedCollectionId);
                               });
                             },
                           );
@@ -102,7 +101,6 @@ class CollectionTitleDialog extends StatelessWidget {
                       provider.saveCollectionId = selectedCollectionId;
                       provider.saveCollectionTitle();
                       Navigator.pop(context);
-                      print(selectedCollectionId);
                       await voidCallback?.call();
                     },
                     text: '선택',

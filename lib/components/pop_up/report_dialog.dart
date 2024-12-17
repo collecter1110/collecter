@@ -133,8 +133,6 @@ class ReportDialog extends StatelessWidget {
                     } else {
                       reportedPostId = selectionProperties!.toMap();
                     }
-                    print(reportedPostId);
-                    print(_reportContext[selectedReportIndex!]);
                     ApiService.report(reportType, reportedPostId,
                         _reportContext[selectedReportIndex!]);
                     Navigator.pop(context);
