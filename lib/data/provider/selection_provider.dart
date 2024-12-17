@@ -47,7 +47,6 @@ class SelectionProvider with ChangeNotifier {
   Future<void> fetchSelectionData() async {
     try {
       _selections = await ApiService.getSelections(_collectionId!);
-      print(_selections);
     } catch (e) {
       print('Failed to fetch selection data: $e');
     }

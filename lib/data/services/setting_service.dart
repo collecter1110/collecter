@@ -13,6 +13,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../components/pop_up/toast.dart';
 import 'api_service.dart';
+import 'image_service.dart';
 import 'storage_service.dart';
 
 class SettingService {
@@ -237,7 +238,8 @@ class SettingService {
       }
     } catch (e, stackTrace) {
       Toast.notify('데이터를 불러올 수 없습니다.\n잠시후에 다시 시도해주세요.');
-      ApiService.trackError(e, stackTrace, 'Exception in Platform');
+      ApiService.trackError(
+          e, stackTrace, 'Exception in fetch Supabase config');
       throw Exception('Failed to fetch Supabase config');
     }
   }
@@ -265,8 +267,8 @@ class SettingService {
   }
 
   static Future<void> serverInitialize(Map<String, String> configs) async {
-    await StorageService.saveConfigs(
-        configs['imageUrl']!, configs['supabaseUrl']!);
+    await StorageService.saveConfigs(configs['supabaseUrl']!);
+    ImageService.imageUrl = configs['imageUrl']!;
     await Supabase.initialize(
       url: configs['supabaseUrl'] ?? '',
       anonKey: configs['supabaseApiKey'] ?? '',

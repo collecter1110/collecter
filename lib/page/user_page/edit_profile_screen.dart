@@ -82,7 +82,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return ImageWidget(
         storageFolderName: '${_userId}/userinfo',
         imageFilePath: _changedImageFilePath!,
-        boarderRadius: 100.r,
+        borderRadius: 100.r,
       );
     } else if (_isChangedImage) {
       return Image.file(
@@ -131,7 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _changedImageFilePath = _pickedImageNames.first;
         }
       }
-      print(_changedImageFilePath);
+
       await ApiService.editUserInfo(
           _changedName!, _changedDescription, _changedImageFilePath);
       final provider = context.read<UserInfoProvider>();
@@ -156,7 +156,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         setState(() {
           _pickedImage = XFile(_pickedImage!.path);
           _changedImageFilePath = _pickedImage!.path.split('/').last;
-          print(_changedImageFilePath);
         });
       }
     } catch (e, stackTrace) {
@@ -212,10 +211,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 aspectRatio: 1 / 1,
                                 child: Stack(
                                   children: [
-                                    SizedBox(
-                                      width: 80.w,
-                                      height: 80.0.w,
-                                      child: _buildImageWidget(),
+                                    ClipOval(
+                                      child: SizedBox(
+                                        width: 80.w,
+                                        height: 80.0.w,
+                                        child: _buildImageWidget(),
+                                      ),
                                     ),
                                     Positioned(
                                       right: 0.0.w,

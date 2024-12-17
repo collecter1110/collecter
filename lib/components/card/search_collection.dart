@@ -46,7 +46,7 @@ class SearchCollection extends StatelessWidget {
                       storageFolderName:
                           '${collectionDetail.userId}/collections',
                       imageFilePath: collectionDetail.imageFilePath!,
-                      boarderRadius: 8.r,
+                      borderRadius: 8.r,
                     )
                   : Container(
                       decoration: BoxDecoration(

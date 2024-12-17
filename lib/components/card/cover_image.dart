@@ -33,7 +33,7 @@ class CoverImage extends StatelessWidget {
             ImageWidget(
               storageFolderName: '$ownerId/selections',
               imageFilePath: thumbFilePath,
-              boarderRadius: 8.r,
+              borderRadius: 8.r,
             ),
             isSelected
                 ? Container(

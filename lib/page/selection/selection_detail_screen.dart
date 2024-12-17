@@ -131,7 +131,7 @@ class _SelectionDetailScreenState extends State<SelectionDetailScreen> {
                                                 '${_selectionDetail.ownerId}/selections',
                                             imageFilePath: _selectionDetail
                                                 .imageFilePaths![index],
-                                            boarderRadius: 8.r,
+                                            borderRadius: 8.r,
                                           ),
                                         );
                                       }),

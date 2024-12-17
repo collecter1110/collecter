@@ -1,10 +1,17 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../components/pop_up/toast.dart';
 
 class ImageService {
-  static final _storage = FlutterSecureStorage();
+  static String? imageUrl;
+
+  static String getFullImageUrl(
+      String storageFolderName, String imageFilePath) {
+    if (imageUrl == null) {
+      throw Exception('Failed to fetch image url');
+    }
+    return '$imageUrl/$storageFolderName/$imageFilePath';
+  }
 
   static Future<void> getPermission() async {
     bool isPermissionGranted = await requestPhotoPermission();
@@ -13,12 +20,6 @@ class ImageService {
     } else {
       openAppSettings();
     }
-  }
-
-  static Future<String> getFullImageUrl(
-      String storageFolderName, String imageFilePath) async {
-    final String imageUrl = await _storage.read(key: 'IMAGE_URL') ?? '';
-    return '$imageUrl/$storageFolderName/$imageFilePath';
   }
 
   static Future<bool> requestPhotoPermission() async {

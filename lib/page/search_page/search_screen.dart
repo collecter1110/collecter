@@ -30,8 +30,6 @@ class _SearchScreenState extends State<SearchScreen> {
   ) async {
     final _searchProvider = context.read<SearchProvider>();
 
-    print('do search $categoryIndex');
-
     if (searchText == null || searchText.isEmpty) return;
 
     switch (categoryIndex) {

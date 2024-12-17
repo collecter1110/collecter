@@ -109,7 +109,6 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     try {
       FocusScope.of(context).unfocus();
       _emailAddressValid = !await ApiService.checkEmailDuplicate(emailAddress);
-      print(_emailAddressValid);
       if (_emailAddressValid) {
         await ApiService.emailLogin(emailAddress);
         FocusScope.of(context).requestFocus(_emailAuthFocus);

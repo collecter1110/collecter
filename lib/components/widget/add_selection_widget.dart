@@ -96,7 +96,7 @@ class _AddSelectionWidgetState extends State<AddSelectionWidget> {
           _isOrder,
           _isSelectable);
     } catch (e) {
-      print('Error: $e');
+      throw Exception('Error: $e');
     } finally {
       if (Navigator.of(context, rootNavigator: true).canPop()) {
         Navigator.of(context, rootNavigator: true).pop();

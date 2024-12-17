@@ -115,7 +115,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       return ImageWidget(
         storageFolderName: '$_userId/selections',
         imageFilePath: _changedImageName!,
-        boarderRadius: 8.r,
+        borderRadius: 8.r,
       );
     }
 
@@ -123,7 +123,7 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       return ImageWidget(
         storageFolderName: '$_userId/collections',
         imageFilePath: _initialImageName!,
-        boarderRadius: 8.r,
+        borderRadius: 8.r,
       );
     }
 
@@ -160,9 +160,6 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       },
     );
     try {
-      print(_initialImageName);
-      print(_changedImageName);
-
       if (!(_initialImageName ?? '').contains(_changedImageName ?? '')) {
         print('커버 바꾸기');
 
@@ -192,7 +189,6 @@ class _EditCollectionScreenState extends State<EditCollectionScreen> {
       } else {
         _finalImageFilePath = _initialImageName;
       }
-      print(_finalImageFilePath);
 
       await ApiService.editCollection(
         _categoryId!,

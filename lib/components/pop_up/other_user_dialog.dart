@@ -32,7 +32,7 @@ class OtherUserDialog extends StatelessWidget {
       try {
         await ApiService.block(userInfo.userId);
       } catch (e) {
-        print('Error: $e');
+        throw Exception('Error: $e');
       } finally {
         if (Navigator.of(context, rootNavigator: true).canPop()) {
           Navigator.of(context, rootNavigator: true).pop();
