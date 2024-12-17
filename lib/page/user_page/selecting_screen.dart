@@ -95,9 +95,11 @@ class _UsersSelectScreenState extends State<SelectingScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                CollectionWidget(
-                  isLiked: true,
-                  routeName: '/user',
+                SingleChildScrollView(
+                  child: CollectionWidget(
+                    isLiked: true,
+                    routeName: '/user',
+                  ),
                 ),
                 SelectingWidget(
                   isSelected: false,
