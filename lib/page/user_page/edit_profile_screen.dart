@@ -212,10 +212,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 aspectRatio: 1 / 1,
                                 child: Stack(
                                   children: [
-                                    SizedBox(
-                                      width: 80.w,
-                                      height: 80.0.w,
-                                      child: _buildImageWidget(),
+                                    ClipOval(
+                                      child: SizedBox(
+                                        width: 80.w,
+                                        height: 80.0.w,
+                                        child: _buildImageWidget(),
+                                      ),
                                     ),
                                     Positioned(
                                       right: 0.0.w,
