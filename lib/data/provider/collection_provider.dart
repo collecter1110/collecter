@@ -14,6 +14,7 @@ class CollectionProvider with ChangeNotifier {
   int? _collectionId;
   String? _collectionTitle;
   int _collectionNum = 0;
+  int _likeCollectionNum = 0;
 
   ConnectionState get state => _state;
 
@@ -25,6 +26,7 @@ class CollectionProvider with ChangeNotifier {
   int? get collectionId => _collectionId;
   String? get collectionTitle => _collectionTitle;
   int get collectionNum => _collectionNum;
+  int get likeCollectionNum => _likeCollectionNum;
 
   set saveCollectionId(int? collectionId) {
     _collectionId = collectionId;
@@ -93,6 +95,7 @@ class CollectionProvider with ChangeNotifier {
   Future<void> fetchLikeCollections() async {
     try {
       _likeCollections = await ApiService.getLikeCollections();
+      _likeCollectionNum = _likeCollections?.length ?? 0;
     } catch (e) {
       _state = ConnectionState.none;
       print('Failed to fetch like collections: $e');

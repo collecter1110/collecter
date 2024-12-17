@@ -3,18 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../components/button/tab_bar_button.dart';
 import '../../components/button/user_page_edit_button.dart';
 import '../../components/button/users_archive_button.dart';
 import '../../components/constants/screen_size.dart';
 import '../../components/ui_kit/expandable_text.dart';
 import '../../components/widget/image_widget.dart';
-import '../../components/widget/like_widget.dart';
 import '../../data/provider/collection_provider.dart';
 import '../../data/provider/selecting_provider.dart';
 import '../../data/provider/user_info_provider.dart';
-import '../../data/services/locator.dart';
-import '../bookmark_page/bookmark_screen.dart';
 import 'edit_profile_screen.dart';
 import 'selecting_screen.dart';
 import 'setting_screen.dart';
@@ -164,65 +160,62 @@ class UserScreen extends StatelessWidget {
                   ),
                   Container(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 50.0.w, vertical: 20.0.h),
-                      child: Consumer<SelectingProvider>(
-                          builder: (context, provider, child) {
-                        // final int? collectionNum = provider.collectionNum;
-                        final int _selectingNum = provider.selectingNum;
-                        final int _selectedNum = provider.selectedNum;
-
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            UsersArchiveButton(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BookmarkScreen(),
-                                    settings: RouteSettings(name: '/bookmark'),
+                      padding: EdgeInsets.symmetric(vertical: 20.0.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          UsersArchiveButton(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SelectingScreen(
+                                    initialPageIndex: 0,
                                   ),
-                                );
-                              },
-                              number:
-                                  locator<CollectionProvider>().collectionNum,
-                              name: 'Collection',
-                            ),
-                            UsersArchiveButton(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SelectingScreen(
-                                      initialPageIndex: 0,
-                                    ),
-                                    settings: RouteSettings(name: '/user'),
+                                  settings: RouteSettings(name: '/user'),
+                                ),
+                              );
+                            },
+                            number: context
+                                .watch<CollectionProvider>()
+                                .likeCollectionNum,
+                            name: 'Likes',
+                          ),
+                          UsersArchiveButton(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SelectingScreen(
+                                    initialPageIndex: 1,
                                   ),
-                                );
-                              },
-                              number: _selectingNum,
-                              name: 'Selecting',
-                            ),
-                            UsersArchiveButton(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SelectingScreen(
-                                      initialPageIndex: 1,
-                                    ),
-                                    settings: RouteSettings(name: '/user'),
+                                  settings: RouteSettings(name: '/user'),
+                                ),
+                              );
+                            },
+                            number:
+                                context.watch<SelectingProvider>().selectingNum,
+                            name: 'Selecting',
+                          ),
+                          UsersArchiveButton(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SelectingScreen(
+                                    initialPageIndex: 2,
                                   ),
-                                );
-                              },
-                              number: _selectedNum,
-                              name: 'Selected',
-                            ),
-                          ],
-                        );
-                      }),
+                                  settings: RouteSettings(name: '/user'),
+                                ),
+                              );
+                            },
+                            number:
+                                context.watch<SelectingProvider>().selectedNum,
+                            name: 'Selected',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Padding(
@@ -248,50 +241,6 @@ class UserScreen extends StatelessWidget {
                   Container(
                     height: 12.0.h,
                     color: Color(0xFFf8f9fa),
-                  ),
-                  SizedBox(
-                    height: 10.0.h,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 18.0.w, vertical: 10.0.h),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          'assets/icons/icon_heart_fill.png',
-                          fit: BoxFit.contain,
-                          height: 12.0.h,
-                        ),
-                        SizedBox(
-                          width: 8.0.w,
-                        ),
-                        Text(
-                          '좋아요 리스트',
-                          style: TextStyle(
-                            color: Color(0xFF343A40),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16.0.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18.0.w),
-                    child: Divider(height: 0.5.h, color: Color(0xFFe9ecef)),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: 18.0.w, right: 18.0.w, top: 10.0.h),
-                    child: TabBarButton(
-                      tabName: 'Collection',
-                      buttonState: true,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18.0.w),
-                    child: LikeWidget(),
                   ),
                 ],
               ),

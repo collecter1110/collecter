@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/button/tab_bar_button.dart';
 import '../../components/ui_kit/custom_app_bar.dart';
+import '../../components/widget/collection_widget.dart';
 import '../../components/widget/selecting_widget.dart';
 
 class SelectingScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _UsersSelectScreenState extends State<SelectingScreen>
     super.initState();
 
     _tabController = TabController(
-      length: 2,
+      length: 3,
       vsync: this,
       initialIndex: widget.initialPageIndex,
     );
@@ -70,14 +71,20 @@ class _UsersSelectScreenState extends State<SelectingScreen>
                 tabs: [
                   Tab(
                     child: TabBarButton(
-                      tabName: 'Selecting',
+                      tabName: 'Like',
                       buttonState: _tabController!.index == 0,
                     ),
                   ),
                   Tab(
                     child: TabBarButton(
-                      tabName: 'Selected',
+                      tabName: 'Selecting',
                       buttonState: _tabController!.index == 1,
+                    ),
+                  ),
+                  Tab(
+                    child: TabBarButton(
+                      tabName: 'Selected',
+                      buttonState: _tabController!.index == 2,
                     ),
                   ),
                 ],
@@ -88,6 +95,10 @@ class _UsersSelectScreenState extends State<SelectingScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
+                CollectionWidget(
+                  isLiked: true,
+                  routeName: '/user',
+                ),
                 SelectingWidget(
                   isSelected: false,
                 ),
