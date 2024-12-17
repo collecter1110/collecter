@@ -82,7 +82,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return ImageWidget(
         storageFolderName: '${_userId}/userinfo',
         imageFilePath: _changedImageFilePath!,
-        boarderRadius: 100.r,
+        borderRadius: 100.r,
       );
     } else if (_isChangedImage) {
       return Image.file(

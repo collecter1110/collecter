@@ -76,7 +76,7 @@ class Selection extends StatelessWidget {
                       ? ImageWidget(
                           storageFolderName: '${ownerId}/selections',
                           imageFilePath: thumbFilePath!,
-                          boarderRadius: 0.r,
+                          borderRadius: 0.r,
                         )
                       : SizedBox.shrink(),
                 ),

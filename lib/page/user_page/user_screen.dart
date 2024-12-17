@@ -112,7 +112,7 @@ class UserScreen extends StatelessWidget {
                                         storageFolderName:
                                             '${_userId}/userinfo',
                                         imageFilePath: _imageFilePath,
-                                        boarderRadius: 100.r,
+                                        borderRadius: 100.r,
                                       ),
                                     ),
                               SizedBox(

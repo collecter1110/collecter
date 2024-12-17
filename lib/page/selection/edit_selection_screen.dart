@@ -298,7 +298,7 @@ class _EditSelectionScreenState extends State<EditSelectionScreen> {
                                                 '${widget.selectionDetail.ownerId}/selections',
                                             imageFilePath:
                                                 _changedImagePaths[index],
-                                            boarderRadius: 8.r)
+                                            borderRadius: 8.r)
                                         : Image.file(
                                             height: double.infinity,
                                             width: double.infinity,

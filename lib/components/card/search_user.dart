@@ -56,7 +56,7 @@ class SearchUser extends StatelessWidget {
                 : ImageWidget(
                     storageFolderName: '${userInfoDetail.userId}/userinfo',
                     imageFilePath: userInfoDetail.imageFilePath!,
-                    boarderRadius: 100.0.r,
+                    borderRadius: 100.0.r,
                   ),
           ),
           SizedBox(

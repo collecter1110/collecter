@@ -4,62 +4,30 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../data/services/image_service.dart';
 
-class ImageWidget extends StatefulWidget {
+class ImageWidget extends StatelessWidget {
   final String storageFolderName;
   final String imageFilePath;
-  final double boarderRadius;
+  final double borderRadius;
 
-  ImageWidget({
-    super.key,
+  const ImageWidget({
+    Key? key,
     required this.storageFolderName,
     required this.imageFilePath,
-    required this.boarderRadius,
-  });
-
-  @override
-  State<ImageWidget> createState() => _ImageWidgetState();
-}
-
-class _ImageWidgetState extends State<ImageWidget> {
-  Future<String>? _imageUrlFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _updateImageUrlFuture();
-  }
-
-  @override
-  void didUpdateWidget(covariant ImageWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.storageFolderName != oldWidget.storageFolderName ||
-        widget.imageFilePath != oldWidget.imageFilePath) {
-      _updateImageUrlFuture();
-    }
-  }
-
-  void _updateImageUrlFuture() {
-    _imageUrlFuture = ImageService.getFullImageUrl(
-      widget.storageFolderName,
-      widget.imageFilePath,
-    );
-  }
+    required this.borderRadius,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
-      future: _imageUrlFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return SizedBox.shrink();
-        } else if (snapshot.hasData) {
-          return CachedNetworkImage(
-            imageUrl: snapshot.data ?? '',
-            imageBuilder: (context, imageProvider) => Container(
+    final String _imageUrl =
+        ImageService.getFullImageUrl(storageFolderName, imageFilePath);
+
+    return CachedNetworkImage(
+        imageUrl: _imageUrl,
+        imageBuilder: (context, imageProvider) => Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(widget.boarderRadius),
+                borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
-                  color: Color(0xFFdee2e6),
+                  color: const Color(0xFFdee2e6),
                   width: 0.5.w,
                 ),
                 image: DecorationImage(
@@ -68,13 +36,19 @@ class _ImageWidgetState extends State<ImageWidget> {
                 ),
               ),
             ),
-            errorWidget: (context, url, error) =>
-                Center(child: Text('Fail to fetch data')),
-          );
-        } else {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-      },
-    );
+        errorListener: (error) {
+          //this is never called when running on the web!
+          print("CachedNetworkImageProvider: Image failed to load!");
+        },
+        errorWidget: (context, url, error) => Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: Border.all(
+                  color: const Color(0xFFdee2e6),
+                  width: 0.5.w,
+                ),
+              ),
+              color: Color(0xFFf1f3f5),
+            ));
   }
 }

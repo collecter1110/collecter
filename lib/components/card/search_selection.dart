@@ -67,7 +67,7 @@ class SearchSelection extends StatelessWidget {
                               storageFolderName:
                                   '${selectionDetail.ownerId}/selections',
                               imageFilePath: selectionDetail.thumbFilePath!,
-                              boarderRadius: 8.r,
+                              borderRadius: 8.r,
                             )
                           : Container(
                               width: double.infinity,
