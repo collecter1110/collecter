@@ -40,6 +40,12 @@ A cross-platform application developed using Flutter, integrated with Supabase, 
 - **Containerization**: Docker for consistent build and deployment.
 - **Hosting**: AWS services and GitHub Actions for CI/CD.
 
+### **Monitoring and Error Tracking**
+- **Sentry**:  
+  - Integrated for real-time error tracking and monitoring of the app.
+
+---
+
 ---
 
 ## **How to Clone and Run**
@@ -48,3 +54,31 @@ A cross-platform application developed using Flutter, integrated with Supabase, 
 ```bash
 git clone git@github.com:your-repo/your-flutter-project.git
 cd your-flutter-project
+```
+
+---
+
+## **Project File structure**
+
+
+```bash
+.
+├── assets
+├── lib
+│   ├── components        # Block Editor
+│   │   ├── data          # Static assets
+│   │   └── page             # Source code
+│   │       ├── apis
+│   │       ├── components
+│   │       │   ├── common  # Common components that are used in multiple pages
+│   │       │   ├── layouts # Layout components
+│   │       │   └── parts   # Parts components that are used in a specific page
+│   │       ├── fonts
+│   │       ├── hooks
+│   │       └── stores
+│   ├── main.dart 
+│   └── page_navigator.dart
+│       
+├── eslint-config
+└── README.md
+```
