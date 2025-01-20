@@ -1,14 +1,14 @@
-# **Flutter Project**
+# **Collecter**
 
 This repository contains a Flutter-based application and its related backend services.
 
-
+&nbsp;
 
 ## **Project Overview**
 
 A cross-platform application developed using Flutter, integrated with Supabase, AWS services, and other key technologies to deliver a scalable and robust solution.
 
----
+&nbsp;
 
 ## **Key Features**
 - Cross-platform support for iOS.
@@ -17,7 +17,7 @@ A cross-platform application developed using Flutter, integrated with Supabase, 
 - Serverless architecture using AWS Lambda.
 - Secure API integration for backend communication.
 
----
+&nbsp;
 
 ## **Technologies Used**
 
@@ -41,14 +41,14 @@ A cross-platform application developed using Flutter, integrated with Supabase, 
 ### **Error Tracking**
 - **Monitoring**: Sentry
 
----
+&nbsp;
 
 ## **How to Clone and Run**
 
 ### **Clone the Repository**
 ```bash
-git clone git@github.com:your-repo/your-flutter-project.git
-cd your-flutter-project
+git clone https://github.com/collecter1110/collecter.git
+cd collecter
 ```
 
 ### **Install Dependencies**
@@ -65,7 +65,8 @@ flutter run
 ```bash
 flutter build ios
 ```
----
+
+&nbsp;
 
 ## **Project File structure**
 
@@ -92,7 +93,7 @@ flutter build ios
 └── README.md
 ```
 
----
+&nbsp;
 
 ## **Environment Variables**
 
@@ -110,8 +111,7 @@ cp .env.example .env
 - `SUPABASE_TEST_API_KEY`: Your Supabase test anonymous key.
 - `AWS_API_KEY` : API key required when calling AWS Lambda function.
 
----
-
+&nbsp;
 
 ## **Branching Strategy**
 
@@ -121,7 +121,7 @@ We use the Git Flow branching model with the following process:
 - `dev`: The primary development branch where all feature branches are merged.
 - `feature/feature-name`: Use the naming convention feature branch. These branches are created from the main branch and merged into the dev branch during development.
 
----
+&nbsp;
 
 ## **Commit format**
 
