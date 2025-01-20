@@ -2,7 +2,7 @@
 
 This repository contains a Flutter-based application and its related backend services.
 
----
+
 
 ## **Project Overview**
 
@@ -115,29 +115,20 @@ cp .env.example .env
 
 ## **Branching Strategy**
 
-We use the **Git Flow** branching model:
+We use the Git Flow branching model with the following process:
 
-- `main`: Production-ready code.
-- `develop`: Latest development changes.
-- Feature branches: `feature/feature-name`.
+- `main`: Contains production-ready code. This branch is updated only after app updates are completed.
+- `dev`: The primary development branch where all feature branches are merged.
+- `feature/feature-name`: Use the naming convention feature branch. These branches are created from the main branch and merged into the dev branch during development.
 
 ---
 
-## **Commit Message Guidelines**
+## **Commit format**
 
-Use the following template for consistent commit messages:
+### **Title**
+[TYPE] : [Short description]
 
-$ git config --local commit.template .gitmessage.txt
-
-
-### **Commit format:**
-
-[TYPE]: [Short description]
-
-[Body: Optional detailed explanation]
-
-
-### **Types:**
+### **Types**
 
 - `feat`: A new feature
 - `fix`: A bug fix
@@ -146,3 +137,9 @@ $ git config --local commit.template .gitmessage.txt
 - `refactor`: Code refactoring without adding new features or fixing bugs
 - `test`: Adding or updating tests
 - `chore`: Maintenance tasks
+
+### **Body**
+[TASK-(TASK_ID)](Notion link)
+
+
+
