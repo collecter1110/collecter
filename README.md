@@ -36,7 +36,6 @@ A cross-platform application developed using Flutter, integrated with Supabase, 
 - **API Framework**: RESTful API.
 
 ### **Deployment**
-- **Containerization**: Docker for consistent build and deployment.
 - **Hosting**: AWS services and GitHub Actions for CI/CD.
 
 ### **Error Tracking**
@@ -52,6 +51,20 @@ git clone git@github.com:your-repo/your-flutter-project.git
 cd your-flutter-project
 ```
 
+### **Install Dependencies**
+```bash
+flutter pub get
+```
+
+### **Run the Project**
+```bash
+flutter run
+```
+
+### **Build the App**
+```bash
+flutter build ios
+```
 ---
 
 ## **Project File structure**
@@ -99,30 +112,6 @@ cp .env.example .env
 
 ---
 
-## **Install Dependencies**
-
-flutter pub get
-
----
-
-## **Run the Project**
-flutter run
-
----
-
-
----
-
-## **Build and Deployment**
-
-### **Build the App**
-
-flutter build apk
-
-or
-flutter build ios
-
----
 
 ## **Branching Strategy**
 
