@@ -74,22 +74,20 @@ flutter build ios
 ```bash
 .
 ├── assets
+│   ├── config               # Environment variable storage folder   
+│   ├── icons                # Icon folder with features
+│   └── images               # Images folder
 ├── lib
-│   ├── components        # Block Editor
-│   │   ├── data          # Static assets
-│   │   └── page             # Source code
-│   │       ├── apis
-│   │       ├── components
-│   │       │   ├── common  # Common components that are used in multiple pages
-│   │       │   ├── layouts # Layout components
-│   │       │   └── parts   # Parts components that are used in a specific page
-│   │       ├── fonts
-│   │       ├── hooks
-│   │       └── stores
+│   ├── components           # UI components
+│   ├── data                 
+│   │   ├── model            # Define data structure
+│   │   ├── provider         # State management data and logic
+│   │   └── services         # Manage logic by modularizing it
+│   ├── page                 # Page widgets
 │   ├── main.dart 
-│   └── page_navigator.dart
-│       
-├── eslint-config
+│   └── page_navigator.dart  # Logic related to page movement
+├── .env.example
+├── pubspec.yaml
 └── README.md
 ```
 
@@ -99,10 +97,10 @@ flutter build ios
 
 ### **Set up Environment Variables**
 
-Copy the `.env.example` file to `assets/config/.env` and update the values:
+Copy the `.env.example` file to `.env` and update the values:
 
 ```bash
-cp .env.example assets/config/.env
+cp .env.example .env
 ```
 
 ### **Required variables:**
