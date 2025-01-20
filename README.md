@@ -24,7 +24,7 @@ A cross-platform application developed using Flutter, integrated with Supabase, 
 ### **Frontend**
 - **Framework**: Flutter  
   - Cross-platform UI framework for building natively compiled apps.
-- **State Management**: Provider / get_it 
+- **State Management**: `Provider` / `get_it` 
 - **UI Components**: Material Design / Custom Widgets.
 
 ### **Backend & Cloud**
@@ -94,15 +94,15 @@ flutter build ios
 
 ---
 
-## **Set up Environment Variables**
+## **Environment Variables**
+
+### **Set up Environment Variables**
 
 Copy the `.env.example` file to `.env` and update the values:
 
 ```bash
 cp .env.example .env
 ```
-
----
 
 ### **Required variables:**
 
@@ -129,9 +129,6 @@ Use the following template for consistent commit messages:
 
 $ git config --local commit.template .gitmessage.txt
 
-markdown
-복사
-편집
 
 ### **Commit format:**
 
