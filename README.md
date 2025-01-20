@@ -99,10 +99,10 @@ flutter build ios
 
 ### **Set up Environment Variables**
 
-Copy the `.env.example` file to `.env` and update the values:
+Copy the `.env.example` file to `assets/config/.env` and update the values:
 
 ```bash
-cp .env.example .env
+cp .env.example assets/config/.env
 ```
 
 ### **Required variables:**
