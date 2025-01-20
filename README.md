@@ -40,11 +40,8 @@ A cross-platform application developed using Flutter, integrated with Supabase, 
 - **Containerization**: Docker for consistent build and deployment.
 - **Hosting**: AWS services and GitHub Actions for CI/CD.
 
-### **Monitoring and Error Tracking**
-- **Sentry**:  
-  - Integrated for real-time error tracking and monitoring of the app.
-
----
+### **Error Tracking**
+- **Monitoring**: Sentry
 
 ---
 
@@ -82,3 +79,85 @@ cd your-flutter-project
 ├── eslint-config
 └── README.md
 ```
+
+---
+
+## **Set up Environment Variables**
+
+Copy the `.env.example` file to `.env` and update the values:
+
+```bash
+cp .env.example .env
+```
+
+---
+
+### **Required variables:**
+
+- `SUPABASE_TEST_URL`: Your Supabase test project URL.
+- `SUPABASE_TEST_API_KEY`: Your Supabase test anonymous key.
+- `AWS_API_KEY` : API key required when calling AWS Lambda function.
+
+---
+
+## **Install Dependencies**
+
+flutter pub get
+
+---
+
+## **Run the Project**
+flutter run
+
+---
+
+
+---
+
+## **Build and Deployment**
+
+### **Build the App**
+
+flutter build apk
+
+or
+flutter build ios
+
+---
+
+## **Branching Strategy**
+
+We use the **Git Flow** branching model:
+
+- `main`: Production-ready code.
+- `develop`: Latest development changes.
+- Feature branches: `feature/feature-name`.
+
+---
+
+## **Commit Message Guidelines**
+
+Use the following template for consistent commit messages:
+
+$ git config --local commit.template .gitmessage.txt
+
+markdown
+복사
+편집
+
+### **Commit format:**
+
+[TYPE]: [Short description]
+
+[Body: Optional detailed explanation]
+
+
+### **Types:**
+
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, missing semi-colons, etc.)
+- `refactor`: Code refactoring without adding new features or fixing bugs
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
