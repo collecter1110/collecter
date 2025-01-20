@@ -11,7 +11,7 @@ A cross-platform application developed using Flutter, integrated with Supabase, 
 ---
 
 ## **Key Features**
-- Cross-platform support for iOS, Android, and Web.
+- Cross-platform support for iOS.
 - Real-time database updates using Supabase.
 - Efficient file storage and retrieval via AWS S3.
 - Serverless architecture using AWS Lambda.
@@ -24,7 +24,7 @@ A cross-platform application developed using Flutter, integrated with Supabase, 
 ### **Frontend**
 - **Framework**: Flutter  
   - Cross-platform UI framework for building natively compiled apps.
-- **State Management**: Provider / Riverpod / Bloc (adjust based on your choice).
+- **State Management**: Provider / get_it 
 - **UI Components**: Material Design / Custom Widgets.
 
 ### **Backend & Cloud**
@@ -33,8 +33,7 @@ A cross-platform application developed using Flutter, integrated with Supabase, 
   - Supabase for real-time database and authentication.
   - AWS S3 for storage and file management.
   - AWS Lambda for serverless middleware logic and environment variable management.
-- **API Framework**: FastAPI for RESTful API development.
-- **Data Analytics**: Elasticsearch and Kibana for search and visualization.
+- **API Framework**: RESTful API.
 
 ### **Deployment**
 - **Containerization**: Docker for consistent build and deployment.
